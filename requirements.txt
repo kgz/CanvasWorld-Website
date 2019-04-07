@@ -1,0 +1,5 @@
+Twisted==18.4.0.dev0
+Werkzeug==0.14.1
+dataset==1.0.3
+Flask==1.0.2
+https://github.com/kgz/PyLog
