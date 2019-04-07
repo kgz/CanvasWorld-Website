@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 
  
-app = Flask(__name__, template_folder="static/CanvasWorld")
+app = Flask(__name__, template_folder="/static/CanvasWorld")
 app.debug = True
 files =[[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
 files.sort(key=lambda tup: tup[2])
