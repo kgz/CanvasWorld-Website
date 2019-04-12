@@ -11,6 +11,29 @@ app = Flask(__name__, template_folder="static/CanvasWorld")
 app.debug = True
 files =[[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
 files.sort(key=lambda tup: tup[2])
+
+# @app.before_request
+# def before():
+#    """."""
+#    Log(request)
+
+
+def wrap(func):
+   def w1(*args, **kwargs):
+      Log(dir(request))
+      Log(request.user_agent)
+      Log(request.url)
+      Log(request.path)
+      Log(request.headers)
+      Log(request.access_route)
+      Log(request.host_url)
+      Log(request.referrer)
+      return func(*args, **kwargs)
+   return w1
+
+
+
+
 @app.after_request
 def add_header(r):
     """
@@ -43,7 +66,9 @@ def getsample(path):
       p = "static/images/404.gif"
    return send_file(p, mimetype='image/gif')
 
+
 @app.route('/')
+@wrap
 def method_name():
    return render_template(".index.html", files = files)
 
