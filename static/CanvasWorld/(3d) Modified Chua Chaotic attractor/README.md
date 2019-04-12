@@ -19,6 +19,7 @@ alpha = 10.82, beta = 14.286
 init := x[0] = 1, y[0] = 1, z[0] = 0
 ```
 
+
 ![alt][logo]
 
-[logo]: /(3d)%20Modified%20Chua%20Chaotic%20attractor/sample.gif ""
+[logo]:sample.gif ""

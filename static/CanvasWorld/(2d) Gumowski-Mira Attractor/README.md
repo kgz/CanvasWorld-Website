@@ -14,6 +14,7 @@ w := a * x + (1-a) * 2 * x * x/(1+x*x)
 init = x[0] = 1, y[0] = 0.5, a, b;
 ```
 
+
 ![alt][logo]
 
-[logo]: /(2d)%20Gumowski-Mira%20Attractor/sample.gif ""
+[logo]:sample.gif ""
