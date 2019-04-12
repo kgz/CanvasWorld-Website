@@ -20,14 +20,14 @@ files.sort(key=lambda tup: tup[2])
 
 def wrap(func):
    def w1(*args, **kwargs):
-      Log(dir(request))
-      Log(request.user_agent)
-      Log(request.url)
-      Log(request.path)
-      Log(request.headers)
-      Log(request.access_route)
-      Log(request.host_url)
-      Log(request.referrer)
+      # Log(dir(request))
+      # Log(request.user_agent)
+      # Log(request.url)
+      # Log(request.path)
+      # Log(request.headers)
+      # Log(request.access_route)
+      # Log(request.host_url)
+      # Log(request.referrer)
       return func(*args, **kwargs)
    return w1
 

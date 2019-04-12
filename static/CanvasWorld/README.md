@@ -2,6 +2,8 @@
 
 My own workshop of cool things I have found and made.
 
+Gallery can be found at [CanvasWorld.xyz](http://CanvasWorld.xyz)
+
 The setup script I use for [three.js](https://threejs.org/) can be found [here](/ThreeSetup.js)
 
 ----

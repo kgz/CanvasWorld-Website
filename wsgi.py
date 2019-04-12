@@ -1,3 +1,6 @@
+from threading import Thread()
+
+
 if __name__ == "__main__":
     from app import app
     reactor_args = {}
