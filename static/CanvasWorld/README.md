@@ -19,6 +19,7 @@ The setup script I use for [three.js](https://threejs.org/) can be found [here](
 7. [ ] PWL Duffing chaotic attractor
 8. [x] [(2d) Bedhead Attractor](/(2d)%20Bedhead%20Attractor) 11/04/19
 9. [x] [(2d) Clifford Attractor](/(2d)%20Clifford%20Attractor) 11/04/19
+10. [x] [(2d) Fractal Dream Attractor](/(2d)%20Fractal%20Dream%20Attractor) 13/04/19
 ### Maps:
 1. [ ] 3-cells CNN system 
 2. [ ] 2D circular chaotic map

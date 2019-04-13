@@ -30,8 +30,7 @@
     <script>let t = ("{{ args.get('name')[1]}}")</script>
     <script src="static/js/template.js"></script>
 
-    <script src="/static/CanvasWorld/{{ args.get('name')[1] }}/scripts/index.js"></script>
-
+    <script class= "source" src="/static/CanvasWorld/{{ args.get('name')[1] }}/scripts/index.{% if args.get('v') %}{{args.get('v')}}.{% endif %}js"></script>
     {%block head %}{% endblock %}
 </head>
 
