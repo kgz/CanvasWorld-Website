@@ -10,7 +10,7 @@ The setup script I use for [three.js](https://threejs.org/) can be found [here](
 
 
 ### Attractors:
-1. [x] [(3d) Modified Chua Chaotic attractor](/Modified%20Chua%20Chaotic%20attractor) 6/4/19
+1. [x] [(3d) Modified Chua Chaotic attractor](/(3d)%20Modified%20Chua%20Chaotic%20attractor) 6/4/19
 2. [ ] Chen attractor
 3. [ ] Hopalong Attractor
 4. [ ] Lorenz attractor
