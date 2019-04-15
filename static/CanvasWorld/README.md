@@ -14,6 +14,7 @@ The setup script I use for [three.js](https://threejs.org/) can be found [here](
 0. [x] [Bedhead Attractor]((2d)%20Bedhead%20Attractor)
 1. [x] [Clifford Attractor]((2d)%20Clifford%20Attractor)
 2. [x] [Fractal Dream Attractor]((2d)%20Fractal%20Dream%20Attractor)
+3. [x] [Henon Map]((2d)%20Henon%20Map)
 ---
 ### 3d
 0. [x] [2d image to 3d model]((3d)%202d%20image%20to%203d%20model)
