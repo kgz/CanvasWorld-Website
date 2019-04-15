@@ -41,6 +41,8 @@ $(function () {
             // clearInterval(interval)
             currentPos = 0;
             colorPos = 0;  
+            x= 0.1;
+            y = 0.1
         }
         for (let index = 0; index < numParticles/100; index++) {
             var positions = starField.geometry.attributes.position.array;
