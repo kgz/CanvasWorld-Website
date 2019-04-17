@@ -26,7 +26,7 @@ logs = db["logs"]
 
 keys = ''.join([random.choice(string.hexdigits) for x in range(random.randrange(20, 30))])
 with open(".h", "w+") as f:
-   f.write(keys)
+   f.write(keys + "\n")
 keys = hashlib.md5(keys.encode()).hexdigest()
 
 
