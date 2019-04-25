@@ -2,16 +2,14 @@ const numParticles = 100000  //1000000;
 let currentPos = 0;
 let colorPos = 0;
 let interval;
-let starField
+let starField;
 let x = 0,
     y = 0,
     z = 0;
-let u = .9;
-let scale = 100
+let scale = 1000
 class options {
     constructor() {
-        this.u = 0.5 * scale; //Dat.gui wouldn't allow anything below .1 :(
-        this.b = 0.3 * scale; //these get divided by ${scale} in the algorithm
+        this.u = 0.867 * scale; //Dat.gui wouldn't allow anything below .1 :(
 
         
     }
@@ -19,8 +17,7 @@ class options {
 $(function () {
     opts = new options()
     const gui = new dat.GUI();
-    gui.add(opts, 'u', 0, 100).name("a / " + scale)
-    gui.add(opts, 'b', 0, 100).name("b / " + scale)
+    gui.add(opts, 'u', 0, 1000).name("u / " + scale)
 
     setup();
     var starsGeometry = new THREE.BufferGeometry();
@@ -57,13 +54,15 @@ $(function () {
         }
         for (let index = 0; index < numParticles / 100; index++) {
             u = opts.u /scale
-            t = index/1000// 0.4 - 6/(1 + x^2 + y^2);
+           //t = currentPos/1000// 0.4 - 6/(1 + x^2 + y^2);
+            t = 0.4 - (6 / (1+ Math.pow(x, 2) + Math.pow(y, 2)))
             x1 = 1 + u*(x*Math.cos(t) - y*Math.sin(t)) ;
             y1 = u*(x*Math.sin(t) + y*Math.cos(t)) ;
+
             x = x1 ;
             y = y1 ;
-            positions[currentPos++] = x *10; //- $("#canvas").innerWidth()/2;
-            positions[currentPos++] = y *10;
+            positions[currentPos++] = x *30; 
+            positions[currentPos++] = y *30;
             positions[currentPos++] = 0
         }
         starField.geometry.attributes.position.needsUpdate = true;

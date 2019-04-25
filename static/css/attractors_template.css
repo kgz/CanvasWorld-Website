@@ -42,16 +42,32 @@ body{
     position:fixed;
     width: calc((100% - 200px)/2);
     height:calc(100% - 80px);
-    background: #ddd;
     top:80px;
     left:0px;
     border-top:solid 1px black;
+    background: #F0F0F0;
+    
     /* visibility: hidden; */
 }
 
+.splitter div{
+    width:50%;
+    height:20px;
+    color:black;
+    background:#ddd;
+    text-decoration: none;
+    float:left;
+    text-align:center;
+    background: #9c9191;
+    cursor: pointer;
+}
+/* .splitter div:first-child{
+    border-right:solid 1px black;
+
+} */
 #code code{
-    
     height:100%;
+    margin-top:20px;
   }
 #code pre{
     height:100%;
@@ -59,7 +75,12 @@ body{
     margin:0px;
 }
 /* canvas */
-
+#readme, #file{
+    height: 100%;
+    overflow: auto;
+    width: 95%;
+    padding-left:5%;
+}
 #canvas{
     position:fixed;
     width: calc((100% - 200px)/2);
@@ -164,7 +185,7 @@ body{
 .git img{
     width:32px;
     height:32px;
-    margin-top:10px;
+    margin-top:30px;
 }
 
 .git{

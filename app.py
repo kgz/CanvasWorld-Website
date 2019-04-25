@@ -76,7 +76,6 @@ def add_header(r):
 # @app.route("/<name>")
 def pathn(name):
    """."""
-   log()
    try:
       return render_template(f"{name[1]}/index.html", args={"name" : name, "v":request.args.get("v"), "scripts":files})
    except Exception as exc:
@@ -87,9 +86,13 @@ for filename in files:
     app.add_url_rule("/" + filename[0], defaults={"name": filename}, view_func=pathn)
 
 
+@app.route("/<path>")
 @app.route("/sample/<path>")
 def getsample(path):
    """."""
+   # Log(request.referrer.split("/")[-1])
+   # if path == "sample.gif":
+   #    path = request.referrer.split("/")[:-1]
    p = f"static/CanvasWorld/{path}/sample.gif"
    if not os.path.isfile(p):
       p = "static/images/404.gif"
