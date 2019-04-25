@@ -1,9 +1,9 @@
 $(function () {
     $.ajax({
-        url: 'https://api.github.com/repos/kgz/CanvasWorld/contents/'+t+'/README.md',//https://api.github.com/repos/kgz/CanvasWorld/readme',
+        url: 'https://api.github.com/repos/kgz/CanvasWorld/contents/'+TNAME+'/README.md',//https://api.github.com/repos/kgz/CanvasWorld/readme',
         headers: { 'Accept': 'application/vnd.github.html' }
       }).done(function(data) {
-         $("#code").append(data.replace( new RegExp("sample.gif", 'g'), "/sample/" + t))
+         $("#code").append(data.replace( new RegExp("sample.gif", 'g'), "/sample/" + TNAME))
         $(".splitter div").eq(1).click();
 
       });
