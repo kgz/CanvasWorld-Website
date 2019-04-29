@@ -22,7 +22,7 @@ for opt in ["(2d)", "(3d)"]:
     names.sort()
     print(names)
 
-    d2 = "\n".join([f"{names.index(x)}. [x] [{x}]({opt}%20{x.replace(' ', '%20')})" for x in names])
+    d2 = "\n".join([f"{names.index(x)}. [x] [{x}](http://canvasworld.xyz/{opt[1:-1]}_{x.replace(' ', '_')})" for x in names])
     string += f"\n### {opt[1:-1]}\n{d2}\n---"
 
 
