@@ -121,7 +121,8 @@ def getsample(path):
 
 @app.route('/')
 def method_name():
-   if request.args.get('hard') in [True, 1, "1"]:
+   if request.args.get('hard'):
+      Log("Reloding")
       t.reload()
    return render_template(".index.html", files = t.files)
 
