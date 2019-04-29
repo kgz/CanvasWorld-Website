@@ -14,8 +14,11 @@ from email.message import EmailMessage
 
 app = Flask(__name__, template_folder="static/CanvasWorld")
 app.debug = True
-files =[[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
-files.sort(key=lambda tup: tup[2])
+# app["files"] =[[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
+# app["files"].sort(key=lambda tup: tup[2])
+
+
+
 # key = 'pbkdf2:sha256:50000$kcKh6aKg$2df02e4cc530afad0e67f3b9f3b27e0aba561cfdaf91866814b3aa56acd86fee'
 # k = check_password_hash(key, "LNca8HA9DYrBtpe4")
 # Log(k)
@@ -29,6 +32,23 @@ with open(".h", "w+") as f:
    f.write(keys + "\n")
 keys = hashlib.md5(keys.encode()).hexdigest()
 
+class Tree:
+   """."""
+
+   def __init__(self):
+      """."""  
+      self.files = [[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
+      self.files.sort(key=lambda tup: tup[2])
+   
+   def reload(self):
+      """."""
+      self._files = [[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
+      self._files.sort(key=lambda tup: tup[2])
+
+
+t = Tree()
+
+
 
 
 def log():
@@ -40,6 +60,7 @@ def log():
          ip = request.remote_addr,
          env_ip = request.environ['REMOTE_ADDR']
    ))
+
 @app.route("/admin/<key>")
 def add(key=None):
    """."""
@@ -77,12 +98,12 @@ def add_header(r):
 def pathn(name):
    """."""
    try:
-      return render_template(f"{name[1]}/index.html", args={"name" : name, "v":request.args.get("v"), "scripts":files})
+      return render_template(f"{name[1]}/index.html", args={"name" : name, "v":request.args.get("v"), "scripts":t.files})
    except Exception as exc:
       Log(exc)
       return "", 404
 
-for filename in files:
+for filename in t.files:
     app.add_url_rule("/" + filename[0], defaults={"name": filename}, view_func=pathn)
 
 
@@ -100,13 +121,14 @@ def getsample(path):
 
 @app.route('/')
 def method_name():
-   log()
-   return render_template(".index.html", files = files)
+   if request.args.get('hard') in [True, 1, "1"]:
+      t.reload()
+   return render_template(".index.html", files = t.files)
 
 
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80, debug=True)
+   app.run(host="0.0.0.0", port=80, debug=True)
 
 
