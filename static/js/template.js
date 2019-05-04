@@ -1,4 +1,5 @@
 $(function () {
+    $("#canvas").innerHeight($(window).innerHeight());
     $.ajax({
         url: 'https://api.github.com/repos/kgz/CanvasWorld/contents/'+TNAME+'/README.md',//https://api.github.com/repos/kgz/CanvasWorld/readme',
         headers: { 'Accept': 'application/vnd.github.html' }
@@ -19,6 +20,12 @@ $(function () {
 
 
 });
+
+
+function map(n, start1, stop1, start2, stop2){
+    return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+}
+
 
 
 $(document).on("click", ".splitter div", function (){

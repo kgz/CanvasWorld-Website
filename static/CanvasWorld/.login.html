@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="/static/resources/jquery-3.3.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r82/three.min.js"></script>
+    <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/shaders/FocusShader.js"></script>
+    <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/shaders/CopyShader.js"></script>
+    <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="//cdn.rawgit.com/mrdoob/three.js/dev/examples/js/controls/OrbitControls.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+    <script src="/static/resources/ThreeSetup.js"></script>
+
+    <script src="/static/resources/jquery.md5.js"></script>
+
+    <script src="/static/js/index.js"></script>
+    <title>Login</title>
+
+    <style>
+        #canvas{
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            position:fixed;
+            z-index: -1;
+
+        }
+        
+
+.login{
+  /* background: rgba(44,62, 80, 0.2); */
+  width: 500px;
+  margin: auto;
+  margin-top: 80px;
+  height: 400px;
+  padding-bottom: 75px;
+  z-index:888
+}
+form {
+  width: 480px;
+  text-align: center;
+  padding: 25px;
+}
+input{
+  width: 400px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #fff;
+  font-family: 'play', sans-serif;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  outline: none;
+  color: #fff;
+  opacity: 0.5;
+}
+input[type=button] {
+  border: none;
+  width: 190px;
+  background: white;
+  color: #000;
+  font-size: 16px;
+  line-height: 25px;
+  padding: 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition-duration: 200ms
+}
+input[type=button]:hover{
+  color: #fff;
+  background: black;
+}
+h2{
+  color: white;
+}
+a {
+  color: #CA8F25;
+  text-decoration: blink;
+}
+a:hover{
+  color: skyblue;
+}
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+::placeholder {
+  color: aliceblue;
+  opacity: 0.8;
+  font-weight: 100;
+  font-family: mono-space;
+  font-size: 18px;
+}
+
+.invalid{
+    color:red;
+}
+
+
+    </style>
+</head>
+
+<body>
+    <div id="canvas"></div>
+
+    <div class="login">
+            <form onsubmit = "event.preventDefault(); " autocomplete="current-password" >
+              <h2>Login</h2>
+              <input type="password" name="p1" autocomplete="current-password" placeholder="Password 1" required><br><br><br>
+              <input type="password" name="p2" autocomplete="current-password" placeholder="password 2" required><br><br>
+              <a href="#"><input class="butt" type="button" value="Login"></a><br><br><br>
+              <div class="invalid"></div>
+            </form>
+          </div>
+    <script>
+        $(function () {
+            $(".butt").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/admin",
+                    data: {
+                        c: $.md5($("input").eq(0).val()),
+                        c1: $.md5($("input").eq(1).val()),
+
+                    },
+                    success: function (data) {
+                        // console.log(data)
+                        window.location = "/admin"
+                    },
+                    error: function () {
+                        $(".invalid").text("Invalid Passwords.")
+                    },
+                    //   dataType: dataType
+                });
+
+            })
+        })
+    </script>
+</body>
+
+</html>

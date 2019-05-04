@@ -3,6 +3,14 @@ let world, scene, camera, renderer, composer, renderPass, controls, focusShader;
 
 
 function setup() {
+
+    dat.controllers.NumberControllerBox.prototype.updateDisplay = function updateDisplay() {
+        this.__input.value = this.__truncationSuspended ? this.getValue() : roundToDecimal(this.getValue(), this.__precision).toFixed(this.__precision);
+        console.log("asdf")
+        return _NumberController.prototype.updateDisplay.call(this);
+    };
+
+
     scene = new THREE.Scene();
     world = new THREE.Object3D();
     scene.add(world);
@@ -37,6 +45,8 @@ function setup() {
    
 
     window.addEventListener('resize', () => {
+
+
         canvasWidth = $("#canvas").innerWidth();
         canvasHeight = $("#canvas").innerHeight();
 
@@ -57,3 +67,5 @@ function setup() {
     $("body").append(renderer.domElement);
 
 }
+
+

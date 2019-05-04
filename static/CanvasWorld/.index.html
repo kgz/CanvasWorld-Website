@@ -44,6 +44,7 @@
     <script src="/static/resources/jquery.md5.js"></script>
 
 
+
 </head>
 
 <body>
@@ -57,18 +58,18 @@
         </div>
     </div> -->
     <div id="content">
-
+        <h1>Welcome to my world of <a class="chaos"> Chaos</a>.</h1>
         {% for x in files %}
         <a class="tile-link" href="/{{x[0]}}">
             <div class="tile">
-                <div class="img"><img width=200 height=200 src="https://raw.githubusercontent.com/kgz/CanvasWorld/master/{{x[1]}}/sample.gif" /></div>
+                <div class="img"><img width=200 height=200 src="https://raw.githubusercontent.com/kgz/CanvasWorld/master/{{x[1]}}/sample.gif" alt = "{{x[1]}}" /></div>
                 <!-- <div class="img"><img width=200 height=200 src="/sample/{{x[1]}}" /></div> -->
                 <div class="cont">
                     <div class="tab-header">{{x[1]}}</div>
                     <div class="info">
 
-                        <a href="https://github.com/kgz/CanvasWorld/blob/master/{{x[1]}}" target="_blank"><img
-                                src="/static/images/git.png" /> Github</a>
+                        <a href="https://github.com/kgz/CanvasWorld/blob/master/{{x[1]}}" target="_blank">
+                            <img src="/static/images/git.png" alt="github link"/> Github</a>
                         <!-- <a> | </a> -->
                         <!-- <a class="created">{{x[2]}} </a> -->
                     </div>

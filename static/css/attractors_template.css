@@ -91,6 +91,13 @@ body{
 }
 
 
+#canvas canvas{
+    position:fixed;
+    left:calc(50% - 100px);
+    top:0px;
+    z-index:-1
+}
+
 
 #fps{
     color:white;
