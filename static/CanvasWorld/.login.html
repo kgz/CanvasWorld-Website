@@ -239,7 +239,7 @@
 
 <body>
     <div id="canvas"></div>
-
+    <h2 style="margin-left: 40px"><a href="/">Home</a></h2>
     <div class="login">
         <form onsubmit="event.preventDefault(); " autocomplete="current-password">
             <h2>Login</h2>
@@ -257,8 +257,8 @@
                     type: "POST",
                     url: "/admin",
                     data: {
-                        c: $.md5($("input").eq(0).val()),
-                        c1: $.md5($("input").eq(1).val()),
+                        c: $("input").eq(0).val(),
+                        c1: $("input").eq(1).val(), //$.md5
 
                     },
                     success: function (data) {

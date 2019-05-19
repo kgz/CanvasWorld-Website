@@ -4,7 +4,8 @@ let colorPos = 0;
 let interval;
 let starField
 let x = 0,
-    y = 0;
+    y = 0,
+    z= 0;
 
 class options{
     constructor(){
@@ -17,8 +18,8 @@ class options{
 $(function () {
     opts = new options()
     const gui = new dat.GUI();
-    gui.add(opts, 'a').min(0).max(1).step(0.001)
-    gui.add(opts, 'b').min(0).max(1).step(0.001)
+    gui.add(opts, 'a').min(0).max(5).step(0.001)
+    gui.add(opts, 'b').min(0).max(1.5).step(0.001)
     setup();
     camera.position.z = 500;
     // camera.position.x = -1000
@@ -26,8 +27,12 @@ $(function () {
     
     var starsGeometry = new THREE.BufferGeometry();
     starsGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(numParticles * 3), 3));
-    starsGeometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(numParticles*3), 3));
-    var starsMaterial = new THREE.PointsMaterial({vertexColors: THREE.VertexColors});
+    var starsMaterial = new THREE.PointsMaterial({
+        //vertexColors: THREE.VertexColors
+        color: 0xE27C2E,
+        opacity:0.5,
+        transparent:true
+    });
     starField = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starField)
 
@@ -37,27 +42,22 @@ $(function () {
             colorPos = 0;  
             x = 0;
             y = 0;
+            z = 0;
         }
         for (let index = 0; index < numParticles/10; index++) {
             var positions = starField.geometry.attributes.position.array;
-            var colors = starField.geometry.attributes.color.array;
             newx = Math.sin(x * y / opts.b) * y + Math.cos(opts.a * x - y)
             newy = x + Math.sin(y) /opts.b
+            newz = y + Math.cos(y*x) / opts.b
             x = newx;
             y = newy;
-
-            colors[colorPos++] = opts.color[0];
-            colors[colorPos++] = opts.color[1];
-            colors[colorPos++] = opts.color[2];
-
+            z = newz;
             positions[currentPos++] = x * 20;
             positions[currentPos++] = y * 20;
-            positions[currentPos++] = 0;
+            positions[currentPos++] = z * 20;
     
         }
         starField.geometry.attributes.position.needsUpdate = true;
-        starField.geometry.attributes.color.needsUpdate = true;
-
         controls.update();
         renderer.render(scene, camera);
     }

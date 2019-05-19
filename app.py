@@ -12,6 +12,8 @@ from flask import (Flask, abort, flash, json, jsonify,
 from PyLog import Log, Logger
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
+from hashlib import sha256, md5
+
 
 app = Flask(__name__, template_folder="static/CanvasWorld")
 app.debug = True
@@ -132,13 +134,21 @@ def _db():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-   if keys[0] in [request.args.get("c"), request.values.get("c")] and \
-      keys[1] in [request.args.get("c1"), request.values.get("c1")]:
-        session["auth"] = True
-   else:
-        flash('Invalid login details.')
+   """."""
    if request.method == 'POST':
+
+      def hash(sr):
+         """."""
+         md = md5()
+         md.update(sr.encode("utf8"))
+         return md.hexdigest()
+
+      m1 = request.args.get("c") or request.values.get("c")
+      m2 = request.args.get("c1") or request.values.get("c1")
+      if keys[0] == hash(m1) and keys[1] == hash(m2):
+         session["auth"] = True
       return "", (200 if session.get("auth") == True else 401)
+
    if session.get("auth") == True:
       return render_template(".admin.html")
    return render_template(".login.html")
