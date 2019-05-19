@@ -27,12 +27,12 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
     <script src="/static/resources/ThreeSetup.js"></script>
  
+    {%block head %}{% endblock %}
 
     <script>let TNAME = ("{{ args.get('name')[1]}}")</script>
     <script src="static/js/template.js"></script>
 
     <script class= "source" src="/static/CanvasWorld/{{ args.get('name')[1] }}/scripts/index.{% if args.get('v') %}{{args.get('v')}}.{% endif %}js"/></script>
-    {%block head %}{% endblock %}
 </head>
 
 <body>

@@ -5,7 +5,7 @@ import random
 import smtplib
 import string
 from datetime import datetime
-
+from collections import OrderedDict
 import dataset
 from flask import (Flask, abort, flash, json, jsonify,
                    render_template, request, send_file, session, url_for, redirect)
@@ -101,6 +101,7 @@ def add_header(r):
 def pathn(name):
    """."""
    try:
+      log()
       return render_template(f"{name[1]}/index.html", args={"name" : name, "v":request.args.get("v"), "scripts":t.files})
    except Exception as exc:
       Log(exc)
@@ -122,12 +123,15 @@ def getsample(path):
       p = "static/images/404.gif"
    return send_file(p, mimetype='image/gif')
 
+@app.route("/db")
+def _db():
+   """."""
+   if session.get("auth") == True:
+      return jsonify([OrderedDict(x) for x in logs.all()])
+   return "",  401
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-   # Log(dir(request))
-   # Log(request.values)
-   flash("")
    if keys[0] in [request.args.get("c"), request.values.get("c")] and \
       keys[1] in [request.args.get("c1"), request.values.get("c1")]:
         session["auth"] = True
@@ -136,7 +140,7 @@ def admin():
    if request.method == 'POST':
       return "", (200 if session.get("auth") == True else 401)
    if session.get("auth") == True:
-      return render_template(".admin.html",  logs=[dict(x) for x in logs.all()])
+      return render_template(".admin.html")
    return render_template(".login.html")
 
 @app.route("/logout")
@@ -149,13 +153,22 @@ def logout():
 
 @app.route('/')
 def index():
+   log()
+
    if request.args.get('hard'):
       Log("Reloding")
       t.reload()
    return render_template(".index.html", files = t.files)
 
-
-
+@app.route('/rem')
+def dbconn():
+   """."""
+   if not session.get('auth'):
+      return "", 404
+   args = request.args.get('id')
+   result = logs.delete(id=args)
+   Log(result)
+   return jsonify({"succesful" : bool(result)})
 
 if __name__ == "__main__":
    app.run(host="0.0.0.0", port=80, debug=True)

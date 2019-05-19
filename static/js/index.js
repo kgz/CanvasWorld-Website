@@ -1,6 +1,6 @@
 let light;
 let boxes = [];
-
+__ = false;
 class box {
     constructor(x, y, w) {
         var d = Math.random() * 100
@@ -27,6 +27,16 @@ class box {
 }
 
 $(function () {
+
+    $('.lazy').Lazy({
+        effect: "fadeIn",
+        effectTime: 2000,
+        threshold: 0,
+        onError: function(element) {
+            $(element).attr('src', 'http://localhost/static/images/404.gif');
+        }
+    });
+           
     w = $("#canvas").innerWidth() / 30;
     let prev;
     setup();
@@ -70,8 +80,8 @@ $(function () {
             //     // console.log("asdfas")
             // }
             if (Math.abs(x.geometry.vertices[0].z - x.goal) < 1) {
-                if (Math.random() > 0.95) {
-                    x.goal = Math.random() * 100
+                if (Math.random() > 0.95 && !document.__) {
+                    x.goal = Math.random() * 100;
                     x.v = Math.random();
                 }
                 // x.isrunning = false
@@ -92,24 +102,34 @@ $(function () {
     $("#canvas").append(renderer.domElement);
 })
 
-a = "0a%2020%2020%2020%2020%2024%2028%2064%206f%2063%2075%206d%2065%206e%2074%2029%202e%206b%2065%2079%2064%206f%2077%206e%2028%2066%2075%206e%2063%2074%2069%206f%206e%2020%2028%2065%2029%2020%207b%200a%200a%2020%2020%2020%2020%2020%2020%2020%2020%205f%202e%2073%2068%2069%2066%2074%2028%2029%200a%2020%2020%2020%2020%2020%2020%2020%2020%205f%202e%2070%2075%2073%2068%2028%2065%202e%206b%2065%2079%2043%206f%2064%2065%2029%203b%200a%2020%2020%2020%2020%2020%2020%2020%2020%2024%202e%206d%2064%2035%2028%205f%2029%2020%203d%203d%2020%2022%2037%2066%2061%2030%2035%2038%2066%2064%2038%2035%2063%2036%2036%2061%2065%2035%2030%2031%2039%2062%2064%2030%2030%2039%2033%2031%2061%2062%2038%2037%2065%2065%2022%2020%203f%2020%2061%206c%2065%2072%2074%2028%2022%2068%2069%2022%2029%203a%2020%2020%2022%2022%200a%2020%2020%2020%2020%207d%2029%20%5Cn%0Afunction%20bin2String(array)%20%7B%0A%20%20var%20result%20%3D%20%22%22%3B%0A%20%20for%20(var%20i%20%3D%200%3B%20i%20%3C%20array.length%3B%20i%2B%2B)%20%7B%0A%20%20%20%20result%20%2B%3D%20String.fromCharCode(parseInt(array%5Bi%5D%2C%202))%3B%0A%20%20%7D%0A%20%20return%20result%3B%0A%7D"
+// a = "0a%2020%2020%2020%2020%2024%2028%2064%206f%2063%2075%206d%2065%206e%2074%2029%202e%206b%2065%2079%2064%206f%2077%206e%2028%2066%2075%206e%2063%2074%2069%206f%206e%2020%2028%2065%2029%2020%207b%200a%200a%2020%2020%2020%2020%2020%2020%2020%2020%205f%202e%2073%2068%2069%2066%2074%2028%2029%200a%2020%2020%2020%2020%2020%2020%2020%2020%205f%202e%2070%2075%2073%2068%2028%2065%202e%206b%2065%2079%2043%206f%2064%2065%2029%203b%200a%2020%2020%2020%2020%2020%2020%2020%2020%2024%202e%206d%2064%2035%2028%205f%2029%2020%203d%203d%2020%2022%2037%2066%2061%2030%2035%2038%2066%2064%2038%2035%2063%2036%2036%2061%2065%2035%2030%2031%2039%2062%2064%2030%2030%2039%2033%2031%2061%2062%2038%2037%2065%2065%2022%2020%203f%2020%2061%206c%2065%2072%2074%2028%2022%2068%2069%2022%2029%203a%2020%2020%2022%2022%200a%2020%2020%2020%2020%207d%2029%20%5Cn%0Afunction%20bin2String(array)%20%7B%0A%20%20var%20result%20%3D%20%22%22%3B%0A%20%20for%20(var%20i%20%3D%200%3B%20i%20%3C%20array.length%3B%20i%2B%2B)%20%7B%0A%20%20%20%20result%20%2B%3D%20String.fromCharCode(parseInt(array%5Bi%5D%2C%202))%3B%0A%20%20%7D%0A%20%20return%20result%3B%0A%7D"
 
-a = decodeURIComponent(a)
-k = eval(a.split("\\n")[1])
+// a = decodeURIComponent(a)
+// k = eval(a.split("\\n")[1])
 
 // console.log(k)
-// $(function () {
-//     _ = new Array(10);
+$(function () {
+    _ = new Array(10);
+    document.__ = 0
+    $(document).keydown(function (e) {
 
-//     $(document).keydown(function (e) {
+        _.shift()
+        _.push(e.keyCode);
+        ___ = function (){
+            document.__ = 1;
+            console.log("!!!!")
+            for(let ______ of boxes){
+                ______.goal = 1000
+                ______.v = 20;
+            }
+        }
+        
+        $.md5(_) == "7fa058fd85c66ae5019bd00931ab87ee" ? ___():  ""
+    })
+    
+});
 
-//         _.shift()
-//         _.push(e.keyCode);
-//         $.md5(_) == "7fa058fd85c66ae5019bd00931ab87ee" ? alert("hi"):  ""
-//     })
-// });
-
-let d = "let _ = eval; function eval(array) {var result = ''; for (var i = 0; i < array.length; i++) {result += String.fromCharCode(parseInt(array[i], 2));}return result;}"
-d = encodeURIComponent(d)
+// let d = "let _ = eval; function eval(array) {var result = ''; for (var i = 0; i < array.length; i++) {result += String.fromCharCode(parseInt(array[i], 2));}return result;}"
+// d = encodeURIComponent(d)
 
 

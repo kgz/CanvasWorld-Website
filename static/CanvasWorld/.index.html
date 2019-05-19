@@ -27,6 +27,7 @@
 
     <script src="/static/resources/jquery-3.3.1.min.js"></script>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.lazy/latest/jquery.lazy.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r82/three.min.js"></script>
     <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/postprocessing/EffectComposer.js"></script>
@@ -62,7 +63,7 @@
         {% for x in files %}
         <a class="tile-link" href="/{{x[0]}}">
             <div class="tile">
-                <div class="img"><img width=200 height=200 src="https://raw.githubusercontent.com/kgz/CanvasWorld/master/{{x[1]}}/sample.gif" alt = "{{x[1]}}" /></div>
+                <div class="img"><img width=200 height=200 class="lazy" style="display:hidden" data-src="https://raw.githubusercontent.com/kgz/CanvasWorld/master/{{x[1]}}/sample.gif" alt = "{{x[1]}}" /></div>
                 <!-- <div class="img"><img width=200 height=200 src="/sample/{{x[1]}}" /></div> -->
                 <div class="cont">
                     <div class="tab-header">{{x[1]}}</div>
