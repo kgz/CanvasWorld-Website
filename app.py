@@ -8,7 +8,7 @@ from datetime import datetime
 from collections import OrderedDict
 import dataset
 from flask import (Flask, abort, flash, json, jsonify,
-                   render_template, request, send_file, session, url_for, redirect)
+                   render_template, request, send_file, session, url_for, redirect, send_from_directory)
 from PyLog import Log, Logger
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
@@ -170,5 +170,12 @@ def dbconn():
    Log(result)
    return jsonify({"succesful" : bool(result)})
 
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
+
+
 if __name__ == "__main__":
    app.run(host="0.0.0.0", port=80, debug=True)
+
