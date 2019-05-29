@@ -45,12 +45,13 @@ class Tree:
    def __init__(self):
       """."""  
       self.files = [[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
-      self.files.sort(key=lambda tup: tup[2])
+      self.files.sort(key=lambda tup: tup[1])
+      Log(self.files)
    
    def reload(self):
       """."""
       self._files = [[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
-      self._files.sort(key=lambda tup: tup[2])
+      self._files.sort(key=lambda tup: tup[1])
 
 
 t = Tree()
