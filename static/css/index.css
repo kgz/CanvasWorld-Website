@@ -229,6 +229,7 @@ font-family: cursive;
     height:200px;
     background-size: 100% auto;
     background:black;
+    overflow:hidden;
 }
 
 .tile .cont{
