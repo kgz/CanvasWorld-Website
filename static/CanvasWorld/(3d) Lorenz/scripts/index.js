@@ -1,11 +1,15 @@
 const numParticles = 100000;
 let currentPos = 0;
+var starField ;
 let x = 1,
     y = 1,
     z = 0;
 class options {
     constructor() {
-        this.b = 0.15280000000000002; 
+        this.a = 10; 
+        this.b = 28; 
+        this.c = 8/3; 
+        this.speed = 1;
     }
 }
 
@@ -13,24 +17,26 @@ class options {
 $(function () {
     opts = new options()
     const gui = new dat.GUI();
-    gui.add(opts, 'b').min(0).max(0.3).step(0.0001)
+    gui.add(opts, 'a').min(0).max(50).step(0.0001)
+    gui.add(opts, 'b').min(0).max(50).step(0.0001)
+    gui.add(opts, 'c').min(0).max(50).step(0.0001)
+    gui.add(opts, 'speed').min(0).max(20).step(.5)
     setup();
     // camera.position.z = -20
-    camera.position.x = 35.43249764260721
-    camera.position.y = 39.927920064464544
-    camera.position.z = 500 //32.83442338378801
     var prev = 0;
      
     var starsGeometry = new THREE.BufferGeometry();
     starsGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(numParticles * 3), 3));
 
-    var starsMaterial = new THREE.PointsMaterial({
+    var starsMaterial = new THREE.LineBasicMaterial({
         color: 0x729ee5,
         transparent:true,
         opacity:0.8
     });
-    var starField = new THREE.Points(starsGeometry, starsMaterial);
+    starField = new THREE.Line(starsGeometry, starsMaterial);
     scene.add(starField);
+    starField.geometry.setDrawRange(0, currentPos)
+
     var positions = starField.geometry.attributes.position.array;
     var light = new THREE.AmbientLight( 0x729ee5 , 50); // soft white light
     scene.add( light );
@@ -45,28 +51,23 @@ $(function () {
         for (let i = 0; i < numParticles/ 10; i++) {
             // console.log("sdaf")
 
-            newx = -opts.b * x + Math.sin(y) //Math.sin(y) - (opts.b * x)
-            newy = -opts.b * y + Math.sin(z)//Math.sin(z) - (opts.b * y)
-            newz = -opts.b * z + Math.sin(x)//Math.sin(x) - (opts.b * z)
-            x += newx
-            y += newy
-            z += newz
+            newx = opts.a * (y - x) 
+            newy = x * (opts.b - z) - y
+            newz = x * y - opts.c * z
+            x += newx * 0.002
+            y += newy * 0.002
+            z += newz * 0.002
 
-            positions[currentPos++] = newx * 100;
-            positions[currentPos++] = newy * 100;
-            positions[currentPos++] = newz * 100;
+            positions[currentPos++] = newx * 0.5;
+            positions[currentPos++] = newy * .5;
+            positions[currentPos++] = newz * .5;
 
-            // var star = new THREE.Vector3();
-            // star.x = newx
-            // star.y = newy
-            // star.z = newz
-
-            // starsGeometry.vertices.push(star);
         }
+
         starField.geometry.attributes.position.needsUpdate = true;
 
     }
-    
+    var dr = 0;
     const loop = (now) => {
         camera.lookAt(scene.position);
         composer.render();
@@ -76,8 +77,12 @@ $(function () {
             var fps = 1000 / delta;
             prev = now;
             $("#fps").text("fps: " + Math.round(fps * 10))
+
         }
         // scene.rotation.y += 0.01
+        starField.geometry.setDrawRange(0, dr >= numParticles ? dr : dr += 1 * opts.speed)
+
+
     }
     loop();
     interval = setInterval(function () {
