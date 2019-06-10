@@ -21,14 +21,14 @@ class options {
     }
 }
 $(function () {
-    a = $("<div/>",{
-        text:"test",
-        css:{
-            "positon":"fixed",
+    // a = $("<div/>",{
+    //     text:"test",
+    //     css:{
+    //         "positon":"fixed",
             
-            "margin-top":$("#canvas").innerHeight() - 50 + "px",
-            "color":"white"
-        }   }).appendTo("#canvas")
+    //         "margin-top":$("#canvas").innerHeight() - 50 + "px",
+    //         "color":"white"
+    //     }   }).appendTo("#canvas")
 
 
     opts = new options()
@@ -65,7 +65,6 @@ $(function () {
 
     let up = function () {
         opts.a > 3 ? opts.a = -3 : opts.a += 0.001
-        a.text("a = "+ opts.a.toFixed(4))
         if (currentPos >= numParticles) {
             currentPos = 0;
             colorPos = 0;
@@ -77,7 +76,7 @@ $(function () {
 
             x1 = opts.d * Math.sin(opts.a * x) - Math.sin(opts.b * y)
             y1 = opts.c * Math.cos(opts.a * x) + Math.cos(opts.b * y);
-            z1 = opts.e * Math.tan(opts.a * x) + Math.tan(opts.b * y);
+            z1 = opts.e * Math.sin(opts.a * x) + Math.sin(opts.b * y);
 
             x = x1;
             y = y1;
@@ -105,7 +104,7 @@ $(function () {
             var delta = now - prev;
             var fps = 1000 / delta;
             prev = now;
-            $("#fps").text("fps: " + Math.round(fps * 10) + " at 100 intervals ")
+            $("#fps").text("fps: " + Math.round(fps * 10) + " at 100 intervals, a = "+ opts.a.toFixed(4))
         }
 
 

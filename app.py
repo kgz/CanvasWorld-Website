@@ -46,7 +46,6 @@ class Tree:
       """."""  
       self.files = [[secure_filename(x.name),x.name, datetime.fromtimestamp(x.stat().st_ctime).strftime('%Y-%m-%d')] for x in os.scandir("static/CanvasWorld") if x.is_dir() and not x.name.startswith(".")]
       self.files.sort(key=lambda tup: tup[1])
-      Log(self.files)
    
    def reload(self):
       """."""
