@@ -3,11 +3,16 @@ let world, scene, camera, renderer, composer, renderPass, controls, focusShader;
 
 
 function setup() {
+
+    dat.controllers.NumberControllerBox.prototype.updateDisplay = function updateDisplay() {
+        this.__input.value = this.__truncationSuspended ? this.getValue() : roundToDecimal(this.getValue(), this.__precision).toFixed(this.__precision);
+        return _NumberController.prototype.updateDisplay.call(this);
+    };
+
+
     scene = new THREE.Scene();
-    // scene.fog = new THREE.Fog("black", 0.05, 1500);
     world = new THREE.Object3D();
     scene.add(world);
-    // world.rotation.x = 90;
     camera = new THREE.PerspectiveCamera(45, $("#canvas").innerWidth() / $("#canvas").innerHeight());
     camera.position.z = 1000;
 
@@ -18,6 +23,7 @@ function setup() {
     renderer.setSize($("#canvas").innerWidth(), $("#canvas").innerHeight());
     renderer.setClearColor("black");
     renderer.setPixelRatio($("#canvas").devicePixelRatio);
+	document.body.appendChild( renderer.domElement );
 
     composer = new THREE.EffectComposer(renderer);
     renderPass = new THREE.RenderPass(scene, camera);
@@ -32,13 +38,15 @@ function setup() {
     composer.addPass(renderPass);
     composer.addPass(focusShader);
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+	controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.9;
     controls.enableZoom = true;
    
 
     window.addEventListener('resize', () => {
+
+
         canvasWidth = $("#canvas").innerWidth();
         canvasHeight = $("#canvas").innerHeight();
 
@@ -61,14 +69,3 @@ function setup() {
 }
 
 
-// class FPS {
-//     constructor() {
-//         this.count = 0
-//     }
-//     run(now) {
-//         if (!now) return
-//         this.count++;
-//         console.log(now, this, this.count)
-//         $("#fps").text("fps: " + Math.round(this.count / (now / 1000)));
-//     }
-// }

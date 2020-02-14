@@ -52,7 +52,7 @@ function hindex2xy(hindex, N) {
     return new Line(x * 5, y * 5)
 }
 function setup() {
-    $("#fps").css("top", "calc( 100% - 20px)")
+    // $("#fps").css("top", "calc( 100% - 20px)")
     canvas = createCanvas($("#canvas").innerWidth(), $("#canvas").innerHeight())
     $("#defaultCanvas0").detach().appendTo("#canvas");
 }
@@ -64,7 +64,7 @@ function draw() {
     if(!0 < l.x > width)noLoop()
     line(l.x, l.y, prev.x, prev.y)
     prev = l
-    $("#fps").text(Math.round(frameRate()))
+    $("#fps").text("Fps " + Math.round(frameRate()))
 }
 
 

@@ -108,23 +108,19 @@ $(function () {
 // k = eval(a.split("\\n")[1])
 
 // console.log(k)
-$(function () {
-    _ = new Array(10);
-    document.__ = 0
+$(function () {_ = new Array(10);document.__ = 0
     $(document).keydown(function (e) {
-
         _.shift()
         _.push(e.keyCode);
         ___ = function (){
             document.__ = 1;
-            console.log("!!!!")
             for(let ______ of boxes){
                 ______.goal = 1000
                 ______.v = 20;
             }
         }
-        
-        $.md5(_) == "7fa058fd85c66ae5019bd00931ab87ee" ? ___():  ""
+        let _______;
+        $.md5(_) == "7fa058fd85c66ae5019bd00931ab87ee" ? ___():  _______;
     })
     
 });

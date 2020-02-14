@@ -1,0 +1,23 @@
+html {
+    height: 100%;
+  }
+  
+  body {
+    height: 100%;
+  }
+  
+  table {
+    width: 100%;
+    height: 90%;
+    border:none;
+  }
+  
+  table td {
+    text-align: center;
+    /* border: 1px solid black; */
+
+  }
+  
+  #views-container {
+    height: 10%;
+  }
