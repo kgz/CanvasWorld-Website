@@ -6,7 +6,7 @@ import smtplib
 import string
 from datetime import datetime
 from collections import OrderedDict
-import dataset
+# import dataset
 from flask import (Flask, abort, flash, json, jsonify,
                    render_template, request, send_file, session, url_for, redirect, send_from_directory)
 from PyLog import Log, Logger
@@ -23,7 +23,7 @@ app.debug = True
 app.jinja_env.add_extension('jinja2.ext.do')
 
 Limiter(
-    app,
+    app=app,
     key_func=get_remote_address,
     default_limits=["50/minute"]
 )
@@ -40,9 +40,9 @@ app.secret_key = "asdfasdf8904afasdf8904afb0deb0deasd"
 # k = check_password_hash(key, "LNca8HA9DYrBtpe4")
 # Log(k)
 
-db = dataset.connect("sqlite:///logs.db?check_same_thread=false")
+# db = dataset.connect("sqlite:///logs.db?check_same_thread=false")
 
-logs = db["logs"]
+# logs = db["logs"]
 
 # keys = ''.join([random.choice(string.hexdigits) for x in range(random.randrange(20, 30))])
 # with open(".h", "w+") as f:
@@ -71,13 +71,14 @@ t = Tree()
 
 def log():
     """."""
-    logs.insert(dict(
-        time=datetime.now(),
-        referrer=request.referrer,
-        path=request.url,
-        ip=request.remote_addr,
-        env_ip=request.environ['REMOTE_ADDR']
-    ))
+    ...
+    # logs.insert(dict(
+    #     time=datetime.now(),
+    #     referrer=request.referrer,
+    #     path=request.url,
+    #     ip=request.remote_addr,
+    #     env_ip=request.environ['REMOTE_ADDR']
+    # ))
 
 # @app.route("/admin/<key>")
 # def add(key=None):
@@ -139,12 +140,12 @@ def getsample(path):
     return send_file(p, mimetype='image/gif')
 
 
-@app.route("/db")
-def _db():
-    """."""
-    if session.get("auth") == True:
-        return jsonify([OrderedDict(x) for x in logs.all()])
-    return "",  401
+# @app.route("/db")
+# def _db():
+#     """."""
+#     if session.get("auth") == True:
+#         return jsonify([OrderedDict(x) for x in logs.all()])
+#     return "",  401
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -187,15 +188,15 @@ def index():
     return render_template(".index.html", files=t.files)
 
 
-@app.route('/rem')
-def dbconn():
-    """."""
-    if not session.get('auth'):
-        return "", 404
-    args = request.args.get('id')
-    result = logs.delete(id=args)
-    Log(result)
-    return jsonify({"successful": bool(result)})
+# @app.route('/rem')
+# def dbconn():
+#     """."""
+#     if not session.get('auth'):
+#         return "", 404
+#     args = request.args.get('id')
+#     result = logs.delete(id=args)
+#     Log(result)
+#     return jsonify({"successful": bool(result)})
 
 
 @app.route('/robots.txt')
@@ -211,4 +212,4 @@ def test():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80, debug=True)
+    app.run(host="0.0.0.0", port=5050, debug=True)
