@@ -143,7 +143,7 @@ $(function () {
       
 
 
-        composer.render();
+        composer.clear();
         rafId = requestAnimationFrame(loop);
 
         if (rafId % 10 == 0) {

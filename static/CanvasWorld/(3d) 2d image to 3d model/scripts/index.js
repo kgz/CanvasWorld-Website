@@ -70,7 +70,7 @@ $(function () {
     var prev;
     const loop = (now) => {
         camera.lookAt(scene.position);
-        composer.render();
+        composer.clear();
         rafId = requestAnimationFrame(loop);
         if(rafId % 10 == 0){
             var delta = now - prev;

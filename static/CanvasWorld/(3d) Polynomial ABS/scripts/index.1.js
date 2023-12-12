@@ -121,7 +121,7 @@ $(function () {
         controls.update();
         renderer.render(scene, camera);
         camera.lookAt(scene.position);
-        composer.render();
+        composer.clear();
         rafId = requestAnimationFrame(loop);
 
         if (rafId % 10 == 0) {
