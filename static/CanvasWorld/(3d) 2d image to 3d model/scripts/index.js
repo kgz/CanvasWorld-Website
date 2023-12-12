@@ -8,7 +8,7 @@ $(function () {
             width: "90%"
         },
         name:"URLINPUT",
-        value:"http://pictify.saatchigallery.com/files/works/pink-gerbera-daisies-1409848544_org.jpg"
+        value: window.location.protocol + "//" + window.location.host + "/static/images/examples_2d_3d.jpg"
     }).appendTo("#canvas")
     $("<button/>", {
         css: {
@@ -43,7 +43,7 @@ $(function () {
         //urls that dont have a 'Access-Control-Allow-Origin: *'  header are blocked by the canvas element.
         //thus we need to always ensure that the image comes from one that does so we redirect it via this heroku app.
         //https://github.com/Rob--W/cors-anywhere
-        img.src ="https://cors-anywhere.herokuapp.com/"+$("[name='URLINPUT']").val(); 
+        img.src =$("[name='URLINPUT']").val(); 
         var canvas = document.getElementById('canvasq')
         var context = canvas.getContext('2d');
         canvas.width = numParticles

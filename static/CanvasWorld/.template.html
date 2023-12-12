@@ -15,7 +15,13 @@
     <script src="/static/resources/highlight.pack.js"></script>
     {% block css %} <link rel="stylesheet" type="text/css" media="screen" href="static/css/attractors_template.css"> {% endblock %}
     <link rel="stylesheet" type="text/css" media="screen" href="static/resources/default.css"> 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+
     <!-- <script src="/static/resources/p5.js"></script> -->
+    {% if p5 %}
+        <script>console.warn("p5 in use")</script>
+        <script src="/static/resources/p5.js"></script>
+    {%else%}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r82/three.min.js"></script>
     <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="//cdn.rawgit.com/mrdoob/three.js/6c7f000734f8579da37fb39e5c2e9e5e2dfb14f8/examples/js/shaders/FocusShader.js"></script>
@@ -26,12 +32,25 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
     <script src="/static/resources/ThreeSetup.js"></script>
     <script src="/static/resources/OrbitControls.js"></script>
- 
+    {%endif%}
+
 
     <script>let t = ("{{ args.get('name')[1]}}")</script>
     <script src="static/js/template.js"></script>
 
     <script src="/static/CanvasWorld/{{ args.get('name')[1] }}/scripts/index.js"></script>
+    <script>
+        function map(n, start1, stop1, start2, stop2){
+            return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+        }
+
+        $(()=> {
+            // .dropdown-content scroll to .dropbtn
+            let dropbtn = $(".dropbtn");
+            let dropdown = $(".dropdown-content");
+            dropdown.scrollTop(dropbtn.offset().top - dropdown.offset().top  + dropdown.scrollTop());
+        })
+    </script>
 
     {%block head %}{% endblock %}
 </head>
