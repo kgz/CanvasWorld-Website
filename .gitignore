@@ -4,3 +4,4 @@ logs.db
 
 update.bat
 /venv
+/__pycache__
