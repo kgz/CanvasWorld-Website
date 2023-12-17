@@ -1,10 +1,7 @@
-use std::thread;
-
 use actix_cors::Cors;
 
 use actix_files::{self as fs, NamedFile};
 use actix_web::{http, web, App, HttpRequest, HttpServer, Result};
-use serde::{Deserialize, Serialize};
 
 #[derive(PartialEq)]
 pub enum Environments {
@@ -31,10 +28,6 @@ async fn static_media(req: HttpRequest) -> Result<fs::NamedFile> {
     let file = req.match_info().get("file").unwrap();
     let path = format!("static/{}", file);
     Ok(NamedFile::open(path)?)
-}
-
-async fn four_oh_four(_: HttpRequest) -> Result<fs::NamedFile> {
-    Ok(NamedFile::open("static/404.html")?)
 }
 
 #[actix_web::main]
