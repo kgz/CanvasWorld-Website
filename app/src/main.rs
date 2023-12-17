@@ -6,7 +6,6 @@ use actix_files::{self as fs, NamedFile};
 use actix_web::{http, web, App, HttpRequest, HttpServer, Result};
 use serde::{Deserialize, Serialize};
 
-
 #[derive(PartialEq)]
 pub enum Environments {
     DEV,
@@ -24,20 +23,18 @@ pub const APP_ENV: Env = Env {
     auto_login_id: "1",
 };
 
-
 async fn index(_: HttpRequest) -> Result<fs::NamedFile> {
-    Ok(NamedFile::open("static/index.html")? )
+    Ok(NamedFile::open("static/index.html")?)
 }
 
 async fn static_media(req: HttpRequest) -> Result<fs::NamedFile> {
     let file = req.match_info().get("file").unwrap();
-    let path = format!("static/media/{}", file);
+    let path = format!("static/{}", file);
     Ok(NamedFile::open(path)?)
 }
 
-async fn test(_: HttpRequest) -> Result<String> {
-
-    Ok("test".to_string())
+async fn four_oh_four(_: HttpRequest) -> Result<fs::NamedFile> {
+    Ok(NamedFile::open("static/404.html")?)
 }
 
 #[actix_web::main]
@@ -57,10 +54,13 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(cors)
             .route("/", web::get().to(index))
+            // static media
+            .route("/static/{file:.*}", web::get().to(static_media))
             .route("/{tail:.*}", web::get().to(index))
-    }).bind("0.0.0.0:5050")?;
+    })
+    .bind("0.0.0.0:2020")?;
 
     // print server url
-    println!("Server running at http://localhost:5050/");
+    println!("Server running at http://localhost:2020/");
     server.run().await
 }

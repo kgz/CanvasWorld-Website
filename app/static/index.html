@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <link rel="icon" href="https://localhost/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta name="description" content="Web site created using create-react-app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -26,8 +24,9 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
-  </head>
-  <body>
+</head>
+
+<body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     hello world
     <div id="root"></div>
@@ -54,7 +53,7 @@
             ', $_SERVER['SERVER_NAME'], $port);
             echo sprintf('<script defer type="module" src="https://%s:%s/src/index.tsx"></script>', $_SERVER['SERVER_NAME'], $port); -->
 
-            <script type="module">
+    <!-- <script type="module">
                 window.dev = true;
                 import RefreshRuntime from "https://localhost:3000/@react-refresh"
                 RefreshRuntime.injectIntoGlobalHook(window)
@@ -62,6 +61,10 @@
                 window.$RefreshSig$ = () => (type) => type
                 window.__vite_plugin_react_preamble_installed__ = true
             </script>
-            <script defer type="module" src="https://localhost:3000/src/index.tsx"></script>
-        </body>
+            <script defer type="module" src="https://localhost:3000/src/index.tsx"></script> -->
+
+    <script src="/static/dist/index.min.js"></script>
+    <link rel="stylesheet" href="/static/dist/index.min.css" />
+</body>
+
 </html>
