@@ -12,3 +12,4 @@ serde = { version = "1.0.130", features = ["derive"] }
 actix-web = { version = "4", features = ["openssl"] }
 actix-files = "*"
 actix-cors = "*"
+openssl = { version = "0.10.35", features = ["vendored"] }
