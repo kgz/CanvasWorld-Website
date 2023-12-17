@@ -1,0 +1,67 @@
+@use '../../root';
+
+.wrapper{
+    display:flex;
+    flex-grow: 1;
+    margin-top:50px;
+
+    .links{
+        display:flex;
+        flex-direction:column;
+        margin-left:50px;
+        // border:solid 2px black;
+
+        .link{
+            margin:10px;
+            padding:10px;
+            // border:solid 2px black;
+            text-decoration:none;
+            // color:black;
+            // add box shadow
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            font-size:20px;
+            font-weight:700;
+            text-align:center;
+            transition:all 0.3s ease-in-out;
+            width: 250px;
+            text-align: left;
+            color:root.color(c3);
+            background:root.color(c1);
+           
+            &:first-child{
+                margin-top:0px;
+            }
+
+            .link_header{
+                font-size:20px;
+                font-weight:900;
+            }
+
+            .link_subheader{
+                font-size:13px;
+                font-weight:700;
+                opacity: 0.7;
+            }
+        }
+        :global{
+            .active{
+                background-color:root.color(c5);
+                color:root.color(c1);
+            }
+
+            .active:hover{
+                background-color:root.color(c5);
+                color:root.color(c1);
+            }
+        }
+
+    }
+
+    .content{
+        display:flex;
+        flex-grow: .9;
+        margin-left: 5%;
+        max-width: 1000px;
+    }
+
+}

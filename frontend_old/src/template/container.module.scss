@@ -1,0 +1,32 @@
+
+@use "../root";
+.main{
+    background: root.color(c1);
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    // justify-content: space-around;
+    // set columsn as 1fr 5fr
+    // grid-template-columns: 1fr 1fr;
+    // grid-template-rows: 1fr 1fr;
+    // padding: 20px;
+    overflow-x: hidden;
+}
+
+.main_content{
+
+    display: flex;
+    // justify-content: center;
+    // align-items: center;
+    // flex-direction: column;
+    left:60px;
+    position: relative;
+    width: calc(100% - 60px);
+    min-height: calc(100vh - root.height(header));
+    background:root.color(c4);
+    // border-radius: 15px;
+
+}

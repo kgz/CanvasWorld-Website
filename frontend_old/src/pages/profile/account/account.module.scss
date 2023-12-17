@@ -1,0 +1,103 @@
+@use "../../../root";
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .account_logo {
+        width: 100%;
+        height: 110px;
+        background: root.color(c1);
+        display: flex;
+        align-items: center;
+        // add 3 flex columns
+        border-radius: 8px;
+        .account_logo__img {
+            height: 80px;
+            margin-left: 10%;
+
+            :global {
+                img {
+                    object-fit: contain;
+                    width: 80px;
+                    aspect-ratio: 1/1;
+                    object-fit: contain;
+                }
+            }
+        }
+
+        .account_logo__name {
+            margin-left: 1%;
+
+            .desc {
+                font-size: 20px;
+                font-weight: 900;
+                color: root.color(c3);
+            }
+
+            :global {
+                p {
+                    font-size: 15px;
+                    // font-weight:900;
+                    color: root.color(c4);
+                }
+            }
+        }
+
+        .account_logo__upload {
+            // justify right
+            width: 29%;
+            display: flex;
+            justify-content: flex-end;
+
+            :global {
+                button {
+                    background: root.color(c5);
+                    color: root.color(c1);
+                    border-radius: 5px;
+                    border: none;
+                    padding: 10px;
+                    font-size: 15px;
+                    font-weight: 900;
+                    cursor: pointer;
+                    transition: all 0.3s;
+
+                    :hover {
+                        background: root.color(c5);
+                        color: root.color(c1);
+                    }
+                }
+            }
+        }
+        .inputfile {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+    }
+
+    .account_form{
+        margin-top:20px;
+        width: 100%;     
+   
+        :global{
+            .ant-input-group-addon{
+                min-width: 200px;
+                text-align: left;
+            }
+            .ant-form-item{
+                margin-bottom: 5px !important;
+            }
+        }
+    }
+
+}
+
+.input{
+    margin-bottom:10px;
+}
+

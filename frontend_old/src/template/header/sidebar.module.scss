@@ -1,0 +1,59 @@
+@use '../../root';
+
+.sidebar{
+    background:root.color(c1);
+    border-right: solid 1px root.color(c4);
+    // border-radius: 15px;
+    margin-right:20px;
+    width: 60px;
+    // make sticky
+    position: -webkit-sticky;
+    position: fixed;
+    top: calc(root.height(header) - 1px);
+    left:0px;
+    z-index: 101;
+    height: calc(100% - root.height(header) );
+    border-top:1px white solid;
+    // align-self: flex-start;
+
+    .sidebar__nav{
+        display:flex;
+        flex-direction:column;
+        // justify-content:space-between;
+        height:100%;
+        width:100%;
+        padding: 20px 0px;
+        // background: red;
+        align-items: center;
+
+        .sidebar__nav__item{
+            padding: 10px;
+            font-size: 1.5rem;
+            transition-duration: 0.3s;
+            transition: color 0.3s;
+
+            
+            :global {
+                a:link{
+                    color:root.color(c2);
+                     transition: color 0.3s;
+                     opacity: 0.5;
+
+                }
+                a:hover{
+                    transition: all 0.3s;
+                    color:root.color(c5);
+                    opacity: 1;
+                }
+                .active{
+                    transition: all 0.3s;
+                    color:root.color(c5) !important;
+                    opacity: 1 !important;
+                }
+            }
+       
+        }
+
+    }
+  
+}
