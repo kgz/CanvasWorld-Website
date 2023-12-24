@@ -5,6 +5,7 @@ import BedheadAttractor from "./bedhead_attractor";
 import { useAppDispatch, useAppSelector } from "../@store/store";
 import { Drawer } from "@mui/material";
 import { SetMenuOpen } from "../@store/webSiteState.slice";
+import Test from "./test1";
 
 const Template = () => {
 
@@ -15,6 +16,7 @@ const Template = () => {
         <div className={style.container}>
             <Routes>
                 <Route path="/BedheadAttractor" element={<BedheadAttractor />} />
+                <Route path="/Test" element={<Test />} />
                 {/* fallback */}
                 <Route path="*" element={<Index />} />
             </Routes>

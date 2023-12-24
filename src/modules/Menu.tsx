@@ -6,17 +6,25 @@ import { Collapse, Fade } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { TransitionGroup } from 'react-transition-group';
 import { Link, NavLink } from "react-router-dom";
+import { useEffect } from "react";
 
 type TProps = {
-    children: JSX.Element | JSX.Element[]
+    children: JSX.Element | JSX.Element[],
+    title: string
 }
 
 
 const Menu = ({
-    children
+    children,
+    title
 }: TProps) => {
     const { menuOpen } = useAppSelector(state => state.webSiteState)
     const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        // always load with menu closed, or maybe we shouldnt - todo see how this works with browkser router
+        // void dispatch(SetMenuOpen(false))
+    }, [dispatch])
 
     return (
         <>
@@ -43,7 +51,7 @@ const Menu = ({
                         }
                     </TransitionGroup>
                 </div>
-                <div className={style.title}>Bedhead Attractor</div>
+                <div className={style.title}>{title}</div>
             </div>
             <TransitionGroup>
 
@@ -62,6 +70,7 @@ const Menu = ({
                     <div className={style.menu}>
                         <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/">Home</NavLink>
                         <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/BedheadAttractor">Bedhead Attractor</NavLink>
+                        <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/test">Test</NavLink>
 
                     </div>
                 </Fade >}
