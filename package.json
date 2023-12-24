@@ -47,6 +47,8 @@
     "react-dat-gui-x": "^4.2.11",
     "react-hot-toast": "^2.4.1",
     "react-json-to-excel": "^1.0.7",
+    "react-katex": "^3.0.1",
+    "react-mathjax": "^1.0.1",
     "react-redux": "^8.1.3",
     "react-router": "^6.20.0",
     "react-router-dom": "^6.20.0",

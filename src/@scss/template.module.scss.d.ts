@@ -5,6 +5,7 @@ export type Styles = {
   card: string;
   container: string;
   desc: string;
+  divider: string;
   header: string;
   headerBreaker: string;
   menu: string;

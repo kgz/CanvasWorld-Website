@@ -1,5 +1,6 @@
 import BedheadAttractor from "../pages/bedhead_attractor";
-import Test from "../pages/test1";
+import BogdanovMap from "../pages/bogdanov_map";
+import Test from "../pages/bogdanov_map";
 
 type TRoutes = {
     name: string,
@@ -14,8 +15,8 @@ const routes: TRoutes = [
         element: BedheadAttractor,
     },
     {
-        name: 'test',
-        element: Test
+        name: 'Bogdanov Map',
+        element: BogdanovMap
     }
 ]
 
