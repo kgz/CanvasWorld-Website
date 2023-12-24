@@ -7,6 +7,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { TransitionGroup } from 'react-transition-group';
 import { Link, NavLink } from "react-router-dom";
 import { useEffect } from "react";
+import routes from "../@types/routes";
+import { genPath } from "./genPath";
 
 type TProps = {
     children: JSX.Element | JSX.Element[],
@@ -23,7 +25,7 @@ const Menu = ({
 
     useEffect(() => {
         // always load with menu closed, or maybe we shouldnt - todo see how this works with browkser router
-        // void dispatch(SetMenuOpen(false))
+        void dispatch(SetMenuOpen(false))
     }, [dispatch])
 
     return (
@@ -69,9 +71,16 @@ const Menu = ({
                 }}>
                     <div className={style.menu}>
                         <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/">Home</NavLink>
-                        <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/BedheadAttractor">Bedhead Attractor</NavLink>
+                        {/* <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/BedheadAttractor">Bedhead Attractor</NavLink>
                         <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/test">Test</NavLink>
+                         */}
 
+                        {routes.map((route, index) => {
+                            return (
+                                <NavLink key={index} className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to={genPath(route.name)}>{route.name}</NavLink>
+                            )
+                        })
+                        }
                     </div>
                 </Fade >}
             </TransitionGroup>

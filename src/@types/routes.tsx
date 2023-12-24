@@ -3,7 +3,7 @@ import Test from "../pages/test1";
 
 type TRoutes = {
     name: string,
-    element: { (setMenuBody: CallableFunction): JSX.Element },
+    element: { ({ setBodyJSX }): JSX.Element },
 }[]
 
 

@@ -2,7 +2,7 @@ import { CameraControls } from "@react-three/drei";
 import { OrbitControls, Stats } from '@react-three/drei';
 import type { RenderCallback } from '@react-three/fiber';
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 // import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gui-x';
 import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gui';
 import *  as THREE from "three";
@@ -179,7 +179,11 @@ const Points = ({ datData }: { datData: DatData }) => {
 }
 
 
-const BedheadAttractor = () => {
+const BedheadAttractor = ({
+    setBodyJSX
+}: {
+    setBodyJSX: React.Dispatch<React.SetStateAction<JSX.Element | JSX.Element[]>>
+}) => {
 
     const canvas = useRef<HTMLCanvasElement>(null)
     const stats = useRef<any>(null)
@@ -190,28 +194,26 @@ const BedheadAttractor = () => {
         b: 0.7345345,
     })
 
-    const dispatch = useAppDispatch()
-    const { menuOpen } = useAppSelector(state => state.webSiteState)
+    useEffect(() => {
+        setBodyJSX(
+            <>
+                <div className={style.card}>
+                    <div className={style.desc} >
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                    </div>
+                </div>
+                <DatGui data={datData} onUpdate={(data: DatData) => {
+                    setDatData(data)
+                }}>
+                    <DatNumber path="a" min={-1} max={1} step={0.0001} key={'a'} />
+                    <DatNumber path="b" min={-1} max={1} step={0.0001} />
+                </DatGui>
+            </>
+        )
+    }, [datData, setBodyJSX])
 
     return (
         <>
-            <div className={style.body}>
-                <Menu title={"Bedhead Attractor"}>
-                    <div className={style.card}>
-                        <div className={style.desc} >
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
-                        </div>
-                    </div>
-                    <DatGui data={datData} onUpdate={(data: DatData) => {
-                        setDatData(data)
-                    }}>
-                        <DatNumber path="a" min={-1} max={1} step={0.0001} key={'a'} />
-                        <DatNumber path="b" min={-1} max={1} step={0.0001} />
-                    </DatGui>
-                </Menu>
-
-            </div>
-
             <div style={{
                 position: "fixed",
                 zIndex: 999
@@ -223,7 +225,6 @@ const BedheadAttractor = () => {
             <Canvas
                 ref={canvas}
                 className={style.canvas}
-
                 camera={
                     {
                         position: [0, 0, -10],
@@ -232,19 +233,8 @@ const BedheadAttractor = () => {
                         far: 1000,
 
                     }
-                }
-
-
-
-            >
-                <OrbitControls makeDefault
-
-
-
-                />
-
-                {/* <ambientLight /> */}
-                {/* <pointLight position={[10, 10, 10]} /> */}
+                }>
+                <OrbitControls makeDefault />
                 <Points datData={datData} />
             </Canvas>
 
@@ -252,6 +242,5 @@ const BedheadAttractor = () => {
     )
 
 }
-
 
 export default BedheadAttractor

@@ -2,7 +2,7 @@ import { CameraControls } from "@react-three/drei";
 import { OrbitControls, Stats } from '@react-three/drei';
 import type { RenderCallback } from '@react-three/fiber';
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 // import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gui-x';
 import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gui';
 import *  as THREE from "three";
@@ -19,6 +19,7 @@ type DatData = {
     package: string,
     a: number,
     b: number,
+    c: number,
 }
 
 
@@ -32,8 +33,8 @@ const Points = ({ datData }: { datData: DatData }) => {
         // Create a Float32Array of count*3 length
         // -> we are going to generate the x, y, and z values for 2000 particles
         // -> thus we need 6000 items in this array
-        const positions = new Float32Array(numParticles * 2);
-        let x = 1, y = 1;
+        const positions = new Float32Array(numParticles * 3);
+        let x = 1, y = 1, z = 1;
         for (let i = 0; i < numParticles; i++) {
             // Generate random values for x, y, and z on every loop
             // const x = 1
@@ -44,15 +45,17 @@ const Points = ({ datData }: { datData: DatData }) => {
 
             const xnew = sin(x * y / datData.b) * y + cos(datData.a * x - y)
             const ynew = x + sin(y) / datData.b
+            const znew = x + sin(y) / datData.c
 
             x = xnew
             y = ynew
+            z = znew
 
-            positions.set([x, y], i * 2);
+            positions.set([x, y, z], i * 3);
         }
 
         return positions;
-    }, [datData.a, datData.b]);
+    }, [datData.a, datData.b, datData.c]);
 
     const ColorBuffer = useMemo(() => {
         // Create a Float32Array of count*3 length
@@ -111,7 +114,7 @@ const Points = ({ datData }: { datData: DatData }) => {
         const positions = pointsBuffer;
         const colors = ColorBuffer;
 
-        let x = 1, y = 1;
+        let x = 1, y = 1, z = 1;
         for (let i = 0; i < numParticles; i++) {
             // Generate random values for x, y, and z on every loop
             // const x = 1
@@ -122,11 +125,13 @@ const Points = ({ datData }: { datData: DatData }) => {
 
             const xnew = sin(x * y / datData.b) * y + cos(datData.a * x - y)
             const ynew = x + sin(y) / datData.b
+            const znew = x + sin(y) / datData.c
 
             x = xnew
             y = ynew
+            z = znew
 
-            positions.set([x, y], i * 2);
+            positions.set([x, y, z], i * 3);
 
             const color = new THREE.Color()
             color.setRGB(255, 119, 0)
@@ -152,9 +157,9 @@ const Points = ({ datData }: { datData: DatData }) => {
             <bufferGeometry attach="geometry">
                 <bufferAttribute
                     attach="attributes-position"
-                    count={pointsBuffer.length / 2}
+                    count={pointsBuffer.length / 3}
                     array={pointsBuffer}
-                    itemSize={2}
+                    itemSize={3}
                 />
                 <bufferAttribute
                     attach='attributes-color'
@@ -179,7 +184,11 @@ const Points = ({ datData }: { datData: DatData }) => {
 }
 
 
-const Test = () => {
+const Test = ({
+    setBodyJSX
+}: {
+    setBodyJSX: React.Dispatch<React.SetStateAction<JSX.Element | JSX.Element[]>>
+}) => {
 
     const canvas = useRef<HTMLCanvasElement>(null)
     const stats = useRef<any>(null)
@@ -188,30 +197,30 @@ const Test = () => {
         package: 'react-dat-gui',
         a: 0.65343,
         b: 0.7345345,
+        c: 0.7345345,
     })
 
-    const dispatch = useAppDispatch()
-    const { menuOpen } = useAppSelector(state => state.webSiteState)
+    useEffect(() => {
+        setBodyJSX(
+            <>
+                <div className={style.card}>
+                    <div className={style.desc} >
+                        This is a text block of description as english instead of like a code block
+                    </div>
+                </div>
+                <DatGui data={datData} onUpdate={(data: DatData) => {
+                    setDatData(data)
+                }}>
+                    <DatNumber path="a" min={-1} max={1} step={0.0001} key={'a'} />
+                    <DatNumber path="b" min={-1} max={1} step={0.0001} />
+                    <DatNumber path="c" min={-1} max={1} step={0.0001} />
+                </DatGui>
+            </>
+        )
+    }, [datData, setBodyJSX])
 
     return (
         <>
-            <div className={style.body}>
-                <Menu title={"asdasd"} >
-                    <div className={style.card}>
-                        <div className={style.desc} >
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
-                        </div>
-                    </div>
-                    <DatGui data={datData} onUpdate={(data: DatData) => {
-                        setDatData(data)
-                    }}>
-                        <DatNumber path="a" min={-1} max={1} step={0.0001} key={'a'} />
-                        <DatNumber path="b" min={-1} max={1} step={0.0001} />
-                    </DatGui>
-                </Menu>
-
-            </div>
-
             <div style={{
                 position: "fixed",
                 zIndex: 999
@@ -223,7 +232,6 @@ const Test = () => {
             <Canvas
                 ref={canvas}
                 className={style.canvas}
-
                 camera={
                     {
                         position: [0, 0, -10],
@@ -232,19 +240,8 @@ const Test = () => {
                         far: 1000,
 
                     }
-                }
-
-
-
-            >
-                <OrbitControls makeDefault
-
-
-
-                />
-
-                {/* <ambientLight /> */}
-                {/* <pointLight position={[10, 10, 10]} /> */}
+                }>
+                <OrbitControls makeDefault />
                 <Points datData={datData} />
             </Canvas>
 
@@ -252,6 +249,5 @@ const Test = () => {
     )
 
 }
-
 
 export default Test
