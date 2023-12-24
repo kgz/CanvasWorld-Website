@@ -45,14 +45,28 @@ const Menu = ({
                 </div>
                 <div className={style.title}>Bedhead Attractor</div>
             </div>
-            <Collapse in={!menuOpen} collapsedSize={0}><div>{children}</div></Collapse>
-            <Fade in={menuOpen} >
-                <div className={style.menu}>
-                    <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/">Home</NavLink>
-                    <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/BedheadAttractor">Bedhead Attractor</NavLink>
+            <TransitionGroup>
 
-                </div>
-            </Fade >
+                {!menuOpen && <Fade style={{
+                    position: 'absolute',
+                    top: 50,
+                    width: 300,
+                }}><div>{children}</div>
+                </Fade>
+                }
+                {menuOpen && <Fade style={{
+                    position: 'absolute',
+                    top: 50,
+                    width: 300,
+                }}>
+                    <div className={style.menu}>
+                        <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/">Home</NavLink>
+                        <NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/BedheadAttractor">Bedhead Attractor</NavLink>
+
+                    </div>
+                </Fade >}
+            </TransitionGroup>
+
         </>
     )
 
