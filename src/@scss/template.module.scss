@@ -1,62 +1,104 @@
 .container {
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
     display: grid;
-    grid-template-columns: 50% 50%;
     min-height: 100vh;
+    // set columns to 200px and 1fr
+    grid-template-columns: 300px 1fr;
 
     // on small screens, we want to display the grid vertically, not using boostap
     @media screen and (max-width: 768px) {
-        grid-template-columns: 1fr;
+        flex-direction: column
     }
 
-    .left {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-        grid-gap: 1rem;
-        background-color: #F0F0F0;
-        color: #000;
-        overflow: hidden;
+    .canvas {
+        height: 100vh !important;
+        min-height: 300px;
+    }
+
+    .body {
+        background: #222;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+
+        .desc {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .headerBreaker {
+            text-align: center;
+            padding: 3px;
+            background: #161616;
+        }
 
         .header {
-            height: 80px;
-            background-color: #464545;
+            display: flex;
+
+            .title {
+                flex: 1;
+                padding: 10px;
+                font-size: 20px;
+                font-weight: 700;
+                text-align: center;
+            }
+
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            // padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            .menuItem {
+                width: 100%;
+                height: 30px;
+                background: #222;
+                margin: 2px;
+                transition: all 0.3s ease;
+                line-height: 30px;
+                color: #b8b2b2;
+                text-decoration: none;
+
+                &:hover,
+                &.active,
+                &:focus {                   
+                }
+
+                &.active {
+                    background: #0b0b0b;
+                    color: #fff;
+                }
+            }
+        
         }
 
-        .title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
+        .card {
+            border-radius: 3px;
+            background: #161616;
+            // margin:5px;
+            padding: 5px;
 
-        .subtitle {
-            font-size: 1rem;
-            font-weight: 400;
-            text-transform: uppercase;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-
-        .description {
-            font-size: 0.8rem;
-            font-weight: 400;
-            text-align: center;
-            margin: 0;
-            padding: 0;
+            // even has no backgorund
+            &:nth-child(even) {
+                // background: #000;
+            }
         }
     }
 }
 
 :global {
 
-    .stats{
+    .stats {
         position: fixed;
-        left:50% !important;
+        right: 0px !important;
+        left: unset !important;
     }
 
 
@@ -67,11 +109,13 @@
         background-color: #000;
         color: #fff;
     }
+
     .react-dat-gui {
-        position: fixed;
+        // position: fixed;
         right: 16px;
         top: 0;
-        width: 280px;
+        // width: 280px;
+        width: 100%;
         font-size: 12px;
         font-family:
             Lucida Grande,
@@ -250,9 +294,7 @@
         display: block;
         cursor: pointer;
         padding: 5px 5px 5px 16px;
-        background: #000
-            url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px
-            48% no-repeat;
+        background: #000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 48% no-repeat;
     }
 
     .react-dat-gui li.folder ul {
@@ -261,9 +303,7 @@
     }
 
     .react-dat-gui li.folder.closed .title {
-        background: #000
-            url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==) 6px
-            48% no-repeat;
+        background: #000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==) 6px 48% no-repeat;
     }
 
     .react-dat-gui li.folder.closed ul {

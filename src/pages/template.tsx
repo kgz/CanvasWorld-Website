@@ -1,25 +1,35 @@
-import { Route, Routes } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import style from "../@scss/template.module.scss";
-import A from "./bedhead_attractor";
-import B from "./b";
 import Index from ".";
 import BedheadAttractor from "./bedhead_attractor";
+import { useAppDispatch, useAppSelector } from "../@store/store";
+import { Drawer } from "@mui/material";
+import { SetMenuOpen } from "../@store/webSiteState.slice";
 
 const Template = () => {
+
+    const { menuOpen } = useAppSelector(state => state.webSiteState)
+    const dispatch = useAppDispatch()
+
     return (
         <div className={style.container}>
-            <div className={style.left}>
-                <div className={style.header}>
-                    <Index />
-
-                </div>
-
-
-            </div>
             <Routes>
-                <Route path="/chaos/BedheadAttractor" element={<BedheadAttractor />} />
-                <Route path="/b" element={<B />} />
+                <Route path="/BedheadAttractor" element={<BedheadAttractor />} />
+                {/* fallback */}
+                <Route path="*" element={<Index />} />
             </Routes>
+            {/* <Drawer
+                anchor="left"
+                open={menuOpen}
+                onClose={() => {
+                    void dispatch(SetMenuOpen(false))
+                }}
+            >
+                <div className={style.menu}>
+                    <Link to="/">Home</Link><br />
+                    <Link to="/BedheadAttractor">Bedhead Attractor</Link><br />
+                </div>
+            </Drawer> */}
         </div>
     );
 }

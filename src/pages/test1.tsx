@@ -253,5 +253,10 @@ const BedheadAttractor = () => {
 
 }
 
+BedheadAttractor.bodyBlock = () => (
+    <div>
+        test
+    </div>
+)
 
 export default BedheadAttractor
