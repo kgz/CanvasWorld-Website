@@ -28,12 +28,10 @@ const Template = () => {
                             <>
                                 <OutsideAlerter callback={() => void dispatch(SetMenuOpen(false))}>
 
-                                    <div className={style.body}>
                                         <Menu title={route.name}>
                                             {bodyJSX}
                                         </Menu>
 
-                                    </div>
                                 </OutsideAlerter>
                                 <route.element setBodyJSX={setBodyJSX} />
                             </>

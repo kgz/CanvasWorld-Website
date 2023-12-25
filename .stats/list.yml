@@ -68,25 +68,33 @@ index.min.js:
   /node_modules/@emotion/memoize/dist/emotion-memoize.esm.js:
     rendered: 100
   /node_modules/@emotion/react/dist/emotion-element-c39617d8.browser.esm.js:
-    rendered: 228
+    rendered: 231
+  /node_modules/@emotion/react/dist/emotion-react.browser.esm.js:
+    rendered: 713
   /node_modules/@emotion/serialize/dist/emotion-serialize.browser.esm.js:
-    rendered: 1836
+    rendered: 1835
   /node_modules/@emotion/sheet/dist/emotion-sheet.browser.esm.js:
     rendered: 1323
   /node_modules/@emotion/styled/base/dist/emotion-styled-base.browser.esm.js:
-    rendered: 1829
+    rendered: 1831
   /node_modules/@emotion/styled/dist/emotion-styled.browser.esm.js:
     rendered: 1082
   /node_modules/@emotion/unitless/dist/emotion-unitless.esm.js:
     rendered: 662
   /node_modules/@emotion/use-insertion-effect-with-fallbacks/dist/emotion-use-insertion-effect-with-fallbacks.browser.esm.js:
-    rendered: 98
+    rendered: 130
   /node_modules/@emotion/utils/dist/emotion-utils.browser.esm.js:
-    rendered: 403
+    rendered: 402
+  /node_modules/@mui/base/TextareaAutosize/TextareaAutosize.js:
+    rendered: 2287
+  /node_modules/@mui/base/utils/isHostComponent.js:
+    rendered: 41
   /node_modules/@mui/icons-material/Close.js:
-    rendered: 294
+    rendered: 304
   /node_modules/@mui/icons-material/Menu.js:
     rendered: 241
+  /node_modules/@mui/icons-material/Search.js:
+    rendered: 428
   /node_modules/@mui/icons-material/utils/createSvgIcon.js:
     rendered: 158
   /node_modules/@mui/material/colors/blue.js:
@@ -106,7 +114,25 @@ index.min.js:
   /node_modules/@mui/material/colors/red.js:
     rendered: 212
   /node_modules/@mui/material/Fade/Fade.js:
-    rendered: 1404
+    rendered: 1423
+  /node_modules/@mui/material/FormControl/FormControlContext.js:
+    rendered: 50
+  /node_modules/@mui/material/FormControl/formControlState.js:
+    rendered: 123
+  /node_modules/@mui/material/FormControl/useFormControl.js:
+    rendered: 48
+  /node_modules/@mui/material/GlobalStyles/GlobalStyles.js:
+    rendered: 81
+  /node_modules/@mui/material/Input/Input.js:
+    rendered: 2322
+  /node_modules/@mui/material/Input/inputClasses.js:
+    rendered: 111
+  /node_modules/@mui/material/InputBase/InputBase.js:
+    rendered: 6812
+  /node_modules/@mui/material/InputBase/inputBaseClasses.js:
+    rendered: 355
+  /node_modules/@mui/material/InputBase/utils.js:
+    rendered: 168
   /node_modules/@mui/material/styles/createMixins.js:
     rendered: 148
   /node_modules/@mui/material/styles/createPalette.js:
@@ -124,23 +150,25 @@ index.min.js:
   /node_modules/@mui/material/styles/shadows.js:
     rendered: 1042
   /node_modules/@mui/material/styles/styled.js:
-    rendered: 106
+    rendered: 103
   /node_modules/@mui/material/styles/useTheme.js:
     rendered: 46
   /node_modules/@mui/material/styles/useThemeProps.js:
-    rendered: 87
+    rendered: 86
   /node_modules/@mui/material/styles/zIndex.js:
     rendered: 124
   /node_modules/@mui/material/SvgIcon/SvgIcon.js:
-    rendered: 2058
+    rendered: 2056
   /node_modules/@mui/material/SvgIcon/svgIconClasses.js:
-    rendered: 211
+    rendered: 210
   /node_modules/@mui/material/transitions/utils.js:
     rendered: 268
   /node_modules/@mui/material/utils/createSvgIcon.js:
-    rendered: 180
+    rendered: 182
   /node_modules/@mui/material/utils/index.js:
-    rendered: 553
+    rendered: 551
+  /node_modules/@mui/styled-engine/GlobalStyles/GlobalStyles.js:
+    rendered: 190
   /node_modules/@mui/styled-engine/index.js:
     rendered: 312
   /node_modules/@mui/system/esm/borders.js:
@@ -152,7 +180,7 @@ index.min.js:
   /node_modules/@mui/system/esm/compose.js:
     rendered: 226
   /node_modules/@mui/system/esm/createStyled.js:
-    rendered: 2914
+    rendered: 2951
   /node_modules/@mui/system/esm/createTheme/createBreakpoints.js:
     rendered: 924
   /node_modules/@mui/system/esm/createTheme/createSpacing.js:
@@ -163,6 +191,8 @@ index.min.js:
     rendered: 35
   /node_modules/@mui/system/esm/cssGrid.js:
     rendered: 894
+  /node_modules/@mui/system/esm/GlobalStyles/GlobalStyles.js:
+    rendered: 144
   /node_modules/@mui/system/esm/memoize.js:
     rendered: 71
   /node_modules/@mui/system/esm/merge.js:
@@ -188,17 +218,17 @@ index.min.js:
   /node_modules/@mui/system/esm/useThemeProps/useThemeProps.js:
     rendered: 120
   /node_modules/@mui/system/esm/useThemeWithoutDefault.js:
-    rendered: 124
+    rendered: 125
   /node_modules/@mui/utils/esm/capitalize/capitalize.js:
     rendered: 104
   /node_modules/@mui/utils/esm/ClassNameGenerator/ClassNameGenerator.js:
     rendered: 115
   /node_modules/@mui/utils/esm/composeClasses/composeClasses.js:
-    rendered: 184
+    rendered: 183
   /node_modules/@mui/utils/esm/createChainedFunction.js:
     rendered: 108
   /node_modules/@mui/utils/esm/debounce/debounce.js:
-    rendered: 148
+    rendered: 147
   /node_modules/@mui/utils/esm/deepmerge.js:
     rendered: 394
   /node_modules/@mui/utils/esm/deprecatedPropType.js:
@@ -208,13 +238,13 @@ index.min.js:
   /node_modules/@mui/utils/esm/generateUtilityClass/generateUtilityClass.js:
     rendered: 320
   /node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js:
-    rendered: 77
+    rendered: 76
   /node_modules/@mui/utils/esm/isMuiElement.js:
-    rendered: 180
+    rendered: 181
   /node_modules/@mui/utils/esm/ownerDocument/ownerDocument.js:
     rendered: 51
   /node_modules/@mui/utils/esm/ownerWindow/ownerWindow.js:
-    rendered: 49
+    rendered: 48
   /node_modules/@mui/utils/esm/requirePropFactory.js:
     rendered: 33
   /node_modules/@mui/utils/esm/resolveProps.js:
@@ -224,33 +254,33 @@ index.min.js:
   /node_modules/@mui/utils/esm/unsupportedProp.js:
     rendered: 36
   /node_modules/@mui/utils/esm/useControlled/useControlled.js:
-    rendered: 197
+    rendered: 200
   /node_modules/@mui/utils/esm/useEnhancedEffect/useEnhancedEffect.js:
-    rendered: 81
+    rendered: 83
   /node_modules/@mui/utils/esm/useEventCallback/useEventCallback.js:
-    rendered: 127
+    rendered: 129
   /node_modules/@mui/utils/esm/useForkRef/useForkRef.js:
-    rendered: 104
+    rendered: 105
   /node_modules/@mui/utils/esm/useId/useId.js:
-    rendered: 247
+    rendered: 249
   /node_modules/@mui/utils/esm/useIsFocusVisible.js:
-    rendered: 1072
+    rendered: 1074
   /node_modules/@react-three/drei/core/OrbitControls.js:
-    rendered: 1050
+    rendered: 1056
   /node_modules/@react-three/drei/core/Stats.js:
-    rendered: 380
+    rendered: 422
   /node_modules/@react-three/drei/helpers/useEffectfulState.js:
-    rendered: 211
+    rendered: 213
   /node_modules/@react-three/fiber/dist/index-5bde93f1.esm.js:
-    rendered: 25037
+    rendered: 25137
   /node_modules/@react-three/fiber/dist/react-three-fiber.esm.js:
-    rendered: 3184
+    rendered: 3230
   /node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js:
-    rendered: 11047
+    rendered: 11053
   /node_modules/@remix-run/router/dist/router.js:
     rendered: 9276
   /node_modules/clsx/dist/clsx.mjs:
-    rendered: 349
+    rendered: 348
   /node_modules/debounce/index.js:
     rendered: 427
   /node_modules/goober/dist/goober.modern.js:
@@ -264,11 +294,13 @@ index.min.js:
   /node_modules/immer/dist/immer.esm.js:
     rendered: 10176
   /node_modules/its-fine/dist/index.js:
-    rendered: 1930
+    rendered: 1942
+  /node_modules/katex/dist/katex.js:
+    rendered: 277214
   /node_modules/lodash.clamp/index.js:
     rendered: 872
   /node_modules/lodash.clonedeep/index.js:
-    rendered: 9377
+    rendered: 9423
   /node_modules/lodash.isfinite/index.js:
     rendered: 265
   /node_modules/lodash.isstring/index.js:
@@ -334,7 +366,7 @@ index.min.js:
   /node_modules/lodash/_baseIsMatch.js:
     rendered: 379
   /node_modules/lodash/_baseIsNative.js:
-    rendered: 374
+    rendered: 381
   /node_modules/lodash/_baseIsSet.js:
     rendered: 88
   /node_modules/lodash/_baseIsTypedArray.js:
@@ -426,7 +458,7 @@ index.min.js:
   /node_modules/lodash/_getMatchData.js:
     rendered: 121
   /node_modules/lodash/_getNative.js:
-    rendered: 75
+    rendered: 83
   /node_modules/lodash/_getPrototype.js:
     rendered: 48
   /node_modules/lodash/_getRawTag.js:
@@ -438,19 +470,19 @@ index.min.js:
   /node_modules/lodash/_getTag.js:
     rendered: 562
   /node_modules/lodash/_getValue.js:
-    rendered: 54
+    rendered: 57
   /node_modules/lodash/_Hash.js:
-    rendered: 259
+    rendered: 263
   /node_modules/lodash/_hashClear.js:
-    rendered: 71
+    rendered: 74
   /node_modules/lodash/_hashDelete.js:
-    rendered: 94
+    rendered: 97
   /node_modules/lodash/_hashGet.js:
-    rendered: 196
+    rendered: 207
   /node_modules/lodash/_hashHas.js:
-    rendered: 129
+    rendered: 138
   /node_modules/lodash/_hashSet.js:
-    rendered: 151
+    rendered: 155
   /node_modules/lodash/_hasPath.js:
     rendered: 257
   /node_modules/lodash/_initCloneArray.js:
@@ -486,7 +518,7 @@ index.min.js:
   /node_modules/lodash/_listCacheSet.js:
     rendered: 117
   /node_modules/lodash/_Map.js:
-    rendered: 34
+    rendered: 40
   /node_modules/lodash/_MapCache.js:
     rendered: 262
   /node_modules/lodash/_mapCacheClear.js:
@@ -506,7 +538,7 @@ index.min.js:
   /node_modules/lodash/_memoizeCapped.js:
     rendered: 122
   /node_modules/lodash/_nativeCreate.js:
-    rendered: 35
+    rendered: 39
   /node_modules/lodash/_nativeKeys.js:
     rendered: 38
   /node_modules/lodash/_nativeKeysIn.js:
@@ -642,29 +674,29 @@ index.min.js:
   /node_modules/lodash/toString.js:
     rendered: 61
   /node_modules/prop-types/factoryWithThrowingShims.js:
-    rendered: 628
+    rendered: 670
   /node_modules/prop-types/index.js:
-    rendered: 16
+    rendered: 35
   /node_modules/prop-types/lib/ReactPropTypesSecret.js:
-    rendered: 56
+    rendered: 113
   /node_modules/react-color/lib/components/common/Alpha.js:
-    rendered: 3870
+    rendered: 3871
   /node_modules/react-color/lib/components/common/Checkboard.js:
-    rendered: 1034
+    rendered: 1035
   /node_modules/react-color/lib/components/common/ColorWrap.js:
-    rendered: 2488
+    rendered: 2489
   /node_modules/react-color/lib/components/common/EditableInput.js:
-    rendered: 4182
+    rendered: 4183
   /node_modules/react-color/lib/components/common/Hue.js:
-    rendered: 3859
+    rendered: 3860
   /node_modules/react-color/lib/components/common/index.js:
     rendered: 946
   /node_modules/react-color/lib/components/common/Raised.js:
-    rendered: 1482
+    rendered: 1477
   /node_modules/react-color/lib/components/common/Saturation.js:
-    rendered: 4081
+    rendered: 4082
   /node_modules/react-color/lib/components/common/Swatch.js:
-    rendered: 1126
+    rendered: 1127
   /node_modules/react-color/lib/helpers/alpha.js:
     rendered: 614
   /node_modules/react-color/lib/helpers/checkboard.js:
@@ -672,49 +704,51 @@ index.min.js:
   /node_modules/react-color/lib/helpers/color.js:
     rendered: 1324
   /node_modules/react-color/lib/helpers/hue.js:
-    rendered: 639
+    rendered: 641
   /node_modules/react-color/lib/helpers/interaction.js:
-    rendered: 1834
+    rendered: 1835
   /node_modules/react-color/lib/helpers/saturation.js:
     rendered: 455
   /node_modules/react-dat-gui/dist/index.cjs.js:
-    rendered: 21598
+    rendered: 21681
   /node_modules/react-dat-gui/node_modules/classnames/index.js:
     rendered: 393
   /node_modules/react-dom/cjs/react-dom.production.min.js:
-    rendered: 130403
+    rendered: 130415
   /node_modules/react-dom/client.js:
     rendered: 76
   /node_modules/react-dom/index.js:
     rendered: 290
   /node_modules/react-dom/node_modules/scheduler/cjs/scheduler.production.min.js:
-    rendered: 3882
+    rendered: 4040
   /node_modules/react-dom/node_modules/scheduler/index.js:
     rendered: 23
   /node_modules/react-hot-toast/dist/index.mjs:
-    rendered: 9144
+    rendered: 9167
   /node_modules/react-is/cjs/react-is.production.min.js:
     rendered: 1953
   /node_modules/react-is/index.js:
     rendered: 20
+  /node_modules/react-katex/dist/react-katex.js:
+    rendered: 1829
   /node_modules/react-reconciler/cjs/react-reconciler-constants.production.min.js:
     rendered: 145
   /node_modules/react-reconciler/cjs/react-reconciler.production.min.js:
-    rendered: 91897
+    rendered: 92328
   /node_modules/react-reconciler/constants.js:
     rendered: 19
   /node_modules/react-reconciler/index.js:
     rendered: 43
   /node_modules/react-redux/es/components/Context.js:
-    rendered: 307
+    rendered: 311
   /node_modules/react-redux/es/components/Provider.js:
-    rendered: 548
+    rendered: 551
   /node_modules/react-redux/es/hooks/useDispatch.js:
     rendered: 99
   /node_modules/react-redux/es/hooks/useReduxContext.js:
-    rendered: 82
+    rendered: 83
   /node_modules/react-redux/es/hooks/useSelector.js:
-    rendered: 493
+    rendered: 496
   /node_modules/react-redux/es/hooks/useStore.js:
     rendered: 104
   /node_modules/react-redux/es/index.js:
@@ -724,13 +758,13 @@ index.min.js:
   /node_modules/react-redux/es/utils/Subscription.js:
     rendered: 947
   /node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js:
-    rendered: 152
+    rendered: 154
   /node_modules/react-redux/es/utils/useSyncExternalStore.js:
     rendered: 51
   /node_modules/react-router-dom/dist/index.js:
-    rendered: 4933
+    rendered: 4983
   /node_modules/react-router/dist/index.js:
-    rendered: 8659
+    rendered: 8709
   /node_modules/react-transition-group/esm/config.js:
     rendered: 23
   /node_modules/react-transition-group/esm/Transition.js:
@@ -740,25 +774,25 @@ index.min.js:
   /node_modules/react-transition-group/esm/TransitionGroupContext.js:
     rendered: 26
   /node_modules/react-transition-group/esm/utils/ChildMapping.js:
-    rendered: 1276
+    rendered: 1285
   /node_modules/react-transition-group/esm/utils/reflow.js:
     rendered: 40
   /node_modules/react-use-measure/dist/web.js:
-    rendered: 2539
+    rendered: 2554
   /node_modules/react/cjs/react-jsx-runtime.production.min.js:
-    rendered: 601
+    rendered: 602
   /node_modules/react/cjs/react.production.min.js:
     rendered: 6574
   /node_modules/react/index.js:
-    rendered: 92
+    rendered: 95
   /node_modules/react/jsx-runtime.js:
     rendered: 77
   /node_modules/reactcss/lib/autoprefix.js:
     rendered: 1488
   /node_modules/reactcss/lib/components/active.js:
-    rendered: 1601
+    rendered: 1602
   /node_modules/reactcss/lib/components/hover.js:
-    rendered: 1599
+    rendered: 1600
   /node_modules/reactcss/lib/flattenNames.js:
     rendered: 552
   /node_modules/reactcss/lib/index.js:
@@ -772,7 +806,7 @@ index.min.js:
   /node_modules/redux/es/redux.js:
     rendered: 3125
   /node_modules/scheduler/cjs/scheduler.production.min.js:
-    rendered: 3882
+    rendered: 4040
   /node_modules/scheduler/index.js:
     rendered: 23
   /node_modules/stats.js/build/stats.min.js:
@@ -790,27 +824,29 @@ index.min.js:
   /node_modules/stylis/src/Utility.js:
     rendered: 520
   /node_modules/three-stdlib/controls/OrbitControls.js:
-    rendered: 13912
+    rendered: 14131
   /node_modules/three/build/three.module.js:
-    rendered: 666195
+    rendered: 667725
   /node_modules/tinycolor2/cjs/tinycolor.js:
-    rendered: 15626
+    rendered: 15889
   /node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.production.min.js:
-    rendered: 784
+    rendered: 785
   /node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.min.js:
-    rendered: 817
+    rendered: 818
   /node_modules/use-sync-external-store/shim/index.js:
     rendered: 49
   /node_modules/use-sync-external-store/shim/with-selector.js:
     rendered: 19
   /node_modules/zustand/esm/index.js:
-    rendered: 1668
+    rendered: 1678
   /src/@store/store.tsx:
-    rendered: 138
+    rendered: 139
   /src/@store/webSiteState.slice.ts:
     rendered: 199
+  /src/@types/onClickOutside.tsx:
+    rendered: 381
   /src/@types/routes.tsx:
-    rendered: 70
+    rendered: 78
   /src/app.tsx:
     rendered: 183
   /src/index.tsx:
@@ -818,12 +854,12 @@ index.min.js:
   /src/modules/genPath.ts:
     rendered: 62
   /src/modules/Menu.tsx:
-    rendered: 1105
+    rendered: 1703
   /src/pages/bedhead_attractor.tsx:
-    rendered: 2543
+    rendered: 2251
+  /src/pages/bogdanov_map.tsx:
+    rendered: 3586
   /src/pages/index.tsx:
     rendered: 210
   /src/pages/template.tsx:
-    rendered: 531
-  /src/pages/test1.tsx:
-    rendered: 2156
+    rendered: 561

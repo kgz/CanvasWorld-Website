@@ -6,8 +6,10 @@ export type Styles = {
   container: string;
   desc: string;
   divider: string;
+  drawerOpenButton: string;
   header: string;
   headerBreaker: string;
+  manuBar: string;
   menu: string;
   menuItem: string;
   title: string;
