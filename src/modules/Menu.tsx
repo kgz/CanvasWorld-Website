@@ -77,28 +77,43 @@ const Menu = ({
 
             >
                 <div className={style.header}>
-                    <div className={style.manuBar}>
+                    <div className={style.manuBar} onClick={() => {
+                        void dispatch(SetMenuOpen(!menuOpen))
+                    }}>
                         {(windowWidth <= 768) && (
                             <div style={{
-                                margin: '0 auto'
+                                margin: '0 auto',
                                 // marginLeft: 'auto'
+
                             }} onClick={() => void dispatch(SetDrawerOpen(false))}>
                                 <Fade in={true}>
                                     <FirstPage />
                                 </Fade>
                             </div>
                         )}
-                        <TransitionGroup onClick={() => {
-                            void dispatch(SetMenuOpen(!menuOpen))
-                        }} style={{
-                            margin: '0 auto'
-                        }}>
+                        <TransitionGroup
+                            style={{
+                                margin: '0 auto',
+                                // marginLeft: 'auto'
+                                position: 'absolute',
+                                // top: -10
+                            }}>
                             {!menuOpen && <Fade>
-                                <MenuIcon />
+                                <MenuIcon style={{
+                                    position: 'absolute',
+                                    left: 14,
+                                    top: -10
+
+                                }} />
                             </Fade>}
                             {menuOpen &&
                                 <Fade>
-                                    <CloseIcon />
+                                    <CloseIcon style={{
+                                        position: 'absolute',
+                                        left: 14,
+                                        top: -10
+
+                                    }} />
                                 </Fade>
                             }
                         </TransitionGroup>
@@ -108,7 +123,7 @@ const Menu = ({
                 <TransitionGroup>
 
                     {!menuOpen && <Fade style={{
-                        position: 'absolute',
+                        // position: 'absolute',
                         top: 50,
                         width: 300,
                     }}><div>{children}</div>

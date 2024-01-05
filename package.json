@@ -45,6 +45,7 @@
     "p-limit": "^5.0.0",
     "react-dat-gui": "^4.1.1",
     "react-dat-gui-x": "^4.2.11",
+    "react-helmet": "^6.1.0",
     "react-hot-toast": "^2.4.1",
     "react-json-to-excel": "^1.0.7",
     "react-katex": "^3.0.1",

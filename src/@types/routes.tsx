@@ -3,6 +3,8 @@ import BogdanovMap from "../pages/bogdanov_map";
 import Test from "../pages/bogdanov_map";
 import Brusselator from "../pages/brusselator";
 import CliffordAttractor from "../pages/clifford_attractor";
+import FractalDreamAttractor from "../pages/fractal_dream_attractor";
+import GumowskiMiraAttractor from "../pages/gumowski_mira_attractor";
 
 type TRoutes = {
     name: string,
@@ -27,6 +29,14 @@ const routes: TRoutes = [
     {
         name: 'Clifford Attractor',
         element: CliffordAttractor
+    },
+    {
+        name: 'Fractal Dream Attractor',
+        element: FractalDreamAttractor
+    },
+    {
+        name: 'Gumowski-Mira Attractor',
+        element: GumowskiMiraAttractor
     }
 ]
 
