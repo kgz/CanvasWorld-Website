@@ -2,6 +2,7 @@ import BedheadAttractor from "../pages/bedhead_attractor";
 import BogdanovMap from "../pages/bogdanov_map";
 import Test from "../pages/bogdanov_map";
 import Brusselator from "../pages/brusselator";
+import CliffordAttractor from "../pages/clifford_attractor";
 
 type TRoutes = {
     name: string,
@@ -20,8 +21,12 @@ const routes: TRoutes = [
         element: BogdanovMap
     },
     {
-        name: 'brusselator',
+        name: 'Brusselator',
         element: Brusselator
+    },
+    {
+        name: 'Clifford Attractor',
+        element: CliffordAttractor
     }
 ]
 

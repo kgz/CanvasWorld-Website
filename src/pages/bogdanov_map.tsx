@@ -18,11 +18,10 @@ type DatData = {
     package: string,
     a: number,
     b: number,
-
 }
 
 
-const numParticles = 420_000;
+const numParticles = 220_000;
 
 const Points = ({ datData }: { datData: DatData }) => {
     const points = useRef<typeof points>();

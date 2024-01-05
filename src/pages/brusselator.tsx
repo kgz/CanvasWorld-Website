@@ -1,7 +1,7 @@
 import { OrbitControls, Stats } from '@react-three/drei';
 import type { RenderCallback } from '@react-three/fiber';
 import { Canvas, useFrame } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 // import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gui-x';
 import DatGui, { DatNumber } from 'react-dat-gui';
 import *  as THREE from "three";
@@ -18,105 +18,172 @@ type DatData = {
     package: string,
     a: number,
     b: number,
-
+    feed: number,
+    kill: number,
 }
 
 
-const numParticles = 420_000;
+
 
 const Points = ({ datData }: { datData: DatData }) => {
     const points = useRef<typeof points>();
     const [datDataCache, setDatDataCache] = useState<DatData>(datData)
+    const width = 200, height = 200;
+    const [grid, setGrid] = useState<{
+        a: number,
+        b: number,
+        aNext: number,
+        bNext: number
 
-    const pointsBuffer = useMemo(() => {
-        // Create a Float32Array of count*3 length
-        // -> we are going to generate the x, y, and z values for 2000 particles
-        // -> thus we need 6000 items in this array
-        const positions = new Float32Array(numParticles * 2);
-        let x = 0.1, y = 0;
-        for (let i = 0; i < numParticles; i++) {
-            // Generate random values for x, y, and z on every loop
-            // const x = 1
-            // const y = 1
-            // const z = 0
+    }[][]>(new Array(width).fill(new Array(height).fill({
+        a: 1,
+        b: 0,
+        aNext: 0,
+        bNext: Math.random() * 0.1
+    }
+    )))
 
-            // positions.set([x, y, z], i * 3);
+    const pointsBuffer = useMemo(() => new Float32Array(width * height * 2), [])
+    const ColorBuffer = useMemo(() => new Float32Array(width * height * 3), [])
 
-            const xnew = sin(x * y / datData.b) * y + cos(datData.a * x - y)
-            const ynew = x + sin(y) / datData.b
+    useEffect(() => {
 
-            x = xnew
-            y = ynew
+        const temp = grid;
 
-            positions.set([x, y], i * 2);
+        for (let i = 100; i < 110; i++) {
+            for (let j = 100; j < 110; j++) {
+                temp[i][j] = {
+                    a: 1,
+                    b: 0,
+                    aNext: 0,
+                    bNext: 1
+                }
+            }
+        }
+        setGrid(temp);
+
+    }, [grid])
+
+    const laplaceA = useCallback((i: number, j: number) => {
+        let sumA = 0;
+
+        if (i === 0 || j === 0 || i === width - 1 || j === height - 1) {
+            return 0;
         }
 
-        return positions;
-    }, [datData.a, datData.b]);
+        sumA += grid[i][j].a * -1;
+        sumA += grid[i - 1][j].a * 0.2;
+        sumA += grid[i + 1][j].a * 0.2;
+        sumA += grid[i][j + 1].a * 0.2;
+        sumA += grid[i][j - 1].a * 0.2;
+        sumA += grid[i - 1][j - 1].a * 0.05;
+        sumA += grid[i + 1][j - 1].a * 0.05;
+        sumA += grid[i + 1][j + 1].a * 0.05;
+        sumA += grid[i - 1][j + 1].a * 0.05;
+        return sumA;
+    }, [grid])
 
-    const ColorBuffer = useMemo(() => {
-        // Create a Float32Array of count*3 length
-        // -> we are going to generate the x, y, and z values for 2000 particles
-        // -> thus we need 6000 items in this array
-        const colors = new Float32Array(numParticles * 3);
+    const laplaceB = useCallback((i: number, j: number) => {
+        let sumB = 0;
 
-        const genRandomWithMaxAndMin = (max: number, min: number) => {
-            return Math.random() * (max - min) + min;
+
+        if (i === 0 || j === 0 || i === width - 1 || j === height - 1) {
+            return 0;
         }
 
+        sumB += grid[i][j].b * -1;
+        sumB += grid[i - 1][j].b * 0.2;
+        sumB += grid[i + 1][j].b * 0.2;
+        sumB += grid[i][j + 1].b * 0.2;
+        sumB += grid[i][j - 1].b * 0.2;
+        sumB += grid[i - 1][j - 1].b * 0.05;
+        sumB += grid[i + 1][j - 1].b * 0.05;
+        sumB += grid[i + 1][j + 1].b * 0.05;
+        sumB += grid[i - 1][j + 1].b * 0.05;
+        return sumB;
+    }, [grid])
 
-        for (let i = 0; i < numParticles; i++) {
-            // Generate random values for x, y, and z on every loop
+    // const calculateValues = useCallback((i: number, j: number): { a: number, b: number } => {
+    //     const { a, b } = grid[i][j];
+
+    //     const da = datDataCache.a;
+    //     const db = datDataCache.b;
+    //     const { kill, feed } = datDataCache;
+
+    //     let newA = a + (da * laplaceA(i, j, grid) - a * b * b + feed * (1 - a)) * 0.1;
+    //     let newB = b + (db * laplaceB(i, j, grid) + a * b * b - (kill + feed) * b) * 0.1;
+
+    //     newA = Math.min(Math.max(newA, 0), 1);
+    //     newB = Math.min(Math.max(newB, 0), 1);
+    //     return { a: newA, b: newB };
+    // }, [grid, datDataCache, laplaceA, laplaceB])
 
 
 
-            // We add the 3 values to the attribute array for every loop
-            // We add the 3 values to the attribute array for every loop
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const c = new THREE.Color()
-
-
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            // c.setRGB(Math
-
-            // const r = Math.sin(i * 0.01) * 0.5 + 0.5;
-            // const g = Math.cos(i * 0.01) * 0.5 + 0.5;
-            // const b = Math.tan(i * 0.01) * 0.5 + 0.5;
-            colors.set([255, 255, 255], i * 3);
-
+    const swap = useCallback(() => {
+        const temp = grid;
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[0].length; j++) {
+                temp[i][j].a = temp[i][j].aNext;
+                temp[i][j].b = temp[i][j].bNext;
+            }
         }
+        setGrid(temp);
 
-        return colors;
-    }, []);
+    }, [grid])
 
     // on every frame recalculates the position of every particle
     // and updates the attribute with the new values
-    const tick: RenderCallback = () => {
-        setDatDataCache(datData)
+    const tick: RenderCallback = useCallback((time, delta, frame) => {
+        // Remove the unused variables 'delta' and 'frame'
+        if (time.gl.info.render.frame % 5 !== 0) {
+            // console.log(grid)
+            return;
+        }
+
+        const tempNext = grid;
+
         const positions = pointsBuffer;
         const colors = ColorBuffer;
 
-        let x = 0.1, y = 0;
-        for (let i = 0; i < numParticles; i++) {
-            const nx = x + y + datData.a * y + datData.b * x * (x - 1) - 0.1 * x * y
-            const ny = y + datData.a * y + datData.b * x * (x - 1) - 0.1 * x * y
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[0].length; j++) {
 
-            x = nx
-            y = ny
+                const { a, b } = grid[i][j];
 
-            positions.set([x * 5, y * 5], i * 2);
+                const da = datData.a;
+                const db = datData.b;
+                const { kill, feed } = datData;
 
-            const color = new THREE.Color()
-            // stroke(color("hsl(" + ((Math.round(x*50 * y*50 ) % opts.colorRange) + (360 - opts.colorRange))+ ", 100%, 50%)"))
+                let newA = a + (da * laplaceA(i, j) - a * b * b + feed * (1 - a)) * 0.1;
+                let newB = b + (db * laplaceB(i, j) + a * b * b - (kill + feed) * b) * 0.1;
 
-            color.setHSL((Math.round(x * 50 * y * 50) % 360) / 360, 1, 0.5)
-            colors.set([color.r, color.g, color.b], i * 3);
+                newA = Math.min(Math.max(newA, 0), 1);
+                newB = Math.min(Math.max(newB, 0), 1);
+
+                tempNext[i][j].aNext = newA;
+                tempNext[i][j].bNext = newB;
+
+                const x = i - width / 2;
+                const y = j - height / 2;
+                const index = (i + j * width) * 2;
+
+                positions.set([x, y], index);
+
+                const color = new THREE.Color();
+                const c = Math.floor((newA - newB) * 1);
+                color.setRGB(c, c, c);
+                color.toArray(colors, index * 3);
+
+
+            }
         }
 
+        setGrid(tempNext);
+        swap();
         points.current.geometry.attributes.position.needsUpdate = true;
         points.current.geometry.attributes.color.needsUpdate = true;
-    }
+    }, [grid, pointsBuffer, ColorBuffer, swap, datData, laplaceA, laplaceB])
 
     useFrame(tick);
 
@@ -141,11 +208,11 @@ const Points = ({ datData }: { datData: DatData }) => {
             </bufferGeometry>
 
             <pointsMaterial
-                size={0.015}
+                size={1}
                 // color="#fff"
                 // sizeAttenuation
                 // depthWrite={false}
-                vertexColors={true}
+                vertexColors
             />
 
         </points>
@@ -154,7 +221,7 @@ const Points = ({ datData }: { datData: DatData }) => {
 }
 
 
-const Brusselator = ({
+const BogdanovMap = ({
     setBodyJSX
 }: {
     setBodyJSX: React.Dispatch<React.SetStateAction<JSX.Element | JSX.Element[]>>
@@ -165,49 +232,28 @@ const Brusselator = ({
 
     const [datData, setDatData] = useState<DatData>({
         package: 'react-dat-gui',
-        a: 0.0025,
-        b: 1.44,
+        a: 1,
+        b: 0.5,
+        feed: 0.055,
+        kill: 0.062
     })
 
     useEffect(() => {
         setBodyJSX(
             <>
+
                 <DatGui data={datData} onUpdate={(data: DatData) => {
                     setDatData(data)
                 }}>
-                    <DatNumber path="a" min={0} max={0.01} step={0.0001} key={'a'} />
-                    <DatNumber path="b" min={0.5} max={2.5} step={0.01} />
+                    <DatNumber path='a' label='a' min={0} max={1} step={0.001} />
+                    <DatNumber path='b' label='b' min={0} max={1} step={0.001} />
+                    <DatNumber path='feed' label='feed' min={0} max={1} step={0.001} />
+                    <DatNumber path='kill' label='kill' min={0} max={1} step={0.001} />
+
                 </DatGui>
                 <div className={style.card}>
                     <div className={style.desc} >
-                        The Bogdanov map is a mathematical model that describes a discrete dynamical system.
-                        It is named after its discoverer, Boris Bogdanov.
-                        The map is often used to study chaotic behavior in nonlinear systems.
-                        <br />
-                        <br />
-
-                        The Bogdanov map is defined by the following equations:
-                        <br />
-                        <InlineMath math={'x(n+1) = y(n) + 1 - a * x(n)^2'} />
-                        <br />
-                        <InlineMath math={'y(n+1) = b * x(n)'} />
-                        <br />
-                        <br />
-                        Limits:
-                        <br />
-                        <InlineMath math="a \in [0, 0.01]" />
-                        <br />
-                        <InlineMath math="b \in [0.5, 2.5]" />
-                        <br />
-                        <br />
-                        Here, x(n) and y(n) represent the state variables at time step n. The parameters a and b are constants that determine the behavior of the system.
-                        The map exhibits interesting dynamics depending on the values of a and b.
-                        <br />
-                        <br />
-                        It can display periodic behavior, stable fixed points, or chaotic trajectories. The chaotic behavior arises when the system is sensitive to initial conditions, meaning small changes in the initial state can lead to significantly different outcomes.
-                        <br />
-                        <br />
-                        The Bogdanov map has applications in various fields, including physics, biology, and economics. It provides insights into complex systems and helps researchers understand the behavior of nonlinear dynamical systems.
+                        ations in various fields, including physics, biology, and economics. It provides insights into complex systems and helps researchers understand the behavior of nonlinear dynamical systems.
                     </div>
                 </div>
             </>
@@ -229,13 +275,19 @@ const Brusselator = ({
                 className={style.canvas}
                 camera={
                     {
-                        position: [0, 0, -3],
+                        position: [0, 0, -180],
                         fov: 75,
                         near: 0.1,
                         far: 1000,
 
                     }
-                }>
+                }
+
+                onCreated={({ gl }) => {
+                    gl.setClearColor('white')
+                }}
+
+            >
                 <OrbitControls makeDefault />
                 <Points datData={datData} />
             </Canvas>
@@ -245,4 +297,4 @@ const Brusselator = ({
 
 }
 
-export default Brusselator
+export default BogdanovMap

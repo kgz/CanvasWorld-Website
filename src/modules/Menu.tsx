@@ -81,6 +81,7 @@ const Menu = ({
                         {(windowWidth <= 768) && (
                             <div style={{
                                 margin: '0 auto'
+                                // marginLeft: 'auto'
                             }} onClick={() => void dispatch(SetDrawerOpen(false))}>
                                 <Fade in={true}>
                                     <FirstPage />
@@ -89,7 +90,9 @@ const Menu = ({
                         )}
                         <TransitionGroup onClick={() => {
                             void dispatch(SetMenuOpen(!menuOpen))
-                        }} >
+                        }} style={{
+                            margin: '0 auto'
+                        }}>
                             {!menuOpen && <Fade>
                                 <MenuIcon />
                             </Fade>}
