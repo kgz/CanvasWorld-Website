@@ -170,6 +170,25 @@
         font-family: sans-serif;
         background-color: #000;
         color: #fff;
+        overflow-x: hidden;
+
+        // make scrollbar thin and look goodon dark theme
+        ::-webkit-scrollbar {
+            width: 5px;
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-corner {
+            height: 0;
+            display: none;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background: #676767;
+        }
+
+        
     }
 
     .react-dat-gui {

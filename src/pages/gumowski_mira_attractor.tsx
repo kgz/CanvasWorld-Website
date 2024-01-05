@@ -140,8 +140,11 @@ const GumowskiMiraAttractor = ({
                             <BlockMath math={`x_{n+1} = y_n + a(1 - b y_n^2)y_n + G(x_n, \\mu)`} />
                             <BlockMath math={`y_{n+1} = -x_n + G(x_{n+1}, \\mu)`} />
                             Where: <BlockMath math={`G(x, \\mu) = \\mu x + 2(1 - \\mu) \\frac{x^2}{1 + x^2}`} />
-                        </MathJax.Provider>
 
+                            Limits:
+                            <BlockMath math="x, y \in [-20, 20]" />
+                            <BlockMath math="a, b,\mu \in [-1, 1]" />
+                        </MathJax.Provider>
 
 
 

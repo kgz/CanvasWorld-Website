@@ -65,6 +65,7 @@ const Menu = ({
                             backgroundColor: '#222',
                             color: '#fff',
                             width: 300,
+                            overflowX: 'hidden'
                         },
                         className: style.body,
                     }
@@ -77,17 +78,22 @@ const Menu = ({
 
             >
                 <div className={style.header}>
-                    <div className={style.manuBar} onClick={() => {
-                        void dispatch(SetMenuOpen(!menuOpen))
-                    }}>
+                    <div className={style.manuBar} >
                         {(windowWidth <= 768) && (
                             <div style={{
                                 margin: '0 auto',
                                 // marginLeft: 'auto'
+                                position: 'absolute',
+
 
                             }} onClick={() => void dispatch(SetDrawerOpen(false))}>
                                 <Fade in={true}>
-                                    <FirstPage />
+                                    <FirstPage style={{
+                                        position: 'absolute',
+                                        left: 4,
+                                        top: -10
+
+                                    }} />
                                 </Fade>
                             </div>
                         )}
@@ -97,11 +103,15 @@ const Menu = ({
                                 // marginLeft: 'auto'
                                 position: 'absolute',
                                 // top: -10
-                            }}>
+                            }}
+                            onClick={() => {
+                                void dispatch(SetMenuOpen(!menuOpen))
+                            }}
+                        >
                             {!menuOpen && <Fade>
                                 <MenuIcon style={{
                                     position: 'absolute',
-                                    left: 14,
+                                    left: windowWidth <= 768 ? 40 : 10,
                                     top: -10
 
                                 }} />
@@ -110,7 +120,7 @@ const Menu = ({
                                 <Fade>
                                     <CloseIcon style={{
                                         position: 'absolute',
-                                        left: 14,
+                                        left: windowWidth <= 768 ? 40 : 10,
                                         top: -10
 
                                     }} />
@@ -120,7 +130,10 @@ const Menu = ({
                     </div>
                     <div className={style.title}>{title}</div>
                 </div>
-                <TransitionGroup>
+                <TransitionGroup style={{
+
+                    // overflow: 'hidden'
+                }}>
 
                     {!menuOpen && <Fade style={{
                         // position: 'absolute',
