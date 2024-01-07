@@ -29,7 +29,7 @@
     "@react-three/fiber": "^8.15.12",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/three": "^0.159.0",
-    "@welldone-software/why-did-you-render": "^7.0.1",
+    "@welldone-software/why-did-you-render": "^8.0.1",
     "antd": "^5.11.3",
     "axios": "^1.6.2",
     "camera-controls": "^2.7.3",

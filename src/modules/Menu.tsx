@@ -6,13 +6,14 @@ import { Collapse, Drawer, Fade, Input } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { TransitionGroup } from 'react-transition-group';
 import { Link, NavLink } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import routes from "../@types/routes";
 import { genPath } from "./genPath";
 import OutsideAlerter from "../@types/onClickOutside";
 import SearchIcon from '@mui/icons-material/Search';
 import LastPage from '@mui/icons-material/LastPage';
 import FirstPage from '@mui/icons-material/FirstPage';
+import $ from 'jquery'
 
 type TProps = {
     children: JSX.Element | JSX.Element[],
@@ -139,7 +140,7 @@ const Menu = ({
                         // position: 'absolute',
                         top: 50,
                         width: 300,
-                    }}><div>{children}</div>
+                    }}><div data-replace-links={true}>{children}</div>
                     </Fade>
                     }
                     {menuOpen && <Fade style={{
