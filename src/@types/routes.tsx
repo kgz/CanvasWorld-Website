@@ -13,7 +13,13 @@ type TRoutes = {
     element: { ({ setBodyJSX }): JSX.Element },
 }[]
 
+export const routesV1 = []
 
+export function addRoute(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+	console.log({ target, propertyKey, descriptor })
+}
+
+export const BaseRoute = null
 
 const routes: TRoutes = [
     {
