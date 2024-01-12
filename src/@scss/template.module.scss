@@ -117,7 +117,7 @@
     transition: all 0.3s ease;
     grid-template-columns: 1fr;
     align-items: center;
-    
+    -webkit-tap-highlight-color: transparent;
 
     .menuItem {
         width: 100%;
@@ -157,6 +157,17 @@
 
 :global {
 
+
+    // katex MathInline
+    .katex-display>.katex {
+        text-align: left !important;
+        // text-indent: 10px !important;
+        margin-left: 10px;
+    }
+
+
+
+    // dat gui
     .stats {
         position: fixed;
         right: 0px !important;
