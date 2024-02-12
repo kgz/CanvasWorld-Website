@@ -66,7 +66,7 @@ const HopalongAttractorAdditive = ({ setDescription }: ComponentProps<TRoutes[0]
 		setDescription(
 			<>
 				{/* x' = y + f(x) where f(x) = + SGN(x)√|bx - c) y' = a - x */}
-				The
+				The Hopalong Attractor is a fractal that can be defined by the following equations:
 				<br />
 				<br />
 				Definition:

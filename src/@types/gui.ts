@@ -57,5 +57,6 @@ export type TPointsProps<T> = {
 	pointSize?: number
 	description?: JSX.Element
 	singleColor?: THREE.Color,
-    cameraPosition?: Vector3
+    cameraPosition?: Vector3,
+    colorAlpha?: boolean,
 }

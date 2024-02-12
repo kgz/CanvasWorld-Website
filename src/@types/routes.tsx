@@ -10,6 +10,9 @@ import HopalongAttractor from '../pages/attractors/hopalong_attractor'
 import HopalongAttractorPositive from '../pages/attractors/hopalong_attractor_positive'
 import HopalongAttractorAdditive from '../pages/attractors/hopalong_attractor_add'
 import HopalongAttractorSin from '../pages/attractors/hopalong_attractor_sin'
+import GingerbreadMan from '../pages/attractors/gingerbread_man'
+import IkedaMap from '../pages/maps/ikeda Map'
+import MandlebrotSet from '../pages/maps/mandlebrot_set'
 
 export type TRoutes = {
 	name: string
@@ -70,6 +73,18 @@ const routes: TRoutes = [
 	{
 		name: 'Hopalong Attractor Sin',
 		element: HopalongAttractorSin,
+	},
+	{
+		name: 'Gingerbread Man',
+		element: GingerbreadMan,
+	},
+	{
+		name: 'Ikeda Map',
+		element: IkedaMap,
+	},
+	{
+		name: 'Mandlebrot Set',
+		element: MandlebrotSet,
 	},
 ]
 

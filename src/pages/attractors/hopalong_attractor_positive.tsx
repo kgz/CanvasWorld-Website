@@ -66,7 +66,7 @@ const HopalongAttractorPositive = ({ setDescription }: ComponentProps<TRoutes[0]
 		setDescription(
 			<>
 				{/* x' = y + f(x) where f(x) = + SGN(x)√|bx - c) y' = a - x */}
-				The Hopalong Attractor is a 2D strange attractor.
+				The Hopalong Attractor is a 2D strange attractor that can be defined by the following equations:
 				<br />
 				<br />
 				Definition:

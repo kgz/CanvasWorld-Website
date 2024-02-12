@@ -15,6 +15,8 @@ import LastPage from '@mui/icons-material/LastPage'
 import FirstPage from '@mui/icons-material/FirstPage'
 import $ from 'jquery'
 import DatGui, { DatButton, DatFolder, DatNumber } from 'react-dat-gui'
+import GitHubIcon from '@mui/icons-material/GitHub'
+import HomeIcon from '@mui/icons-material/Home'
 
 type TProps = {
 	title: string
@@ -162,6 +164,18 @@ const Menu = ({ title, description }: TProps) => {
 											/>
 										)
 									})}
+									<DatButton
+										label="Reset"
+										onClick={() => {
+											void dispatch(
+												setData(
+													Object.fromEntries(
+														Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]),
+													),
+												),
+											)
+										}}
+									/>
 									<DatFolder closed={true} title="Examples">
 										{datData.examples.map((example, i) => {
 											return (
@@ -193,8 +207,40 @@ const Menu = ({ title, description }: TProps) => {
 							<div>
 								<OutsideAlerter callback={() => void dispatch(SetMenuOpen(false))}>
 									<div className={style.menu}>
-										<NavLink className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')} to="/">
-											Home
+										<div style={{ marginTop: 15 }} className={style.divider}></div>
+
+										<NavLink
+											className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')}
+											to="/"
+											style={{
+												display: 'flex',
+												alignItems: 'center',
+											}}
+										>
+											<HomeIcon
+												style={{
+													marginLeft: 10,
+												}}
+												fontSize="small"
+											/>{' '}
+											<span style={{ marginLeft: -5 }}>Home</span>
+										</NavLink>
+										<NavLink
+											className={({ isActive }) => style.menuItem + ' ' + (isActive ? style.active : '')}
+											to="https://github.com/kgz/cw-app"
+											target="_blank"
+											style={{
+												display: 'flex',
+												alignItems: 'center',
+											}}
+										>
+											<GitHubIcon
+												style={{
+													marginLeft: 10,
+												}}
+												fontSize="small"
+											/>{' '}
+											<span style={{ marginLeft: -5 }}>Github</span>
 										</NavLink>
 										<div className={style.divider}></div>
 										<Input
@@ -204,6 +250,8 @@ const Menu = ({ title, description }: TProps) => {
 											placeholder="Search"
 											style={{
 												color: '#fff',
+												width: 'calc(100% - 20px)',
+												marginInline: 10,
 											}}
 											sx={
 												// change the divider color
@@ -221,6 +269,8 @@ const Menu = ({ title, description }: TProps) => {
 												}
 											}
 										/>
+										<div className={style.divider}></div>
+
 										{filteredSearch.map((route, index) => {
 											return (
 												<NavLink

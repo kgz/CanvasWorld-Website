@@ -23,6 +23,7 @@ const Points = <T,>({
 	dimension,
 	pointSize,
 	singleColor,
+	colorAlpha = false,
 }: TPointsProps<T>): JSX.Element => {
 	const points = useRef<typeof points>()
 
@@ -54,7 +55,12 @@ const Points = <T,>({
 					itemSize={dimension}
 				/>
 				{!singleColor && (
-					<bufferAttribute attach="attributes-color" count={ColorBuffer.length / 3} array={ColorBuffer} itemSize={3} />
+					<bufferAttribute
+						attach="attributes-color"
+						count={ColorBuffer.length / (colorAlpha ? 4 : 3)}
+						array={ColorBuffer}
+						itemSize={colorAlpha ? 4 : 3}
+					/>
 				)}
 			</bufferGeometry>
 
@@ -75,6 +81,7 @@ const Base = <T,>({
 	description,
 	singleColor,
 	cameraPosition,
+	colorAlpha = false,
 }: TPointsProps<T>) => {
 	const canvas = useRef<HTMLCanvasElement>(null)
 	const stats = useRef<any>(null)
@@ -142,7 +149,6 @@ const Base = <T,>({
 					fov: 75,
 					near: 0.1,
 					far: 1000,
-					
 				}}
 			>
 				<OrbitControls makeDefault />

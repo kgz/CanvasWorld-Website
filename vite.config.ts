@@ -94,7 +94,7 @@ const config = ({ mode }) => {
 			port: Number(env.VITE_PORT),
             hmr: {
                 host: 'localhost'
-            }
+            },
 		},
 		resolve: {
 			alias: [
