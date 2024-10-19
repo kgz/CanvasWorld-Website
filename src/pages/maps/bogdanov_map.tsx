@@ -6,15 +6,15 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/webSiteState.slice'
+import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
 const { sin, cos } = Math
 
-const BogdanovMap = ({ setDescription }: ComponentProps<TRoutes[0]['element']>) => {
+const BogdanovMap = () => {
 	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.webSiteState)
+	const { data } = useAppSelector(state => state.WebSlice)
 
 	const datData = useMemo(
 		() =>
@@ -41,39 +41,42 @@ const BogdanovMap = ({ setDescription }: ComponentProps<TRoutes[0]['element']>) 
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		setDescription(
-			<>
-				The Bogdanov map is a mathematical model that describes a discrete dynamical system. It is named after its
-				discoverer, Boris Bogdanov. The map is often used to study chaotic behavior in nonlinear systems.
-				<br />
-				<br />
-				Definitions:
-				<BlockMath math={'x(n+1) = y(n) + 1 - a * x(n)^2'} />
-				<BlockMath math={'y(n+1) = b * x(n)'} />
-				Limits:
-				<BlockMath math="a \in [0, 0.01]" />
-				<BlockMath math="b \in [0.5, 2.5]" />
-				<br />
-				<br />
-				Here, x(n) and y(n) represent the state variables at time step n. The parameters a and b are constants that
-				determine the behavior of the system. The map exhibits interesting dynamics depending on the values of a and b.
-				<br />
-				<br />
-				It can display periodic behavior, stable fixed points, or chaotic trajectories. The chaotic behavior arises when
-				the system is sensitive to initial conditions, meaning small changes in the initial state can lead to
-				significantly different outcomes.
-				<br />
-				<br />
-				The Bogdanov map has applications in various fields, including physics, biology, and economics. It provides
-				insights into complex systems and helps researchers understand the behavior of nonlinear dynamical systems.
-			</>,
+		void dispatch(
+			setDescription(
+				<>
+					The Bogdanov map is a mathematical model that describes a discrete dynamical system. It is named after its
+					discoverer, Boris Bogdanov. The map is often used to study chaotic behavior in nonlinear systems.
+					<br />
+					<br />
+					Definitions:
+					<BlockMath math={'x(n+1) = y(n) + 1 - a * x(n)^2'} />
+					<BlockMath math={'y(n+1) = b * x(n)'} />
+					Limits:
+					<BlockMath math="a \in [0, 0.01]" />
+					<BlockMath math="b \in [0.5, 2.5]" />
+					<br />
+					<br />
+					Here, x(n) and y(n) represent the state variables at time step n. The parameters a and b are constants that
+					determine the behavior of the system. The map exhibits interesting dynamics depending on the values of a and
+					b.
+					<br />
+					<br />
+					It can display periodic behavior, stable fixed points, or chaotic trajectories. The chaotic behavior arises
+					when the system is sensitive to initial conditions, meaning small changes in the initial state can lead to
+					significantly different outcomes.
+					<br />
+					<br />
+					The Bogdanov map has applications in various fields, including physics, biology, and economics. It provides
+					insights into complex systems and helps researchers understand the behavior of nonlinear dynamical systems.
+				</>,
+			),
 		)
 
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [datData, dispatch, setDescription])
+	}, [datData, dispatch])
 
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,

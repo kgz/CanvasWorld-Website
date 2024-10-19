@@ -10,9 +10,9 @@ import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
-const { sin, cos } = Math
+const { sin, sqrt } = Math
 
-const HenonMap = () => {
+const GingerbreadMan = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
 
@@ -21,33 +21,26 @@ const HenonMap = () => {
 			({
 				options: {
 					a: {
-						initialValue: 1.4,
-						min: 0,
-						max: 2,
-						step: 0.000001,
+						initialValue: -1,
+						min: -1,
+						max: 1,
+						step: 0.00001,
 					},
 					b: {
-						initialValue: 0.3,
-						min: 0,
-						max: 20,
-						step: 0.000001,
+						initialValue: -0.98246,
+						min: -1,
+						max: 1,
+						step: 0.00001,
 					},
 				},
 				examples: [
 					// {
-					// 	a: 1.4,
-					// 	b: 5.157895,
-					// 	c: 2.736842,
+					// 	a: 0,
+					// 	b: 0.9298,
 					// },
 					// {
-					// 	a: -11,
-					// 	b: 0.3,
-					// 	c: -0.5,
-					// },
-					// {
-					// 	a: 1.4,
-					// 	b: 5.157895,
-					// 	c: -4.561404,
+					// 	a: 0,
+					// 	b: 0.66667,
 					// },
 				],
 			}) as TDatData,
@@ -60,20 +53,23 @@ const HenonMap = () => {
 		void dispatch(
 			setDescription(
 				<>
-					The Henon map is a discrete-time dynamical system. <br />
-					<br />
-					It is a prototypical example of chaotic system that exhibits the phenomenon of strange attractors. <br />
-					<br />
-					It was introduced by Michel Hénon in 1976, while studying the Lorenz attractor map. <br />
-					The Hénon map arises from a simplification of the Lorenz system. <br />
-					<br />
-					The Hénon map is area-preserving and exhibits chaotic behavior for certain values of its parameters. <br />
-					<br />
-					Definition:
-					<BlockMath math="x_{n + 1} = 1 - a x_n^2 + y_n" />
-					<BlockMath math="y_{n + 1} = b x_n" />
-					Limits:
-					<BlockMath math="a, b \in [0, 2]" />
+					{/* x' = y + f(x) where f(x) = + SGN(x)√|bx - c) y' = a - x */}
+					WIP
+					{/* <br />
+				<br />
+				Definition:
+				<BlockMath math={`x_{n+1} = y_n + f(x_n)`} />
+				<BlockMath math={`y_{n+1} = a - x_n`} />
+				Where
+				<BlockMath math={`f(x) = sin(bx - \mu)`} />
+				<br />
+				Limits: <br />
+				<BlockMath math="a,b,\mu \in [-1, 1]" />
+				Refrences:
+				<br />
+				<a target="_blank" href="https://www.jolinton.co.uk/Mathematics/Hopalong_Fractals/Text.pdf">
+					www.jolinton.co.uk
+				</a> */}
 				</>,
 			),
 		)
@@ -91,21 +87,20 @@ const HenonMap = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		const { a, b } = data
-		let x = 0.03,
-			y = 0.01
+		const { a, b, mu } = data
+
+		let x = 0.723135391715914,
+			y = -0.327585775405169
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const xn = -(x * x) + b * y + a
-			const yn = x
+			const xn = y + Math.abs(b * x)
+			const yn = a - x
 			x = xn
 			y = yn
 
-			positions.set([x * 100, y * 100], i * 2)
-
+			positions.set([x * 20, y * 20], i * EDimensions.TWO_D)
 			const color = new THREE.Color()
-			const percent = (sin(i) / 255) * 255
-			// map percent from 0 to 255 to 0 to 1
-			color.setHSL(sin(i), 1, 0.5)
+			const colorI = Math.floor(i / 1000)
+			color.setHSL(0.8 + colorI / (255 * 0.2), 1, 0.5)
 			colors.set([color.r, color.g, color.b], i * 3)
 		}
 
@@ -118,9 +113,9 @@ const HenonMap = () => {
 			numParticles={200_000}
 			tick={tick}
 			pointSize={0.5}
-			cameraPosition={[0, 0, -400]}
+			cameraPosition={[0, 0, -775]}
 		/>
 	)
 }
 
-export default HenonMap
+export default GingerbreadMan

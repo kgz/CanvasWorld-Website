@@ -6,13 +6,13 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/webSiteState.slice'
+import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
-const HopalongAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['element']>) => {
+const HopalongAttractor = () => {
 	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.webSiteState)
+	const { data } = useAppSelector(state => state.WebSlice)
 
 	const datData = useMemo(
 		() =>
@@ -61,27 +61,29 @@ const HopalongAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['elemen
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		setDescription(
-			<>
-				The Hopalong Attractor is a fractal also known as the "Skull Attractor" or "Martin's Attractor".
-				<br />
-				<br />
-				It was discovered by Barry Martin in 1981 and at the core is just a modified simple ellipse.
-				<br />
-				<br />
-				Definition:
-				<BlockMath math="x_{n+1} = y_n - sign(x_n) \sqrt{|b x_n - c|}" />
-				<BlockMath math="y_{n+1} = a - x_n - 1" />
-				Limits:
-				<BlockMath math="a, b, c \in [-20, 20]" />
-			</>,
+		void dispatch(
+			setDescription(
+				<>
+					The Hopalong Attractor is a fractal also known as the "Skull Attractor" or "Martin's Attractor".
+					<br />
+					<br />
+					It was discovered by Barry Martin in 1981 and at the core is just a modified simple ellipse.
+					<br />
+					<br />
+					Definition:
+					<BlockMath math="x_{n+1} = y_n - sign(x_n) \sqrt{|b x_n - c|}" />
+					<BlockMath math="y_{n+1} = a - x_n - 1" />
+					Limits:
+					<BlockMath math="a, b, c \in [-20, 20]" />
+				</>,
+			),
 		)
 
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [datData, dispatch, setDescription])
+	}, [datData, dispatch])
 
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,

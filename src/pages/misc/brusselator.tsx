@@ -6,15 +6,15 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/webSiteState.slice'
+import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
 const { sin, cos } = Math
 
-const CliffordAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['element']>) => {
+const CliffordAttractor = () => {
 	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.webSiteState)
+	const { data } = useAppSelector(state => state.WebSlice)
 
 	const datData = useMemo(
 		() =>
@@ -53,33 +53,36 @@ const CliffordAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['elemen
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		setDescription(
-			<>
-				The Clifford Attractor is a 2D strange attractor.
-				<br />
-				<br />
-				It is characterized by two iterative equations that determine the x and y coordinates of discrete steps in the
-				path of a particle across a 2D space. <br />
-				The starting point (x0, y0) and the values of four parameters (a, b, c, d) influence the shape of the attractor.
-				<br />
-				<br />
-				It is named after Clifford Pickover, who described it in his book Chaos in Wonderland (1994).
-				<br />
-				<br />
-				Definition: <br />
-				<BlockMath math={`x_{n+1} = sin(a * y_n) + c * cos(a * x_n)`} />
-				<BlockMath math={`y_{n+1} = sin(b * x_n) + d * cos(b * y_n)`} />
-				<br />
-				Limits: <br />
-				<BlockMath math="a,b,c,d \in [-3, 3]" />
-			</>,
+		void dispatch(
+			setDescription(
+				<>
+					The Clifford Attractor is a 2D strange attractor.
+					<br />
+					<br />
+					It is characterized by two iterative equations that determine the x and y coordinates of discrete steps in the
+					path of a particle across a 2D space. <br />
+					The starting point (x0, y0) and the values of four parameters (a, b, c, d) influence the shape of the
+					attractor.
+					<br />
+					<br />
+					It is named after Clifford Pickover, who described it in his book Chaos in Wonderland (1994).
+					<br />
+					<br />
+					Definition: <br />
+					<BlockMath math={`x_{n+1} = sin(a * y_n) + c * cos(a * x_n)`} />
+					<BlockMath math={`y_{n+1} = sin(b * x_n) + d * cos(b * y_n)`} />
+					<br />
+					Limits: <br />
+					<BlockMath math="a,b,c,d \in [-3, 3]" />
+				</>,
+			),
 		)
 
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [datData, dispatch, setDescription])
+	}, [datData, dispatch])
 
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,

@@ -6,15 +6,15 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/webSiteState.slice'
+import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
 const { sin, cos } = Math
 
-const GumowskiMiraAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['element']>) => {
+const GumowskiMiraAttractor = () => {
 	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.webSiteState)
+	const { data } = useAppSelector(state => state.WebSlice)
 
 	const datData = useMemo(
 		() =>
@@ -63,37 +63,40 @@ const GumowskiMiraAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['el
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		setDescription(
-			<>
-				The Gumowski-Mira Attractor is a mathematical model that describes the behavior of a dynamic system.
-				<br />
-				<br />
-				It is often used in chaos theory and fractal geometry to generate visually interesting patterns. The equations
-				in the code represent the iterative formulas for calculating the next values of the variables x and y in the
-				Gumowski-Mira Attractor.
-				<br />
-				<br />
-				These equations involve parameters a, b, and μ, which determine the shape and characteristics of the attractor.
-				<br />
-				<br /> By varying these parameters, you can create different visual patterns and explore the complex dynamics of
-				the system.
-				<br />
-				<br />
-				Definition:
-				<BlockMath math={`x_{n+1} = y_n + a(1 - b y_n^2)y_n + G(x_n, \\mu)`} />
-				<BlockMath math={`y_{n+1} = -x_n + G(x_{n+1}, \\mu)`} />
-				Where:
-				<BlockMath math={`G(x, \\mu) = \\mu x + 2(1 - \\mu) \\frac{x^2}{1 + x^2}`} />
-				Limits:
-				<BlockMath math="a, b,\mu \in [-1, 1]" />
-			</>,
+		void dispatch(
+			setDescription(
+				<>
+					The Gumowski-Mira Attractor is a mathematical model that describes the behavior of a dynamic system.
+					<br />
+					<br />
+					It is often used in chaos theory and fractal geometry to generate visually interesting patterns. The equations
+					in the code represent the iterative formulas for calculating the next values of the variables x and y in the
+					Gumowski-Mira Attractor.
+					<br />
+					<br />
+					These equations involve parameters a, b, and μ, which determine the shape and characteristics of the
+					attractor.
+					<br />
+					<br /> By varying these parameters, you can create different visual patterns and explore the complex dynamics
+					of the system.
+					<br />
+					<br />
+					Definition:
+					<BlockMath math={`x_{n+1} = y_n + a(1 - b y_n^2)y_n + G(x_n, \\mu)`} />
+					<BlockMath math={`y_{n+1} = -x_n + G(x_{n+1}, \\mu)`} />
+					Where:
+					<BlockMath math={`G(x, \\mu) = \\mu x + 2(1 - \\mu) \\frac{x^2}{1 + x^2}`} />
+					Limits:
+					<BlockMath math="a, b,\mu \in [-1, 1]" />
+				</>,
+			),
 		)
 
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [datData, dispatch, setDescription])
+	}, [datData, dispatch])
 
 	const G = (x: number, mu: number) => {
 		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)

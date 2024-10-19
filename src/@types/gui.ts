@@ -2,6 +2,7 @@
 
 import type { RootState, Vector3 } from "@react-three/fiber"
 import type { _XRFrame } from "@react-three/fiber/dist/declarations/src/core/utils"
+import type { RefObject } from 'react'
 
 /**
  * Enumeration for dimensions.
@@ -45,18 +46,13 @@ export type TDataFromObject<G extends TDatData['options']> = {
  * @property {THREE.Color} [singleColor] - If null, will use the color vector as the color source
  */
 export type TPointsProps<T> = {
-	tick: (
-		positions: Float32Array,
-		colors: Float32Array,
-		state: RootState,
-		delta: number,
-		frame?: _XRFrame,
-	) => void
+	tick: (positions: Float32Array, colors: Float32Array, state: RootState, delta: number, frame?: _XRFrame) => void
 	numParticles: number
 	dimension: EDimensions
 	pointSize?: number
 	description?: JSX.Element
-	singleColor?: THREE.Color,
-    cameraPosition?: Vector3,
-    colorAlpha?: boolean,
+	singleColor?: THREE.Color
+	cameraPosition?: Vector3
+	colorAlpha?: boolean
+	setCanvasRef?: (ref: RefObject<HTMLCanvasElement>) => void
 }

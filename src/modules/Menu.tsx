@@ -1,33 +1,32 @@
 import { useAppDispatch, useAppSelector } from '../@store/store'
 import style from '../@scss/template.module.scss'
-import { SetDrawerOpen, SetMenuOpen, setData } from '../@store/webSiteState.slice'
+import { SetDrawerOpen, SetMenuOpen, setData } from '../@store/WebSlice'
 import MenuIcon from '@mui/icons-material/Menu'
-import { Collapse, Drawer, Fade, Input } from '@mui/material'
+import { Drawer, Fade, Input } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { TransitionGroup } from 'react-transition-group'
-import { Link, NavLink } from 'react-router-dom'
-import { HtmlHTMLAttributes, MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { NavLink } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
 import routes from '../@types/routes'
 import { genPath } from './genPath'
 import OutsideAlerter from '../@types/onClickOutside'
 import SearchIcon from '@mui/icons-material/Search'
 import LastPage from '@mui/icons-material/LastPage'
 import FirstPage from '@mui/icons-material/FirstPage'
-import $ from 'jquery'
 import DatGui, { DatButton, DatFolder, DatNumber } from 'react-dat-gui'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import HomeIcon from '@mui/icons-material/Home'
 
 type TProps = {
 	title: string
-	description?: JSX.Element | JSX.Element[]
 }
 
-const Menu = ({ title, description }: TProps) => {
-	const { menuOpen, drawerOpen, datData, data } = useAppSelector(state => state.webSiteState)
+const Menu = ({ title }: TProps) => {
+	const { menuOpen, drawerOpen, datData, data } = useAppSelector(state => state.WebSlice)
 	const dispatch = useAppDispatch()
 	const [search, setSearch] = useState('')
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+	const { description } = useAppSelector(s => s.WebSlice)
 
 	useEffect(() => {
 		// always load with menu closed, or maybe we shouldnt - todo see how this works with browkser router

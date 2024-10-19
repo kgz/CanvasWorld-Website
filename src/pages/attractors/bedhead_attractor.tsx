@@ -6,15 +6,15 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/webSiteState.slice'
+import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
 const { sin, cos } = Math
 
-const BedheadAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['element']>) => {
+const BedheadAttractor = () => {
 	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.webSiteState)
+	const { data } = useAppSelector(state => state.WebSlice)
 
 	const datData = useMemo(
 		() =>
@@ -41,7 +41,7 @@ const BedheadAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['element
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		setDescription(
+		void dispatch(setDescription(
 			<>
 				Cannot actually find any information on this attractor, but it looks cool.
 				<br />
@@ -49,13 +49,13 @@ const BedheadAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['element
 				<BlockMath math="x_{n+1} = sin(x \cdot y/b) \cdot y + cos(a \cdot x - y)" />
 				<BlockMath math="y_{n+1} = x + sin(y)/b" />
 			</>,
-		)
+		))
 
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [datData, dispatch, setDescription])
+	}, [datData, dispatch])
 
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,

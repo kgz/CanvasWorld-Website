@@ -6,15 +6,15 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/webSiteState.slice'
+import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
 const { sin, cos } = Math
 
-const CliffordAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['element']>) => {
+const CliffordAttractor = () => {
 	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.webSiteState)
+	const { data } = useAppSelector(state => state.WebSlice)
 
 	const datData = useMemo(
 		() =>
@@ -53,7 +53,7 @@ const CliffordAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['elemen
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		setDescription(
+		void dispatch(setDescription(
 			<>
 				The Clifford Attractor is a 2D strange attractor.
 				<br />
@@ -73,13 +73,13 @@ const CliffordAttractor = ({ setDescription }: ComponentProps<TRoutes[0]['elemen
 				Limits: <br />
 				<BlockMath math="a,b,c,d \in [-3, 3]" />
 			</>,
-		)
+		))
 
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [datData, dispatch, setDescription])
+	}, [datData, dispatch])
 
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,

@@ -12,20 +12,16 @@ import HopalongAttractorAdditive from '../pages/attractors/hopalong_attractor_ad
 import HopalongAttractorSin from '../pages/attractors/hopalong_attractor_sin'
 import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
-import MandlebrotSet from '../pages/maps/mandlebrot_set'
+import MandlebrotSet from '../pages/maps/mandlebrot_set_1'
 
 export type TRoutes = {
 	name: string
 	element: {
-		(props: { setDescription: React.Dispatch<React.SetStateAction<JSX.Element | JSX.Element[]>> }): JSX.Element
+		(): JSX.Element
 	}
 }[]
 
 export const routesV1 = []
-
-export function addRoute(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-	console.log({ target, propertyKey, descriptor })
-}
 
 export const BaseRoute = null
 

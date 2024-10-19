@@ -19,7 +19,7 @@ import type { TPointsProps } from '../@types/gui'
  */
 const Points = <T,>({
 	tick,
-	numParticles = 200_000,
+	numParticles = 200_000 / 1000,
 	dimension,
 	pointSize,
 	singleColor,
@@ -75,13 +75,14 @@ const Points = <T,>({
 
 const Base = <T,>({
 	tick,
-	numParticles = 200_000,
+	numParticles = 200_000 / 1000,
 	dimension,
 	pointSize,
 	description,
 	singleColor,
 	cameraPosition,
 	colorAlpha = false,
+	setCanvasRef = () => {},
 }: TPointsProps<T>) => {
 	const canvas = useRef<HTMLCanvasElement>(null)
 	const stats = useRef<any>(null)
@@ -97,6 +98,15 @@ const Base = <T,>({
 	// 	}
 	// }, [dD])
 
+	useEffect(()=>{
+		setCanvasRef(canvas)
+	}, [canvas, setCanvasRef])
+
+	const isIframe = useMemo(() => {
+		const params = new URLSearchParams(window.location.search)
+		return params.get('iframe') !== null
+	}, [])
+
 	const parentElementName = useMemo(() => {
 		//current last opart oif the path
 		const path = window.location.pathname.split('/')
@@ -111,19 +121,19 @@ const Base = <T,>({
 		return renderToString(description ?? <></>)
 	}, [description])
 
-	const decocdeEntities = useMemo(() => {
+	const decodeEntities = useMemo(() => {
 		// convert html entities like &nsbp; to unicode
 		const st = descriptionToString.replace(/&#(\d+);/g, '')
 		return st
 	}, [descriptionToString])
 
 	const descriptionWithoutHTML = useMemo(() => {
-		let st = decocdeEntities.replace(/(<([^>]+)>)/gi, '')
+		let st = decodeEntities.replace(/(<([^>]+)>)/gi, '')
 		// convert things like &nsbp; to spaces
 		st = st.replace(/&[a-z]+;/g, ' ')
 		st = st.replace(/\u200B/g, '')
 		return st
-	}, [decocdeEntities])
+	}, [decodeEntities])
 
 	return (
 		<>
@@ -139,7 +149,7 @@ const Base = <T,>({
 				}}
 				ref={stats}
 			>
-				<Stats parent={stats} className="stats" />
+				{!isIframe && <Stats parent={stats} className="stats" />}
 			</div>
 			<Canvas
 				ref={canvas}
@@ -150,6 +160,17 @@ const Base = <T,>({
 					near: 0.1,
 					far: 1000,
 				}}
+				// style={
+				// 	isIframe
+				// 		? {
+				// 				canvas: {
+				// 					minHeight: 'none',
+				// 					height: 'auto !important',
+				// 					width: 'auto !important',
+				// 				},
+				// 			}
+				// 		: {}
+				// }
 			>
 				<OrbitControls makeDefault />
 				<Points
@@ -158,6 +179,7 @@ const Base = <T,>({
 					dimension={dimension}
 					pointSize={pointSize}
 					singleColor={singleColor}
+					// isIframe
 				/>
 			</Canvas>
 		</>

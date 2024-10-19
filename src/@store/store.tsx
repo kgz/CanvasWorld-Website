@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import type { DefaultRootState, TypedUseSelectorHook} from 'react-redux'
 import thunk from "redux-thunk";
-import webSiteState from './webSiteState.slice';
+import { WebSlice } from './WebSlice'
 
 const reducer = combineReducers({
-    webSiteState,
+	WebSlice,
 })
 
 const store = configureStore({

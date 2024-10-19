@@ -24,16 +24,13 @@ const config = ({ mode }) => {
 
 	return defineConfig({
 		plugins: [
-            basicSsl(),
+			basicSsl(),
 
 			react({
 				babel: {
 					plugins: [
-						["@babel/plugin-proposal-decorators", { legacy: true }],
-						[
-							"@babel/plugin-proposal-class-properties",
-							{ loose: true },
-						],
+						['@babel/plugin-proposal-decorators', { legacy: true }],
+						['@babel/plugin-proposal-class-properties', { loose: true }],
 					],
 				},
 			}),
@@ -47,30 +44,43 @@ const config = ({ mode }) => {
 			visualizer({
 				filename: './.stats/treemap.html',
 				template: 'treemap',
-				sourcemap: true
+				sourcemap: true,
 			}),
 			visualizer({
 				filename: './.stats/sunburst.html',
 				template: 'sunburst',
-				sourcemap: true
+				sourcemap: true,
 			}),
 			visualizer({
 				filename: './.stats/network.html',
 				template: 'network',
-				sourcemap: true
+				sourcemap: true,
 			}),
 			visualizer({
 				filename: './.stats/raw-data.json',
 				template: 'raw-data',
-				sourcemap: true
+				sourcemap: true,
 			}),
 			visualizer({
 				filename: './.stats/list.yml',
 				template: 'list',
-				sourcemap: true
-			})
+				sourcemap: true,
+			}),
 		],
+		optimizeDeps: {
+			esbuildOptions: {
+				target: 'esnext',
+				// Node.js global to browser globalThis
+				define: {
+					global: 'globalThis',
+				},
+				supported: {
+					bigint: true,
+				},
+			},
+		},
 		build: {
+			target: 'esnext',
 			rollupOptions: {
 				external: ['moment-timezone'],
 				input: {
@@ -78,8 +88,8 @@ const config = ({ mode }) => {
 				},
 				output: outputs.map(output => ({
 					...outputConfig,
-					dir: './' + output
-				}))
+					dir: './' + output,
+				})),
 			},
 			outDir: './dist',
 			sourcemap: true,
@@ -88,23 +98,22 @@ const config = ({ mode }) => {
 		server: {
 			host: env.VITE_HOST,
 			https: {
-                key: env.VITE_HTTPS_KEY,
-                cert: env.VITE_HTTPS_CERT,
-            },
+				key: env.VITE_HTTPS_KEY,
+				cert: env.VITE_HTTPS_CERT,
+			},
 			port: Number(env.VITE_PORT),
-            hmr: {
-                host: 'localhost'
-            },
+			hmr: {
+				host: 'localhost',
+			},
 		},
 		resolve: {
 			alias: [
 				{ find: '@s', replacement: path.resolve(__dirname, 'src/@styles') },
 				{ find: '@t', replacement: path.resolve(__dirname, 'src/@types') },
 				{ find: '@a', replacement: path.resolve(__dirname, 'src/@assets') },
-			]
-		}
-	}
-	)
+			],
+		},
+	})
 
 }
 
