@@ -35,8 +35,8 @@ const datData: TDatData = {
 	},
 	examples: [
 		{
-			a: 0.008,
-			b: -0.7,
+			a: 0.4,
+			b: 0.3,
 			mu: -0.228,
 		},
 		{
