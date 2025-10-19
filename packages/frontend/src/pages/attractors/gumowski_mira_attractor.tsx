@@ -65,10 +65,16 @@ const GumowskiMiraAttractor = () => {
 
 	useEffect(() => {
 		void dispatch(setDatData(datData))
-		void dispatch(
-			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
-		)
 	}, [datData, dispatch])
+
+	useEffect(() => {
+		// Only set initial data if no data exists yet
+		if (Object.keys(data).length === 0) {
+			void dispatch(
+				setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
+			)
+		}
+	}, [datData, dispatch, data])
 
 	const G = (x: number, mu: number) => {
 		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)
