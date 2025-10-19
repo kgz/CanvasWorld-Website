@@ -294,7 +294,7 @@ const Menu = ({ title }: TProps) => {
 												<NavLink
 													key={index}
 													className={({ isActive }) => 'test ' + style.menuItem + ' ' + (isActive ? style.active : '')}
-													to={genPath(route.name)}
+													to={"/" + genPath(route.name)}
 												>
 													{route.name}
 												</NavLink>

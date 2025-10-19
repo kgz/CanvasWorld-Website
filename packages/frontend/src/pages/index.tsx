@@ -87,7 +87,7 @@ function Index() {
 			>
 				{routes.map((route, index) => {
 					return (
-						<Link key={index} to={genPath(route.name)}>
+						<Link key={index} to={"/" + genPath(route.name)}>
 							{/* {route.name} */}
 
 							<Card sx={{ maxWidth: 345, maxHeight: 450 }}>
@@ -106,7 +106,7 @@ function Index() {
 			{/* <iframe
 					frameBorder={'0'}
 					scrolling="no"
-					src={'https://localhost:2020/chaos' + genPath(routes[0].name) + '?iframe'}
+					src={'https://localhost:2020/chaos/' + genPath(routes[0].name) + '?iframe'}
 				/>
 				 */}
 		</div>

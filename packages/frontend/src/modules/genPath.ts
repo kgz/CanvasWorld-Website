@@ -1,9 +1,8 @@
 export const genPath = (path: string) => {
-
-    // }removespace and make sure a / is at the front
+    // Remove spaces and make lowercase
     path = path.replace(/\s/g, "_");
     path = path.replace(/\/$/, "");
-    path = "/" + path.toLowerCase();
+    path = path.toLowerCase();
     return path;
 }
 
