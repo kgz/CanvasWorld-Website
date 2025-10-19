@@ -7,6 +7,8 @@ import { genPath } from '../modules/genPath';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { useEffect, useMemo } from 'react';
 import Index from './index-new';
+import { BlockMath, InlineMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 // Route components are imported dynamically via route.element
 
@@ -63,8 +65,8 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 											// Check if line contains LaTeX math (starts with x_ or y_)
 											if (line.match(/^[xy]_{/)) {
 												return (
-													<div key={index} className="my-2 font-mono text-blue-300 bg-gray-700/50 p-2 rounded">
-														{line}
+													<div key={index} className="my-3">
+														<BlockMath math={line} />
 													</div>
 												)
 											}

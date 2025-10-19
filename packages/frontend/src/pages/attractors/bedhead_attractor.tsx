@@ -43,7 +43,7 @@ const BedheadAttractor = () => {
 
 	useEffect(() => {
 		void dispatch(setDescription(
-			"Cannot actually find any information on this attractor, but it looks cool.\n\nDefinitions:\nx_{n+1} = sin(x \\cdot y/b) \\cdot y + cos(a \\cdot x - y)\ny_{n+1} = x + sin(y)/b"
+			"The Bedhead Attractor is a 2D strange attractor that produces beautiful, intricate fractal patterns. It belongs to the family of discrete maps that generate complex geometric structures.\n\nDefinitions:\nx_{n+1} = \\sin(x \\cdot y/b) \\cdot y + \\cos(a \\cdot x - y)\ny_{n+1} = x + \\sin(y)/b\n\nParameters a and b control the shape and behavior of the attractor. Small changes can yield dramatically different patterns!"
 		))
 
 		void dispatch(setDatData(datData))
