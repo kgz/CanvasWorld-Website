@@ -63,29 +63,7 @@ const HopalongAttractorAdditive = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(
-			setDescription(
-				<>
-					{/* x' = y + f(x) where f(x) = + SGN(x)√|bx - c) y' = a - x */}
-					The Hopalong Attractor is a fractal that can be defined by the following equations:
-					<br />
-					<br />
-					Definition:
-					<BlockMath math={`x_{n+1} = y_n + f(x_n)`} />
-					<BlockMath math={`y_{n+1} = a - x_n`} />
-					Where
-					<BlockMath math={`f(x) = √{|bx - \mu|}`} />
-					<br />
-					Limits: <br />
-					<BlockMath math="a,b,\mu \in [-1, 1]" />
-					Refrences:
-					<br />
-					<a target="_blank" href="https://www.jolinton.co.uk/Mathematics/Hopalong_Fractals/Text.pdf">
-						www.jolinton.co.uk
-					</a>
-				</>,
-			),
-		)
+		
 
 		void dispatch(setDatData(datData))
 		void dispatch(
@@ -133,5 +111,13 @@ const HopalongAttractorAdditive = () => {
 		/>
 	)
 }
+
+
+// Add static description function to the component
+HopalongAttractorAdditive.getDescription = () => (
+	<>
+		This attractor is currently work in progress (WIP).
+	</>
+)
 
 export default HopalongAttractorAdditive

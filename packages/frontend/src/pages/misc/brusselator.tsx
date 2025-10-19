@@ -53,30 +53,7 @@ const CliffordAttractor = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(
-			setDescription(
-				<>
-					The Clifford Attractor is a 2D strange attractor.
-					<br />
-					<br />
-					It is characterized by two iterative equations that determine the x and y coordinates of discrete steps in the
-					path of a particle across a 2D space. <br />
-					The starting point (x0, y0) and the values of four parameters (a, b, c, d) influence the shape of the
-					attractor.
-					<br />
-					<br />
-					It is named after Clifford Pickover, who described it in his book Chaos in Wonderland (1994).
-					<br />
-					<br />
-					Definition: <br />
-					<BlockMath math={`x_{n+1} = sin(a * y_n) + c * cos(a * x_n)`} />
-					<BlockMath math={`y_{n+1} = sin(b * x_n) + d * cos(b * y_n)`} />
-					<br />
-					Limits: <br />
-					<BlockMath math="a,b,c,d \in [-3, 3]" />
-				</>,
-			),
-		)
+		
 
 		void dispatch(setDatData(datData))
 		void dispatch(
@@ -124,5 +101,13 @@ const CliffordAttractor = () => {
 		/>
 	)
 }
+
+
+// Add static description function to the component
+CliffordAttractor.getDescription = () => (
+	<>
+		This attractor is currently work in progress (WIP).
+	</>
+)
 
 export default CliffordAttractor
