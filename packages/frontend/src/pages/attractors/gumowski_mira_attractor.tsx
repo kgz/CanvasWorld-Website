@@ -5,18 +5,14 @@ import { BlockMath } from 'react-katex'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
 import Base from '../_base'
 import type { ComponentProps } from 'react'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
 const { sin, cos } = Math
 
-const GumowskiMiraAttractor = () => {
-	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.WebSlice)
-
-	const datData = useMemo(() => ({
+const datData: TDatData = {
 		options: {
 			a: {
 				initialValue: 0.79253300698474,
@@ -58,8 +54,12 @@ const GumowskiMiraAttractor = () => {
 				b: -0.436713613104075,
 				mu: -0.228,
 			},
-		],
-	}) as TDatData, [])
+	],
+}
+
+const GumowskiMiraAttractor = () => {
+	const dispatch = useAppDispatch()
+	const { data } = useAppSelector(state => state.WebSlice)
 
 	type TData = TDataFromObject<(typeof datData)['options']>
 
