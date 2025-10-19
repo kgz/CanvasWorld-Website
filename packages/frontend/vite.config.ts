@@ -8,6 +8,8 @@ export default defineConfig({
 	},
 	plugins: [
 		react({
+			// Enable React Refresh for hot reloading
+			fastRefresh: true,
 			babel: {
 				plugins: [
 					['@babel/plugin-proposal-decorators', { legacy: true }],
@@ -39,15 +41,14 @@ export default defineConfig({
 	server: {
 		host: 'localhost',
 		port: Number(process.env.VITE_PORT) || 5173,
+		// Enable HMR (Hot Module Replacement)
+		hmr: {
+			port: Number(process.env.VITE_PORT) || 5173,
+		},
 		proxy: {
 			'/api': {
 				target: 'http://localhost:' + (process.env.BACKEND_PORT || '8080'),
 				changeOrigin: true,
-			},
-			'/chaos': {
-				target: 'http://localhost:3000',
-				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/chaos/, '/chaos'),
 			},
 		},
 	},
