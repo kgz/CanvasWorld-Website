@@ -63,70 +63,68 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 						: 'w-0 opacity-0'
 				} bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 h-[calc(100vh-4rem)] flex-shrink-0 overflow-y-auto overflow-x-hidden`}>
 					<div className="p-6">
-							{/* Description */}
+						{/* Controls */}
+						{datData && Object.keys(datData.options).length > 0 && (
 							<div className="mb-6">
-								<h2 className="text-lg font-semibold text-white mb-3">About</h2>
-								<div className="text-gray-300 text-sm leading-relaxed">
-									{description}
+								<h2 className="text-lg font-semibold text-white mb-3">Controls</h2>
+								<div className="space-y-4">
+									{Object.entries(datData.options).map(([key, option]: [string, any]) => (
+										<div key={key}>
+											<label className="block text-sm font-medium text-gray-300 mb-1">
+												{key}
+											</label>
+											<input
+												type="range"
+												min={option.min}
+												max={option.max}
+												step={option.step || 0.001}
+												value={data[key] || option.initialValue}
+												onChange={(e) => {
+													dispatch(setData({ [key]: parseFloat(e.target.value) }));
+												}}
+												className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+											/>
+											<div className="flex justify-between text-xs text-gray-400 mt-1">
+												<span>{option.min}</span>
+												<span className="font-mono">{data[key] || option.initialValue}</span>
+												<span>{option.max}</span>
+											</div>
+										</div>
+									))}
 								</div>
 							</div>
+						)}
 
-							{/* Controls */}
-							{datData && Object.keys(datData.options).length > 0 && (
-								<div className="mb-6">
-									<h2 className="text-lg font-semibold text-white mb-3">Controls</h2>
-									<div className="space-y-4">
-										{Object.entries(datData.options).map(([key, option]: [string, any]) => (
-											<div key={key}>
-												<label className="block text-sm font-medium text-gray-300 mb-1">
-													{key}
-												</label>
-												<input
-													type="range"
-													min={option.min}
-													max={option.max}
-													step={option.step || 0.001}
-													value={data[key] || option.initialValue}
-													onChange={(e) => {
-														dispatch(setData({ [key]: parseFloat(e.target.value) }));
-													}}
-													className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-												/>
-												<div className="flex justify-between text-xs text-gray-400 mt-1">
-													<span>{option.min}</span>
-													<span className="font-mono">{data[key] || option.initialValue}</span>
-													<span>{option.max}</span>
-												</div>
+						{/* Examples */}
+						{datData.examples && datData.examples.length > 0 && (
+							<div className="mb-6">
+								<h2 className="text-lg font-semibold text-white mb-3">Examples</h2>
+								<div className="space-y-2">
+									{datData.examples.map((example: any, index: number) => (
+										<button
+											key={index}
+											onClick={() => {
+												dispatch(setData(example));
+											}}
+											className="w-full text-left p-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors duration-300"
+										>
+											<div className="text-sm text-white font-medium">Example {index + 1}</div>
+											<div className="text-xs text-gray-400 mt-1">
+												{Object.entries(example).map(([key, value]) => `${key}: ${value}`).join(', ')}
 											</div>
-										))}
-									</div>
+										</button>
+									))}
 								</div>
-							)}
+							</div>
+						)}
 
-							{/* Examples */}
-							{datData.examples && datData.examples.length > 0 && (
-								<div className="mb-6">
-									<h2 className="text-lg font-semibold text-white mb-3">Examples</h2>
-									<div className="space-y-2">
-										{datData.examples.map((example: any, index: number) => (
-											<button
-												key={index}
-												onClick={() => {
-													dispatch(setData(example));
-												}}
-												className="w-full text-left p-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors duration-300"
-											>
-												<div className="text-sm text-white font-medium">Example {index + 1}</div>
-												<div className="text-xs text-gray-400 mt-1">
-													{Object.entries(example).map(([key, value]) => `${key}: ${value}`).join(', ')}
-												</div>
-											</button>
-										))}
-									</div>
-								</div>
-							)}
-
-							{/* Navigation */}
+						{/* Description */}
+						<div className="mb-6">
+							<h2 className="text-lg font-semibold text-white mb-3">About</h2>
+							<div className="text-gray-300 text-sm leading-relaxed">
+								{description}
+							</div>
+						</div>
 							<div>
 								<h2 className="text-lg font-semibold text-white mb-3">Explore</h2>
 								<div className="space-y-1">
