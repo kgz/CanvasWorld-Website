@@ -9,7 +9,7 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
-import { testBedheadAttractorTick } from '../../__tests__/attractors/bedhead_attractor.test'
+import { testBedheadAttractorTick } from '../../utils/bedheadAttractorTest'
 
 const { sin, cos } = Math
 
