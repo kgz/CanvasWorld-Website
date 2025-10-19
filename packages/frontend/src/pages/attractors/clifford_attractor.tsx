@@ -1,7 +1,7 @@
 import type { RootState } from '@react-three/fiber'
 import * as THREE from 'three'
 
-import { BlockMath } from 'react-katex'
+import { BlockMath, InlineMath } from 'react-katex'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
 import Base from '../_base'
 import type { ComponentProps } from 'react'
@@ -103,23 +103,32 @@ const CliffordAttractor = () => {
 // Add static description function to the component
 CliffordAttractor.getDescription = () => (
 	<>
-		The Clifford Attractor is a 2D strange attractor.
+		The Clifford Attractor is a fascinating example of a 2-dimensional strange (chaotic) attractor defined by a simple discrete iteration of two functions. It's both mathematically rich and visually compelling.
 		<br />
 		<br />
-		It is characterized by two iterative equations that determine the x and y coordinates of discrete steps in the
-		path of a particle across a 2D space. The starting point (x0, y0) and the values of four parameters (a, b, c, d) influence the shape of the
-		attractor.
+		<strong>Definition:</strong>
+		<BlockMath math={'x_{n+1} = \\sin(a \\cdot y_n) + c \\cdot \\cos(a \\cdot x_n)'} />
+		<BlockMath math={'y_{n+1} = \\sin(b \\cdot x_n) + d \\cdot \\cos(b \\cdot y_n)'} />
+		<br />
+		Where <InlineMath math="a, b, c, d" /> are real constants, and <InlineMath math="(x_0, y_0)" /> is an initial seed point.
 		<br />
 		<br />
-		It is named after Clifford Pickover, who described it in his book Chaos in Wonderland (1994).
+		<strong>Why it's interesting:</strong>
+		<br />
+		• <strong>Visual richness:</strong> Different parameter choices produce wildly different shapes — loops, ribbons, swirls, almost-cellular structures
+		<br />
+		• <strong>Simplicity + complexity:</strong> Simple sine/cosine formula yet complex chaotic behavior with sensitive dependence and fractal boundaries
+		<br />
+		• <strong>Fractal nature:</strong> Often has non-integer dimension with self-similarity when zoomed
+		<br />
+		• <strong>Parameter exploration:</strong> Slight variations can dramatically change the attractor shape
 		<br />
 		<br />
-		Definition: <br />
-		<BlockMath math={'x_{n+1} = sin(a * y_n) + c * cos(a * x_n)'} />
-		<BlockMath math={'y_{n+1} = sin(b * x_n) + d * cos(b * y_n)'} />
+		<strong>Parameter limits:</strong>
+		<BlockMath math="a, b, c, d \\in [-3, 3]" />
 		<br />
-		Limits: <br />
-		<BlockMath math="a,b,c,d \\in [-3, 3]" />
+		<br />
+		The attractor is named after Clifford A. Pickover and is popular in generative art due to its visual richness and ease of parameter experimentation.
 	</>
 )
 
