@@ -61,24 +61,6 @@ const HopalongAttractor = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(
-			setDescription(
-				<>
-					The Hopalong Attractor is a fractal also known as the "Skull Attractor" or "Martin's Attractor".
-					<br />
-					<br />
-					It was discovered by Barry Martin in 1981 and at the core is just a modified simple ellipse.
-					<br />
-					<br />
-					Definition:
-					<BlockMath math="x_{n+1} = y_n - sign(x_n) \sqrt{|b x_n - c|}" />
-					<BlockMath math="y_{n+1} = a - x_n - 1" />
-					Limits:
-					<BlockMath math="a, b, c \in [-20, 20]" />
-				</>,
-			),
-		)
-
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
@@ -112,5 +94,22 @@ const HopalongAttractor = () => {
 
 	return <Base<TData> dimension={EDimensions.TWO_D} numParticles={200_000} tick={tick} pointSize={0.5} />
 }
+
+// Add static description function to the component
+HopalongAttractor.getDescription = () => (
+	<>
+		The Hopalong Attractor is a fractal also known as the "Skull Attractor" or "Martin's Attractor".
+		<br />
+		<br />
+		It was discovered by Barry Martin in 1981 and at the core is just a modified simple ellipse.
+		<br />
+		<br />
+		Definition:
+		<BlockMath math="x_{n+1} = y_n - sign(x_n) \\sqrt{|b x_n - c|}" />
+		<BlockMath math="y_{n+1} = a - x_n - 1" />
+		Limits:
+		<BlockMath math="a, b, c \\in [-20, 20]" />
+	</>
+)
 
 export default HopalongAttractor

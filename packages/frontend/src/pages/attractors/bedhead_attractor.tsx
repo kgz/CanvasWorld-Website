@@ -1,6 +1,7 @@
 import type { RootState } from '@react-three/fiber'
 import * as THREE from 'three'
 
+import { BlockMath } from 'react-katex'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps } from '../../@types/gui'
 import Base from '../_base'
 import { useEffect, useMemo } from 'react'
@@ -108,5 +109,20 @@ const BedheadAttractor = () => {
 		/>
 	)
 }
+
+// Add static description function to the component
+BedheadAttractor.getDescription = () => (
+	<>
+		The Bedhead Attractor is a 2D strange attractor that produces beautiful, intricate fractal patterns. It belongs to the family of discrete maps that generate complex geometric structures.
+		<br />
+		<br />
+		Definitions:
+		<BlockMath math={'x_{n+1} = \\sin(x \\cdot y/b) \\cdot y + \\cos(a \\cdot x - y)'} />
+		<BlockMath math={'y_{n+1} = x + \\sin(y)/b'} />
+		<br />
+		<br />
+		Parameters a and b control the shape and behavior of the attractor. Small changes can yield dramatically different patterns!
+	</>
+)
 
 export default BedheadAttractor
