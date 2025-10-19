@@ -5,7 +5,7 @@ import { BlockMath } from 'react-katex'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
 import Base from '../_base'
 import type { ComponentProps } from 'react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
@@ -60,21 +60,23 @@ const datData: TDatData = {
 const GumowskiMiraAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const initialized = useRef(false)
 
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
 		void dispatch(setDatData(datData))
-	}, [datData, dispatch])
+	}, [dispatch])
 
 	useEffect(() => {
-		// Only set initial data if no data exists yet
-		if (Object.keys(data).length === 0) {
+		// Only set initial data once
+		if (!initialized.current) {
 			void dispatch(
 				setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 			)
+			initialized.current = true
 		}
-	}, [datData, dispatch, data])
+	}, [dispatch])
 
 	const G = (x: number, mu: number) => {
 		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)
