@@ -8,6 +8,16 @@ import Template from './pages/template';
 import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react'
 import './index.css'
 
+// Suppress react-dat-gui UNSAFE_componentWillMount warning
+const originalConsoleWarn = console.warn;
+console.warn = (...args) => {
+	if (args[0] && typeof args[0] === 'string' && args[0].includes('UNSAFE_componentWillMount')) {
+		// Suppress react-dat-gui warnings
+		return;
+	}
+	originalConsoleWarn.apply(console, args);
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 // const instance = createInstance({
