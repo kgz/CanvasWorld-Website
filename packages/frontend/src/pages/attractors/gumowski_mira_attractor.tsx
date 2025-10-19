@@ -19,13 +19,13 @@ const GumowskiMiraAttractor = () => {
 	const datData = useMemo(() => ({
 		options: {
 			a: {
-				initialValue: 0,
+				initialValue: 0.4,
 				min: -1,
 				max: 1,
 				step: 0.01,
 			},
 			b: {
-				initialValue: -10.211,
+				initialValue: -0.211,
 				min: -1,
 				max: 1,
 				step: 0.01,
