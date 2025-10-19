@@ -110,9 +110,9 @@ const GumowskiMiraAttractor = () => {
 		let x = safeX0,
 			y = safeY0
 		
-		// First pass: calculate positions and find max distance
-		let maxDistance = 0
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
+		const numParticles = positions.length / EDimensions.TWO_D
+		
+		for (let i = 0; i < numParticles; i++) {
 			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
 			const yn = -x + G(xn, safeMu)
 			x = xn
@@ -120,27 +120,10 @@ const GumowskiMiraAttractor = () => {
 
 			positions.set([x * 5, y * 5], i * EDimensions.TWO_D)
 			
-			// Calculate distance from starting point
-			const distance = Math.sqrt((x - safeX0) ** 2 + (y - safeY0) ** 2)
-			maxDistance = Math.max(maxDistance, distance)
-		}
-		
-		// Second pass: reset position and apply colors based on normalized distance
-		x = safeX0
-		y = safeY0
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
-			const yn = -x + G(xn, safeMu)
-			x = xn
-			y = yn
-			
-			// Calculate distance from starting point
-			const distance = Math.sqrt((x - safeX0) ** 2 + (y - safeY0) ** 2)
-			const normalizedDistance = maxDistance > 0 ? distance / maxDistance : 0
-			
-			// Create a color gradient from blue (close) to red (far)
+			// Create color based on iteration (blue to red gradient)
+			const normalizedIteration = i / (numParticles - 1)
 			const color = new THREE.Color()
-			color.setHSL(0.6 - normalizedDistance * 0.6, 1.0, 0.5) // Blue to red gradient
+			color.setHSL(0.6 - normalizedIteration * 0.6, 1.0, 0.5) // Blue to red gradient
 			colors.set([color.r, color.g, color.b], i * 3)
 		}
 
