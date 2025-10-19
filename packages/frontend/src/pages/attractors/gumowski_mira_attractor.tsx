@@ -13,26 +13,26 @@ import type { TRoutes } from '../../@types/routes'
 const { sin, cos } = Math
 
 const datData: TDatData = {
-		options: {
-			a: {
-				initialValue: 0.79253300698474,
-				min: -1,
-				max: 1,
-				step: 0.01,
-			},
-			b: {
-				initialValue: 0.345703079365194,
-				min: -1,
-				max: 1,
-				step: 0.01,
-			},
-			mu: {
-				initialValue: -0.228,
-				min: -1,
-				max: 1,
-				step: 0.01,
-			},
+	options: {
+		a: {
+			initialValue: 0,
+			min: -1,
+			max: 1,
+			step: 0.01,
 		},
+		b: {
+			initialValue: -0.211,
+			min: -1,
+			max: 1,
+			step: 0.01,
+		},
+		mu: {
+			initialValue: -0.228,
+			min: -1,
+			max: 1,
+			step: 0.01,
+		},
+	},
 		examples: [
 			{
 				a: 0.008,
