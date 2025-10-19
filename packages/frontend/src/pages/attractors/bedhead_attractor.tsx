@@ -31,7 +31,24 @@ const BedheadAttractor = () => {
 						step: 0.01,
 					},
 				},
-				examples: [],
+				examples: [
+					{
+						a: 0.65343,
+						b: 0.7345345,
+					},
+					{
+						a: -0.81,
+						b: -0.92,
+					},
+					{
+						a: -0.64,
+						b: 0.76,
+					},
+					{
+						a: 0.06,
+						b: 0.98,
+					},
+				],
 			}) as TDatData,
 		[],
 	)
@@ -73,7 +90,7 @@ const BedheadAttractor = () => {
 				positions.set([x * 50, y * 50], i * 2)
 
 				const color = new THREE.Color()
-				color.setRGB(47, 161, 214)
+				color.setHex(0x22c55e) // Simple green color
 				colors.set([color.r, color.g, color.b], i * 3)
 			} catch (error: any) {
 				console.error(`Bedhead Attractor: Error at iteration ${i}:`, error.message)

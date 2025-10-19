@@ -85,10 +85,9 @@ const CliffordAttractor = () => {
 
 			positions.set([x * 100, y * 100], i * 2)
 
+			// Simple purple color with 80% opacity
 			const color = new THREE.Color()
-			const percent = (sin(x + y) / 255) * 255
-			// map percent from 0 to 255 to 0 to 1
-			color.setHex(0xf87b3)
+			color.setHex(0x8b5cf6) // Purple color
 			colors.set([color.r, color.g, color.b], i * 3)
 		}
 
