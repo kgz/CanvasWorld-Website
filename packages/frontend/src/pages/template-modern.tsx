@@ -61,8 +61,8 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 								<div className="text-gray-300 text-sm leading-relaxed">
 									{typeof description === 'string' 
 										? description.split('\n').map((line, index) => {
-											// Check if line contains LaTeX math (starts with x_ or y_)
-											if (line.match(/^[xy]_{/)) {
+											// Check if line contains LaTeX math (starts with x_ or y_, or contains \in)
+											if (line.match(/^[xy]_{/) || line.includes('\\in')) {
 												return (
 													<div key={index} className="my-3">
 														<BlockMath math={line} />
