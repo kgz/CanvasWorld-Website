@@ -9,7 +9,7 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
-import { testBedheadAttractorTick } from '../../utils/bedheadAttractorTest'
+import { bedheadAttractorTick, testBedheadAttractorTick } from '../../utils/bedheadAttractor'
 
 const { sin, cos } = Math
 
@@ -67,31 +67,25 @@ const BedheadAttractor = () => {
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 
-		// Safety check for division by zero or very small b
-		const finalB = Math.abs(safeB) < 0.001 ? 0.001 * Math.sign(safeB) : safeB
-
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = sin((x * y) / finalB) * y + cos(safeA * x - y)
-			const ny = x + sin(y) / finalB
+			try {
+				const next = bedheadAttractorTick(x, y, safeA, safeB)
+				x = next.x
+				y = next.y
 
-			// Check for NaN or Infinity
-			if (!isFinite(nx) || !isFinite(ny)) {
-				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${safeA}, b=${finalB}`)
+				// Clamp values to prevent explosion
+				x = Math.max(-1000, Math.min(1000, x))
+				y = Math.max(-1000, Math.min(1000, y))
+
+				positions.set([x * 50, y * 50], i * 2)
+
+				const color = new THREE.Color()
+				color.setRGB(47, 161, 214)
+				colors.set([color.r, color.g, color.b], i * 3)
+			} catch (error) {
+				console.error(`Bedhead Attractor: Error at iteration ${i}:`, error.message)
 				break
 			}
-
-			x = nx
-			y = ny
-
-			// Clamp values to prevent explosion
-			x = Math.max(-1000, Math.min(1000, x))
-			y = Math.max(-1000, Math.min(1000, y))
-
-			positions.set([x * 50, y * 50], i * 2)
-
-			const color = new THREE.Color()
-			color.setRGB(47, 161, 214)
-			colors.set([color.r, color.g, color.b], i * 3)
 		}
 
 		return { positions, colors }
