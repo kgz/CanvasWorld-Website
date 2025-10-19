@@ -69,21 +69,18 @@ func (s *ScreenshotService) ScreenshotAttractor(routeName string) error {
 						}
 						
 						const checkCanvas = () => {
-							const ctx = canvas.getContext('2d');
-							if (ctx) {
-								const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-								const hasContent = imageData.data.some(pixel => pixel !== 0);
+							// Check WebGL context (Three.js uses WebGL)
+							const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+							if (gl) {
+								// Check if canvas has been drawn to
+								const pixels = new Uint8Array(4);
+								gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+								// If any pixel is not black (0,0,0,0), canvas has content
+								const hasContent = pixels.some(pixel => pixel !== 0);
 								if (hasContent) {
 									resolve(true);
 									return;
 								}
-							}
-							
-							// Also check WebGL context
-							const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
-							if (gl) {
-								resolve(true);
-								return;
 							}
 							
 							setTimeout(checkCanvas, 100);
@@ -95,6 +92,43 @@ func (s *ScreenshotService) ScreenshotAttractor(routeName string) error {
 			)
 		}),
 		chromedp.Sleep(2*time.Second), // Additional wait
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			// Hide .stats canvas elements and other non-Three.js canvases before screenshot
+			return chromedp.Run(ctx,
+				chromedp.Evaluate(`
+					// Hide all canvas elements in .stats containers
+					const statsCanvases = document.querySelectorAll('.stats canvas');
+					statsCanvases.forEach(canvas => {
+						canvas.style.display = 'none';
+					});
+					
+					// Hide any canvas elements that are not the main Three.js canvas
+					const allCanvases = document.querySelectorAll('canvas');
+					let mainCanvas = null;
+					
+					// Find the main Three.js canvas (usually the largest one)
+					allCanvases.forEach(canvas => {
+						if (canvas.hasAttribute('data-engine') && canvas.getAttribute('data-engine').includes('three.js')) {
+							mainCanvas = canvas;
+						}
+					});
+					
+					// If no Three.js canvas found, use the largest canvas
+					if (!mainCanvas && allCanvases.length > 0) {
+						mainCanvas = Array.from(allCanvases).reduce((largest, current) => {
+							return (current.width * current.height) > (largest.width * largest.height) ? current : largest;
+						});
+					}
+					
+					// Hide all other canvases
+					allCanvases.forEach(canvas => {
+						if (canvas !== mainCanvas) {
+							canvas.style.display = 'none';
+						}
+					});
+				`, nil),
+			)
+		}),
 		chromedp.CaptureScreenshot(&buf),
 	)
 

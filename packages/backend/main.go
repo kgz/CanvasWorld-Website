@@ -112,13 +112,13 @@ func main() {
 		Root:   http.Dir("../frontend/dist"),
 		Browse: false,
 	}))
-	
+
 	// Serve built frontend assets
 	app.Use("/assets", filesystem.New(filesystem.Config{
 		Root:   http.Dir("../frontend/dist/assets"),
 		Browse: false,
 	}))
-	
+
 	// Serve other frontend files (favicon, manifest, etc.)
 	app.Use("/favicon.ico", filesystem.New(filesystem.Config{
 		Root:   http.Dir("../frontend/dist"),
