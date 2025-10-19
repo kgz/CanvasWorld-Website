@@ -15,31 +15,31 @@ const { sin, cos } = Math
 const datData: TDatData = {
 	options: {
 		a: {
-			initialValue: 0.79253300698474,
+			initialValue: 0.008,
 			min: -2,
 			max: 1,
 			step: 0.01,
 		},
 		b: {
-			initialValue: 0.345703079365194,
+			initialValue: 0.05,
 			min: -1,
 			max: 1,
 			step: 0.01,
 		},
 		mu: {
-			initialValue: -0.228,
+			initialValue: -0.9,
 			min: -2,
 			max: 1,
 			step: 0.01,
 		},
 		x0: {
-			initialValue: 0.723135391715914,
+			initialValue: 0.0,
 			min: -10,
 			max: 10,
 			step: 0.001,
 		},
 		y0: {
-			initialValue: -0.327585775405169,
+			initialValue: 0.5,
 			min: -10,
 			max: 10,
 			step: 0.001,
@@ -52,6 +52,34 @@ const datData: TDatData = {
 			mu: -0.9,
 			x0: 0.0,
 			y0: 0.5,
+		},
+		{
+			a: -1.1,
+			b: -0.2,
+			mu: -1.845,
+			x0: 0.1,
+			y0: 0.1,
+		},
+		{
+			a: -1.1,
+			b: -0.2,
+			mu: -1.95924896,
+			x0: 0.1,
+			y0: 0.1,
+		},
+		{
+			a: 0.0,
+			b: 0.5,
+			mu: -0.75,
+			x0: 0.0,
+			y0: 0.5,
+		},
+		{
+			a: 0.6,
+			b: 0.995,
+			mu: -0.9,
+			x0: 2.25,
+			y0: 7.75,
 		},
 	],
 }
