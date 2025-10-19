@@ -44,6 +44,11 @@ export default defineConfig({
 				target: 'http://localhost:' + (process.env.BACKEND_PORT || '8080'),
 				changeOrigin: true,
 			},
+			'/chaos': {
+				target: 'http://localhost:3000',
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/chaos/, '/chaos'),
+			},
 		},
 	},
 	resolve: {
