@@ -57,27 +57,6 @@ const HenonMap = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(
-			setDescription(
-				<>
-					The Henon map is a discrete-time dynamical system. <br />
-					<br />
-					It is a prototypical example of chaotic system that exhibits the phenomenon of strange attractors. <br />
-					<br />
-					It was introduced by Michel Hénon in 1976, while studying the Lorenz attractor map. <br />
-					The Hénon map arises from a simplification of the Lorenz system. <br />
-					<br />
-					The Hénon map is area-preserving and exhibits chaotic behavior for certain values of its parameters. <br />
-					<br />
-					Definition:
-					<BlockMath math="x_{n + 1} = 1 - a x_n^2 + y_n" />
-					<BlockMath math="y_{n + 1} = b x_n" />
-					Limits:
-					<BlockMath math="a, b \in [0, 2]" />
-				</>,
-			),
-		)
-
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
@@ -122,5 +101,29 @@ const HenonMap = () => {
 		/>
 	)
 }
+
+// Add static description function to the component
+HenonMap.getDescription = () => (
+	<>
+		The Henon map is a discrete-time dynamical system.
+		<br />
+		<br />
+		It is a prototypical example of chaotic system that exhibits the phenomenon of strange attractors.
+		<br />
+		<br />
+		It was introduced by Michel Hénon in 1976, while studying the Lorenz attractor map.
+		The Hénon map arises from a simplification of the Lorenz system.
+		<br />
+		<br />
+		The Hénon map is area-preserving and exhibits chaotic behavior for certain values of its parameters.
+		<br />
+		<br />
+		Definition:
+		<BlockMath math="x_{n + 1} = 1 - a x_n^2 + y_n" />
+		<BlockMath math="y_{n + 1} = b x_n" />
+		Limits:
+		<BlockMath math="a, b \\in [0, 2]" />
+	</>
+)
 
 export default HenonMap
