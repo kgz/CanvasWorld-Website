@@ -6,7 +6,7 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData, setDescription } from '../../@store/WebSlice'
+import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
@@ -72,9 +72,15 @@ const CliffordAttractor = () => {
 			y = -2
 		const { a, b, c, d } = data
 
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		const safeC = c !== undefined ? c : datData.options.c.initialValue
+		const safeD = d !== undefined ? d : datData.options.d.initialValue
+
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = Math.sin(a * y) + c * Math.cos(a * x)
-			const ny = Math.sin(b * x) + d * Math.cos(b * y)
+			const nx = Math.sin(safeA * y) + safeC * Math.cos(safeA * x)
+			const ny = Math.sin(safeB * x) + safeD * Math.cos(safeB * y)
 
 			x = nx
 			y = ny

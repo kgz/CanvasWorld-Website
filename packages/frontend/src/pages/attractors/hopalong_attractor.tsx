@@ -6,7 +6,7 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData, setDescription } from '../../@store/WebSlice'
+import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
@@ -75,11 +75,17 @@ const HopalongAttractor = () => {
 		frame?: XRFrame | undefined,
 	) => {
 		const { a, b, c } = data
+		
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		const safeC = c !== undefined ? c : datData.options.c.initialValue
+		
 		let x = 0.03,
 			y = 0.01
 		for (let i = 0; i < positions.length / 2; i++) {
-			const xn = y - 1 - Math.sqrt(Math.abs(b * x - c)) * Math.sign(x - 1)
-			const yn = a - x - 1
+			const xn = y - 1 - Math.sqrt(Math.abs(safeB * x - safeC)) * Math.sign(x - 1)
+			const yn = safeA - x - 1
 			x = xn
 			y = yn
 			positions.set([x * 1, y * 1], i * 2)

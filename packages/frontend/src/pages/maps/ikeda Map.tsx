@@ -54,13 +54,17 @@ const IkedaMap = () => {
 	) => {
 		const { a, b } = data
 
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+
 		let x = 0.0,
 			y = 0.0
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
 			const G = 0.4 - 6 / (1 + Math.pow(x, 2) + Math.pow(y, 2))
 
-			const xn = 1 + a * (x * Math.cos(G) - y * Math.sin(G))
-			const yn = a * (x * Math.sin(G) + y * Math.cos(G))
+			const xn = 1 + safeA * (x * Math.cos(G) - y * Math.sin(G))
+			const yn = safeA * (x * Math.sin(G) + y * Math.cos(G))
 			y = yn
 			x = xn
 			positions.set([x * 50 - 20, y * 50 - 200], i * EDimensions.TWO_D)
