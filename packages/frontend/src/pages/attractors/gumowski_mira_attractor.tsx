@@ -111,7 +111,7 @@ const GumowskiMiraAttractor = () => {
 			y = safeY0
 		
 		// First pass: calculate positions and find max distance
-		const distances: number[] = []
+		let maxDistance = 0
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
 			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
 			const yn = -x + G(xn, safeMu)
@@ -122,15 +122,21 @@ const GumowskiMiraAttractor = () => {
 			
 			// Calculate distance from starting point
 			const distance = Math.sqrt((x - safeX0) ** 2 + (y - safeY0) ** 2)
-			distances.push(distance)
+			maxDistance = Math.max(maxDistance, distance)
 		}
 		
-		// Find maximum distance for normalization
-		const maxDistance = Math.max(...distances)
-		
-		// Second pass: apply colors based on normalized distance
+		// Second pass: reset position and apply colors based on normalized distance
+		x = safeX0
+		y = safeY0
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const normalizedDistance = maxDistance > 0 ? distances[i] / maxDistance : 0
+			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
+			const yn = -x + G(xn, safeMu)
+			x = xn
+			y = yn
+			
+			// Calculate distance from starting point
+			const distance = Math.sqrt((x - safeX0) ** 2 + (y - safeY0) ** 2)
+			const normalizedDistance = maxDistance > 0 ? distance / maxDistance : 0
 			
 			// Create a color gradient from blue (close) to red (far)
 			const color = new THREE.Color()
