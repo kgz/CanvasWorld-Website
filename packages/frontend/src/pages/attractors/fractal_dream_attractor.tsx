@@ -70,9 +70,15 @@ const FractalDreamAttractor = () => {
 			y = -2
 		const { a, b, c, d } = data
 
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		const safeC = c !== undefined ? c : datData.options.c.initialValue
+		const safeD = d !== undefined ? d : datData.options.d.initialValue
+
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = Math.sin(b * y) + c * Math.sin(b * x)
-			const ny = Math.sin(a * x) + d * Math.sin(a * y)
+			const nx = Math.sin(safeB * y) + safeC * Math.sin(safeB * x)
+			const ny = Math.sin(safeA * x) + safeD * Math.sin(safeA * y)
 
 			x = nx
 			y = ny

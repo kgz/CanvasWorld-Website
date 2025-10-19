@@ -6,7 +6,7 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData, setDescription } from '../../@store/WebSlice'
+import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
@@ -71,10 +71,15 @@ const HenonMap = () => {
 		frame?: XRFrame | undefined,
 	) => {
 		const { a, b } = data
+		
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		
 		let x = 0.03,
 			y = 0.01
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const xn = -(x * x) + b * y + a
+			const xn = -(x * x) + safeB * y + safeA
 			const yn = x
 			x = xn
 			y = yn

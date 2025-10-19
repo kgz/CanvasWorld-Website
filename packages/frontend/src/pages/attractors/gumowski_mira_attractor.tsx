@@ -6,7 +6,7 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData, setDescription } from '../../@store/WebSlice'
+import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
@@ -82,11 +82,16 @@ const GumowskiMiraAttractor = () => {
 	) => {
 		const { a, b, mu } = data
 
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		const safeMu = mu !== undefined ? mu : datData.options.mu.initialValue
+
 		let x = 0.723135391715914,
 			y = -0.327585775405169
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const xn = y + a * (1 - b * y ** 2) * y + G(x, mu)
-			const yn = -x + G(xn, mu)
+			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
+			const yn = -x + G(xn, safeMu)
 			x = xn
 			y = yn
 
