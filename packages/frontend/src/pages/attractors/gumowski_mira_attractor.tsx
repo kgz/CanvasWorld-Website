@@ -19,13 +19,13 @@ const GumowskiMiraAttractor = () => {
 	const datData = useMemo(() => ({
 		options: {
 			a: {
-				initialValue: 0.4,
+				initialValue: 0.79253300698474,
 				min: -1,
 				max: 1,
 				step: 0.01,
 			},
 			b: {
-				initialValue: -0.211,
+				initialValue: 0.345703079365194,
 				min: -1,
 				max: 1,
 				step: 0.01,
@@ -38,21 +38,26 @@ const GumowskiMiraAttractor = () => {
 			},
 		},
 		examples: [
-			// {
-			// 	a: 1.4,
-			// 	b: 5.157895,
-			// 	c: 2.736842,
-			// },
-			// {
-			// 	a: -11,
-			// 	b: 0.3,
-			// 	c: -0.5,
-			// },
-			// {
-			// 	a: 1.4,
-			// 	b: 5.157895,
-			// 	c: -4.561404,
-			// },
+			{
+				a: 0.008,
+				b: -0.7,
+				mu: -0.228,
+			},
+			{
+				a: 0.79253300698474,
+				b: 0.345703079365194,
+				mu: -0.228,
+			},
+			{
+				a: 0.579161538276821,
+				b: -0.820410779677331,
+				mu: -0.228,
+			},
+			{
+				a: 0.062683217227459,
+				b: -0.436713613104075,
+				mu: -0.228,
+			},
 		],
 	}) as TDatData, [])
 
@@ -83,8 +88,6 @@ const GumowskiMiraAttractor = () => {
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 		const safeMu = mu !== undefined ? mu : datData.options.mu.initialValue
 
-		// Debug: log b parameter value
-		console.log('Gumowski-Mira b parameter:', safeB)
 
 		let x = 0.723135391715914,
 			y = -0.327585775405169
