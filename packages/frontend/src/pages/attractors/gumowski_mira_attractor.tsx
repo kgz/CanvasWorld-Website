@@ -16,49 +16,45 @@ const GumowskiMiraAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
 
-	const datData = useMemo(
-		() =>
-			({
-				options: {
-					a: {
-						initialValue: 0,
-						min: -1,
-						max: 1,
-						step: 0.0001,
-					},
-					b: {
-						initialValue: -0.211,
-						min: -1,
-						max: 1,
-						step: 0.0001,
-					},
-					mu: {
-						initialValue: -0.228,
-						min: -1,
-						max: 1,
-						step: 0.0001,
-					},
-				},
-				examples: [
-					// {
-					// 	a: 1.4,
-					// 	b: 5.157895,
-					// 	c: 2.736842,
-					// },
-					// {
-					// 	a: -11,
-					// 	b: 0.3,
-					// 	c: -0.5,
-					// },
-					// {
-					// 	a: 1.4,
-					// 	b: 5.157895,
-					// 	c: -4.561404,
-					// },
-				],
-			}) as TDatData,
-		[],
-	)
+	const datData: TDatData = {
+		options: {
+			a: {
+				initialValue: 0,
+				min: -1,
+				max: 1,
+				step: 0.0001,
+			},
+			b: {
+				initialValue: -0.211,
+				min: -1,
+				max: 1,
+				step: 0.0001,
+			},
+			mu: {
+				initialValue: -0.228,
+				min: -1,
+				max: 1,
+				step: 0.0001,
+			},
+		},
+		examples: [
+			// {
+			// 	a: 1.4,
+			// 	b: 5.157895,
+			// 	c: 2.736842,
+			// },
+			// {
+			// 	a: -11,
+			// 	b: 0.3,
+			// 	c: -0.5,
+			// },
+			// {
+			// 	a: 1.4,
+			// 	b: 5.157895,
+			// 	c: -4.561404,
+			// },
+		],
+	}
 
 	type TData = TDataFromObject<(typeof datData)['options']>
 
@@ -67,7 +63,7 @@ const GumowskiMiraAttractor = () => {
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [datData, dispatch])
+	}, [dispatch])
 
 	const G = (x: number, mu: number) => {
 		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)
