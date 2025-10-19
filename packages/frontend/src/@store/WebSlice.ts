@@ -1,13 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { TDatData, TDataFromObject } from '../@types/gui'
-import React from 'react'
 
 type TState = {
 	menuOpen: boolean
 	drawerOpen: boolean
 	datData: TDatData
 	data: TDataFromObject<TDatData['options']>
-	description: string | React.ReactElement
 }
 
 export const UserSliceDefualt: TState = {
@@ -18,17 +16,12 @@ export const UserSliceDefualt: TState = {
 		examples: [],
 	},
 	data: {},
-	description: '',
 }
 
 export const SetMenuOpen = createAsyncThunk('store/SetMenuOpen', (data: boolean) => data)
 export const SetDrawerOpen = createAsyncThunk('store/SetDrawerOpen', (data: boolean) => data)
 export const setDatData = createAsyncThunk('store/setDatData', (data: TDatData) => data)
 export const setData = createAsyncThunk('store/setData', (data: TDataFromObject<TDatData['options']>) => data)
-export const setDescription = createAsyncThunk('store/setDescription', (data: string | React.ReactElement) => {
-	console.log('Setting description:', data)
-	return data
-})
 
 const Slice = createSlice({
 	name: 'store',
@@ -47,17 +40,8 @@ const Slice = createSlice({
 			.addCase(setData.fulfilled, (state, action) => {
 				state.data = action.payload
 			})
-			.addCase(setDescription.fulfilled, (state, action) => {
-				console.log('setting description ', action)
-				state.description = action.payload
-			})
 	},
 	reducers: {},
 })
 
 export const WebSlice = Slice.reducer
-
-// Selectors
-export const selectDescriptionJSX = (state: { WebSlice: TState }) => {
-	return state.WebSlice.description
-}

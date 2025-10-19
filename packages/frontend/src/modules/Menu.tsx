@@ -26,7 +26,6 @@ const Menu = ({ title }: TProps) => {
 	const dispatch = useAppDispatch()
 	const [search, setSearch] = useState('')
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-	const { description } = useAppSelector(s => s.WebSlice)
 
 	useEffect(() => {
 		// always load with menu closed, or maybe we shouldnt - todo see how this works with browkser router
@@ -191,24 +190,7 @@ const Menu = ({ title }: TProps) => {
 								</DatGui>
 								<div className={style.card}>
 									<div className={style.desc}>
-										{typeof description === 'string' 
-											? description.split('\n').map((line, index) => {
-												// Check if line contains LaTeX math (starts with x_ or y_)
-												if (line.match(/^[xy]_{/)) {
-													return (
-														<div key={index} style={{ margin: '10px 0', fontFamily: 'monospace' }}>
-															{line}
-														</div>
-													)
-												}
-												return (
-													<div key={index} style={{ margin: '5px 0' }}>
-														{line}
-													</div>
-												)
-											})
-											: <div>Loading description...</div>
-										}
+										<div>Description now handled by component.getDescription()</div>
 									</div>
 								</div>
 							</span>
