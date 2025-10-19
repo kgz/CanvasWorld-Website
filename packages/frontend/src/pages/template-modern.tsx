@@ -49,7 +49,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 			<div className="flex pt-16">
 				{/* Sidebar */}
 				{sidebarOpen && !isIframe && (
-					<div className="w-80 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 h-screen flex-shrink-0 overflow-y-auto">
+					<div className="w-80 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 h-[calc(100vh-4rem)] flex-shrink-0 overflow-y-auto">
 					<div className="p-6">
 							{/* Description */}
 							<div className="mb-6">
