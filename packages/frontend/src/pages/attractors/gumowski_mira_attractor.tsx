@@ -16,7 +16,7 @@ const GumowskiMiraAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
 
-	const datData: TDatData = {
+	const datData = useMemo(() => ({
 		options: {
 			a: {
 				initialValue: 0,
@@ -25,7 +25,7 @@ const GumowskiMiraAttractor = () => {
 				step: 0.01,
 			},
 			b: {
-				initialValue: -0.211,
+				initialValue: -10.211,
 				min: -1,
 				max: 1,
 				step: 0.01,
@@ -54,7 +54,7 @@ const GumowskiMiraAttractor = () => {
 			// 	c: -4.561404,
 			// },
 		],
-	}
+	}) as TDatData, [])
 
 	type TData = TDataFromObject<(typeof datData)['options']>
 
@@ -63,7 +63,7 @@ const GumowskiMiraAttractor = () => {
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
-	}, [dispatch])
+	}, [datData, dispatch])
 
 	const G = (x: number, mu: number) => {
 		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)
@@ -82,6 +82,9 @@ const GumowskiMiraAttractor = () => {
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 		const safeMu = mu !== undefined ? mu : datData.options.mu.initialValue
+
+		// Debug: log b parameter value
+		console.log('Gumowski-Mira b parameter:', safeB)
 
 		let x = 0.723135391715914,
 			y = -0.327585775405169
