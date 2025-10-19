@@ -49,7 +49,7 @@ func init() {
 
 	// Initialize database
 	initDB()
-	
+
 	// Initialize screenshot service
 	frontendURL := getEnv("FRONTEND_URL", "http://localhost:5173")
 	imagesDir := getEnv("IMAGES_DIR", "static/images")
@@ -109,6 +109,26 @@ func main() {
 
 	// Serve static files from frontend dist
 	app.Use("/static", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist"),
+		Browse: false,
+	}))
+	
+	// Serve built frontend assets
+	app.Use("/assets", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist/assets"),
+		Browse: false,
+	}))
+	
+	// Serve other frontend files (favicon, manifest, etc.)
+	app.Use("/favicon.ico", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist"),
+		Browse: false,
+	}))
+	app.Use("/manifest.json", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist"),
+		Browse: false,
+	}))
+	app.Use("/robots.txt", filesystem.New(filesystem.Config{
 		Root:   http.Dir("../frontend/dist"),
 		Browse: false,
 	}))
