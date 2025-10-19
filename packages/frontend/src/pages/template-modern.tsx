@@ -152,7 +152,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 
 				{/* Main Canvas Area */}
 				<div className={`flex-1 ${sidebarOpen && !isIframe ? 'ml-0' : 'ml-0'}`}>
-					<div className="h-screen bg-gray-900 relative">
+					<div className="h-[calc(100vh-4rem)] bg-gray-900 relative">
 						<route.element />
 					</div>
 				</div>
