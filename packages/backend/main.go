@@ -29,6 +29,7 @@ type Config struct {
 
 var config Config
 var db *gorm.DB
+var screenshotService *ScreenshotService
 
 func init() {
 	// Load environment variables
@@ -48,6 +49,11 @@ func init() {
 
 	// Initialize database
 	initDB()
+	
+	// Initialize screenshot service
+	frontendURL := getEnv("FRONTEND_URL", "http://localhost:5173")
+	imagesDir := getEnv("IMAGES_DIR", "static/images")
+	screenshotService = NewScreenshotService(frontendURL, imagesDir)
 }
 
 func getEnv(key, defaultValue string) string {
@@ -114,6 +120,19 @@ func main() {
 	})
 	api.Get("/routes", func(c *fiber.Ctx) error {
 		return c.JSON(getRoutes())
+	})
+	api.Post("/screenshot/:route", func(c *fiber.Ctx) error {
+		route := c.Params("route")
+		if err := screenshotService.ScreenshotAttractor(route); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.JSON(fiber.Map{"message": "Screenshot taken", "route": route})
+	})
+	api.Post("/screenshot-all", func(c *fiber.Ctx) error {
+		if err := screenshotService.ScreenshotAllAttractors(); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.JSON(fiber.Map{"message": "All screenshots taken"})
 	})
 
 	// Bot detection middleware for SSR
