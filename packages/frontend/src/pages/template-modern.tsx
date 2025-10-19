@@ -80,7 +80,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 												step={option.step || 0.001}
 												value={data[key] || option.initialValue}
 												onChange={(e) => {
-													dispatch(setData({ [key]: parseFloat(e.target.value) }));
+													dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }));
 												}}
 												className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
 											/>
