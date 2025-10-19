@@ -15,13 +15,13 @@ const { sin, cos } = Math
 const datData: TDatData = {
 	options: {
 		a: {
-			initialValue: 0,
+			initialValue: 0.79253300698474,
 			min: -1,
 			max: 1,
 			step: 0.01,
 		},
 		b: {
-			initialValue: -0.211,
+			initialValue: 0.345703079365194,
 			min: -1,
 			max: 1,
 			step: 0.01,
@@ -66,17 +66,13 @@ const GumowskiMiraAttractor = () => {
 
 	useEffect(() => {
 		void dispatch(setDatData(datData))
-	}, [dispatch])
-
-	useEffect(() => {
-		// Only set initial data once
-		if (!initialized.current) {
+		// Only set initial data if no data exists yet
+		if (Object.keys(data).length === 0) {
 			void dispatch(
 				setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 			)
-			initialized.current = true
 		}
-	}, [dispatch])
+	}, [dispatch, data])
 
 	const G = (x: number, mu: number) => {
 		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)
