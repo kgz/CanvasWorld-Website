@@ -185,7 +185,7 @@ const Template = () => {
 				return (
 					<Route
 						key={index}
-						path={"/" + genPath(route.name)}
+						path={"/chaos/" + genPath(route.name)}
 						element={
 							<ModernCanvasPage route={route} isIframe={isIframe} />
 						}
@@ -197,4 +197,4 @@ const Template = () => {
 	);
 };
 
-export default Template;
+export default ModernCanvasPage;
