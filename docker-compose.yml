@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: canvasworld-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: canvasworld
+      MYSQL_USER: canvasworld
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - canvasworld-network
+
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile.dev
+    container_name: canvasworld-backend
+    environment:
+      - PORT=8080
+      - ENV=development
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASS=password
+      - DB_NAME=canvasworld
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./packages/backend:/app
+      - /app/tmp
+    depends_on:
+      - mysql
+    networks:
+      - canvasworld-network
+    command: air
+
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile.dev
+    container_name: canvasworld-frontend
+    environment:
+      - VITE_PORT=5173
+      - BACKEND_PORT=8080
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./packages/frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - canvasworld-network
+    command: pnpm dev
+
+volumes:
+  mysql_data:
+
+networks:
+  canvasworld-network:
+    driver: bridge

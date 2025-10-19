@@ -2,12 +2,13 @@ import type { RootState } from '@react-three/fiber'
 
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps } from '../../@types/gui'
 import Base from '../_base'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import * as math from 'mathjs'
 import { Color } from 'three'
-
+import style from '../../@scss/template.module.scss'
+import $ from 'jquery'
 class Complex {
 	public real: number
 	public imaginary: number
@@ -53,7 +54,7 @@ class Complex {
 const MandlebrotSet = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
-
+	const [loading, setLoading] = useState(false)
 	const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
 	const datData = useMemo(
 		() =>
@@ -87,52 +88,38 @@ const MandlebrotSet = () => {
 	}, [datData, dispatch])
 
 	const [w, h] = useMemo(() => {
-		// if (canvas) {
-		// 	console.log('setting height', [document.body.clientWidth - 200, document.body.clientHeight], canvas)
-		// 	return [document.body.clientWidth - 200, document.body.clientHeight]
-		// }
+		const params = new URLSearchParams(window.location.search)
+		return [window.innerWidth - (params.get('iframe') !== null ? 0 : 300), window.innerHeight]
+	}, [])
 
-		if (canvas) {
-			console.log('setting height', [canvas.width, canvas.height], canvas)
-			return [document.body.clientWidth - 200, document.body.clientHeight]
-		}
+	// if (!w || !h) {
+	// 	return <></>
+	// }
 
-		return [1585, 640]
-	}, [canvas])
+	const [x, y] = [-0.7, -0]
 
-	const [x, y] = [-0.7, -0.3]
-
-	const zoom = 300
+	const zoom = 240
 
 	const areal = useMemo(
 		() =>
 			Array.from(new Array(w)).map((v, i) => {
 				return [i, (i - w / 2) / zoom + x]
 			}),
-		[w, x],
+		[w, x, zoom],
 	)
 
-	const bimg = useMemo(
+	const bing = useMemo(
 		() =>
 			Array.from(new Array(w)).map((v, i) => {
 				return [i, (i - h / 2) / zoom + y]
 			}),
-		[h, w, y],
+		[h, w, y, zoom],
 	)
-
-	// if (!canvas) {
-	// 	return <></>
-	// }
-
-	const new_positions = useMemo(() => {}, [])
-
-	const tick: TPointsProps<TData>['tick'] = (
-		positions: Float32Array,
-		colors: Float32Array,
-		state: RootState,
-		delta: number,
-		frame?: XRFrame | undefined,
-	) => {
+	const [new_positions, new_colors] = useMemo(() => {
+		console.warn('running memo')
+		setLoading(true)
+		const positions = new Float32Array(areal.length * bing.length * EDimensions.TWO_D)
+		const colors = new Float32Array(areal.length * bing.length * EDimensions.THREE_D)
 		const radius = 2 ** 3
 		const maxIterations = 20
 
@@ -140,7 +127,7 @@ const MandlebrotSet = () => {
 		areal.forEach(real_element => {
 			const [b, real] = real_element
 			// y
-			bimg.forEach(img_element => {
+			bing.forEach(img_element => {
 				const [a, img] = img_element
 				// const imgi = mat`${real}+${img}*1i`h.complex(img, 1)
 
@@ -158,15 +145,10 @@ const MandlebrotSet = () => {
 						const pix = b * w + a
 						const c = new Color()
 						c.setHex(0xf87b3 * math.sin(i - math.log(Math.abs(z.magnitude()), radius)))
-						// c.setHex(0xfff)
-
 						try {
 							colors.set([c.r, c.g, c.b], pix * 3)
-							positions.set([b, a - 250], pix * EDimensions.TWO_D)
-						} catch {
-							// console.log(pix, colors.length)
-							// debugger
-						}
+							positions.set([b - w / 2, a - h / 2], pix * EDimensions.TWO_D)
+						} catch {}
 					} else {
 						const pix = b * w + a
 						const c = new Color()
@@ -175,32 +157,56 @@ const MandlebrotSet = () => {
 						try {
 							colors.set([c.r, c.g, c.b], pix * 3)
 							positions.set([b * 2, a * 2], pix * EDimensions.TWO_D)
-						} catch {
-							// console.log(pix, colors.length)
-							// debugger
-						}
+						} catch {}
 					}
 				}
 			})
 		})
+		setLoading(false)
+		return [positions, colors]
+	}, [areal, bing, h, w])
 
-		return { positions, colors }
-	}
+	const tick: TPointsProps<TData>['tick'] = useCallback(
+		(positions: Float32Array, colors: Float32Array, state: RootState, delta: number, frame?: XRFrame | undefined) => {
+			positions.set(new_positions)
+			colors.set(new_colors)
+			return { positions: new_positions, colors: new_colors }
+		},
+
+		[new_colors, new_positions],
+	)
 
 	return (
-		<Base<TData>
-			dimension={EDimensions.TWO_D}
-			numParticles={50000000}
-			tick={tick}
-			pointSize={0.5}
-			cameraPosition={[0, 0, -575]}
-			colorAlpha={false}
-			setCanvasRef={ref => {
-				if (ref.current) {
-					setCanvas(ref.current)
-				}
-			}}
-		/>
+		<>
+			<div
+				style={{
+					position: 'fixed',
+					background: 'white',
+					width: 200,
+					height: 50,
+					left: '50%',
+					zIndex: 9999,
+					opacity: 1,
+					color: 'black',
+					display: loading ? 'block' : 'none',
+				}}
+			>
+				Loading...
+			</div>
+			<Base<TData>
+				dimension={EDimensions.TWO_D}
+				numParticles={areal.length * bing.length}
+				tick={tick}
+				pointSize={0.5}
+				cameraPosition={[0, 0, -500]}
+				colorAlpha={false}
+				setCanvasRef={ref => {
+					if (ref.current) {
+						setCanvas(ref.current)
+					}
+				}}
+			/>
+		</>
 	)
 }
 

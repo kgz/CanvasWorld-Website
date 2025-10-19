@@ -8,7 +8,7 @@ import style from '../@scss/template.module.scss'
 import { Helmet } from 'react-helmet'
 import type { _XRFrame } from '@react-three/fiber/dist/declarations/src/core/utils'
 import { renderToString } from 'react-dom/server'
-import type { TPointsProps } from '../@types/gui'
+import { EDimensions, type TPointsProps } from '../@types/gui'
 
 /**
  * Renders points on a canvas.
@@ -98,7 +98,7 @@ const Base = <T,>({
 	// 	}
 	// }, [dD])
 
-	useEffect(()=>{
+	useEffect(() => {
 		setCanvasRef(canvas)
 	}, [canvas, setCanvasRef])
 
@@ -159,6 +159,8 @@ const Base = <T,>({
 					fov: 75,
 					near: 0.1,
 					far: 1000,
+					// rotateX: Camera.
+					// rotateY: 0,
 				}}
 				// style={
 				// 	isIframe
@@ -172,7 +174,7 @@ const Base = <T,>({
 				// 		: {}
 				// }
 			>
-				<OrbitControls makeDefault />
+				<OrbitControls makeDefault enableRotate={dimension !== EDimensions.TWO_D} enablePan enableZoom />
 				<Points
 					tick={tick}
 					numParticles={numParticles}

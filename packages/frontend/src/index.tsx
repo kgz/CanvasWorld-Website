@@ -1,0 +1,52 @@
+import React, {  } from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+
+import store from './@store/store';
+import App from './app';
+import Template from './pages/template';
+import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react'
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+
+// const instance = createInstance({
+// 	urlBase: 'http://localhost:9000',
+// 	siteId: 1,
+// 	trackerUrl: 'http://localhost:9000/matomo.php', // optional, default value: `${urlBase}matomo.php`
+// 	srcUrl: 'http://localhost:9000/matomo.js', // optional, default value: `${urlBase}matomo.js`
+// 	disabled: false, // optional, false by default. Makes all tracking calls no-ops if set to true.
+// 	heartBeat: {
+// 		// optional, enabled by default
+// 		active: true, // optional, default value: true
+// 		seconds: 10, // optional, default value: `15
+// 	},
+// 	linkTracking: true, // optional, default value: true
+// 	configurations: {
+// 		// optional, default value: {}
+// 		// any valid matomo configuration, all below are optional
+// 		disableCookies: true,
+// 		setSecureCookie: true,
+// 		setRequestMethod: 'POST',
+// 	},
+// })
+
+root.render(
+	<React.StrictMode>
+		{/* <MatomoProvider value={instance}> */}
+		{/* <Provider store={store}> */}
+
+		{/* reactrouter */}
+		<App />
+		{/* </MatomoProvider> */}
+		{/* </Provider> */}
+	</React.StrictMode>,
+)
+
+setTimeout(() => {
+	throw new Error('test error')
+}, 5000)
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// reportWebVitals();

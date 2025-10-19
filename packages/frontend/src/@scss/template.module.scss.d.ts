@@ -1,8 +1,10 @@
 export type Styles = {
   active: string;
+  awesome: string;
   body: string;
   canvas: string;
   card: string;
+  colorChange: string;
   container: string;
   desc: string;
   divider: string;

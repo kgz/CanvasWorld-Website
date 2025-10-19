@@ -1,6 +1,6 @@
-import { Link, Route, Routes } from "react-router-dom";
-import style from "../@scss/template.module.scss";
-import Index from ".";
+import { Link, Route, Routes, useLocation } from 'react-router-dom'
+import style from '../@scss/template.module.scss'
+import Index from '.'
 import BedheadAttractor from './attractors/bedhead_attractor'
 import { useAppDispatch, useAppSelector } from '../@store/store'
 import { Drawer } from '@mui/material'
@@ -9,15 +9,25 @@ import Test from './maps/bogdanov_map'
 import routes from '../@types/routes'
 import DatGui, { DatNumber } from 'react-dat-gui'
 import Menu from '../modules/Menu'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { genPath } from '../modules/genPath'
 import OutsideAlerter from '../@types/onClickOutside'
 import 'katex/dist/katex.min.css'
 import { pink } from '@mui/material/colors'
+import { useMatomo } from '@datapunt/matomo-tracker-react'
 
 const Template = () => {
 	const dispatch = useAppDispatch()
 	// const [description, setDescription] = useState<JSX.Element | JSX.Element[]>(<></>)
+	const { trackPageView, trackEvent } = useMatomo()
+
+	const loc = useLocation()
+
+	// Track page view
+	useEffect(() => {
+		console.log('tracking', loc)
+		trackPageView()
+	}, [trackPageView, loc])
 
 	const { description } = useAppSelector(state => state.WebSlice)
 
@@ -62,4 +72,4 @@ const Template = () => {
 	)
 }
 
-export default Template;
+export default Template
