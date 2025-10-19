@@ -12,6 +12,19 @@ import type { TRoutes } from '../../@types/routes'
 
 const { sin, cos } = Math
 
+// Core tick logic for Bogdanov Map
+export const bogdanovMapTick = (
+	x: number,
+	y: number,
+	a: number,
+	b: number
+): { x: number; y: number } => {
+	const nx = x + y + a * y + b * x * (x - 1) - 0.1 * x * y
+	const ny = y + a * y + b * x * (x - 1) - 0.1 * x * y
+	
+	return { x: nx, y: ny }
+}
+
 const BogdanovMap = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
@@ -89,31 +102,16 @@ const BogdanovMap = () => {
 			y = 0
 		const { a, b } = data
 
-		// Use fallback values if parameters are undefined
-		const safeA = a !== undefined ? a : datData.options.a.initialValue
-		const safeB = b !== undefined ? b : datData.options.b.initialValue
-
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			try {
-				const next = bogdanovMapTick(x, y, safeA, safeB)
-				x = next.x
-				y = next.y
+			const next = bogdanovMapTick(x, y, a, b)
+			x = next.x
+			y = next.y
 
-				// Only clamp if values are getting too extreme
-				if (Math.abs(x) > 1000 || Math.abs(y) > 1000) {
-					x = Math.max(-1000, Math.min(1000, x))
-					y = Math.max(-1000, Math.min(1000, y))
-				}
+			positions.set([x * 150, y * 150], i * 2)
 
-				positions.set([x * 150, y * 150], i * 2)
-
-				const color = new THREE.Color()
-				color.setHSL((Math.round(i) % 360) / 360, 1, 0.5)
-				colors.set([color.r, color.g, color.b], i * 3)
-			} catch (error: any) {
-				console.error(`Bogdanov Map: Error at iteration ${i}:`, error.message)
-				break
-			}
+			const color = new THREE.Color()
+			color.setHSL((Math.round(i) % 360) / 360, 1, 0.5)
+			colors.set([color.r, color.g, color.b], i * 3)
 		}
 
 		return { positions, colors }
