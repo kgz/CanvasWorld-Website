@@ -22,14 +22,14 @@ const BedheadAttractor = () => {
 				options: {
 					a: {
 						initialValue: 0.65343,
-						min: -1,
-						max: 1,
-						step: 0.0001,
+						min: -2,
+						max: 2,
+						step: 0.001,
 					},
 					b: {
 						initialValue: 0.7345345,
-						min: -1,
-						max: 1,
+						min: 0.1,  // Prevent division by zero
+						max: 2,
 						step: 0.01,
 					},
 				},
@@ -51,6 +51,42 @@ const BedheadAttractor = () => {
 		)
 	}, [datData, dispatch])
 
+	// Test function to validate tick behavior
+	const testTickFunction = (a: number, b: number, iterations: number = 100) => {
+		let x = 0.1, y = 0
+		const results: Array<{x: number, y: number, iteration: number}> = []
+		
+		for (let i = 0; i < iterations; i++) {
+			// Safety check for division by zero or very small b
+			if (Math.abs(b) < 0.001) {
+				console.warn(`Bedhead Attractor: b value ${b} is too small, using 0.001`)
+				b = 0.001 * Math.sign(b)
+			}
+			
+			const nx = sin((x * y) / b) * y + cos(a * x - y)
+			const ny = x + sin(y) / b
+			
+			// Check for NaN or Infinity
+			if (!isFinite(nx) || !isFinite(ny)) {
+				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${a}, b=${b}`)
+				break
+			}
+			
+			x = nx
+			y = ny
+			
+			results.push({ x, y, iteration: i })
+			
+			// Check if values are exploding
+			if (Math.abs(x) > 1000 || Math.abs(y) > 1000) {
+				console.warn(`Bedhead Attractor: Values exploding at iteration ${i}: x=${x}, y=${y}`)
+				break
+			}
+		}
+		
+		return results
+	}
+
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,
 		colors: Float32Array,
@@ -62,12 +98,25 @@ const BedheadAttractor = () => {
 			y = 0
 		const { a, b } = data
 
+		// Safety check for division by zero or very small b
+		const safeB = Math.abs(b) < 0.001 ? 0.001 * Math.sign(b) : b
+
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = sin((x * y) / b) * y + cos(a * x - y)
-			const ny = x + sin(y) / b
+			const nx = sin((x * y) / safeB) * y + cos(a * x - y)
+			const ny = x + sin(y) / safeB
+
+			// Check for NaN or Infinity
+			if (!isFinite(nx) || !isFinite(ny)) {
+				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${a}, b=${b}`)
+				break
+			}
 
 			x = nx
 			y = ny
+
+			// Clamp values to prevent explosion
+			x = Math.max(-1000, Math.min(1000, x))
+			y = Math.max(-1000, Math.min(1000, y))
 
 			positions.set([x * 50, y * 50], i * 2)
 
@@ -78,6 +127,14 @@ const BedheadAttractor = () => {
 
 		return { positions, colors }
 	}
+
+	// Test the function when parameters change
+	useEffect(() => {
+		const { a, b } = data
+		console.log(`Testing Bedhead Attractor with a=${a}, b=${b}`)
+		const testResults = testTickFunction(a, b, 50)
+		console.log(`Test completed: ${testResults.length} iterations, final values: x=${testResults[testResults.length-1]?.x}, y=${testResults[testResults.length-1]?.y}`)
+	}, [data])
 
 	return (
 		<Base<TData>
