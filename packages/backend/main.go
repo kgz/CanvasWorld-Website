@@ -100,7 +100,7 @@ func main() {
 	} else {
 		templateDir = "templates"
 	}
-	
+
 	engine := html.New(templateDir, ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
