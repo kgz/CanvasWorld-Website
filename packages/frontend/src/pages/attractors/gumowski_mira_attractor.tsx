@@ -19,13 +19,19 @@ const GumowskiMiraAttractor = () => {
 	const datData: TDatData = {
 		options: {
 			a: {
-				initialValue: 0.4,
+				initialValue: 0,
 				min: -1,
 				max: 1,
 				step: 0.01,
 			},
 			b: {
-				initialValue: 0.3,
+				initialValue: -0.211,
+				min: -1,
+				max: 1,
+				step: 0.01,
+			},
+			mu: {
+				initialValue: -0.228,
 				min: -1,
 				max: 1,
 				step: 0.01,
@@ -59,9 +65,8 @@ const GumowskiMiraAttractor = () => {
 		)
 	}, [dispatch])
 
-	// Gumowski-Mira Attractor helper function
-	const w = (x: number, a: number) => {
-		return a * x + (1 - a) * 2 * x ** 2 / (1 + x ** 2)
+	const G = (x: number, mu: number) => {
+		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)
 	}
 
 	const tick: TPointsProps<TData>['tick'] = (
@@ -71,29 +76,18 @@ const GumowskiMiraAttractor = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		const { a, b } = data
+		const { a, b, mu } = data
 
 		// Use fallback values if parameters are undefined
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		const safeMu = mu !== undefined ? mu : datData.options.mu.initialValue
 
-		let x = 0.1,
-			y = 0.1
+		let x = 0.723135391715914,
+			y = -0.327585775405169
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			// Debug: log parameter values on first iteration
-			if (i === 0) {
-				console.log('Gumowski-Mira params:', { a: safeA, b: safeB })
-			}
-			
-			// Correct Gumowski-Mira Attractor formula:
-			// t = x
-			// x_new = b * y + w
-			// w = a * x + (1 - a) * 2 * x^2 / (1 + x^2)
-			// y_new = w - t
-			const t = x
-			const w_val = w(x, safeA)
-			const xn = safeB * y + w_val
-			const yn = w_val - t
+			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
+			const yn = -x + G(xn, safeMu)
 			x = xn
 			y = yn
 
@@ -136,12 +130,12 @@ GumowskiMiraAttractor.getDescription = () => (
 		<br />
 		<br />
 		Definition:
-		<BlockMath math={'t = x_n'} />
-		<BlockMath math={'x_{n+1} = b \\cdot y_n + w'} />
-		<BlockMath math={'w = a \\cdot x_n + (1 - a) \\cdot \\frac{2x_n^2}{1 + x_n^2}'} />
-		<BlockMath math={'y_{n+1} = w - t'} />
+		<BlockMath math={'x_{n+1} = y_n + a(1 - b y_n^2)y_n + G(x_n, \\mu)'} />
+		<BlockMath math={'y_{n+1} = -x_n + G(x_{n+1}, \\mu)'} />
+		Where:
+		<BlockMath math={'G(x, \\mu) = \\mu x + 2(1 - \\mu) \\frac{x^2}{1 + x^2}'} />
 		Limits:
-		<BlockMath math="a, b \\in [-1, 1]" />
+		<BlockMath math="a, b,\mu \\in [-1, 1]" />
 	</>
 )
 
