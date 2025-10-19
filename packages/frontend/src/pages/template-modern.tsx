@@ -22,17 +22,6 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 		if (route.element && route.element.getDescription) {
 			return route.element.getDescription();
 		}
-		// Fallback: try to import the description function based on route name
-		try {
-			const routeName = route.name.toLowerCase().replace(/\s+/g, '_');
-			if (routeName === 'bogdanov_map') {
-				const { getBogdanovMapDescription } = require('../maps/bogdanov_map');
-				return getBogdanovMapDescription();
-			}
-			// Add more routes as needed
-		} catch (error) {
-			console.warn('Could not load description for route:', route.name);
-		}
 		return <div>Loading description...</div>;
 	}, [route]);
 
