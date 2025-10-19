@@ -75,7 +75,11 @@ const BogdanovMap = () => {
 		const { a, b } = data
 
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const next = bogdanovMapTick(x, y, a, b)
+			// Use fallback values if parameters are undefined
+			const safeA = a !== undefined ? a : datData.options.a.initialValue
+			const safeB = b !== undefined ? b : datData.options.b.initialValue
+			
+			const next = bogdanovMapTick(x, y, safeA, safeB)
 			x = next.x
 			y = next.y
 
