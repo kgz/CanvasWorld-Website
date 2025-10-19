@@ -6,7 +6,7 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
-import { setDatData, setData, setDescription } from '../../@store/WebSlice'
+import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 
@@ -53,16 +53,6 @@ const FractalDreamAttractor = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(setDescription(
-			`The Fractal Dream Attractor is a 2D strange attractor.
-
-Definition:
-x_{n+1} = sin(b * y_n) + c * sin(b * x_n)
-y_{n+1} = sin(a * x_n) + d * sin(a * y_n)
-
-Limits: a,b,c,d ∈ [-3, 3]`
-		))
-
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
@@ -107,5 +97,19 @@ Limits: a,b,c,d ∈ [-3, 3]`
 		/>
 	)
 }
+
+// Add static description function to the component
+FractalDreamAttractor.getDescription = () => (
+	<>
+		The Fractal Dream Attractor is a 2D strange attractor.
+		<br />
+		<br />
+		Definition:
+		<BlockMath math={'x_{n+1} = sin(b * y_n) + c * sin(b * x_n)'} />
+		<BlockMath math={'y_{n+1} = sin(a * x_n) + d * sin(a * y_n)'} />
+		<br />
+		Limits: <BlockMath math="a,b,c,d \\in [-3, 3]" />
+	</>
+)
 
 export default FractalDreamAttractor
