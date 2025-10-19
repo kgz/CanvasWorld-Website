@@ -6,7 +6,7 @@ import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, ty
 import Base from '../_base'
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { setDatData, setData, setDescription } from '../../@store/WebSlice'
+import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 import { mapLinear } from 'three/src/math/MathUtils'
@@ -44,7 +44,6 @@ const MandlebrotSet = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(setDescription("This is in WIP"))
 
 		void dispatch(setDatData(datData))
 		void dispatch(

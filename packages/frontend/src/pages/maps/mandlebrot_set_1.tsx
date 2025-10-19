@@ -3,7 +3,7 @@ import type { RootState } from '@react-three/fiber'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps } from '../../@types/gui'
 import Base from '../_base'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { setDatData, setData, setDescription } from '../../@store/WebSlice'
+import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import * as math from 'mathjs'
 import { Color } from 'three'
@@ -79,7 +79,6 @@ const MandlebrotSet = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(setDescription("This is in WIP"))
 
 		void dispatch(setDatData(datData))
 		void dispatch(
