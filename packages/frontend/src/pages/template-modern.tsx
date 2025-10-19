@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../@store/store';
-import { SetMenuOpen, setData, selectDescriptionJSX } from '../@store/WebSlice';
+import { SetMenuOpen, setData } from '../@store/WebSlice';
 import routes from '../@types/routes';
 import { genPath } from '../modules/genPath';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
@@ -15,8 +15,26 @@ import 'katex/dist/katex.min.css';
 const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, isIframe }) => {
 	const dispatch = useAppDispatch();
 	const { datData, data } = useAppSelector(state => state.WebSlice);
-	const descriptionJSX = useAppSelector(selectDescriptionJSX);
 	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe);
+
+	// Get description from the route component's static function
+	const description = React.useMemo(() => {
+		if (route.element && route.element.getDescription) {
+			return route.element.getDescription();
+		}
+		// Fallback: try to import the description function based on route name
+		try {
+			const routeName = route.name.toLowerCase().replace(/\s+/g, '_');
+			if (routeName === 'bogdanov_map') {
+				const { getBogdanovMapDescription } = require('../maps/bogdanov_map');
+				return getBogdanovMapDescription();
+			}
+			// Add more routes as needed
+		} catch (error) {
+			console.warn('Could not load description for route:', route.name);
+		}
+		return <div>Loading description...</div>;
+	}, [route]);
 
 	return (
 		<div className="min-h-screen bg-gray-900 text-white">
@@ -60,27 +78,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 							<div className="mb-6">
 								<h2 className="text-lg font-semibold text-white mb-3">About</h2>
 								<div className="text-gray-300 text-sm leading-relaxed">
-									{React.isValidElement(descriptionJSX) ? (
-										descriptionJSX
-									) : typeof descriptionJSX === 'string' ? (
-										descriptionJSX.split('\n').map((line, index) => {
-											// Check if line contains LaTeX math (starts with x_ or y_, or contains \in)
-											if (line.match(/^[xy]_{/) || line.includes('\\in')) {
-												return (
-													<div key={index} className="my-3">
-														<BlockMath math={line} />
-													</div>
-												)
-											}
-											return (
-												<div key={index} className="my-1">
-													{line}
-												</div>
-											)
-										})
-									) : (
-										<div>Loading description...</div>
-									)}
+									{description}
 								</div>
 							</div>
 
