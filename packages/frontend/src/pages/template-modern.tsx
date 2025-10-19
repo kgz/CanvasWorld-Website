@@ -73,22 +73,38 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 											<label className="block text-sm font-medium text-gray-300 mb-1">
 												{key}
 											</label>
-											<input
-												type="range"
-												min={option.min}
-												max={option.max}
-												step={option.step || 0.001}
-												value={data[key] || option.initialValue}
-												onChange={(e) => {
-													dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }));
-												}}
-												className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-											/>
-											<div className="flex justify-between text-xs text-gray-400 mt-1">
-												<span>{option.min}</span>
-												<span className="font-mono">{data[key] || option.initialValue}</span>
-												<span>{option.max}</span>
-											</div>
+											{key === 'x0' || key === 'y0' ? (
+												<input
+													type="number"
+													min={option.min}
+													max={option.max}
+													step={option.step || 0.001}
+													value={data[key] || option.initialValue}
+													onChange={(e) => {
+														dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }));
+													}}
+													className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+											) : (
+												<>
+													<input
+														type="range"
+														min={option.min}
+														max={option.max}
+														step={option.step || 0.001}
+														value={data[key] || option.initialValue}
+														onChange={(e) => {
+															dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }));
+														}}
+														className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+													/>
+													<div className="flex justify-between text-xs text-gray-400 mt-1">
+														<span>{option.min}</span>
+														<span className="font-mono">{data[key] || option.initialValue}</span>
+														<span>{option.max}</span>
+													</div>
+												</>
+											)}
 										</div>
 									))}
 								</div>

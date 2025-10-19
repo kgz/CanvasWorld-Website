@@ -32,57 +32,89 @@ const datData: TDatData = {
 			max: 1,
 			step: 0.01,
 		},
+		x0: {
+			initialValue: 0.723135391715914,
+			min: -10,
+			max: 10,
+			step: 0.001,
+		},
+		y0: {
+			initialValue: -0.327585775405169,
+			min: -10,
+			max: 10,
+			step: 0.001,
+		},
 	},
 	examples: [
 		{
 			a: 0.4,
 			b: 0.3,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: 0.79253300698474,
 			b: 0.345703079365194,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: 0.579161538276821,
 			b: -0.820410779677331,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: 0.062683217227459,
 			b: -0.436713613104075,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: -0.125,
 			b: 0.9985,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: -0.375,
 			b: 0.9985,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: -0.625,
 			b: 0.9985,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: -0.111,
 			b: 0.9985,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: -0.1,
 			b: 0.9985,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 		{
 			a: -0.091,
 			b: 0.9985,
 			mu: -0.228,
+			x0: 0.723135391715914,
+			y0: -0.327585775405169,
 		},
 	],
 }
@@ -115,16 +147,17 @@ const GumowskiMiraAttractor = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		const { a, b, mu } = data
+		const { a, b, mu, x0, y0 } = data
 
 		// Use fallback values if parameters are undefined
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 		const safeMu = mu !== undefined ? mu : datData.options.mu.initialValue
+		const safeX0 = x0 !== undefined ? x0 : datData.options.x0.initialValue
+		const safeY0 = y0 !== undefined ? y0 : datData.options.y0.initialValue
 
-
-		let x = 0.723135391715914,
-			y = -0.327585775405169
+		let x = safeX0,
+			y = safeY0
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
 			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
 			const yn = -x + G(xn, safeMu)
