@@ -56,19 +56,23 @@ const BedheadAttractor = () => {
 		let x = 0.1, y = 0
 		const results: Array<{x: number, y: number, iteration: number}> = []
 		
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		
 		for (let i = 0; i < iterations; i++) {
 			// Safety check for division by zero or very small b
-			if (Math.abs(b) < 0.001) {
-				console.warn(`Bedhead Attractor: b value ${b} is too small, using 0.001`)
-				b = 0.001 * Math.sign(b)
+			if (Math.abs(safeB) < 0.001) {
+				console.warn(`Bedhead Attractor: b value ${safeB} is too small, using 0.001`)
+				b = 0.001 * Math.sign(safeB)
 			}
 			
-			const nx = sin((x * y) / b) * y + cos(a * x - y)
-			const ny = x + sin(y) / b
+			const nx = sin((x * y) / safeB) * y + cos(safeA * x - y)
+			const ny = x + sin(y) / safeB
 			
 			// Check for NaN or Infinity
 			if (!isFinite(nx) || !isFinite(ny)) {
-				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${a}, b=${b}`)
+				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${safeA}, b=${safeB}`)
 				break
 			}
 			
@@ -98,16 +102,20 @@ const BedheadAttractor = () => {
 			y = 0
 		const { a, b } = data
 
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+
 		// Safety check for division by zero or very small b
-		const safeB = Math.abs(b) < 0.001 ? 0.001 * Math.sign(b) : b
+		const finalB = Math.abs(safeB) < 0.001 ? 0.001 * Math.sign(safeB) : safeB
 
 		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = sin((x * y) / safeB) * y + cos(a * x - y)
-			const ny = x + sin(y) / safeB
+			const nx = sin((x * y) / finalB) * y + cos(safeA * x - y)
+			const ny = x + sin(y) / finalB
 
 			// Check for NaN or Infinity
 			if (!isFinite(nx) || !isFinite(ny)) {
-				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${a}, b=${b}`)
+				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${safeA}, b=${finalB}`)
 				break
 			}
 
@@ -131,10 +139,13 @@ const BedheadAttractor = () => {
 	// Test the function when parameters change
 	useEffect(() => {
 		const { a, b } = data
-		console.log(`Testing Bedhead Attractor with a=${a}, b=${b}`)
-		const testResults = testTickFunction(a, b, 50)
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		
+		console.log(`Testing Bedhead Attractor with a=${safeA}, b=${safeB}`)
+		const testResults = testTickFunction(safeA, safeB, 50)
 		console.log(`Test completed: ${testResults.length} iterations, final values: x=${testResults[testResults.length-1]?.x}, y=${testResults[testResults.length-1]?.y}`)
-	}, [data])
+	}, [data, datData])
 
 	return (
 		<Base<TData>
