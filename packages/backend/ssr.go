@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"strings"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 func serveSSR(c *fiber.Ctx) error {
 	path := c.Path()
 	routes := getRoutes()
-	
+
 	// Get route info if it exists
 	var route Route
 	var exists bool
@@ -17,12 +18,12 @@ func serveSSR(c *fiber.Ctx) error {
 		routeKey := strings.TrimPrefix(path, "/")
 		route, exists = routes[routeKey]
 	}
-	
+
 	// Default meta tags
 	title := "CanvasWorld - Mathematical Attractors"
 	description := "Explore beautiful mathematical attractors and chaotic systems through interactive visualizations."
 	image := "/static/images/mandelbrot.png"
-	
+
 	// Customize meta tags for specific routes
 	if exists {
 		routeKey := strings.TrimPrefix(path, "/")
@@ -30,7 +31,7 @@ func serveSSR(c *fiber.Ctx) error {
 		description = route.Description
 		image = fmt.Sprintf("/static/images/%s.png", routeKey)
 	}
-	
+
 	// Generate HTML with meta tags for Discord/social media
 	html := fmt.Sprintf(`
 <!DOCTYPE html>
@@ -99,7 +100,7 @@ func serveSSR(c *fiber.Ctx) error {
     </script>
 </body>
 </html>`, title, path, title, description, image, path, title, description, image, title, description)
-	
+
 	c.Set("Content-Type", "text/html")
 	return c.SendString(html)
 }

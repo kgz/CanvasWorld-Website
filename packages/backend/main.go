@@ -18,13 +18,13 @@ import (
 )
 
 type Config struct {
-	Port     string
-	DBHost   string
-	DBPort   string
-	DBUser   string
-	DBPass   string
-	DBName   string
-	Env      string
+	Port   string
+	DBHost string
+	DBPort string
+	DBUser string
+	DBPass string
+	DBName string
+	Env    string
 }
 
 var config Config
@@ -75,7 +75,7 @@ func isBot(userAgent string) bool {
 		"slackbot", "telegrambot", "whatsapp", "skypeuripreview",
 		"bot", "crawler", "spider", "scraper",
 	}
-	
+
 	userAgent = strings.ToLower(userAgent)
 	for _, keyword := range botKeywords {
 		if strings.Contains(userAgent, keyword) {
@@ -119,12 +119,12 @@ func main() {
 	// Bot detection middleware for SSR
 	app.Use(func(c *fiber.Ctx) error {
 		userAgent := c.Get("User-Agent")
-		
+
 		if isBot(userAgent) {
 			// Serve SSR HTML with meta tags for bots
 			return serveSSR(c)
 		}
-		
+
 		// For regular users, serve the SPA
 		return c.Next()
 	})

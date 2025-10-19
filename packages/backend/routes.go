@@ -10,7 +10,7 @@ type Route struct {
 
 func getRoutes() map[string]Route {
 	routes := make(map[string]Route)
-	
+
 	routes["bedhead_attractor"] = Route{
 		Description: "The Bedhead Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(x \\cdot y/b) \\cdot y + cos(a \\cdot x - y), y_{n+1} = x + sin(y)/b",
 	}
@@ -53,7 +53,7 @@ func getRoutes() map[string]Route {
 	routes["mandlebrot_set"] = Route{
 		Description: "The Mandlebrot Set is a chaotic map defined by the following equations: x_{n+1} = x_n^2 - y_n^2 + x_0, y_{n+1} = 2 \\cdot x_n \\cdot y_n + y_0",
 	}
-	
+
 	return routes
 }
 

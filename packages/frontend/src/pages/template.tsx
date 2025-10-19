@@ -12,7 +12,7 @@ import Menu from '../modules/Menu'
 import { useEffect, useMemo, useState } from 'react'
 import { genPath } from '../modules/genPath'
 import OutsideAlerter from '../@types/onClickOutside'
-import 'katex/dist/katex.min.css'
+// import 'katex/dist/katex.min.css'
 import { pink } from '@mui/material/colors'
 import { useMatomo } from '@datapunt/matomo-tracker-react'
 
@@ -26,7 +26,9 @@ const Template = () => {
 	// Track page view
 	useEffect(() => {
 		console.log('tracking', loc)
-		trackPageView()
+		trackPageView({
+			href: loc.pathname + loc.search
+		})
 	}, [trackPageView, loc])
 
 	const { description } = useAppSelector(state => state.WebSlice)

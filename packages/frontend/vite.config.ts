@@ -29,6 +29,9 @@ export default defineConfig({
 		outDir: './dist',
 		sourcemap: true,
 		emptyOutDir: true,
+		rollupOptions: {
+			external: ['katex/dist/katex.min.css'],
+		},
 	},
 	server: {
 		host: 'localhost',
