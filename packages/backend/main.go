@@ -113,6 +113,12 @@ func main() {
 		Browse: false,
 	}))
 
+	// Serve screenshot images
+	app.Use("/chaos/icons", filesystem.New(filesystem.Config{
+		Root:   http.Dir("static/images"),
+		Browse: false,
+	}))
+
 	// Serve built frontend assets
 	app.Use("/assets", filesystem.New(filesystem.Config{
 		Root:   http.Dir("../frontend/dist/assets"),

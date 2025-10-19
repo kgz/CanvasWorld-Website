@@ -191,21 +191,24 @@ const Menu = ({ title }: TProps) => {
 								</DatGui>
 								<div className={style.card}>
 									<div className={style.desc}>
-										{description.split('\n').map((line, index) => {
-											// Check if line contains LaTeX math (starts with x_ or y_)
-											if (line.match(/^[xy]_{/)) {
+										{typeof description === 'string' 
+											? description.split('\n').map((line, index) => {
+												// Check if line contains LaTeX math (starts with x_ or y_)
+												if (line.match(/^[xy]_{/)) {
+													return (
+														<div key={index} style={{ margin: '10px 0', fontFamily: 'monospace' }}>
+															{line}
+														</div>
+													)
+												}
 												return (
-													<div key={index} style={{ margin: '10px 0', fontFamily: 'monospace' }}>
+													<div key={index} style={{ margin: '5px 0' }}>
 														{line}
 													</div>
 												)
-											}
-											return (
-												<div key={index} style={{ margin: '5px 0' }}>
-													{line}
-												</div>
-											)
-										})}
+											})
+											: <div>Loading description...</div>
+										}
 									</div>
 								</div>
 							</span>
