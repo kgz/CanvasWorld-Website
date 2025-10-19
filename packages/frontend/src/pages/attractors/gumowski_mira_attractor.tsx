@@ -63,35 +63,6 @@ const GumowskiMiraAttractor = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(
-			setDescription(
-				<>
-					The Gumowski-Mira Attractor is a mathematical model that describes the behavior of a dynamic system.
-					<br />
-					<br />
-					It is often used in chaos theory and fractal geometry to generate visually interesting patterns. The equations
-					in the code represent the iterative formulas for calculating the next values of the variables x and y in the
-					Gumowski-Mira Attractor.
-					<br />
-					<br />
-					These equations involve parameters a, b, and μ, which determine the shape and characteristics of the
-					attractor.
-					<br />
-					<br /> By varying these parameters, you can create different visual patterns and explore the complex dynamics
-					of the system.
-					<br />
-					<br />
-					Definition:
-					<BlockMath math={`x_{n+1} = y_n + a(1 - b y_n^2)y_n + G(x_n, \\mu)`} />
-					<BlockMath math={`y_{n+1} = -x_n + G(x_{n+1}, \\mu)`} />
-					Where:
-					<BlockMath math={`G(x, \\mu) = \\mu x + 2(1 - \\mu) \\frac{x^2}{1 + x^2}`} />
-					Limits:
-					<BlockMath math="a, b,\mu \in [-1, 1]" />
-				</>,
-			),
-		)
-
 		void dispatch(setDatData(datData))
 		void dispatch(
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
@@ -138,5 +109,33 @@ const GumowskiMiraAttractor = () => {
 		/>
 	)
 }
+
+// Add static description function to the component
+GumowskiMiraAttractor.getDescription = () => (
+	<>
+		The Gumowski-Mira Attractor is a mathematical model that describes the behavior of a dynamic system.
+		<br />
+		<br />
+		It is often used in chaos theory and fractal geometry to generate visually interesting patterns. The equations
+		in the code represent the iterative formulas for calculating the next values of the variables x and y in the
+		Gumowski-Mira Attractor.
+		<br />
+		<br />
+		These equations involve parameters a, b, and μ, which determine the shape and characteristics of the
+		attractor.
+		<br />
+		<br /> By varying these parameters, you can create different visual patterns and explore the complex dynamics
+		of the system.
+		<br />
+		<br />
+		Definition:
+		<BlockMath math={'x_{n+1} = y_n + a(1 - b y_n^2)y_n + G(x_n, \\mu)'} />
+		<BlockMath math={'y_{n+1} = -x_n + G(x_{n+1}, \\mu)'} />
+		Where:
+		<BlockMath math={'G(x, \\mu) = \\mu x + 2(1 - \\mu) \\frac{x^2}{1 + x^2}'} />
+		Limits:
+		<BlockMath math="a, b,\mu \\in [-1, 1]" />
+	</>
+)
 
 export default GumowskiMiraAttractor
