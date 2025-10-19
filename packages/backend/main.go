@@ -107,37 +107,40 @@ func main() {
 		AllowHeaders: "Origin,Content-Type,Accept,Authorization",
 	}))
 
-	// Serve static files from frontend dist
-	app.Use("/static", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
-		Browse: false,
-	}))
-
-	// Serve screenshot images
+	// Serve screenshot images (always needed)
 	app.Use("/chaos/icons", filesystem.New(filesystem.Config{
 		Root:   http.Dir("static/images"),
 		Browse: false,
 	}))
 
-	// Serve built frontend assets
-	app.Use("/assets", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist/assets"),
-		Browse: false,
-	}))
+	// Only serve built frontend files in production
+	if config.Env == "production" {
+		// Serve static files from frontend dist
+		app.Use("/static", filesystem.New(filesystem.Config{
+			Root:   http.Dir("../frontend/dist"),
+			Browse: false,
+		}))
 
-	// Serve other frontend files (favicon, manifest, etc.)
-	app.Use("/favicon.ico", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
-		Browse: false,
-	}))
-	app.Use("/manifest.json", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
-		Browse: false,
-	}))
-	app.Use("/robots.txt", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
-		Browse: false,
-	}))
+		// Serve built frontend assets
+		app.Use("/assets", filesystem.New(filesystem.Config{
+			Root:   http.Dir("../frontend/dist/assets"),
+			Browse: false,
+		}))
+
+		// Serve other frontend files (favicon, manifest, etc.)
+		app.Use("/favicon.ico", filesystem.New(filesystem.Config{
+			Root:   http.Dir("../frontend/dist"),
+			Browse: false,
+		}))
+		app.Use("/manifest.json", filesystem.New(filesystem.Config{
+			Root:   http.Dir("../frontend/dist"),
+			Browse: false,
+		}))
+		app.Use("/robots.txt", filesystem.New(filesystem.Config{
+			Root:   http.Dir("../frontend/dist"),
+			Browse: false,
+		}))
+	}
 
 	// API routes
 	api := app.Group("/api")
@@ -174,10 +177,12 @@ func main() {
 		return c.Next()
 	})
 
-	// Catch-all route for SPA
-	app.Get("*", func(c *fiber.Ctx) error {
-		return c.Render("index", fiber.Map{})
-	})
+	// Catch-all route for SPA (only in production)
+	if config.Env == "production" {
+		app.Get("*", func(c *fiber.Ctx) error {
+			return c.Render("index", fiber.Map{})
+		})
+	}
 
 	log.Printf("Server starting on port %s", config.Port)
 	log.Fatal(app.Listen(":" + config.Port))
