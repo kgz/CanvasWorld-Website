@@ -35,10 +35,10 @@ func (s *ScreenshotService) ScreenshotAttractor(routeName string) error {
 	filename := fmt.Sprintf("%s.png", routeName)
 	filepath := filepath.Join(s.imagesDir, filename)
 
-	if _, err := os.Stat(filepath); err == nil {
-		log.Printf("Screenshot already exists for %s", routeName)
-		return nil
-	}
+	// if _, err := os.Stat(filepath); err == nil {
+	// 	log.Printf("Screenshot already exists for %s", routeName)
+	// 	return nil
+	// }
 
 	// Build URL
 	url := fmt.Sprintf("%s/chaos/%s", s.frontendURL, routeName)
@@ -61,20 +61,30 @@ func (s *ScreenshotService) ScreenshotAttractor(routeName string) error {
 			// Hide ALL Material-UI components and UI elements
 			return chromedp.Run(ctx,
 				chromedp.Evaluate(`
-					// Hide ALL Material-UI components
+					// Hide ALL Material-UI components (legacy)
 					const muiElements = document.querySelectorAll('[class*="Mui"]');
 					muiElements.forEach(el => {
 						el.style.display = 'none';
 					});
 					
-					// Hide any element that might be a sidebar/drawer
+					// Hide the new Tailwind-based sidebar
+					const sidebarElements = document.querySelectorAll('div[class*="bg-gray-800"], div[class*="backdrop-blur"], nav[class*="fixed"]');
+					sidebarElements.forEach(el => {
+						el.style.display = 'none';
+						el.style.visibility = 'hidden';
+						el.style.opacity = '0';
+					});
+					
+					// Hide any element that might be a sidebar/drawer (legacy + new)
 					const sidebarSelectors = [
 						'[class*="sidebar"]',
 						'[class*="menu"]', 
 						'[class*="drawer"]',
 						'[class*="nav"]',
 						'[class*="panel"]',
-						'[class*="control"]'
+						'[class*="control"]',
+						'[class*="bg-gray-800"]',
+						'[class*="backdrop-blur"]'
 					];
 					
 					sidebarSelectors.forEach(selector => {
@@ -118,8 +128,8 @@ func (s *ScreenshotService) ScreenshotAttractor(routeName string) error {
 						});
 					}
 					
-					// Hide ALL interactive UI elements
-					const uiElements = document.querySelectorAll('button, input, select, .gui, .controls, .menu, .sidebar, nav, header, aside');
+					// Hide ALL interactive UI elements (legacy + new Tailwind)
+					const uiElements = document.querySelectorAll('button, input, select, .gui, .controls, .menu, .sidebar, nav, header, aside, [class*="glass-effect"], [class*="gradient-text"]');
 					uiElements.forEach(el => {
 						el.style.display = 'none';
 						el.style.visibility = 'hidden';
