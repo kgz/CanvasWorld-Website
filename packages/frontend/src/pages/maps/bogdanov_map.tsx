@@ -23,18 +23,12 @@ export const bogdanovMapTick = (
 	// x(n+1) = y(n) + 1 - a * x(n)^2
 	// y(n+1) = b * x(n)
 	
-	// Clamp input values to prevent overflow
-	const safeX = Math.max(-10, Math.min(10, x))
-	const safeY = Math.max(-10, Math.min(10, y))
-	const safeA = Math.max(0, Math.min(0.01, a))
-	const safeB = Math.max(0.5, Math.min(2.5, b))
-	
-	const nx = safeY + 1 - safeA * safeX * safeX
-	const ny = safeB * safeX
+	const nx = y + 1 - a * x * x
+	const ny = b * x
 	
 	// Check for NaN or Infinity
 	if (!isFinite(nx) || !isFinite(ny)) {
-		throw new Error(`Invalid values: nx=${nx}, ny=${ny}, a=${safeA}, b=${safeB}`)
+		throw new Error(`Invalid values: nx=${nx}, ny=${ny}, a=${a}, b=${b}`)
 	}
 	
 	return { x: nx, y: ny }
@@ -100,27 +94,20 @@ const BogdanovMap = () => {
 				x = next.x
 				y = next.y
 
-				// More aggressive clamping to prevent NaN
-				x = Math.max(-100, Math.min(100, x))
-				y = Math.max(-100, Math.min(100, y))
-
-				// Check for NaN before setting positions
-				if (!isFinite(x) || !isFinite(y)) {
-					console.warn(`Bogdanov Map: NaN detected at iteration ${i}, resetting to safe values`)
-					x = 0.1
-					y = 0
+				// Only clamp if values are getting too extreme
+				if (Math.abs(x) > 1000 || Math.abs(y) > 1000) {
+					x = Math.max(-1000, Math.min(1000, x))
+					y = Math.max(-1000, Math.min(1000, y))
 				}
 
-				positions.set([x * 50, y * 50], i * 2)
+				positions.set([x * 150, y * 150], i * 2)
 
 				const color = new THREE.Color()
 				color.setHSL((Math.round(i) % 360) / 360, 1, 0.5)
 				colors.set([color.r, color.g, color.b], i * 3)
 			} catch (error: any) {
 				console.error(`Bogdanov Map: Error at iteration ${i}:`, error.message)
-				// Reset to safe values and continue
-				x = 0.1
-				y = 0
+				break
 			}
 		}
 
