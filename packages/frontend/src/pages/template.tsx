@@ -1,6 +1,6 @@
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import style from '../@scss/template.module.scss'
-import Index from './index-test'
+import Index from './index-new'
 import BedheadAttractor from './attractors/bedhead_attractor'
 import { useAppDispatch, useAppSelector } from '../@store/store'
 import { Drawer } from '@mui/material'
