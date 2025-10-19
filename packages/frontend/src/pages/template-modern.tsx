@@ -48,11 +48,8 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 
 			<div className="flex pt-16">
 				{/* Sidebar */}
-				<div className={`transition-all duration-300 ease-in-out ${
-					sidebarOpen && !isIframe 
-						? 'w-80 opacity-100' 
-						: 'w-0 opacity-0'
-				} bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 min-h-screen overflow-hidden`}>
+				{sidebarOpen && !isIframe && (
+					<div className="w-80 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 min-h-screen">
 					<div className="p-6">
 							{/* Description */}
 							<div className="mb-6">
@@ -151,6 +148,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 							</div>
 						</div>
 					</div>
+				)}
 
 				{/* Main Canvas Area */}
 				<div className={`flex-1 ${sidebarOpen && !isIframe ? 'ml-0' : 'ml-0'}`}>
