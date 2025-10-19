@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../@store/store';
-import { SetMenuOpen } from '../@store/WebSlice';
+import { SetMenuOpen, setData } from '../@store/WebSlice';
 import routes from '../@types/routes';
 import { genPath } from '../modules/genPath';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
@@ -185,7 +185,7 @@ const Template = () => {
 				return (
 					<Route
 						key={index}
-						path={"/" + genPath(route.name) + '/'}
+						path={"/" + genPath(route.name)}
 						element={
 							<ModernCanvasPage route={route} isIframe={isIframe} />
 						}

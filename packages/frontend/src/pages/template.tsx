@@ -33,7 +33,7 @@ const Template = () => {
 				return (
 					<Route
 						key={index}
-						path={"/" + genPath(route.name) + '/'}
+						path={"/" + genPath(route.name)}
 						element={
 							<ModernCanvasPage route={route} isIframe={isIframe} />
 						}

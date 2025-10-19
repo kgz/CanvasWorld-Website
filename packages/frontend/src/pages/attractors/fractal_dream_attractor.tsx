@@ -54,17 +54,13 @@ const FractalDreamAttractor = () => {
 
 	useEffect(() => {
 		void dispatch(setDescription(
-			<>
-				The Fractal Dream Attractor is a 2D strange attractor.
-				<br />
-				<br />
-				Definition:
-				<BlockMath math={`x_{n+1} = sin(b * y_n) + c * sin(b * x_n)`} />
-				<BlockMath math={`y_{n+1} = sin(a * x_n) + d * sin(a * y_n)`} />
-				<br />
-				Limits: <br />
-				<BlockMath math="a,b,c,d \in [-3, 3]" />
-			</>,
+			`The Fractal Dream Attractor is a 2D strange attractor.
+
+Definition:
+x_{n+1} = sin(b * y_n) + c * sin(b * x_n)
+y_{n+1} = sin(a * x_n) + d * sin(a * y_n)
+
+Limits: a,b,c,d ∈ [-3, 3]`
 		))
 
 		void dispatch(setDatData(datData))

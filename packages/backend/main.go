@@ -121,34 +121,32 @@ func main() {
 		Browse: false,
 	}))
 
-	// Only serve built frontend files in production
-	if config.Env == "production" {
-		// Serve static files from frontend dist
-		app.Use("/static", filesystem.New(filesystem.Config{
-			Root:   http.Dir("../frontend/dist"),
-			Browse: false,
-		}))
+	// Serve built frontend files (both dev and production)
+	// In development, this allows direct access to port 8080 to work
+	app.Use("/static", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist"),
+		Browse: false,
+	}))
 
-		// Serve built frontend assets
-		app.Use("/assets", filesystem.New(filesystem.Config{
-			Root:   http.Dir("../frontend/dist/assets"),
-			Browse: false,
-		}))
+	// Serve built frontend assets
+	app.Use("/assets", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist/assets"),
+		Browse: false,
+	}))
 
-		// Serve other frontend files (favicon, manifest, etc.)
-		app.Use("/favicon.ico", filesystem.New(filesystem.Config{
-			Root:   http.Dir("../frontend/dist"),
-			Browse: false,
-		}))
-		app.Use("/manifest.json", filesystem.New(filesystem.Config{
-			Root:   http.Dir("../frontend/dist"),
-			Browse: false,
-		}))
-		app.Use("/robots.txt", filesystem.New(filesystem.Config{
-			Root:   http.Dir("../frontend/dist"),
-			Browse: false,
-		}))
-	}
+	// Serve other frontend files (favicon, manifest, etc.)
+	app.Use("/favicon.ico", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist"),
+		Browse: false,
+	}))
+	app.Use("/manifest.json", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist"),
+		Browse: false,
+	}))
+	app.Use("/robots.txt", filesystem.New(filesystem.Config{
+		Root:   http.Dir("../frontend/dist"),
+		Browse: false,
+	}))
 
 	// API routes
 	api := app.Group("/api")
