@@ -69,7 +69,7 @@ const BogdanovMap = () => {
 					<BlockMath math="b \\in [0.5, 2.5]" />
 					<br />
 					<br />
-					Here, x_{n} and y_{n} represent the state variables at time step n. The parameters a and b are constants that
+					Here, {'x_{n}'} and {'y_{n}'} represent the state variables at time step n. The parameters a and b are constants that
 					determine the behavior of the system. The map exhibits interesting dynamics depending on the values of a and
 					b.
 					<br />

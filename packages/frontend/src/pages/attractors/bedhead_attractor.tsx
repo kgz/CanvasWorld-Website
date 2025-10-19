@@ -1,17 +1,13 @@
 import type { RootState } from '@react-three/fiber'
 import * as THREE from 'three'
 
-import { BlockMath } from 'react-katex'
-import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
+import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps } from '../../@types/gui'
 import Base from '../_base'
-import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
 import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
-import type { TRoutes } from '../../@types/routes'
 import { bedheadAttractorTick, testBedheadAttractorTick } from '../../utils/bedheadAttractor'
 
-const { sin, cos } = Math
 
 const BedheadAttractor = () => {
 	const dispatch = useAppDispatch()
@@ -82,7 +78,7 @@ const BedheadAttractor = () => {
 				const color = new THREE.Color()
 				color.setRGB(47, 161, 214)
 				colors.set([color.r, color.g, color.b], i * 3)
-			} catch (error) {
+			} catch (error: any) {
 				console.error(`Bedhead Attractor: Error at iteration ${i}:`, error.message)
 				break
 			}

@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { TDatData, TDataFromObject } from '../@types/gui'
-import { BlockMath } from 'react-katex'
 import React from 'react'
 
 type TState = {
@@ -60,28 +59,5 @@ export const WebSlice = Slice.reducer
 
 // Selectors
 export const selectDescriptionJSX = (state: { WebSlice: TState }) => {
-	const description = state.WebSlice.description
-	if (!description) return null
-	
-	// If it's already JSX, return it directly
-	if (React.isValidElement(description)) {
-		return description
-	}
-	
-	// If it's a string, convert to JSX
-	return description.split('\n').map((line, index) => {
-		// Check if line contains LaTeX math (starts with x_ or y_, or contains \in)
-		if (line.match(/^[xy]_{/) || line.includes('\\in')) {
-			return (
-				<div key={index} className="my-3">
-					<BlockMath math={line} />
-				</div>
-			)
-		}
-		return (
-			<div key={index} className="my-1">
-				{line}
-			</div>
-		)
-	})
+	return state.WebSlice.description
 }

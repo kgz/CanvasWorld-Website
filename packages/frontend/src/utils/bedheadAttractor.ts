@@ -39,7 +39,7 @@ export const testBedheadAttractorTick = (a: number, b: number, iterations: numbe
 				console.warn(`Bedhead Attractor: Values exploding at iteration ${i}: x=${x}, y=${y}`)
 				break
 			}
-		} catch (error) {
+		} catch (error: any) {
 			console.error(`Bedhead Attractor: Error at iteration ${i}:`, error.message)
 			break
 		}
