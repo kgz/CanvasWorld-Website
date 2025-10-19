@@ -9,6 +9,7 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData, setDescription } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { testBedheadAttractorTick } from '../../__tests__/attractors/bedhead_attractor.test'
 
 const { sin, cos } = Math
 
@@ -50,46 +51,6 @@ const BedheadAttractor = () => {
 			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
 		)
 	}, [datData, dispatch])
-
-	// Test function to validate tick behavior
-	const testTickFunction = (a: number, b: number, iterations: number = 100) => {
-		let x = 0.1, y = 0
-		const results: Array<{x: number, y: number, iteration: number}> = []
-		
-		// Use fallback values if parameters are undefined
-		const safeA = a !== undefined ? a : datData.options.a.initialValue
-		const safeB = b !== undefined ? b : datData.options.b.initialValue
-		
-		for (let i = 0; i < iterations; i++) {
-			// Safety check for division by zero or very small b
-			if (Math.abs(safeB) < 0.001) {
-				console.warn(`Bedhead Attractor: b value ${safeB} is too small, using 0.001`)
-				b = 0.001 * Math.sign(safeB)
-			}
-			
-			const nx = sin((x * y) / safeB) * y + cos(safeA * x - y)
-			const ny = x + sin(y) / safeB
-			
-			// Check for NaN or Infinity
-			if (!isFinite(nx) || !isFinite(ny)) {
-				console.error(`Bedhead Attractor: Invalid values at iteration ${i}: nx=${nx}, ny=${ny}, a=${safeA}, b=${safeB}`)
-				break
-			}
-			
-			x = nx
-			y = ny
-			
-			results.push({ x, y, iteration: i })
-			
-			// Check if values are exploding
-			if (Math.abs(x) > 1000 || Math.abs(y) > 1000) {
-				console.warn(`Bedhead Attractor: Values exploding at iteration ${i}: x=${x}, y=${y}`)
-				break
-			}
-		}
-		
-		return results
-	}
 
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,
@@ -143,7 +104,7 @@ const BedheadAttractor = () => {
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 		
 		console.log(`Testing Bedhead Attractor with a=${safeA}, b=${safeB}`)
-		const testResults = testTickFunction(safeA, safeB, 50)
+		const testResults = testBedheadAttractorTick(safeA, safeB, 50)
 		console.log(`Test completed: ${testResults.length} iterations, final values: x=${testResults[testResults.length-1]?.x}, y=${testResults[testResults.length-1]?.y}`)
 	}, [data, datData])
 
