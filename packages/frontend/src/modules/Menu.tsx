@@ -190,7 +190,23 @@ const Menu = ({ title }: TProps) => {
 									</DatFolder>
 								</DatGui>
 								<div className={style.card}>
-									<div className={style.desc}>{description}</div>
+									<div className={style.desc}>
+										{description.split('\n').map((line, index) => {
+											// Check if line contains LaTeX math (starts with x_ or y_)
+											if (line.match(/^[xy]_{/)) {
+												return (
+													<div key={index} style={{ margin: '10px 0', fontFamily: 'monospace' }}>
+														{line}
+													</div>
+												)
+											}
+											return (
+												<div key={index} style={{ margin: '5px 0' }}>
+													{line}
+												</div>
+											)
+										})}
+									</div>
 								</div>
 							</span>
 						</Fade>

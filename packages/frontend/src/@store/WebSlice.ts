@@ -6,7 +6,7 @@ type TState = {
 	drawerOpen: boolean
 	datData: TDatData
 	data: TDataFromObject<TDatData['options']>
-	description: JSX.Element | JSX.Element[]
+	description: string
 }
 
 export const UserSliceDefualt: TState = {
@@ -17,16 +17,15 @@ export const UserSliceDefualt: TState = {
 		examples: [],
 	},
 	data: {},
-	description: [] as JSX.Element[],
+	description: '',
 }
 
 export const SetMenuOpen = createAsyncThunk('store/SetMenuOpen', (data: boolean) => data)
 export const SetDrawerOpen = createAsyncThunk('store/SetDrawerOpen', (data: boolean) => data)
 export const setDatData = createAsyncThunk('store/setDatData', (data: TDatData) => data)
 export const setData = createAsyncThunk('store/setData', (data: TDataFromObject<TDatData['options']>) => data)
-export const setDescription = createAsyncThunk('store/setDescription', (data: JSX.Element | JSX.Element[]) => {
-	console.log('asdfasdf')
-
+export const setDescription = createAsyncThunk('store/setDescription', (data: string) => {
+	console.log('Setting description:', data)
 	return data
 })
 

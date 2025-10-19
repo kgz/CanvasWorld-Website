@@ -44,7 +44,7 @@ const MandlebrotSet = () => {
 	type TData = TDataFromObject<(typeof datData)['options']>
 
 	useEffect(() => {
-		void dispatch(setDescription(<>This is in WIP</>))
+		void dispatch(setDescription("This is in WIP"))
 
 		void dispatch(setDatData(datData))
 		void dispatch(

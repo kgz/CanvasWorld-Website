@@ -42,13 +42,7 @@ const BedheadAttractor = () => {
 
 	useEffect(() => {
 		void dispatch(setDescription(
-			<>
-				Cannot actually find any information on this attractor, but it looks cool.
-				<br />
-				Definitions:
-				<BlockMath math="x_{n+1} = sin(x \cdot y/b) \cdot y + cos(a \cdot x - y)" />
-				<BlockMath math="y_{n+1} = x + sin(y)/b" />
-			</>,
+			"Cannot actually find any information on this attractor, but it looks cool.\n\nDefinitions:\nx_{n+1} = sin(x \\cdot y/b) \\cdot y + cos(a \\cdot x - y)\ny_{n+1} = x + sin(y)/b"
 		))
 
 		void dispatch(setDatData(datData))
