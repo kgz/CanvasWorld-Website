@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -93,7 +94,14 @@ func isBot(userAgent string) bool {
 
 func main() {
 	// Initialize Fiber with HTML template engine
-	engine := html.New("../frontend/dist", ".html")
+	var templateDir string
+	if config.Env == "production" {
+		templateDir = "../frontend/dist"
+	} else {
+		templateDir = "templates"
+	}
+	
+	engine := html.New(templateDir, ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
@@ -177,12 +185,40 @@ func main() {
 		return c.Next()
 	})
 
-	// Catch-all route for SPA (only in production)
-	if config.Env == "production" {
-		app.Get("*", func(c *fiber.Ctx) error {
-			return c.Render("index", fiber.Map{})
+	// Catch-all route for SPA
+	app.Get("*", func(c *fiber.Ctx) error {
+		path := c.Path()
+		routes := getRoutes()
+
+		// Get route info if it exists
+		var route Route
+		var exists bool
+		if path != "/" && path != "" {
+			routeKey := strings.TrimPrefix(path, "/")
+			route, exists = routes[routeKey]
+		}
+
+		// Default meta tags
+		title := "CanvasWorld - Mathematical Attractors"
+		description := "Explore beautiful mathematical attractors and chaotic systems through interactive visualizations."
+		image := "/chaos/icons/mandelbrot_set.png"
+
+		// Customize meta tags for specific routes
+		if exists {
+			routeKey := strings.TrimPrefix(path, "/")
+			title = fmt.Sprintf("%s - CanvasWorld", strings.ReplaceAll(routeKey, "_", " "))
+			description = route.Description
+			image = fmt.Sprintf("/chaos/icons/%s.png", routeKey)
+		}
+
+		return c.Render("index", fiber.Map{
+			"Title":       title,
+			"Description": description,
+			"Image":       image,
+			"Path":        path,
+			"IsDev":       config.Env == "development",
 		})
-	}
+	})
 
 	log.Printf("Server starting on port %s", config.Port)
 	log.Fatal(app.Listen(":" + config.Port))

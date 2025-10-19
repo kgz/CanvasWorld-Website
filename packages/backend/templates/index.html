@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    
+    <!-- External scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <script>
+        function map(n, start1, stop1, start2, stop2){
+            return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+        }
+    </script>
+
+    {{if .IsDev}}
+    <!-- React Refresh Runtime for Development -->
+    <script type="module">
+        console.log('Running in dev mode')
+        window.dev = true;
+        import RefreshRuntime from 'http://localhost:5173/@react-refresh'
+        RefreshRuntime.injectIntoGlobalHook(window)
+        window.$RefreshReg$ = () => {}
+        window.$RefreshSig$ = () => (type) => type
+        window.__vite_plugin_react_preamble_installed__ = true;
+    </script>
+    {{end}}
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://canvasworld.dev{{.Path}}">
+    <meta property="og:title" content="{{.Title}}">
+    <meta property="og:description" content="{{.Description}}">
+    <meta property="og:image" content="https://canvasworld.dev{{.Image}}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://canvasworld.dev{{.Path}}">
+    <meta property="twitter:title" content="{{.Title}}">
+    <meta property="twitter:description" content="{{.Description}}">
+    <meta property="twitter:image" content="https://canvasworld.dev{{.Image}}">
+    
+    <!-- Discord -->
+    <meta property="og:site_name" content="CanvasWorld">
+    <meta name="theme-color" content="#000000">
+</head>
+<body>
+    <div id="root"></div>
+    
+    {{if .IsDev}}
+    <!-- Load from Vite dev server -->
+    <script type="module" src="http://localhost:5173/src/index.tsx"></script>
+    {{else}}
+    <!-- Load built assets -->
+    <script type="module" src="/assets/index.js"></script>
+    {{end}}
+</body>
+</html>
