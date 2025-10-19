@@ -6,6 +6,7 @@ import store from './@store/store';
 import App from './app';
 import Template from './pages/template';
 import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react'
+import './index.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
