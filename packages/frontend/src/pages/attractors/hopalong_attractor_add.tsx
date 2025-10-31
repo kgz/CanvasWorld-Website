@@ -134,19 +134,26 @@ const HopalongAttractorAdditive = () => {
 // Add static description function to the component
 HopalongAttractorAdditive.getDescription = () => (
 	<>
-		{/* x' = y + f(x) where f(x) = + SGN(x)√|bx - c) y' = a - x */}
-		The Hopalong Attractor is a fractal that can be defined by the following equations:
+		This visualization shows the Additive Hopalong Attractor, a modern variation of the classic chaotic system discovered by Barry Martin.
 		<br />
 		<br />
-		Definition:
-		<BlockMath math={'x_{n+1} = y_n + f(x_n)'} />
-		<BlockMath math={'y_{n+1} = a - x_n'} />
+		The original Hopalong attractor uses a sign function to flip direction each step, producing sharp, mirrored "butterfly" or "boomerang" shapes.
+		This additive variation removes that sign change and introduces a smooth nonlinear feedback term, giving the motion a more fluid and continuous character.
+		<br />
+		<br />
+		Instead of distinct symmetrical wings, this version forms swirling, asymmetric clouds of points — like an evolving nebula of chaos. The equations blend Hopalong-style chaos with logistic-style growth, resulting in a dynamic but balanced system.
+		<br />
+		<br />
+		<strong>Definition:</strong>
+		<BlockMath math={'x_{n+1} = y_n + a(1 - by_n^2)y_n + G(x_n)'} />
+		<BlockMath math={'y_{n+1} = -x_n + G(x_{n+1})'} />
 		Where
-		<BlockMath math={'f(x) = √{|bx - \\mu|}'} />
+		<BlockMath math={'G(x) = \\sqrt{|bx - \\mu|}'} />
 		<br />
-		Limits: <br />
+		<strong>Limits:</strong>
 		<BlockMath math="a,b,\\mu \\in [-1, 1]" />
-		Refrences:
+		<br />
+		<strong>References:</strong>
 		<br />
 		<a target="_blank" href="https://www.jolinton.co.uk/Mathematics/Hopalong_Fractals/Text.pdf">
 			www.jolinton.co.uk
