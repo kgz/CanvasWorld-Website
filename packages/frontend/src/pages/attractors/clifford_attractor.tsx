@@ -5,7 +5,7 @@ import { BlockMath, InlineMath } from 'react-katex'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
 import Base from '../_base'
 import type { ComponentProps } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
@@ -19,8 +19,8 @@ const CliffordAttractor = () => {
 	// Animation state
 	const [isPaused, setIsPaused] = useState(false)
 	const [manualProgress, setManualProgress] = useState<number | null>(null)
-	const [pausedProgress, setPausedProgress] = useState<number>(100)
 	const [animationSpeed, setAnimationSpeed] = useState(1)
+	const currentProgressRef = useRef<number>(100)
 
 	const datData = useMemo(
 		() =>
@@ -75,17 +75,23 @@ const CliffordAttractor = () => {
 			setManualProgress(event.detail.progress)
 		}
 
+		const handleReleaseProgress = () => {
+			setManualProgress(null)
+		}
+
 		const handleSetSpeed = (event: CustomEvent) => {
 			setAnimationSpeed(event.detail.speed)
 		}
 
 		window.addEventListener('toggleAnimation', handleToggleAnimation as EventListener)
 		window.addEventListener('setAnimationProgress', handleSetProgress as EventListener)
+		window.addEventListener('releaseAnimationProgress', handleReleaseProgress)
 		window.addEventListener('setAnimationSpeed', handleSetSpeed as EventListener)
 
 		return () => {
 			window.removeEventListener('toggleAnimation', handleToggleAnimation as EventListener)
 			window.removeEventListener('setAnimationProgress', handleSetProgress as EventListener)
+			window.removeEventListener('releaseAnimationProgress', handleReleaseProgress)
 			window.removeEventListener('setAnimationSpeed', handleSetSpeed as EventListener)
 		}
 	}, [])
@@ -110,23 +116,23 @@ const CliffordAttractor = () => {
 		// Calculate how many particles to draw based on time or manual control
 		const totalParticles = positions.length / EDimensions.TWO_D
 		const baseSpeed = 2000 // base particles per second
-		const effectiveSpeed = baseSpeed * animationSpeed
 		
 		let particlesToDraw: number
 		if (manualProgress !== null) {
 			// Manual control via slider
 			particlesToDraw = Math.min(manualProgress, totalParticles)
+			currentProgressRef.current = particlesToDraw
 		} else if (isPaused) {
 			// Paused - keep current progress frozen
-			particlesToDraw = pausedProgress
+			particlesToDraw = currentProgressRef.current
 		} else {
-			// Normal animation
-			const currentProgress = Math.min(
-				Math.floor(state.clock.elapsedTime * effectiveSpeed),
+			// Normal animation - increment based on delta and speed
+			const increment = delta * baseSpeed * animationSpeed
+			currentProgressRef.current = Math.min(
+				currentProgressRef.current + increment,
 				totalParticles
 			)
-			particlesToDraw = currentProgress
-			setPausedProgress(currentProgress)
+			particlesToDraw = Math.floor(currentProgressRef.current)
 		}
 
 		// Ensure minimum particles for visibility

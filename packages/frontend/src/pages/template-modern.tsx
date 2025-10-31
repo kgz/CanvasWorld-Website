@@ -224,6 +224,12 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 										detail: { progress: value } 
 									}));
 								}}
+								onMouseUp={() => {
+									window.dispatchEvent(new CustomEvent('releaseAnimationProgress'));
+								}}
+								onTouchEnd={() => {
+									window.dispatchEvent(new CustomEvent('releaseAnimationProgress'));
+								}}
 								className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
 							/>
 						</div>
