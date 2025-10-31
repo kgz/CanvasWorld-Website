@@ -9,10 +9,12 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const HopalongAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -81,19 +83,35 @@ const HopalongAttractor = () => {
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 		const safeC = c !== undefined ? c : datData.options.c.initialValue
 		
+		const totalParticles = positions.length / 2
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
+		
 		let x = 0.03,
 			y = 0.01
-		for (let i = 0; i < positions.length / 2; i++) {
-			const xn = y - 1 - Math.sqrt(Math.abs(safeB * x - safeC)) * Math.sign(x - 1)
-			const yn = safeA - x - 1
-			x = xn
-			y = yn
-			positions.set([x * 1, y * 1], i * 2)
-			const color = new THREE.Color()
-			const colorI = Math.floor(i / 1000)
-			color.setHSL(0.8 + colorI / (255 * 0.2), 1, 0.5)
-			colors.set([color.r, color.g, color.b], i * 3)
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				const xn = y - 1 - Math.sqrt(Math.abs(safeB * x - safeC)) * Math.sign(x - 1)
+				const yn = safeA - x - 1
+				x = xn
+				y = yn
+				positions.set([x * 1, y * 1], i * 2)
+				
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const color = new THREE.Color()
+					const colorI = Math.floor(i / 1000)
+					color.setHSL(0.8 + colorI / (255 * 0.2), 1, 0.5)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * 2)
+				colors.set([0, 0, 0], i * 3)
+			}
 		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		return { positions, colors }
 	}

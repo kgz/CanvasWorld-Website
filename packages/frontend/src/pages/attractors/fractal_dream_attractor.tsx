@@ -9,12 +9,14 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, cos } = Math
 
 const FractalDreamAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -66,8 +68,6 @@ const FractalDreamAttractor = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		let x = -2,
-			y = -2
 		const { a, b, c, d } = data
 
 		// Use fallback values if parameters are undefined
@@ -76,19 +76,36 @@ const FractalDreamAttractor = () => {
 		const safeC = c !== undefined ? c : datData.options.c.initialValue
 		const safeD = d !== undefined ? d : datData.options.d.initialValue
 
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = Math.sin(safeB * y) + safeC * Math.sin(safeB * x)
-			const ny = Math.sin(safeA * x) + safeD * Math.sin(safeA * y)
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
 
-			x = nx
-			y = ny
+		let x = -2,
+			y = -2
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				const nx = Math.sin(safeB * y) + safeC * Math.sin(safeB * x)
+				const ny = Math.sin(safeA * x) + safeD * Math.sin(safeA * y)
 
-			positions.set([x * 100, y * 100], i * 2)
+				x = nx
+				y = ny
 
-			const color = new THREE.Color()
-			color.setHex(0xf87b3)
-			colors.set([color.r, color.g, color.b], i * 3)
+				positions.set([x * 100, y * 100], i * 2)
+
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const color = new THREE.Color()
+					color.setHex(0xf87b3)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * 2)
+				colors.set([0, 0, 0], i * 3)
+			}
 		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		return { positions, colors }
 	}

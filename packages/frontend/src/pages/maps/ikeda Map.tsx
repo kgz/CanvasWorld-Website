@@ -9,12 +9,14 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, sqrt } = Math
 
 const IkedaMap = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -58,20 +60,36 @@ const IkedaMap = () => {
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
+
 		let x = 0.0,
 			y = 0.0
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const G = 0.4 - 6 / (1 + Math.pow(x, 2) + Math.pow(y, 2))
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				const G = 0.4 - 6 / (1 + Math.pow(x, 2) + Math.pow(y, 2))
 
-			const xn = 1 + safeA * (x * Math.cos(G) - y * Math.sin(G))
-			const yn = safeA * (x * Math.sin(G) + y * Math.cos(G))
-			y = yn
-			x = xn
-			positions.set([x * 50 - 20, y * 50 - 200], i * EDimensions.TWO_D)
-			const color = new THREE.Color()
-			color.setHex(0xf87b3)
-			colors.set([color.r, color.g, color.b], i * 3)
+				const xn = 1 + safeA * (x * Math.cos(G) - y * Math.sin(G))
+				const yn = safeA * (x * Math.sin(G) + y * Math.cos(G))
+				y = yn
+				x = xn
+				positions.set([x * 50 - 20, y * 50 - 200], i * EDimensions.TWO_D)
+				
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const color = new THREE.Color()
+					color.setHex(0xf87b3)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * EDimensions.TWO_D)
+				colors.set([0, 0, 0], i * 3)
+			}
 		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		// void dispatch(
 		// 	setData({

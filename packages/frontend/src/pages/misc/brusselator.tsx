@@ -9,12 +9,14 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, cos } = Math
 
 const CliffordAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -78,21 +80,34 @@ const CliffordAttractor = () => {
 		const safeC = c !== undefined ? c : datData.options.c.initialValue
 		const safeD = d !== undefined ? d : datData.options.d.initialValue
 
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = Math.sin(safeA * y) + safeC * Math.cos(safeA * x)
-			const ny = Math.sin(safeB * x) + safeD * Math.cos(safeB * y)
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
 
-			x = nx
-			y = ny
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				const nx = Math.sin(safeA * y) + safeC * Math.cos(safeA * x)
+				const ny = Math.sin(safeB * x) + safeD * Math.cos(safeB * y)
 
-			positions.set([x * 100, y * 100], i * 2)
+				x = nx
+				y = ny
 
-			const color = new THREE.Color()
-			const percent = (sin(x + y) / 255) * 255
-			// map percent from 0 to 255 to 0 to 1
-			color.setHex(0xf87b3)
-			colors.set([color.r, color.g, color.b], i * 3)
+				positions.set([x * 100, y * 100], i * 2)
+
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const color = new THREE.Color()
+					color.setHex(0xf87b3)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * 2)
+				colors.set([0, 0, 0], i * 3)
+			}
 		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		return { positions, colors }
 	}

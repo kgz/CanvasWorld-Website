@@ -8,11 +8,13 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { bedheadAttractorTick, testBedheadAttractorTick } from '../../utils/bedheadAttractor'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 
 const BedheadAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -69,34 +71,49 @@ const BedheadAttractor = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		let x = 0.1,
-			y = 0
 		const { a, b } = data
 
 		// Use fallback values if parameters are undefined
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			try {
-				const next = bedheadAttractorTick(x, y, safeA, safeB)
-				x = next.x
-				y = next.y
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
 
-				// Clamp values to prevent explosion
-				x = Math.max(-1000, Math.min(1000, x))
-				y = Math.max(-1000, Math.min(1000, y))
+		let x = 0.1,
+			y = 0
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				try {
+					const next = bedheadAttractorTick(x, y, safeA, safeB)
+					x = next.x
+					y = next.y
 
-				positions.set([x * 50, y * 50], i * 2)
+					// Clamp values to prevent explosion
+					x = Math.max(-1000, Math.min(1000, x))
+					y = Math.max(-1000, Math.min(1000, y))
 
-				const color = new THREE.Color()
-				color.setHex(0x22c55e) // Simple green color
-				colors.set([color.r, color.g, color.b], i * 3)
-			} catch (error: any) {
-				console.error(`Bedhead Attractor: Error at iteration ${i}:`, error.message)
-				break
+					positions.set([x * 50, y * 50], i * 2)
+
+					if (i >= particlesToDraw - 100) {
+						colors.set([1.0, 1.0, 0.0], i * 3)
+					} else {
+						const color = new THREE.Color()
+						color.setHex(0x22c55e)
+						colors.set([color.r, color.g, color.b], i * 3)
+					}
+				} catch (error) {
+					console.error(`Bedhead Attractor: Error at iteration ${i}:`, error)
+					break
+				}
+			} else {
+				positions.set([9999, 9999], i * 2)
+				colors.set([0, 0, 0], i * 3)
 			}
 		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		return { positions, colors }
 	}

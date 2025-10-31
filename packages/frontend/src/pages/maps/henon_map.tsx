@@ -9,12 +9,14 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, cos } = Math
 
 const HenonMap = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -76,22 +78,35 @@ const HenonMap = () => {
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
 		
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
+		
 		let x = 0.03,
 			y = 0.01
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const xn = -(x * x) + safeB * y + safeA
-			const yn = x
-			x = xn
-			y = yn
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				const xn = -(x * x) + safeB * y + safeA
+				const yn = x
+				x = xn
+				y = yn
 
-			positions.set([x * 100, y * 100], i * 2)
+				positions.set([x * 100, y * 100], i * 2)
 
-			const color = new THREE.Color()
-			const percent = (sin(i) / 255) * 255
-			// map percent from 0 to 255 to 0 to 1
-			color.setHSL(sin(i), 1, 0.5)
-			colors.set([color.r, color.g, color.b], i * 3)
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const color = new THREE.Color()
+					color.setHSL(sin(i), 1, 0.5)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * 2)
+				colors.set([0, 0, 0], i * 3)
+			}
 		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		return { positions, colors }
 	}

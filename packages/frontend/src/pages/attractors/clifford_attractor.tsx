@@ -5,22 +5,18 @@ import { BlockMath, InlineMath } from 'react-katex'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
 import Base from '../_base'
 import type { ComponentProps } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, cos } = Math
 
 const CliffordAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
-	
-	// Animation state
-	const [isPaused, setIsPaused] = useState(false)
-	const [manualProgress, setManualProgress] = useState<number | null>(null)
-	const [animationSpeed, setAnimationSpeed] = useState(1)
-	const currentProgressRef = useRef<number>(100)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -65,44 +61,6 @@ const CliffordAttractor = () => {
 		)
 	}, [datData, dispatch])
 
-	// Add event listeners for animation controls
-	useEffect(() => {
-		const handleToggleAnimation = (event: CustomEvent) => {
-			setIsPaused(event.detail.paused)
-		}
-
-		const handleSetProgress = (event: CustomEvent) => {
-			setManualProgress(event.detail.progress)
-		}
-
-		const handleReleaseProgress = () => {
-			setManualProgress(null)
-		}
-
-		const handleSetSpeed = (event: CustomEvent) => {
-			setAnimationSpeed(event.detail.speed)
-		}
-
-		const handleReplay = () => {
-			currentProgressRef.current = 100
-			setIsPaused(false)
-		}
-
-		window.addEventListener('toggleAnimation', handleToggleAnimation as EventListener)
-		window.addEventListener('setAnimationProgress', handleSetProgress as EventListener)
-		window.addEventListener('releaseAnimationProgress', handleReleaseProgress)
-		window.addEventListener('setAnimationSpeed', handleSetSpeed as EventListener)
-		window.addEventListener('replayAnimation', handleReplay)
-
-		return () => {
-			window.removeEventListener('toggleAnimation', handleToggleAnimation as EventListener)
-			window.removeEventListener('setAnimationProgress', handleSetProgress as EventListener)
-			window.removeEventListener('releaseAnimationProgress', handleReleaseProgress)
-			window.removeEventListener('setAnimationSpeed', handleSetSpeed as EventListener)
-			window.removeEventListener('replayAnimation', handleReplay)
-		}
-	}, [])
-
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,
 		colors: Float32Array,
@@ -122,28 +80,7 @@ const CliffordAttractor = () => {
 
 		// Calculate how many particles to draw based on time or manual control
 		const totalParticles = positions.length / EDimensions.TWO_D
-		const baseSpeed = 2000 // base particles per second
-		
-		let particlesToDraw: number
-		if (manualProgress !== null) {
-			// Manual control via slider
-			particlesToDraw = Math.min(manualProgress, totalParticles)
-			currentProgressRef.current = particlesToDraw
-		} else if (isPaused) {
-			// Paused - keep current progress frozen
-			particlesToDraw = currentProgressRef.current
-		} else {
-			// Normal animation - increment based on delta and speed
-			const increment = delta * baseSpeed * animationSpeed
-			currentProgressRef.current = Math.min(
-				currentProgressRef.current + increment,
-				totalParticles
-			)
-			particlesToDraw = Math.floor(currentProgressRef.current)
-		}
-
-		// Ensure minimum particles for visibility
-		particlesToDraw = Math.max(particlesToDraw, 100)
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
 
 		// Draw animated particles and hide unused ones
 		for (let i = 0; i < totalParticles; i++) {
@@ -172,22 +109,9 @@ const CliffordAttractor = () => {
 			}
 		}
 
-		// Update progress controls
-		const progressText = document.getElementById('progress-text')
-		const progressSlider = document.getElementById('progress-slider') as HTMLInputElement
-		
-		if (progressText) {
-			progressText.textContent = `${particlesToDraw.toLocaleString()} / ${totalParticles.toLocaleString()}`
-		}
-		if (progressSlider) {
-			progressSlider.value = particlesToDraw.toString()
-		}
-
-		// Check if animation is complete
-		const isAnimationComplete = particlesToDraw >= totalParticles
-		window.dispatchEvent(new CustomEvent('animationComplete', {
-			detail: { complete: isAnimationComplete }
-		}))
+		// Update progress controls and check completion
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		return { positions, colors }
 	}

@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, cos } = Math
 
@@ -74,6 +75,7 @@ const GumowskiMiraAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
 	const initialized = useRef(false)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	type TData = TDataFromObject<(typeof datData)['options']>
 
@@ -107,25 +109,37 @@ const GumowskiMiraAttractor = () => {
 		const safeX0 = x0 !== undefined ? x0 : datData.options.x0.initialValue
 		const safeY0 = y0 !== undefined ? y0 : datData.options.y0.initialValue
 
+		const numParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(numParticles, delta)
+		
 		let x = safeX0,
 			y = safeY0
 		
-		const numParticles = positions.length / EDimensions.TWO_D
-		
 		for (let i = 0; i < numParticles; i++) {
-			const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
-			const yn = -x + G(xn, safeMu)
-			x = xn
-			y = yn
+			if (i < particlesToDraw) {
+				const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
+				const yn = -x + G(xn, safeMu)
+				x = xn
+				y = yn
 
-			positions.set([x * 5, y * 5], i * EDimensions.TWO_D)
-			
-			// Create color based on iteration (blue to red gradient)
-			const normalizedIteration = i / (numParticles - 1)
-			const color = new THREE.Color()
-			color.setHSL(0.6 - normalizedIteration * 0.6, 1.0, 0.5) // Blue to red gradient
-			colors.set([color.r, color.g, color.b], i * 3)
+				positions.set([x * 5, y * 5], i * EDimensions.TWO_D)
+				
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const normalizedIteration = i / (numParticles - 1)
+					const color = new THREE.Color()
+					color.setHSL(0.6 - normalizedIteration * 0.6, 1.0, 0.5)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * EDimensions.TWO_D)
+				colors.set([0, 0, 0], i * 3)
+			}
 		}
+
+		updateProgressUI(particlesToDraw, numParticles)
+		checkCompletion(particlesToDraw, numParticles)
 
 		return { positions, colors }
 	}

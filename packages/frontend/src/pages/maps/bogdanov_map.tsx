@@ -9,6 +9,7 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, cos } = Math
 
@@ -28,6 +29,7 @@ export const bogdanovMapTick = (
 const BogdanovMap = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
 
 	const datData = useMemo(
 		() =>
@@ -67,25 +69,40 @@ const BogdanovMap = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		let x = 0.1,
-			y = 0
 		const { a, b } = data
 
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			// Use fallback values if parameters are undefined
-			const safeA = a !== undefined ? a : datData.options.a.initialValue
-			const safeB = b !== undefined ? b : datData.options.b.initialValue
-			
-			const next = bogdanovMapTick(x, y, safeA, safeB)
-			x = next.x
-			y = next.y
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
 
-			positions.set([x * 150, y * 150], i * 2)
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
 
-			const color = new THREE.Color()
-			color.setHSL((Math.round(i) % 360) / 360, 1, 0.5)
-			colors.set([color.r, color.g, color.b], i * 3)
+		let x = 0.1,
+			y = 0
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				const next = bogdanovMapTick(x, y, safeA, safeB)
+				x = next.x
+				y = next.y
+
+				positions.set([x * 150, y * 150], i * 2)
+
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const color = new THREE.Color()
+					color.setHSL((Math.round(i) % 360) / 360, 1, 0.5)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * 2)
+				colors.set([0, 0, 0], i * 3)
+			}
 		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
 
 		return { positions, colors }
 	}
