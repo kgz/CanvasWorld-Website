@@ -134,19 +134,27 @@ const HopalongAttractorPositive = () => {
 // Add static description function to the component
 HopalongAttractorPositive.getDescription = () => (
 	<>
-		{/* x' = y + f(x) where f(x) = + SGN(x)√|bx - c) y' = a - x */}
-		The Hopalong Attractor is a 2D strange attractor that can be defined by the following equations:
+		This visualization is based on the Positive Hopalong Attractor, a variation of the original chaotic system first described by Barry Martin.
 		<br />
 		<br />
-		Definition:
-		<BlockMath math={'x_{n+1} = y_n + f(x_n)'} />
-		<BlockMath math={'y_{n+1} = a - x_n'} />
-		Where
-		<BlockMath math={'f(x) = sgn(x)√|bx - \\mu|'} />
+		The classic Hopalong attractor uses a sign function to alternate direction, producing its distinctive mirrored "butterfly" shape.
+		This positive variation keeps that sign dependency — it multiplies the square root term by the sign of x — but combines it with a smooth nonlinear feedback term for added dynamism.
 		<br />
-		Limits: <br />
+		<br />
+		The result is a balanced form of chaos: still sharply structured like the original, but with smoother curvature and a more continuous flow between regions. Each point follows the recursive rule:
+		<br />
+		<br />
+		<strong>Definition:</strong>
+		<BlockMath math={'x_{n+1} = y_n + a(1 - by_n^2)y_n + \\text{sgn}(x_n)\\sqrt{|bx_n - \\mu|}'} />
+		<BlockMath math={'y_{n+1} = -x_n + \\text{sgn}(x_{n+1})\\sqrt{|bx_{n+1} - \\mu|}'} />
+		<br />
+		This combination preserves the attractor's mirror symmetry while softening its edges — giving rise to graceful, wave-like patterns that still retain their fractal heart.
+		<br />
+		<br />
+		<strong>Limits:</strong>
 		<BlockMath math="a,b,\\mu \\in [-1, 1]" />
-		Refrences:
+		<br />
+		<strong>References:</strong>
 		<br />
 		<a target="_blank" href="https://www.jolinton.co.uk/Mathematics/Hopalong_Fractals/Text.pdf">
 			www.jolinton.co.uk
@@ -155,3 +163,4 @@ HopalongAttractorPositive.getDescription = () => (
 )
 
 export default HopalongAttractorPositive
+
