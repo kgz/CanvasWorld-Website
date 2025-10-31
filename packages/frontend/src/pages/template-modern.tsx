@@ -209,6 +209,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 
 						{/* Progress Text */}
 						<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg">
+							<span className="font-semibold">n = </span>
 							<span id="progress-text">0 / 200,000</span>
 						</div>
 					</div>
