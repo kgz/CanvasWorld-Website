@@ -19,6 +19,7 @@ const CliffordAttractor = () => {
 	// Animation state
 	const [isPaused, setIsPaused] = useState(false)
 	const [manualProgress, setManualProgress] = useState<number | null>(null)
+	const [pausedProgress, setPausedProgress] = useState<number>(100)
 
 	const datData = useMemo(
 		() =>
@@ -108,17 +109,16 @@ const CliffordAttractor = () => {
 			// Manual control via slider
 			particlesToDraw = Math.min(manualProgress, totalParticles)
 		} else if (isPaused) {
-			// Paused - keep current progress
-			particlesToDraw = Math.min(
-				Math.floor(state.clock.elapsedTime * animationSpeed),
-				totalParticles
-			)
+			// Paused - keep current progress frozen
+			particlesToDraw = pausedProgress
 		} else {
 			// Normal animation
-			particlesToDraw = Math.min(
+			const currentProgress = Math.min(
 				Math.floor(state.clock.elapsedTime * animationSpeed),
 				totalParticles
 			)
+			particlesToDraw = currentProgress
+			setPausedProgress(currentProgress)
 		}
 
 		// Ensure minimum particles for visibility
