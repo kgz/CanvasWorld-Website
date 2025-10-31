@@ -39,7 +39,7 @@ const Points = <T,>({
 		if (points?.current?.geometry?.attributes?.position) {
 			points.current.geometry.attributes.position.needsUpdate = true
 		}
-		if (points?.current?.geometry?.attributes?.color?.needsUpdate) {
+		if (points?.current?.geometry?.attributes?.color) {
 			points.current.geometry.attributes.color.needsUpdate = true
 		}
 	}
@@ -145,6 +145,8 @@ const Base = <T,>({
 			<div
 				style={{
 					position: 'fixed',
+					top: '4rem', // Position under the header (4rem = 64px)
+					left: '1rem',
 					zIndex: 999,
 				}}
 				ref={stats}
