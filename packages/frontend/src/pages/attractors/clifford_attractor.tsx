@@ -5,7 +5,7 @@ import { BlockMath, InlineMath } from 'react-katex'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
 import Base from '../_base'
 import type { ComponentProps } from 'react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
@@ -15,6 +15,10 @@ const { sin, cos } = Math
 const CliffordAttractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
+	
+	// Animation state
+	const [isPaused, setIsPaused] = useState(false)
+	const [manualProgress, setManualProgress] = useState<number | null>(null)
 
 	const datData = useMemo(
 		() =>
@@ -59,6 +63,25 @@ const CliffordAttractor = () => {
 		)
 	}, [datData, dispatch])
 
+	// Add event listeners for animation controls
+	useEffect(() => {
+		const handleToggleAnimation = (event: CustomEvent) => {
+			setIsPaused(event.detail.paused)
+		}
+
+		const handleSetProgress = (event: CustomEvent) => {
+			setManualProgress(event.detail.progress)
+		}
+
+		window.addEventListener('toggleAnimation', handleToggleAnimation as EventListener)
+		window.addEventListener('setAnimationProgress', handleSetProgress as EventListener)
+
+		return () => {
+			window.removeEventListener('toggleAnimation', handleToggleAnimation as EventListener)
+			window.removeEventListener('setAnimationProgress', handleSetProgress as EventListener)
+		}
+	}, [])
+
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,
 		colors: Float32Array,
@@ -76,19 +99,67 @@ const CliffordAttractor = () => {
 		const safeC = c !== undefined ? c : datData.options.c.initialValue
 		const safeD = d !== undefined ? d : datData.options.d.initialValue
 
-		for (let i = 0; i < positions.length / EDimensions.TWO_D; i++) {
-			const nx = Math.sin(safeA * y) + safeC * Math.cos(safeA * x)
-			const ny = Math.sin(safeB * x) + safeD * Math.cos(safeB * y)
+		// Calculate how many particles to draw based on time or manual control
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const animationSpeed = 2000 // particles per second
+		
+		let particlesToDraw: number
+		if (manualProgress !== null) {
+			// Manual control via slider
+			particlesToDraw = Math.min(manualProgress, totalParticles)
+		} else if (isPaused) {
+			// Paused - keep current progress
+			particlesToDraw = Math.min(
+				Math.floor(state.clock.elapsedTime * animationSpeed),
+				totalParticles
+			)
+		} else {
+			// Normal animation
+			particlesToDraw = Math.min(
+				Math.floor(state.clock.elapsedTime * animationSpeed),
+				totalParticles
+			)
+		}
 
-			x = nx
-			y = ny
+		// Ensure minimum particles for visibility
+		particlesToDraw = Math.max(particlesToDraw, 100)
 
-			positions.set([x * 100, y * 100], i * 2)
+		// Draw animated particles and hide unused ones
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				// Draw animated particles in red
+				const nx = Math.sin(safeA * y) + safeC * Math.cos(safeA * x)
+				const ny = Math.sin(safeB * x) + safeD * Math.cos(safeB * y)
 
-			// Simple purple color with 80% opacity
-			const color = new THREE.Color()
-			color.setHex(0x8b5cf6) // Purple color
-			colors.set([color.r, color.g, color.b], i * 3)
+				x = nx
+				y = ny
+
+				positions.set([x * 100, y * 100], i * 2)
+
+				// Color logic: last 100 particles are bright yellow, rest are purple
+				if (i >= particlesToDraw - 100) {
+					// Last 100 particles are bright yellow
+					colors.set([1.0, 1.0, 0.0], i * 3) // Bright yellow RGB
+				} else {
+					// Rest are purple
+					colors.set([0.8, 0.2, 0.8], i * 3) // Bright purple RGB
+				}
+			} else {
+				// Hide unused particles by moving them far away and making them black
+				positions.set([9999, 9999], i * 2) // Move far away
+				colors.set([0, 0, 0], i * 3) // Black
+			}
+		}
+
+		// Update progress controls
+		const progressText = document.getElementById('progress-text')
+		const progressSlider = document.getElementById('progress-slider') as HTMLInputElement
+		
+		if (progressText) {
+			progressText.textContent = `${particlesToDraw.toLocaleString()} / ${totalParticles.toLocaleString()}`
+		}
+		if (progressSlider) {
+			progressSlider.value = particlesToDraw.toString()
 		}
 
 		return { positions, colors }
