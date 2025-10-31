@@ -16,19 +16,19 @@ const { sin, cos } = Math
 const datData: TDatData = {
 	options: {
 		a: {
-			initialValue: 0.0,
+			initialValue: 0.008,
 			min: -2,
 			max: 1,
 			step: 0.01,
 		},
 		b: {
-			initialValue: 0.5,
+			initialValue: 0.05,
 			min: -1,
 			max: 1,
 			step: 0.01,
 		},
 		mu: {
-			initialValue: -0.75,
+			initialValue: -0.9,
 			min: -2,
 			max: 1,
 			step: 0.01,
