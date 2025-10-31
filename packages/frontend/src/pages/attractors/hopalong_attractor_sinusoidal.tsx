@@ -13,7 +13,7 @@ import { useAnimationState } from '../../hooks/useAnimationState'
 
 const { sin, sqrt } = Math
 
-const HopalongAttractorSin = () => {
+const HopalongAttractorSinusoidal = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
@@ -127,10 +127,10 @@ const HopalongAttractorSin = () => {
 
 
 // Add static description function to the component
-HopalongAttractorSin.getDescription = () => (
+HopalongAttractorSinusoidal.getDescription = () => (
 	<>
 		{/* x' = y + f(x) where f(x) = + SGN(x)√|bx - c) y' = a - x */}
-		The Hopalong Attractor is a 2D strange attractor.
+		The Hopalong Attractor Sinusoidal is a 2D strange attractor.
 		<br />
 		<br />
 		Definition:
@@ -149,4 +149,4 @@ HopalongAttractorSin.getDescription = () => (
 	</>
 )
 
-export default HopalongAttractorSin
+export default HopalongAttractorSinusoidal

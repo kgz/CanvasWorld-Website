@@ -9,7 +9,7 @@ import HenonMap from '../pages/maps/henon_map'
 import HopalongAttractor from '../pages/attractors/hopalong_attractor'
 import HopalongAttractorPositive from '../pages/attractors/hopalong_attractor_positive'
 import HopalongAttractorAdditive from '../pages/attractors/hopalong_attractor_add'
-import HopalongAttractorSin from '../pages/attractors/hopalong_attractor_sin'
+import HopalongAttractorSinusoidal from '../pages/attractors/hopalong_attractor_sinusoidal'
 import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
 import MandlebrotSet from '../pages/maps/mandlebrot_set_1'
@@ -67,8 +67,8 @@ const routes: TRoutes = [
 		element: HopalongAttractorAdditive,
 	},
 	{
-		name: 'Hopalong Attractor Sin',
-		element: HopalongAttractorSin,
+		name: 'Hopalong Attractor Sinusoidal',
+		element: HopalongAttractorSinusoidal,
 	},
 	{
 		name: 'Gingerbread Man',
