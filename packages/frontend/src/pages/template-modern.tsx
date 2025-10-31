@@ -18,6 +18,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 	const { datData, data } = useAppSelector(state => state.WebSlice);
 	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe);
 	const [isPlaying, setIsPlaying] = React.useState(true);
+	const [speed, setSpeed] = React.useState(1);
 
 	// Get description from the route component's static function
 	const description = React.useMemo(() => {
@@ -173,7 +174,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 			{/* Animation Controls - Bottom of Screen */}
 			<div className="fixed bottom-0 z-50 glass-effect border-t border-gray-700/50" style={{ left: sidebarOpen && !isIframe ? '20rem' : '0', right: '0' }}>
 				<div className="max-w-7xl mx-auto px-4 py-3">
-					<div className="flex items-center justify-between">
+					<div className="flex items-center justify-between gap-4">
 						{/* Play/Pause Button */}
 						<button
 							id="play-pause-btn"
@@ -183,10 +184,31 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 									detail: { paused: isPlaying } 
 								}));
 							}}
-							className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300 text-white"
+							className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300 text-white flex-shrink-0"
 						>
 							{isPlaying ? <Pause size={24} /> : <Play size={24} />}
 						</button>
+
+						{/* Speed Control */}
+						<div className="flex items-center gap-2 flex-shrink-0">
+							<span className="text-xs text-gray-400">Speed:</span>
+							<input
+								type="range"
+								min="0.1"
+								max="5"
+								step="0.1"
+								value={speed}
+								onChange={(e) => {
+									const value = parseFloat(e.target.value);
+									setSpeed(value);
+									window.dispatchEvent(new CustomEvent('setAnimationSpeed', { 
+										detail: { speed: value } 
+									}));
+								}}
+								className="w-24 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+							/>
+							<span className="text-xs text-gray-300 font-mono w-8">{speed.toFixed(1)}x</span>
+						</div>
 
 						{/* Progress Slider */}
 						<div className="flex-1 mx-4">
@@ -198,7 +220,6 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 								value="0"
 								onChange={(e) => {
 									const value = parseInt(e.target.value);
-									// Update animation progress (we'll implement this in the attractor)
 									window.dispatchEvent(new CustomEvent('setAnimationProgress', { 
 										detail: { progress: value } 
 									}));
@@ -208,7 +229,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 						</div>
 
 						{/* Progress Text */}
-						<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg">
+						<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg flex-shrink-0">
 							<span className="font-semibold">n = </span>
 							<span id="progress-text">0 / 200,000</span>
 						</div>
