@@ -9,7 +9,7 @@ import { useEffect, useMemo } from 'react';
 import Index from './index-new';
 import { BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 
 // Route components are imported dynamically via route.element
 
@@ -19,6 +19,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe);
 	const [isPlaying, setIsPlaying] = React.useState(true);
 	const [speed, setSpeed] = React.useState(1);
+	const [isComplete, setIsComplete] = React.useState(false);
 
 	// Get description from the route component's static function
 	const description = React.useMemo(() => {
@@ -27,6 +28,22 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 		}
 		return <div>Loading description...</div>;
 	}, [route]);
+
+	// Listen for animation completion
+	useEffect(() => {
+		const handleAnimationComplete = (event: CustomEvent) => {
+			setIsComplete(event.detail.complete);
+			if (event.detail.complete) {
+				setIsPlaying(false);
+			}
+		};
+
+		window.addEventListener('animationComplete', handleAnimationComplete as EventListener);
+
+		return () => {
+			window.removeEventListener('animationComplete', handleAnimationComplete as EventListener);
+		};
+	}, []);
 
 	return (
 		<div className="min-h-screen bg-gray-900 text-white">
@@ -175,18 +192,26 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 			<div className="fixed bottom-0 z-50 glass-effect border-t border-gray-700/50" style={{ left: sidebarOpen && !isIframe ? '20rem' : '0', right: '0' }}>
 				<div className="max-w-7xl mx-auto px-4 py-3">
 					<div className="flex items-center justify-between gap-4">
-						{/* Play/Pause Button */}
+						{/* Play/Pause/Replay Button */}
 						<button
 							id="play-pause-btn"
 							onClick={() => {
-								setIsPlaying(!isPlaying);
-								window.dispatchEvent(new CustomEvent('toggleAnimation', { 
-									detail: { paused: isPlaying } 
-								}));
+								if (isComplete) {
+									// Replay: reset animation
+									setIsComplete(false);
+									setIsPlaying(true);
+									window.dispatchEvent(new CustomEvent('replayAnimation'));
+								} else {
+									// Toggle play/pause
+									setIsPlaying(!isPlaying);
+									window.dispatchEvent(new CustomEvent('toggleAnimation', { 
+										detail: { paused: isPlaying } 
+									}));
+								}
 							}}
 							className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300 text-white flex-shrink-0"
 						>
-							{isPlaying ? <Pause size={24} /> : <Play size={24} />}
+							{isComplete ? <RotateCcw size={24} /> : (isPlaying ? <Pause size={24} /> : <Play size={24} />)}
 						</button>
 
 						{/* Speed Control */}

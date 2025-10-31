@@ -83,16 +83,23 @@ const CliffordAttractor = () => {
 			setAnimationSpeed(event.detail.speed)
 		}
 
+		const handleReplay = () => {
+			currentProgressRef.current = 100
+			setIsPaused(false)
+		}
+
 		window.addEventListener('toggleAnimation', handleToggleAnimation as EventListener)
 		window.addEventListener('setAnimationProgress', handleSetProgress as EventListener)
 		window.addEventListener('releaseAnimationProgress', handleReleaseProgress)
 		window.addEventListener('setAnimationSpeed', handleSetSpeed as EventListener)
+		window.addEventListener('replayAnimation', handleReplay)
 
 		return () => {
 			window.removeEventListener('toggleAnimation', handleToggleAnimation as EventListener)
 			window.removeEventListener('setAnimationProgress', handleSetProgress as EventListener)
 			window.removeEventListener('releaseAnimationProgress', handleReleaseProgress)
 			window.removeEventListener('setAnimationSpeed', handleSetSpeed as EventListener)
+			window.removeEventListener('replayAnimation', handleReplay)
 		}
 	}, [])
 
@@ -175,6 +182,12 @@ const CliffordAttractor = () => {
 		if (progressSlider) {
 			progressSlider.value = particlesToDraw.toString()
 		}
+
+		// Check if animation is complete
+		const isAnimationComplete = particlesToDraw >= totalParticles
+		window.dispatchEvent(new CustomEvent('animationComplete', {
+			detail: { complete: isAnimationComplete }
+		}))
 
 		return { positions, colors }
 	}
