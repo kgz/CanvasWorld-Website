@@ -9,6 +9,7 @@ import { useEffect, useMemo } from 'react';
 import Index from './index-new';
 import { BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
+import { Play, Pause } from 'lucide-react';
 
 // Route components are imported dynamically via route.element
 
@@ -16,6 +17,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 	const dispatch = useAppDispatch();
 	const { datData, data } = useAppSelector(state => state.WebSlice);
 	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe);
+	const [isPlaying, setIsPlaying] = React.useState(true);
 
 	// Get description from the route component's static function
 	const description = React.useMemo(() => {
@@ -50,7 +52,9 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 							</Link>
 						</div>
 						<h1 className="text-xl font-semibold text-white">{route.name}</h1>
-						<div></div>
+						<div className="flex items-center space-x-4">
+							{/* Empty space for future elements */}
+						</div>
 					</div>
 				</div>
 			</nav>
@@ -162,6 +166,51 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 				<div className={`flex-1 ${sidebarOpen && !isIframe ? 'ml-0' : 'ml-0'}`}>
 					<div className="h-[calc(100vh-4rem)] bg-gray-900 relative">
 						<route.element />
+					</div>
+				</div>
+			</div>
+
+			{/* Animation Controls - Bottom of Screen */}
+			<div className="fixed bottom-0 z-50 glass-effect border-t border-gray-700/50" style={{ left: sidebarOpen && !isIframe ? '20rem' : '0', right: '0' }}>
+				<div className="max-w-7xl mx-auto px-4 py-3">
+					<div className="flex items-center justify-between">
+						{/* Play/Pause Button */}
+						<button
+							id="play-pause-btn"
+							onClick={() => {
+								setIsPlaying(!isPlaying);
+								window.dispatchEvent(new CustomEvent('toggleAnimation', { 
+									detail: { paused: isPlaying } 
+								}));
+							}}
+							className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300 text-white"
+						>
+							{isPlaying ? <Pause size={24} /> : <Play size={24} />}
+						</button>
+
+						{/* Progress Slider */}
+						<div className="flex-1 mx-4">
+							<input
+								id="progress-slider"
+								type="range"
+								min="0"
+								max="200000"
+								value="0"
+								onChange={(e) => {
+									const value = parseInt(e.target.value);
+									// Update animation progress (we'll implement this in the attractor)
+									window.dispatchEvent(new CustomEvent('setAnimationProgress', { 
+										detail: { progress: value } 
+									}));
+								}}
+								className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+							/>
+						</div>
+
+						{/* Progress Text */}
+						<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg">
+							<span id="progress-text">0 / 200,000</span>
+						</div>
 					</div>
 				</div>
 			</div>

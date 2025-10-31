@@ -43,6 +43,7 @@
     "json-to-csv-export": "^2.1.1",
     "katex": "^0.16.25",
     "leva": "^0.9.2",
+    "lucide-react": "^0.552.0",
     "luxon": "^3.4.4",
     "material-react-table": "^2.0.2",
     "mathjs": "^13.2.0",
