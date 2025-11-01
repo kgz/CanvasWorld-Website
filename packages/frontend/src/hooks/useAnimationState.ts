@@ -44,6 +44,15 @@ export const useAnimationState = () => {
 	}, [])
 
 	const calculateParticlesToDraw = (totalParticles: number, delta: number) => {
+		// Check if we're in screenshot mode (URL parameter)
+		const urlParams = new URLSearchParams(window.location.search)
+		const isScreenshot = urlParams.get('screenshot') === 'true'
+		
+		// If screenshot mode, always return max particles
+		if (isScreenshot) {
+			return totalParticles
+		}
+		
 		const baseSpeed = 2000
 
 		let particlesToDraw: number

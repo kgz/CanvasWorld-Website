@@ -40,8 +40,8 @@ func (s *ScreenshotService) ScreenshotAttractor(routeName string) error {
 	// 	return nil
 	// }
 
-	// Build URL
-	url := fmt.Sprintf("%s/chaos/%s", s.frontendURL, routeName)
+	// Build URL with screenshot parameter to show full animation
+	url := fmt.Sprintf("%s/chaos/%s?screenshot=true", s.frontendURL, routeName)
 	log.Printf("Taking screenshot of %s", url)
 
 	// Create Chrome context with shorter timeout
