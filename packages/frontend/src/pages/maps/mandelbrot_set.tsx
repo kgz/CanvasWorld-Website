@@ -29,6 +29,7 @@ const MandelbrotContent = ({
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragStart, setDragStart] = useState([0, 0])
 	const canvasRef = useRef<HTMLCanvasElement | null>(null)
+	const overlayRef = useRef<HTMLDivElement | null>(null)
 
 	// Get canvas element from DOM (retry if not found initially)
 	useEffect(() => {
@@ -87,7 +88,7 @@ const MandelbrotContent = ({
 		setIterations(256)
 	}
 
-	const handleWheelDiv = useCallback((e: React.WheelEvent) => {
+	const handleWheelDiv = useCallback((e: WheelEvent) => {
 		e.preventDefault()
 		const canvas = canvasRef.current || document.querySelector('canvas')
 		if (!canvas) return
@@ -114,14 +115,23 @@ const MandelbrotContent = ({
 		setCenter([newCenterX, newCenterY])
 	}, [zoom, center])
 
+	// Attach wheel event listener with passive: false
+	useEffect(() => {
+		const overlay = overlayRef.current
+		if (!overlay) return
+		
+		overlay.addEventListener('wheel', handleWheelDiv, { passive: false })
+		return () => overlay.removeEventListener('wheel', handleWheelDiv)
+	}, [handleWheelDiv])
+
 	return (
 		<>
 			<div
+				ref={overlayRef}
 				onMouseDown={handleMouseDown}
 				onMouseMove={handleMouseMove}
 				onMouseUp={handleMouseUp}
 				onClick={handleCanvasClick}
-				onWheel={handleWheelDiv}
 				style={{ position: 'fixed', inset: 0, cursor: isDragging ? 'grabbing' : 'grab', pointerEvents: 'auto' }}
 			/>
 
