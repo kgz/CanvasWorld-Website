@@ -28,22 +28,11 @@ const GingerbreadMan = () => {
 						max: 1,
 						step: 0.00001,
 					},
-					b: {
-						initialValue: -0.98246,
-						min: -1,
-						max: 1,
-						step: 0.00001,
-					},
 				},
 				examples: [
-					// {
-					// 	a: 0,
-					// 	b: 0.9298,
-					// },
-					// {
-					// 	a: 0,
-					// 	b: 0.66667,
-					// },
+					{
+						a: -1,
+					},
 				],
 			}) as TDatData,
 		[],
@@ -65,7 +54,7 @@ const GingerbreadMan = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		const { a, b, mu } = data
+		const { a } = data
 
 		const totalParticles = positions.length / EDimensions.TWO_D
 		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
@@ -74,7 +63,7 @@ const GingerbreadMan = () => {
 			y = -0.327585775405169
 		for (let i = 0; i < totalParticles; i++) {
 			if (i < particlesToDraw) {
-				const xn = y + Math.abs(b * x)
+				const xn = 1 - y + Math.abs(x)
 				const yn = a - x
 				x = xn
 				y = yn
@@ -121,15 +110,8 @@ GingerbreadMan.getDescription = () => (
 		Defined by only two equations, the system evolves as follows:
 		<br />
 		<br />
-		<strong>Classic Definition:</strong>
+		<strong>Definition:</strong>
 		<BlockMath math={'x_{n+1} = 1 - y_n + |x_n|'} />
-		<BlockMath math={'y_{n+1} = a - x_n'} />
-		<br />
-		In this variation, the equations are parameterized using constants a and b, which influence the attractor's spread and symmetry:
-		<br />
-		<br />
-		<strong>Parameterized Definition:</strong>
-		<BlockMath math={'x_{n+1} = y_n + |b \\cdot x_n|'} />
 		<BlockMath math={'y_{n+1} = a - x_n'} />
 		<br />
 		Each iteration takes the current point and transforms it through absolute value and subtraction, creating a chaotic dance that never repeats yet remains bounded within a distinctive region.
