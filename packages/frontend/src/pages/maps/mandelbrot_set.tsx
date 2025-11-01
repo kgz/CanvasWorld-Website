@@ -253,7 +253,7 @@ const MandelbrotSet = () => {
 		u_zoom: { value: zoom },
 		u_maxIterations: { value: iterations },
 		u_resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
-		u_juliaMode: { value: juliaMode },
+		u_juliaMode: { value: juliaMode ? 1.0 : 0.0 },
 		u_juliaC: { value: new Vector2(juliaC[0], juliaC[1]) },
 		u_colorScheme: { value: colorScheme }
 	})
@@ -272,7 +272,7 @@ const MandelbrotSet = () => {
 	}, [iterations, uniforms])
 
 	useEffect(() => {
-		uniforms.u_juliaMode.value = juliaMode
+		uniforms.u_juliaMode.value = juliaMode ? 1.0 : 0.0
 	}, [juliaMode, uniforms])
 
 	useEffect(() => {

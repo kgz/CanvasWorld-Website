@@ -2,7 +2,7 @@ uniform vec2 u_center;
 uniform float u_zoom;
 uniform int u_maxIterations;
 uniform vec2 u_resolution;
-uniform bool u_juliaMode;
+uniform float u_juliaMode;
 uniform vec2 u_juliaC;
 uniform int u_colorScheme;
 
@@ -16,7 +16,7 @@ void main() {
     vec2 uv = (gl_FragCoord.xy - u_resolution * 0.5) / (u_zoom * u_resolution.y);
     vec2 z, c;
     
-    if (u_juliaMode) {
+    if (u_juliaMode > 0.5) {
         z = uv + u_center;
         c = u_juliaC;
     } else {
