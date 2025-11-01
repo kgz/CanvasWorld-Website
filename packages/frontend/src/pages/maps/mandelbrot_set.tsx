@@ -97,9 +97,13 @@ const MandelbrotContent = ({
 		const mouseX = e.clientX - rect.left
 		const mouseY = e.clientY - rect.top
 		
-		// Calculate the complex coordinate at mouse position before zoom
-		const worldX = ((mouseX - rect.width / 2) / (zoom * rect.height)) + center[0]
-		const worldY = ((rect.height / 2 - mouseY) / (zoom * rect.height)) + center[1]
+		// Calculate the complex coordinate at mouse position (matching shader formula)
+		// Shader: uv = (gl_FragCoord - resolution*0.5) / (zoom * resolution.y)
+		//         c = uv + center
+		const dx = (mouseX - rect.width / 2) / (zoom * rect.height)
+		const dy = (mouseY - rect.height / 2) / (zoom * rect.height)
+		const worldX = center[0] + dx
+		const worldY = center[1] + dy
 		
 		// Apply zoom (smooth multiplier based on scroll delta)
 		const zoomSpeed = 0.0003
@@ -107,9 +111,11 @@ const MandelbrotContent = ({
 		const newZoom = Math.max(0.01, zoom * (1 + zoomDelta))
 		
 		// Adjust center so the point under mouse stays fixed
-		const zoomRatio = newZoom / zoom
-		const newCenterX = worldX - ((mouseX - rect.width / 2) / (newZoom * rect.height))
-		const newCenterY = worldY - ((rect.height / 2 - mouseY) / (newZoom * rect.height))
+		// After zoom, same world point should be at: newCenter + (mouse - center_pixels) / (newZoom * height)
+		const newDx = (mouseX - rect.width / 2) / (newZoom * rect.height)
+		const newDy = (mouseY - rect.height / 2) / (newZoom * rect.height)
+		const newCenterX = worldX - newDx
+		const newCenterY = worldY - newDy
 		
 		setZoom(newZoom)
 		setCenter([newCenterX, newCenterY])
