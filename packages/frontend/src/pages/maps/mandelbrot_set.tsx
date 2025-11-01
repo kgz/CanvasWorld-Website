@@ -101,7 +101,7 @@ const MandelbrotContent = ({
 		const worldY = ((rect.height / 2 - mouseY) / (zoom * rect.height)) + center[1]
 		
 		// Apply zoom (smooth multiplier based on scroll delta)
-		const zoomSpeed = 0.001
+		const zoomSpeed = 0.0003
 		const zoomDelta = -e.deltaY * zoomSpeed
 		const newZoom = Math.max(0.01, zoom * (1 + zoomDelta))
 		
