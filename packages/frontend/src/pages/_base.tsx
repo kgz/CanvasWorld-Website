@@ -8,7 +8,7 @@ import style from '../@scss/template.module.scss'
 import { Helmet } from 'react-helmet'
 import type { _XRFrame } from '@react-three/fiber/dist/declarations/src/core/utils'
 import { renderToString } from 'react-dom/server'
-import { EDimensions, type TPointsProps } from '../@types/gui'
+import { EDimensions, ERenderMode, type TPointsProps, type TParticleProps, type TShaderProps } from '../@types/gui'
 
 /**
  * Renders points on a canvas.
@@ -73,17 +73,44 @@ const Points = <T,>({
 	)
 }
 
-const Base = <T,>({
-	tick,
-	numParticles = 200_000 / 1000,
-	dimension,
-	pointSize,
-	description,
-	singleColor,
-	cameraPosition,
-	colorAlpha = false,
-	setCanvasRef = () => {},
-}: TPointsProps<T>) => {
+/**
+ * Renders a shader-based visualization on a fullscreen plane.
+ */
+const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: TShaderProps): JSX.Element => {
+	const meshRef = useRef<THREE.Mesh>(null)
+	const [resolution, setResolution] = useState([window.innerWidth, window.innerHeight])
+
+	useEffect(() => {
+		const handleResize = () => {
+			setResolution([window.innerWidth, window.innerHeight])
+		}
+		window.addEventListener('resize', handleResize)
+		return () => window.removeEventListener('resize', handleResize)
+	}, [])
+
+	useFrame(() => {
+		if (meshRef.current?.material && 'uniforms' in meshRef.current.material) {
+			const material = meshRef.current.material as THREE.ShaderMaterial
+			if (material.uniforms.u_resolution) {
+				material.uniforms.u_resolution.value.set(resolution[0], resolution[1])
+			}
+		}
+	})
+
+	return (
+		<mesh ref={meshRef}>
+			<planeGeometry args={[2, 2]} />
+			<shaderMaterial
+				vertexShader={vertexShader}
+				fragmentShader={fragmentShader}
+				uniforms={uniforms}
+			/>
+		</mesh>
+	)
+}
+
+const Base = <T,>(props: TPointsProps<T>) => {
+	const isShaderMode = 'renderMode' in props && props.renderMode === ERenderMode.SHADER
 	const canvas = useRef<HTMLCanvasElement>(null)
 	const stats = useRef<any>(null)
 
@@ -99,8 +126,10 @@ const Base = <T,>({
 	// }, [dD])
 
 	useEffect(() => {
-		setCanvasRef(canvas)
-	}, [canvas, setCanvasRef])
+		if (!isShaderMode && 'setCanvasRef' in props && props.setCanvasRef) {
+			props.setCanvasRef(canvas)
+		}
+	}, [canvas, isShaderMode, props])
 
 	const isIframe = useMemo(() => {
 		const params = new URLSearchParams(window.location.search)
@@ -118,8 +147,9 @@ const Base = <T,>({
 	}, [parentElementName])
 
 	const descriptionToString = useMemo(() => {
-		return renderToString(description ?? <></>)
-	}, [description])
+		const desc = 'description' in props ? props.description : undefined
+		return renderToString(desc ?? <></>)
+	}, [props])
 
 	const decodeEntities = useMemo(() => {
 		// convert html entities like &nsbp; to unicode
@@ -157,34 +187,36 @@ const Base = <T,>({
 				ref={canvas}
 				className={style.canvas}
 				camera={{
-					position: cameraPosition ?? [0, 0, -95],
+					position: props.cameraPosition ?? [0, 0, -95],
 					fov: 75,
 					near: 0.1,
 					far: 1000,
-					// rotateX: Camera.
-					// rotateY: 0,
 				}}
-				// style={
-				// 	isIframe
-				// 		? {
-				// 				canvas: {
-				// 					minHeight: 'none',
-				// 					height: 'auto !important',
-				// 					width: 'auto !important',
-				// 				},
-				// 			}
-				// 		: {}
-				// }
 			>
-				<OrbitControls makeDefault enableRotate={dimension !== EDimensions.TWO_D} enablePan enableZoom />
-				<Points
-					tick={tick}
-					numParticles={numParticles}
-					dimension={dimension}
-					pointSize={pointSize}
-					singleColor={singleColor}
-					// isIframe
-				/>
+				{isShaderMode ? (
+					<>
+						<ShaderPlane
+							renderMode={ERenderMode.SHADER}
+							vertexShader={props.vertexShader}
+							fragmentShader={props.fragmentShader}
+							uniforms={props.uniforms}
+						/>
+						{'children' in props && props.children}
+					</>
+				) : (
+					<>
+						<OrbitControls makeDefault enableRotate={'dimension' in props && props.dimension !== EDimensions.TWO_D} enablePan enableZoom />
+						<Points
+							renderMode={ERenderMode.PARTICLES}
+							tick={props.tick}
+							numParticles={props.numParticles}
+							dimension={props.dimension}
+							pointSize={'pointSize' in props ? props.pointSize : undefined}
+							singleColor={'singleColor' in props ? props.singleColor : undefined}
+							colorAlpha={'colorAlpha' in props ? props.colorAlpha : false}
+						/>
+					</>
+				)}
 			</Canvas>
 		</>
 	)

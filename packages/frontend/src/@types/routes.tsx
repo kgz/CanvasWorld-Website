@@ -12,7 +12,7 @@ import HopalongAttractorAdditive from '../pages/attractors/hopalong_attractor_ad
 import HopalongAttractorSinusoidal from '../pages/attractors/hopalong_attractor_sinusoidal'
 import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
-import MandlebrotSet from '../pages/maps/mandlebrot_set_1'
+import MandelbrotSet from '../pages/maps/mandelbrot_set'
 
 export type TRoutes = {
 	name: string

@@ -12,6 +12,14 @@ export enum EDimensions {
 	THREE_D = 3,
 }
 
+/**
+ * Enumeration for render modes.
+ */
+export enum ERenderMode {
+	PARTICLES = 'particles',
+	SHADER = 'shader',
+}
+
 export interface TDatData {
 	options: {
 		[key: string]: {
@@ -35,6 +43,34 @@ export type TDataFromObject<G extends TDatData['options']> = {
 }
 
 /**
+ * Represents shader-specific props
+ */
+export type TShaderProps = {
+	renderMode: ERenderMode.SHADER
+	vertexShader: string
+	fragmentShader: string
+	uniforms: Record<string, { value: unknown }>
+	cameraPosition?: Vector3
+	children?: React.ReactNode
+}
+
+/**
+ * Represents particle-specific props
+ * @template T The type of data for the TPoints component.
+ */
+export type TParticleProps<T> = {
+	renderMode?: ERenderMode.PARTICLES
+	tick: (positions: Float32Array, colors: Float32Array, state: RootState, delta: number, frame?: _XRFrame) => void
+	numParticles: number
+	dimension: EDimensions
+	pointSize?: number
+	singleColor?: THREE.Color
+	cameraPosition?: Vector3
+	colorAlpha?: boolean
+	setCanvasRef?: (ref: RefObject<HTMLCanvasElement>) => void
+}
+
+/**
  * Represents the props for TPoints component.
  * @template T The type of data for the TPoints component.
  * @property {TDatData & { data?: T }} datData - The data for the dat gui.
@@ -45,14 +81,4 @@ export type TDataFromObject<G extends TDatData['options']> = {
  * @property {JSX.Element} [description] - The description of the attractor.
  * @property {THREE.Color} [singleColor] - If null, will use the color vector as the color source
  */
-export type TPointsProps<T> = {
-	tick: (positions: Float32Array, colors: Float32Array, state: RootState, delta: number, frame?: _XRFrame) => void
-	numParticles: number
-	dimension: EDimensions
-	pointSize?: number
-	description?: JSX.Element
-	singleColor?: THREE.Color
-	cameraPosition?: Vector3
-	colorAlpha?: boolean
-	setCanvasRef?: (ref: RefObject<HTMLCanvasElement>) => void
-}
+export type TPointsProps<T> = TParticleProps<T> | TShaderProps
