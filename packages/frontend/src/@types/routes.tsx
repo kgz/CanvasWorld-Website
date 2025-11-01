@@ -79,8 +79,8 @@ const routes: TRoutes = [
 		element: IkedaMap,
 	},
 	{
-		name: 'Mandlebrot Set',
-		element: MandlebrotSet,
+		name: 'Mandelbrot Set',
+		element: MandelbrotSet,
 	},
 ]
 

@@ -10,17 +10,17 @@ import fragmentShader from '../../shaders/mandelbrot.frag.glsl?raw'
 
 type MandelbrotContentProps = {
 	center: number[]
-	setCenter: (center: number[]) => void
+	setCenter: React.Dispatch<React.SetStateAction<number[]>>
 	zoom: number
-	setZoom: (zoom: number) => void
+	setZoom: React.Dispatch<React.SetStateAction<number>>
 	iterations: number
-	setIterations: (iterations: number) => void
+	setIterations: React.Dispatch<React.SetStateAction<number>>
 	juliaMode: boolean
-	setJuliaMode: (mode: boolean) => void
+	setJuliaMode: React.Dispatch<React.SetStateAction<boolean>>
 	juliaC: number[]
-	setJuliaC: (c: number[]) => void
+	setJuliaC: React.Dispatch<React.SetStateAction<number[]>>
 	colorScheme: number
-	setColorScheme: (scheme: number) => void
+	setColorScheme: React.Dispatch<React.SetStateAction<number>>
 }
 
 const MandelbrotContent = ({

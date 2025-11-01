@@ -14,7 +14,7 @@ import { EDimensions, ERenderMode, type TPointsProps, type TParticleProps, type 
  * Renders points on a canvas.
  *
  * @template T - The type of data for each point, {[key: string]: number}
- * @param {TPointsProps<T>} props - The component props.
+ * @param {TParticleProps<T>} props - The component props.
  * @returns {JSX.Element} - The rendered component.
  */
 const Points = <T,>({
@@ -24,7 +24,7 @@ const Points = <T,>({
 	pointSize,
 	singleColor,
 	colorAlpha = false,
-}: TPointsProps<T>): JSX.Element => {
+}: TParticleProps<T>): JSX.Element => {
 	const points = useRef<typeof points>()
 
 	const pointsBuffer = new Float32Array(numParticles * dimension)
@@ -197,23 +197,24 @@ const Base = <T,>(props: TPointsProps<T>) => {
 					<>
 						<ShaderPlane
 							renderMode={ERenderMode.SHADER}
-							vertexShader={props.vertexShader}
-							fragmentShader={props.fragmentShader}
-							uniforms={props.uniforms}
+							vertexShader={(props as TShaderProps).vertexShader}
+							fragmentShader={(props as TShaderProps).fragmentShader}
+							uniforms={(props as TShaderProps).uniforms}
 						/>
 						{'children' in props && props.children}
 					</>
 				) : (
 					<>
-						<OrbitControls makeDefault enableRotate={'dimension' in props && props.dimension !== EDimensions.TWO_D} enablePan enableZoom />
-						<Points
+						<OrbitControls makeDefault enableRotate={'dimension' in props && (props as TParticleProps<T>).dimension !== EDimensions.TWO_D} enablePan enableZoom />
+						<Points<T>
 							renderMode={ERenderMode.PARTICLES}
-							tick={props.tick}
-							numParticles={props.numParticles}
-							dimension={props.dimension}
-							pointSize={'pointSize' in props ? props.pointSize : undefined}
-							singleColor={'singleColor' in props ? props.singleColor : undefined}
-							colorAlpha={'colorAlpha' in props ? props.colorAlpha : false}
+							tick={(props as TParticleProps<T>).tick}
+							numParticles={(props as TParticleProps<T>).numParticles}
+							dimension={(props as TParticleProps<T>).dimension}
+							pointSize={(props as TParticleProps<T>).pointSize}
+							singleColor={(props as TParticleProps<T>).singleColor}
+							colorAlpha={(props as TParticleProps<T>).colorAlpha}
+							setCanvasRef={(props as TParticleProps<T>).setCanvasRef}
 						/>
 					</>
 				)}

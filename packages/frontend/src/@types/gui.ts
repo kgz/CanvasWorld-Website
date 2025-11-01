@@ -71,14 +71,22 @@ export type TParticleProps<T> = {
 }
 
 /**
- * Represents the props for TPoints component.
+ * Represents the props for Base component - can be either particle or shader based.
+ * For particle mode, pass all TParticleProps. For shader mode, pass TShaderProps.
  * @template T The type of data for the TPoints component.
- * @property {TDatData & { data?: T }} datData - The data for the dat gui.
- * @property {(positions: Float32Array, colors: Float32Array, datData: T, state: RootState, delta: number, frame?: _XRFrame) => void} tick - The function that is called on every frame.
- * @property {number} numParticles - The number of particles.
- * @property {EDimensions} dimension - The dimension of the points.
- * @property {number} [pointSize] - The size of the points.
- * @property {JSX.Element} [description] - The description of the attractor.
- * @property {THREE.Color} [singleColor] - If null, will use the color vector as the color source
  */
 export type TPointsProps<T> = TParticleProps<T> | TShaderProps
+
+/**
+ * Type guard to check if props are for particle rendering
+ */
+export function isParticleProps<T>(props: TPointsProps<T>): props is TParticleProps<T> {
+	return !('renderMode' in props) || props.renderMode === ERenderMode.PARTICLES
+}
+
+/**
+ * Type guard to check if props are for shader rendering
+ */
+export function isShaderProps<T>(props: TPointsProps<T>): props is TShaderProps {
+	return 'renderMode' in props && props.renderMode === ERenderMode.SHADER
+}
