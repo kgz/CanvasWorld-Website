@@ -89,9 +89,30 @@ const MandelbrotContent = ({
 
 	const handleWheelDiv = useCallback((e: React.WheelEvent) => {
 		e.preventDefault()
-		const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1
-		setZoom(prev => Math.max(0.01, prev * zoomFactor))
-	}, [setZoom])
+		const canvas = canvasRef.current || document.querySelector('canvas')
+		if (!canvas) return
+		
+		const rect = canvas.getBoundingClientRect()
+		const mouseX = e.clientX - rect.left
+		const mouseY = e.clientY - rect.top
+		
+		// Calculate the complex coordinate at mouse position before zoom
+		const worldX = ((mouseX - rect.width / 2) / (zoom * rect.height)) + center[0]
+		const worldY = ((rect.height / 2 - mouseY) / (zoom * rect.height)) + center[1]
+		
+		// Apply zoom (smooth multiplier based on scroll delta)
+		const zoomSpeed = 0.001
+		const zoomDelta = -e.deltaY * zoomSpeed
+		const newZoom = Math.max(0.01, zoom * (1 + zoomDelta))
+		
+		// Adjust center so the point under mouse stays fixed
+		const zoomRatio = newZoom / zoom
+		const newCenterX = worldX - ((mouseX - rect.width / 2) / (newZoom * rect.height))
+		const newCenterY = worldY - ((rect.height / 2 - mouseY) / (newZoom * rect.height))
+		
+		setZoom(newZoom)
+		setCenter([newCenterX, newCenterY])
+	}, [zoom, center])
 
 	return (
 		<>
