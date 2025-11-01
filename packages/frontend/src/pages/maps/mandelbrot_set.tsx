@@ -76,9 +76,25 @@ const MandelbrotContent = ({
 		if (juliaMode) return
 		const canvas = canvasRef.current || document.querySelector('canvas')
 		if (!canvas) return
+		
 		const rect = canvas.getBoundingClientRect()
-		const x = ((e.clientX - rect.left) - rect.width / 2) / (zoom * rect.height) + center[0]
-		const y = (rect.height / 2 - (e.clientY - rect.top)) / (zoom * rect.height) + center[1]
+		const canvasWidth = canvas.width || rect.width
+		const canvasHeight = canvas.height || rect.height
+		
+		const mouseX = e.clientX - rect.left
+		const mouseY = e.clientY - rect.top
+		
+		// Convert to shader coordinate system (same as zoom handler)
+		const scaleX = canvasWidth / rect.width
+		const scaleY = canvasHeight / rect.height
+		const shaderX = mouseX * scaleX
+		const shaderY = (rect.height - mouseY) * scaleY  // Flip Y: bottom-left origin
+		
+		const dx = (shaderX - canvasWidth / 2) / (zoom * canvasHeight)
+		const dy = (shaderY - canvasHeight / 2) / (zoom * canvasHeight)
+		const x = center[0] + dx
+		const y = center[1] + dy
+		
 		setJuliaC([x, y])
 	}, [juliaMode, zoom, center, setJuliaC])
 
@@ -94,14 +110,26 @@ const MandelbrotContent = ({
 		if (!canvas) return
 		
 		const rect = canvas.getBoundingClientRect()
+		const canvasWidth = canvas.width || rect.width
+		const canvasHeight = canvas.height || rect.height
+		
+		// Mouse position relative to canvas
 		const mouseX = e.clientX - rect.left
 		const mouseY = e.clientY - rect.top
 		
-		// Calculate the complex coordinate at mouse position (matching shader formula)
+		// Convert to shader coordinate system
+		// gl_FragCoord has Y=0 at bottom, HTML has Y=0 at top
+		// Also account for CSS scaling if canvas size != CSS size
+		const scaleX = canvasWidth / rect.width
+		const scaleY = canvasHeight / rect.height
+		const shaderX = mouseX * scaleX
+		const shaderY = (rect.height - mouseY) * scaleY  // Flip Y: bottom-left origin
+		
+		// Calculate complex coordinate at mouse position (matching shader)
 		// Shader: uv = (gl_FragCoord - resolution*0.5) / (zoom * resolution.y)
 		//         c = uv + center
-		const dx = (mouseX - rect.width / 2) / (zoom * rect.height)
-		const dy = (mouseY - rect.height / 2) / (zoom * rect.height)
+		const dx = (shaderX - canvasWidth / 2) / (zoom * canvasHeight)
+		const dy = (shaderY - canvasHeight / 2) / (zoom * canvasHeight)
 		const worldX = center[0] + dx
 		const worldY = center[1] + dy
 		
@@ -111,9 +139,9 @@ const MandelbrotContent = ({
 		const newZoom = Math.max(0.01, zoom * (1 + zoomDelta))
 		
 		// Adjust center so the point under mouse stays fixed
-		// After zoom, same world point should be at: newCenter + (mouse - center_pixels) / (newZoom * height)
-		const newDx = (mouseX - rect.width / 2) / (newZoom * rect.height)
-		const newDy = (mouseY - rect.height / 2) / (newZoom * rect.height)
+		// After zoom: same world point must map back to same shader coordinates
+		const newDx = (shaderX - canvasWidth / 2) / (newZoom * canvasHeight)
+		const newDy = (shaderY - canvasHeight / 2) / (newZoom * canvasHeight)
 		const newCenterX = worldX - newDx
 		const newCenterY = worldY - newDy
 		

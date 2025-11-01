@@ -81,8 +81,18 @@ const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: TShaderProps): 
 	const [resolution, setResolution] = useState([window.innerWidth, window.innerHeight])
 
 	useEffect(() => {
+		const updateResolution = () => {
+			const canvas = document.querySelector('canvas')
+			if (canvas) {
+				setResolution([canvas.width, canvas.height])
+			} else {
+				setResolution([window.innerWidth, window.innerHeight])
+			}
+		}
+		
+		updateResolution()
 		const handleResize = () => {
-			setResolution([window.innerWidth, window.innerHeight])
+			updateResolution()
 		}
 		window.addEventListener('resize', handleResize)
 		return () => window.removeEventListener('resize', handleResize)
