@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform vec2 u_center;
 uniform float u_zoom;
 uniform int u_maxIterations;
@@ -26,9 +28,10 @@ void main() {
     
     float iterations = 0.0;
     float magnitude = 0.0;
+    int maxIter = u_maxIterations;
     
     for(int i = 0; i < 1000; i++) {
-        if(i >= u_maxIterations) break;
+        if(i >= maxIter) break;
         magnitude = dot(z, z);
         if(magnitude > 4.0) break;
         z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
@@ -39,7 +42,9 @@ void main() {
     if(iterations >= float(u_maxIterations)) {
         color = vec3(0.0);
     } else {
-        float smoothValue = iterations - log2(log2(magnitude)) + 4.0;
+        float log2mag = log(magnitude) / log(2.0);
+        float log2log2mag = log(log2mag) / log(2.0);
+        float smoothValue = iterations - log2log2mag + 4.0;
         float t = smoothValue / float(u_maxIterations);
         
         if(u_colorScheme == 0) {
