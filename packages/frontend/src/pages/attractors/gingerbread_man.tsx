@@ -115,10 +115,27 @@ const GingerbreadMan = () => {
 // Add static description function to the component
 GingerbreadMan.getDescription = () => (
 	<>
-		The Gingerbread Man attractor is a fractal pattern that resembles a gingerbread man cookie.
+		The Gingerbread Man Attractor is a classic example of a chaotic map — a simple, two-dimensional system that produces surprisingly intricate and unpredictable behavior. Despite its playful name, this attractor's shape often resembles a gingerbread man when plotted, earning it its distinctive title.
 		<br />
 		<br />
-		This attractor is currently work in progress (WIP).
+		Defined by only two equations, the system evolves as follows:
+		<br />
+		<br />
+		<strong>Classic Definition:</strong>
+		<BlockMath math={'x_{n+1} = 1 - y_n + |x_n|'} />
+		<BlockMath math={'y_{n+1} = a - x_n'} />
+		<br />
+		In this variation, the equations are parameterized using constants a and b, which influence the attractor's spread and symmetry:
+		<br />
+		<br />
+		<strong>Parameterized Definition:</strong>
+		<BlockMath math={'x_{n+1} = y_n + |b \\cdot x_n|'} />
+		<BlockMath math={'y_{n+1} = a - x_n'} />
+		<br />
+		Each iteration takes the current point and transforms it through absolute value and subtraction, creating a chaotic dance that never repeats yet remains bounded within a distinctive region.
+		<br />
+		<br />
+		The simplicity of the rule hides its beauty — from random starting points, a consistent structure emerges: a chaotic, cookie-shaped figure made of millions of points.
 	</>
 )
 
