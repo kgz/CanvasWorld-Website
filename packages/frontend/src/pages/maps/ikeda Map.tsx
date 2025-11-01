@@ -54,11 +54,10 @@ const IkedaMap = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		const { a, b } = data
+		const { a } = data
 
 		// Use fallback values if parameters are undefined
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
-		const safeB = b !== undefined ? b : datData.options.b.initialValue
 
 		const totalParticles = positions.length / EDimensions.TWO_D
 		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
@@ -143,8 +142,8 @@ IkedaMap.getDescription = () => (
 		<br />
 		<br />
 		Definition:
-		<BlockMath math={'x_{n+1} = 1 + a(x_n cos(f) - y_n sin(f))'} />
-		<BlockMath math={'y_{n+1} = y_n cos(f) + x_n sin(f)'} />
+		<BlockMath math={'x_{n+1} = 1 + a(x_n \\cos(f) - y_n \\sin(f))'} />
+		<BlockMath math={'y_{n+1} = a(x_n \\sin(f) + y_n \\cos(f))'} />
 		Where
 		<BlockMath math={'f(x, y) = 0.4 - \\frac{6}{1 + x_n^2 + y_n^2}'} />
 		<br />
