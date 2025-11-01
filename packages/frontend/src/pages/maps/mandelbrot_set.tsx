@@ -44,12 +44,6 @@ const MandelbrotContent = ({
 		findCanvas()
 	}, [])
 
-	const handleWheel = useCallback((e: WheelEvent) => {
-		e.preventDefault()
-		const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1
-		setZoom(prev => Math.max(0.01, prev * zoomFactor))
-	}, [setZoom])
-
 	const handleMouseDown = useCallback((e: React.MouseEvent) => {
 		setIsDragging(true)
 		setDragStart([e.clientX, e.clientY])
@@ -93,12 +87,11 @@ const MandelbrotContent = ({
 		setIterations(256)
 	}
 
-	useEffect(() => {
-		const canvas = canvasRef.current || document.querySelector('canvas')
-		if (!canvas) return
-		canvas.addEventListener('wheel', handleWheel, { passive: false })
-		return () => canvas.removeEventListener('wheel', handleWheel)
-	}, [handleWheel])
+	const handleWheelDiv = useCallback((e: React.WheelEvent) => {
+		e.preventDefault()
+		const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1
+		setZoom(prev => Math.max(0.01, prev * zoomFactor))
+	}, [setZoom])
 
 	return (
 		<>
@@ -107,6 +100,7 @@ const MandelbrotContent = ({
 				onMouseMove={handleMouseMove}
 				onMouseUp={handleMouseUp}
 				onClick={handleCanvasClick}
+				onWheel={handleWheelDiv}
 				style={{ position: 'fixed', inset: 0, cursor: isDragging ? 'grabbing' : 'grab', pointerEvents: 'auto' }}
 			/>
 
