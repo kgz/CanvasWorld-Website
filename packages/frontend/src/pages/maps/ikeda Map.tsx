@@ -132,23 +132,25 @@ const IkedaMap = () => {
 // Add static description function to the component
 IkedaMap.getDescription = () => (
 	<>
-		The Ikeda Map is a 2D strange attractor.
-		<br />
-		Where <InlineMath math={'a \\ge 0.6'} /> It has a{' '}
-		<a target="_blank" href="https://en.wikipedia.org/wiki/Attractor">
-			Chaotic Attraction
-		</a>
-		.
-		<br />
-		<br />
-		Definition:
+		The Ikeda Map is a classic 2D discrete-time dynamical system known for its chaotic behavior. 
+		Iterating its equations generates a strange attractor that exhibits complex, swirling patterns. 
+		<br /><br />
+		Each new point is computed based on the previous point using a combination of rotation and scaling:
 		<BlockMath math={'x_{n+1} = 1 + a(x_n \\cos(f) - y_n \\sin(f))'} />
 		<BlockMath math={'y_{n+1} = a(x_n \\sin(f) + y_n \\cos(f))'} />
-		Where
-		<BlockMath math={'f(x, y) = 0.4 - \\frac{6}{1 + x_n^2 + y_n^2}'} />
+		where the rotation angle <InlineMath math={'f'} /> depends on the current state:
+		<BlockMath math={'f(x_n, y_n) = 0.4 - \\frac{6}{1 + x_n^2 + y_n^2}'} />
+		<br /><br />
+		The parameter <InlineMath math={'a'} /> controls the system's scaling and stretching, influencing the degree of chaos.
+		Typical values for <InlineMath math={'a'} /> lie in <InlineMath math={'[0.6, 1]'} /> to ensure the attractor exhibits a richly structured, bounded trajectory. 
+		<br /><br />
+		When visualized, the Ikeda Map produces intricate, folded structures reminiscent of optical resonators in nonlinear physics, making it a popular example of chaotic behavior in simple iterative maps.
+		<br /><br />
+		Reference:
 		<br />
-		Limits: <br />
-		<BlockMath math="a \\in [0, 1]" />
+		<a target="_blank" href="https://en.wikipedia.org/wiki/Ikeda_map">
+			Ikeda Map – Wikipedia
+		</a>
 	</>
 )
 
