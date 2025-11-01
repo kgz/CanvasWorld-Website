@@ -47,7 +47,7 @@ const MandelbrotContent = ({
 	const handleWheel = useCallback((e: WheelEvent) => {
 		e.preventDefault()
 		const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1
-		setZoom(prev => Math.max(0.1, Math.min(prev * zoomFactor, 1e10)))
+		setZoom(prev => Math.max(0.01, prev * zoomFactor))
 	}, [setZoom])
 
 	const handleMouseDown = useCallback((e: React.MouseEvent) => {
