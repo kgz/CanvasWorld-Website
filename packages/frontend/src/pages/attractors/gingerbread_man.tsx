@@ -11,8 +11,6 @@ import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 import { useAnimationState } from '../../hooks/useAnimationState'
 
-const { sin, sqrt } = Math
-
 const GingerbreadMan = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector(state => state.WebSlice)
@@ -21,19 +19,8 @@ const GingerbreadMan = () => {
 	const datData = useMemo(
 		() =>
 			({
-				options: {
-					a: {
-						initialValue: -1,
-						min: -1,
-						max: 1,
-						step: 0.00001,
-					},
-				},
-				examples: [
-					{
-						a: -1,
-					},
-				],
+				options: {},
+				examples: [],
 			}) as TDatData,
 		[],
 	)
@@ -54,17 +41,15 @@ const GingerbreadMan = () => {
 		delta: number,
 		frame?: XRFrame | undefined,
 	) => {
-		const { a } = data
-
 		const totalParticles = positions.length / EDimensions.TWO_D
 		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
 
-		let x = 0.723135391715914,
-			y = -0.327585775405169
+		let x = -0.1,
+			y = 0
 		for (let i = 0; i < totalParticles; i++) {
 			if (i < particlesToDraw) {
 				const xn = 1 - y + Math.abs(x)
-				const yn = a - x
+				const yn = x
 				x = xn
 				y = yn
 
@@ -112,7 +97,7 @@ GingerbreadMan.getDescription = () => (
 		<br />
 		<strong>Definition:</strong>
 		<BlockMath math={'x_{n+1} = 1 - y_n + |x_n|'} />
-		<BlockMath math={'y_{n+1} = a - x_n'} />
+		<BlockMath math={'y_{n+1} = x_n'} />
 		<br />
 		Each iteration takes the current point and transforms it through absolute value and subtraction, creating a chaotic dance that never repeats yet remains bounded within a distinctive region.
 		<br />
