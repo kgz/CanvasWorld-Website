@@ -194,15 +194,12 @@ const Base = <T,>(props: TPointsProps<T>) => {
 				}}
 			>
 				{isShaderMode ? (
-					<>
-						<ShaderPlane
-							renderMode={ERenderMode.SHADER}
-							vertexShader={(props as TShaderProps).vertexShader}
-							fragmentShader={(props as TShaderProps).fragmentShader}
-							uniforms={(props as TShaderProps).uniforms}
-						/>
-						{'children' in props && props.children}
-					</>
+					<ShaderPlane
+						renderMode={ERenderMode.SHADER}
+						vertexShader={(props as TShaderProps).vertexShader}
+						fragmentShader={(props as TShaderProps).fragmentShader}
+						uniforms={(props as TShaderProps).uniforms}
+					/>
 				) : (
 					<>
 						<OrbitControls makeDefault enableRotate={'dimension' in props && (props as TParticleProps<T>).dimension !== EDimensions.TWO_D} enablePan enableZoom />

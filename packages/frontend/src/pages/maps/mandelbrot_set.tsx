@@ -1,7 +1,6 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { Vector2 } from 'three'
 import { Save } from 'lucide-react'
-import { useThree } from '@react-three/fiber'
 import Base from '../_base'
 import { ERenderMode } from '../../@types/gui'
 import { BlockMath } from 'react-katex'
@@ -27,15 +26,29 @@ const MandelbrotContent = ({
 	center, setCenter, zoom, setZoom, iterations, setIterations,
 	juliaMode, setJuliaMode, juliaC, setJuliaC, colorScheme, setColorScheme
 }: MandelbrotContentProps) => {
-	const { gl, scene, camera } = useThree()
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragStart, setDragStart] = useState([0, 0])
+	const canvasRef = useRef<HTMLCanvasElement | null>(null)
+
+	// Get canvas element from DOM (retry if not found initially)
+	useEffect(() => {
+		const findCanvas = () => {
+			const canvas = document.querySelector('canvas')
+			if (canvas) {
+				canvasRef.current = canvas
+			} else {
+				// Retry after a short delay if canvas not found
+				setTimeout(findCanvas, 100)
+			}
+		}
+		findCanvas()
+	}, [])
 
 	const handleWheel = useCallback((e: WheelEvent) => {
 		e.preventDefault()
 		const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1
 		setZoom(prev => Math.max(0.1, Math.min(prev * zoomFactor, 1e10)))
-	}, [])
+	}, [setZoom])
 
 	const handleMouseDown = useCallback((e: React.MouseEvent) => {
 		setIsDragging(true)
@@ -48,28 +61,31 @@ const MandelbrotContent = ({
 		const dy = (dragStart[1] - e.clientY) / (zoom * window.innerHeight)
 		setCenter(prev => [prev[0] - dx, prev[1] - dy])
 		setDragStart([e.clientX, e.clientY])
-	}, [isDragging, dragStart, zoom])
+	}, [isDragging, dragStart, zoom, setCenter])
 
 	const handleMouseUp = useCallback(() => {
 		setIsDragging(false)
 	}, [])
 
 	const handleExport = useCallback(() => {
-		gl.render(scene, camera)
-		const dataURL = gl.domElement.toDataURL('image/png')
+		const canvas = canvasRef.current || document.querySelector('canvas')
+		if (!canvas) return
+		const dataURL = canvas.toDataURL('image/png')
 		const link = document.createElement('a')
 		link.download = `${juliaMode ? 'julia' : 'mandelbrot'}_${Date.now()}.png`
 		link.href = dataURL
 		link.click()
-	}, [gl, scene, camera, juliaMode])
+	}, [juliaMode])
 
 	const handleCanvasClick = useCallback((e: React.MouseEvent) => {
 		if (juliaMode) return
-		const rect = gl.domElement.getBoundingClientRect()
+		const canvas = canvasRef.current || document.querySelector('canvas')
+		if (!canvas) return
+		const rect = canvas.getBoundingClientRect()
 		const x = ((e.clientX - rect.left) - rect.width / 2) / (zoom * rect.height) + center[0]
 		const y = (rect.height / 2 - (e.clientY - rect.top)) / (zoom * rect.height) + center[1]
 		setJuliaC([x, y])
-	}, [gl, zoom, center, juliaMode])
+	}, [juliaMode, zoom, center, setJuliaC])
 
 	const handleReset = () => {
 		setCenter([-0.5, 0.0])
@@ -78,10 +94,11 @@ const MandelbrotContent = ({
 	}
 
 	useEffect(() => {
-		const canvas = gl.domElement
+		const canvas = canvasRef.current || document.querySelector('canvas')
+		if (!canvas) return
 		canvas.addEventListener('wheel', handleWheel, { passive: false })
 		return () => canvas.removeEventListener('wheel', handleWheel)
-	}, [gl, handleWheel])
+	}, [handleWheel])
 
 	return (
 		<>
@@ -208,13 +225,14 @@ const MandelbrotSet = () => {
 	}, [colorScheme, uniforms])
 
 	return (
-		<Base
-			renderMode={ERenderMode.SHADER}
-			vertexShader={vertexShader}
-			fragmentShader={fragmentShader}
-			uniforms={uniforms}
-			cameraPosition={[0, 0, 1]}
-		>
+		<>
+			<Base
+				renderMode={ERenderMode.SHADER}
+				vertexShader={vertexShader}
+				fragmentShader={fragmentShader}
+				uniforms={uniforms}
+				cameraPosition={[0, 0, 1]}
+			/>
 			<MandelbrotContent
 				center={center}
 				setCenter={setCenter}
@@ -229,7 +247,7 @@ const MandelbrotSet = () => {
 				colorScheme={colorScheme}
 				setColorScheme={setColorScheme}
 			/>
-		</Base>
+		</>
 	)
 }
 
