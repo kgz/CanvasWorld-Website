@@ -50,7 +50,7 @@ function Index() {
 						key={index}
 						name={route.name}
 						route={genPath(route.name)}
-						imageUrl={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080'}/chaos/icons/${genPath(route.name)}.png`}
+						imageUrl={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'}/chaos/icons/${genPath(route.name)}.png`}
 						description={`Explore the ${route.name} mathematical attractor`}
 					/>
 				))}

@@ -94,7 +94,7 @@ function Index() {
 								<CardHeader title={route.name} subheader={'September 14, 2016'} />
 								<CardMedia
 									component="img"
-									src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080'}/chaos/icons/${genPath(route.name)}.png`}
+									src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'}/chaos/icons/${genPath(route.name)}.png`}
 									height="194"
 								></CardMedia>
 							</Card>

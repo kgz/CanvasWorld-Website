@@ -20,7 +20,7 @@ function Index() {
 						<div key={index} className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
 							<h3 className="text-lg font-semibold text-white mb-2">{route.name}</h3>
 							<img
-								src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080'}/chaos/icons/${genPath(route.name)}.png`}
+								src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'}/chaos/icons/${genPath(route.name)}.png`}
 								alt={route.name}
 								className="w-full h-32 object-cover rounded"
 							/>
