@@ -32,14 +32,14 @@ func serveSSR(c *fiber.Ctx) error {
 	// Default meta tags
 	title := "CanvasWorld - Mathematical Attractors"
 	description := "Explore beautiful mathematical attractors and chaotic systems through interactive visualizations."
-	image := "/static/images/mandelbrot.png"
+	image := "/chaos/icons/mandelbrot_set.png"
 
 	// Customize meta tags for specific routes
 	if exists {
 		routeKey := strings.TrimPrefix(path, "/")
 		title = fmt.Sprintf("%s - CanvasWorld", strings.ReplaceAll(routeKey, "_", " "))
 		description = route.Description
-		image = fmt.Sprintf("/static/images/%s.png", routeKey)
+		image = fmt.Sprintf("/chaos/icons/%s.png", routeKey)
 	}
 
 	// Generate HTML with meta tags for Discord/social media

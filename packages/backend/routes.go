@@ -41,8 +41,8 @@ func getRoutes() map[string]Route {
 	routes["hopalong_attractor_additive"] = Route{
 		Description: "The Hopalong Attractor Additive is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
 	}
-	routes["hopalong_attractor_sin"] = Route{
-		Description: "The Hopalong Attractor (Sin version) is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
+	routes["hopalong_attractor_sinusoidal"] = Route{
+		Description: "The Hopalong Attractor (Sinusoidal) is a chaotic attractor that replaces the square-root term with a sine, blending periodic motion with fractal structure.",
 	}
 	routes["gingerbread_man"] = Route{
 		Description: "WIP",
@@ -50,8 +50,11 @@ func getRoutes() map[string]Route {
 	routes["ikeda_map"] = Route{
 		Description: "The Ikeda Map is a chaotic map defined by the following equations: x_{n+1} = 1 + c \\cdot (x_n \\cdot cos(t) - y_n \\cdot sin(t)), y_{n+1} = c \\cdot (x_n \\cdot sin(t) + y_n \\cdot cos(t))",
 	}
-	routes["mandlebrot_set"] = Route{
-		Description: "The Mandlebrot Set is a chaotic map defined by the following equations: x_{n+1} = x_n^2 - y_n^2 + x_0, y_{n+1} = 2 \\cdot x_n \\cdot y_n + y_0",
+	routes["mandelbrot_set"] = Route{
+		Description: "The Mandelbrot Set is defined by iterating z_{n+1} = z_n^2 + c for complex c; the set is those c for which the sequence remains bounded.",
+	}
+	routes["sierpiński_triangle"] = Route{
+		Description: "The Sierpiński triangle is a fractal obtained by recursively removing the central triangle from an equilateral triangle (chaos-game / IFS form in the interactive viz).",
 	}
 
 	return routes
