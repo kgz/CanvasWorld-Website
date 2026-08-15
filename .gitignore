@@ -1,4 +1,16 @@
 node_modules
 .eslintcache
-
 .stats
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+packages/frontend/.env
+packages/frontend/.env.*
+!packages/frontend/.env.example
+packages/backend/.env
+
+# Local TLS (mkcert / vite HTTPS)
+*.pem
+packages/frontend/certs/
