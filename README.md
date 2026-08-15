@@ -22,12 +22,22 @@ A monorepo containing the CanvasWorld mathematical attractors visualization plat
 
 ## Development Setup
 
-1. **Copy environment file**:
+1. **Copy environment files** (gitignored — do not commit):
    ```bash
    cp env.example .env
+   cp packages/frontend/.env.example packages/frontend/.env
    ```
 
-2. **Start with Docker Compose**:
+2. **Optional local HTTPS** (Vite). Generate certs into a gitignored folder:
+   ```bash
+   mkdir -p packages/frontend/certs
+   mkcert -key-file packages/frontend/certs/localhost-key.pem \
+     -cert-file packages/frontend/certs/localhost.pem localhost 127.0.0.1
+   ```
+   Then uncomment `VITE_HTTPS_KEY` / `VITE_HTTPS_CERT` in `packages/frontend/.env`.  
+   Never commit `*.pem` files.
+
+3. **Start with Docker Compose**:
    ```bash
    docker-compose up
    ```
@@ -37,7 +47,7 @@ A monorepo containing the CanvasWorld mathematical attractors visualization plat
    - Go backend with Air on port 8080
    - React frontend with Vite on port 5173
 
-3. **Or run locally**:
+4. **Or run locally**:
 
    **Backend**:
    ```bash
