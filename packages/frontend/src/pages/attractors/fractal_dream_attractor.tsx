@@ -1,0 +1,138 @@
+import type { RootState } from '@react-three/fiber'
+import * as THREE from 'three'
+
+import { BlockMath } from 'react-katex'
+import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
+import Base from '../_base'
+import type { ComponentProps } from 'react'
+import { useEffect, useMemo } from 'react'
+import { setDatData, setData } from '../../@store/WebSlice'
+import { useAppDispatch, useAppSelector } from '../../@store/store'
+import type { TRoutes } from '../../@types/routes'
+import { useAnimationState } from '../../hooks/useAnimationState'
+
+const { sin, cos } = Math
+
+const FractalDreamAttractor = () => {
+	const dispatch = useAppDispatch()
+	const { data } = useAppSelector(state => state.WebSlice)
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
+
+	const datData = useMemo(
+		() =>
+			({
+				options: {
+					a: {
+						initialValue: 1.1,
+						min: 0,
+						max: 3,
+						step: 0.000001,
+					},
+					b: {
+						initialValue: 2.7640000000000002,
+						min: 0,
+						max: 3,
+						step: 0.000001,
+					},
+					c: {
+						initialValue: 1.07,
+						min: 0,
+						max: 3,
+						step: 0.000001,
+					},
+					d: {
+						initialValue: 1.561,
+						min: 0,
+						max: 3,
+						step: 0.000001,
+					},
+				},
+				examples: [],
+			}) as TDatData,
+		[],
+	)
+
+	type TData = TDataFromObject<(typeof datData)['options']>
+
+	useEffect(() => {
+		void dispatch(setDatData(datData))
+		void dispatch(
+			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
+		)
+	}, [datData, dispatch])
+
+	const tick: TPointsProps<TData>['tick'] = (
+		positions: Float32Array,
+		colors: Float32Array,
+		state: RootState,
+		delta: number,
+		frame?: XRFrame | undefined,
+	) => {
+		const { a, b, c, d } = data
+
+		// Use fallback values if parameters are undefined
+		const safeA = a !== undefined ? a : datData.options.a.initialValue
+		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		const safeC = c !== undefined ? c : datData.options.c.initialValue
+		const safeD = d !== undefined ? d : datData.options.d.initialValue
+
+		const totalParticles = positions.length / EDimensions.TWO_D
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
+
+		let x = -2,
+			y = -2
+		for (let i = 0; i < totalParticles; i++) {
+			if (i < particlesToDraw) {
+				const nx = Math.sin(safeB * y) + safeC * Math.sin(safeB * x)
+				const ny = Math.sin(safeA * x) + safeD * Math.sin(safeA * y)
+
+				x = nx
+				y = ny
+
+				positions.set([x * 100, y * 100], i * 2)
+
+				if (i >= particlesToDraw - 100) {
+					colors.set([1.0, 1.0, 0.0], i * 3)
+				} else {
+					const color = new THREE.Color()
+					color.setHex(0xf87b3)
+					colors.set([color.r, color.g, color.b], i * 3)
+				}
+			} else {
+				positions.set([9999, 9999], i * 2)
+				colors.set([0, 0, 0], i * 3)
+			}
+		}
+
+		updateProgressUI(particlesToDraw, totalParticles)
+		checkCompletion(particlesToDraw, totalParticles)
+
+		return { positions, colors }
+	}
+
+	return (
+		<Base<TData>
+			dimension={EDimensions.TWO_D}
+			numParticles={200_000}
+			tick={tick}
+			pointSize={0.5}
+			cameraPosition={[0, 0, -500]}
+		/>
+	)
+}
+
+// Add static description function to the component
+FractalDreamAttractor.getDescription = () => (
+	<>
+		The Fractal Dream Attractor is a 2D strange attractor.
+		<br />
+		<br />
+		Definition:
+		<BlockMath math={'x_{n+1} = sin(b * y_n) + c * sin(b * x_n)'} />
+		<BlockMath math={'y_{n+1} = sin(a * x_n) + d * sin(a * y_n)'} />
+		<br />
+		Limits: <BlockMath math="a,b,c,d \\in [-3, 3]" />
+	</>
+)
+
+export default FractalDreamAttractor

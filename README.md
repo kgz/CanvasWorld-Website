@@ -1,46 +1,75 @@
-# Getting Started with Create React App
+# CanvasWorld Monorepo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A monorepo containing the CanvasWorld mathematical attractors visualization platform.
 
-## Available Scripts
+## Structure
 
-In the project directory, you can run:
+```
+├── packages/
+│   ├── backend/          # Go API server with Fiber
+│   └── frontend/         # React SPA with Vite
+├── docker-compose.yml    # Development environment
+├── Dockerfile           # Production build
+└── env.example          # Environment configuration
+```
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Hybrid SSR/SPA**: Bot detection for Discord/social media embeds
+- **Hot Reload**: Air for Go backend, Vite for frontend
+- **Database**: MySQL with GORM ORM
+- **Package Manager**: pnpm for frontend dependencies
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Development Setup
 
-### `npm test`
+1. **Copy environment file**:
+   ```bash
+   cp env.example .env
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Start with Docker Compose**:
+   ```bash
+   docker-compose up
+   ```
 
-### `npm run build`
+   This will start:
+   - MySQL database on port 3306
+   - Go backend with Air on port 8080
+   - React frontend with Vite on port 5173
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. **Or run locally**:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   **Backend**:
+   ```bash
+   cd packages/backend
+   go mod download
+   air
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   **Frontend**:
+   ```bash
+   cd packages/frontend
+   pnpm install
+   pnpm dev
+   ```
 
-### `npm run eject`
+## Production Build
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+docker build -t canvasworld .
+docker run -p 8080:8080 canvasworld
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Bot Detection
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The backend automatically detects bot user agents (Discord, Twitter, Facebook, etc.) and serves pre-rendered HTML with proper meta tags for social media embeds. Regular users get the SPA experience.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## API Endpoints
 
-## Learn More
+- `GET /api/version` - API version
+- `GET /api/routes` - Available attractor routes
+- `GET /*` - SPA routes (with bot detection)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Environment Variables
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+See `env.example` for all available configuration options.
