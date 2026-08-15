@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,15 +17,6 @@ func serveSSR(c *fiber.Ctx) error {
 	if path != "/" && path != "" {
 		routeKey := strings.TrimPrefix(path, "/")
 		route, exists = routes[routeKey]
-
-		// Generate screenshot if it doesn't exist
-		if exists {
-			go func() {
-				if err := screenshotService.ScreenshotIfNotExists(routeKey); err != nil {
-					log.Printf("Failed to generate screenshot for %s: %v", routeKey, err)
-				}
-			}()
-		}
 	}
 
 	// Default meta tags

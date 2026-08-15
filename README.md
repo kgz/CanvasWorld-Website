@@ -63,6 +63,24 @@ A monorepo containing the CanvasWorld mathematical attractors visualization plat
    pnpm dev
    ```
 
+## Thumbnails / OG images
+
+Icons live in `packages/backend/static/images/{slug}.png` and are served at `/chaos/icons/{slug}.png`.
+
+Generate (or refresh) them with Playwright while the frontend is running:
+
+```bash
+cd packages/frontend
+pnpm exec playwright install chromium   # once
+FRONTEND_URL=http://localhost:3002 pnpm thumbs
+# single slug:
+FRONTEND_URL=http://localhost:3002 pnpm thumbs -- --slug clifford_attractor
+```
+
+Pages opened with `?screenshot=true` hide chrome and set `window.__CW_READY__` when the canvas is capture-ready. Prefer this offline script over Discord-first generation — bot SSR only references existing files.
+
+Optional on-demand API (requires Chrome for chromedp): `POST /api/screenshot/:slug` / `POST /api/screenshot-all`.
+
 ## Production Build
 
 ```bash

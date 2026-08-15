@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../@store/store';
 import { SetMenuOpen, setData } from '../@store/WebSlice';
 import routes from '../@types/routes';
 import { genPath } from '../modules/genPath';
+import { isScreenshotMode, resetScreenshotReady } from '../modules/screenshotMode';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { useEffect, useMemo } from 'react';
 import Index from './index-new';
@@ -16,10 +17,15 @@ import { Play, Pause, RotateCcw } from 'lucide-react';
 const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, isIframe }) => {
 	const dispatch = useAppDispatch();
 	const { datData, data } = useAppSelector(state => state.WebSlice);
-	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe);
+	const screenshot = isScreenshotMode();
+	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe && !screenshot);
 	const [isPlaying, setIsPlaying] = React.useState(true);
 	const [speed, setSpeed] = React.useState(1);
 	const [isComplete, setIsComplete] = React.useState(false);
+
+	useEffect(() => {
+		resetScreenshotReady();
+	}, [route.name]);
 
 	// Get description from the route component's static function
 	const description = React.useMemo(() => {
@@ -44,6 +50,16 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 			window.removeEventListener('animationComplete', handleAnimationComplete as EventListener);
 		};
 	}, []);
+
+	if (screenshot) {
+		return (
+			<div className="min-h-screen bg-black text-white">
+				<div className="h-screen w-screen bg-black">
+					<route.element />
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="min-h-screen bg-gray-900 text-white">

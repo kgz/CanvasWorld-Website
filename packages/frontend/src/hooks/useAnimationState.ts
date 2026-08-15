@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { isScreenshotMode } from '../modules/screenshotMode'
 
 export const useAnimationState = () => {
 	const [isPaused, setIsPaused] = useState(false)
@@ -44,12 +45,7 @@ export const useAnimationState = () => {
 	}, [])
 
 	const calculateParticlesToDraw = (totalParticles: number, delta: number) => {
-		// Check if we're in screenshot mode (URL parameter)
-		const urlParams = new URLSearchParams(window.location.search)
-		const isScreenshot = urlParams.get('screenshot') === 'true'
-		
-		// If screenshot mode, always return max particles
-		if (isScreenshot) {
+		if (isScreenshotMode()) {
 			return totalParticles
 		}
 		
