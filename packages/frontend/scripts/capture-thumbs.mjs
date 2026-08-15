@@ -37,20 +37,26 @@ const SLUGS = [
 ]
 
 function parseSlugArg(argv) {
-	const i = argv.indexOf('--slug')
-	if (i >= 0 && argv[i + 1]) {
-		return argv[i + 1]
+	const filtered = argv.filter((a) => a !== '--')
+	const i = filtered.indexOf('--slug')
+	if (i >= 0 && filtered[i + 1]) {
+		return filtered[i + 1]
 	}
 	return null
 }
 
-async function captureSlug(page, slug) {
-	const url = `${FRONTEND_URL}/${slug}?screenshot=true`
-	console.log(`→ ${url}`)
-	await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
-	await page.waitForSelector('#cw-viz-canvas', { timeout: 30000 })
+async function waitForDrawnCanvas(page) {
 	await page.waitForFunction(() => window.__CW_READY__ === true, null, { timeout: 45000 })
-	await page.waitForTimeout(250)
+	// Let a couple of presented frames land (preserveDrawingBuffer must be on).
+	await page.waitForTimeout(800)
+}
+
+async function captureSlug(page, slug) {
+	const url = `${FRONTEND_URL}/${encodeURI(slug)}?screenshot=true`
+	console.log(`→ ${url}`)
+	await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
+	await page.waitForSelector('#cw-viz-canvas', { timeout: 30000 })
+	await waitForDrawnCanvas(page)
 	const canvas = page.locator('#cw-viz-canvas')
 	const buf = await canvas.screenshot({ type: 'png' })
 	const out = path.join(OUT_DIR, `${slug}.png`)
@@ -64,7 +70,14 @@ async function main() {
 
 	await mkdir(OUT_DIR, { recursive: true })
 
-	const browser = await chromium.launch({ headless: true })
+	const browser = await chromium.launch({
+		headless: true,
+		args: [
+			'--use-gl=angle',
+			'--enable-webgl',
+			'--ignore-gpu-blocklist',
+		],
+	})
 	const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
 
 	let failed = 0

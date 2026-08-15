@@ -15,7 +15,12 @@ export function markScreenshotReady(): void {
 	if (!isScreenshotMode()) {
 		return
 	}
-	window.__CW_READY__ = true
+	// Two RAFs so the WebGL frame is presented before capturers read the canvas.
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			window.__CW_READY__ = true
+		})
+	})
 }
 
 export function resetScreenshotReady(): void {

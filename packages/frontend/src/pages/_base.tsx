@@ -14,6 +14,10 @@ const tagVizCanvas = (canvas: HTMLCanvasElement) => {
   canvas.dataset.cwViz = '1'
 }
 
+const canvasGlProps = () =>
+  isScreenshotMode() ? { preserveDrawingBuffer: true as const } : undefined
+
+
 // ------------------------------------------------------------
 // Particle Points Renderer
 // ------------------------------------------------------------
@@ -258,6 +262,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
         <Canvas
           camera={('cameraPosition' in props && props.cameraPosition) ? { position: props.cameraPosition } : { position: [0, 0, 1], fov: 75 }}
           dpr={window.devicePixelRatio}
+          gl={canvasGlProps()}
           style={{ width: '100%', height: '100vh', background: '#000' }}
           onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
         >
@@ -311,6 +316,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
         <Canvas
           camera={{ position: [0, 0, 1], fov: 75 }}
           dpr={window.devicePixelRatio}
+          gl={canvasGlProps()}
           style={{ width: '100%', height: '100vh', background: '#000' }}
           onCreated={({ gl }) => {
             tagVizCanvas(gl.domElement)
@@ -327,6 +333,11 @@ const Base = <T,>(props: TPointsProps<T>) => {
   }
 
   // Original particle/points mode
+  const particleCamera =
+    'cameraPosition' in props && props.cameraPosition
+      ? { position: props.cameraPosition, fov: 75 }
+      : { position: [0, 0, 400] as [number, number, number], fov: 75 }
+
   return (
     <>
       <Helmet>
@@ -334,8 +345,9 @@ const Base = <T,>(props: TPointsProps<T>) => {
         <meta name="description" content={description} />
       </Helmet>
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 75 }}
+        camera={particleCamera}
         dpr={window.devicePixelRatio}
+        gl={canvasGlProps()}
         style={{ width: '100%', height: '100vh', background: '#000' }}
         onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
       >
