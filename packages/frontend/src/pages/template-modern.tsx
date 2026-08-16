@@ -47,12 +47,13 @@ function FpsCounter() {
 		let raf = 0
 
 		const tick = (t: number) => {
-			const dtMs = last === 0 ? 16 : Math.min(t - last, 48)
+			const rawDt = last === 0 ? 16 : t - last
+			const dtMs = Math.min(Math.max(rawDt, 0.1), 48)
 			last = t
 			smoothed = smoothed * 0.88 + (1000 / dtMs) * 0.12
 			if (lastPaint === 0 || t - lastPaint >= 200) {
 				lastPaint = t
-				setFps(Math.max(1, Math.round(smoothed)))
+				setFps(Math.max(1, Math.min(240, Math.round(smoothed))))
 			}
 			raf = requestAnimationFrame(tick)
 		}

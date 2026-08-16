@@ -4,18 +4,13 @@ uniform int u_maxIterations;
 uniform vec2 u_resolution;
 uniform float u_juliaMode;
 uniform vec2 u_juliaC;
-uniform int u_colorScheme;
 
 varying vec2 vUv;
 
-vec3 palette(float t, vec3 a, vec3 b, vec3 c, vec3 d) {
-    return a + b * cos(6.28318 * (c * t + d));
-}
-
 void main() {
-    vec2 uv = (gl_FragCoord.xy - u_resolution * 0.5) / (u_zoom * u_resolution.y);
+    vec2 uv = (gl_FragCoord.xy - u_resolution * 0.5) / (u_zoom * max(u_resolution.y, 1.0));
     vec2 z, c;
-    
+
     if (u_juliaMode > 0.5) {
         z = uv + u_center;
         c = u_juliaC;
@@ -23,41 +18,33 @@ void main() {
         z = vec2(0.0);
         c = uv + u_center;
     }
-    
+
     float iterations = 0.0;
     float magnitude = 0.0;
     int maxIter = u_maxIterations;
-    
-    for(int i = 0; i < 1000; i++) {
-        if(i >= maxIter) break;
+    if (maxIter < 1) {
+        maxIter = 1;
+    }
+
+    for (int i = 0; i < 1000; i++) {
+        if (i >= maxIter) break;
         magnitude = dot(z, z);
-        if(magnitude > 4.0) break;
+        if (magnitude > 4.0) break;
         z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
         iterations += 1.0;
     }
-    
+
     vec3 color;
-    if(iterations >= float(u_maxIterations)) {
+    if (iterations >= float(maxIter) - 0.5) {
         color = vec3(0.0);
     } else {
-        float log2mag = log(magnitude) / log(2.0);
-        float log2log2mag = log(log2mag) / log(2.0);
-        float smoothValue = iterations - log2log2mag + 4.0;
-        float t = smoothValue / float(u_maxIterations);
-        
-        if(u_colorScheme == 0) {
-            color = palette(t, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.0, 0.33, 0.67));
-        } else if(u_colorScheme == 1) {
-            color = palette(t, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.0, 0.1, 0.2));
-        } else if(u_colorScheme == 2) {
-            color = palette(t, vec3(0.5), vec3(0.5), vec3(1.0, 1.0, 0.5), vec3(0.8, 0.9, 0.3));
-        } else if(u_colorScheme == 3) {
-            color = vec3(t);
-        } else {
-            color = palette(t, vec3(0.5), vec3(0.5), vec3(2.0, 1.0, 0.0), vec3(0.5, 0.2, 0.25));
-        }
+        float mag = max(magnitude, 1.0000001);
+        float logzn = log(mag) / log(2.0);
+        float nu = log(max(logzn, 1.0000001)) / log(2.0);
+        float smoothValue = iterations + 1.0 - nu;
+        float t = clamp(smoothValue / float(maxIter), 0.0, 1.0);
+        color = vec3(t);
     }
-    
+
     gl_FragColor = vec4(color, 1.0);
 }
-

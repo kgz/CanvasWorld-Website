@@ -126,6 +126,15 @@
     "active": true
   },
   {
+    "slug": "julia_set",
+    "title": "Julia Set",
+    "category": "fractal",
+    "description": "Julia sets fix a complex constant c and iterate z_{n+1} = z_n^2 + c over starting points z₀. Each c yields a different connected or dusty fractal.",
+    "thumbnail": "/chaos/icons/julia_set.png",
+    "renderMode": "shader",
+    "active": true
+  },
+  {
     "slug": "sierpinski_triangle",
     "title": "Sierpiński Triangle",
     "category": "fractal",
