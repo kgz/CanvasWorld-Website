@@ -8,33 +8,16 @@ import { isScreenshotMode } from '../../modules/screenshotMode'
 import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
 import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
 
-/** Recursion finer than ~1px only aliases into sparse sparkles. */
-const screenDepthCap = (zoom: number, heightPx: number): number => {
-	const pixel = 1 / Math.max(zoom * Math.max(heightPx, 1), 1)
-	return Math.max(1, Math.floor(Math.log2(Math.max(1.5 / pixel, 1)) + 0.75))
-}
+const MAX_DEPTH = 10
 
 type OverlayProps = {
 	center: number[]
 	setCenter: Dispatch<SetStateAction<number[]>>
 	zoom: number
 	setZoom: Dispatch<SetStateAction<number>>
-	depth: number
-	setDepth: Dispatch<SetStateAction<number>>
-	usedDepth: number
-	screenCap: number
 }
 
-const SierpinskiOverlay = ({
-	center,
-	setCenter,
-	zoom,
-	setZoom,
-	depth,
-	setDepth,
-	usedDepth,
-	screenCap,
-}: OverlayProps) => {
+const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) => {
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragStart, setDragStart] = useState([0, 0])
 	const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -75,7 +58,6 @@ const SierpinskiOverlay = ({
 	const handleReset = () => {
 		setCenter([0, 0])
 		setZoom(0.65)
-		setDepth(7)
 	}
 
 	const handleWheelDiv = useCallback(
@@ -119,11 +101,8 @@ const SierpinskiOverlay = ({
 		return () => overlay.removeEventListener('wheel', handleWheelDiv)
 	}, [handleWheelDiv])
 
-	const capped = depth > screenCap
-
 	return (
 		<>
-			{/* Leave the transport bar clickable */}
 			<div
 				ref={overlayRef}
 				onMouseDown={handleMouseDown}
@@ -142,24 +121,6 @@ const SierpinskiOverlay = ({
 			/>
 
 			<div className="fixed top-20 right-4 z-50 w-64 space-y-4 rounded-lg bg-gray-800/90 p-4 text-white backdrop-blur-sm">
-				<div>
-					<label className="mb-1 block text-sm">Max depth: {depth}</label>
-					<input
-						type="range"
-						min={1}
-						max={24}
-						step={1}
-						value={depth}
-						onChange={(e) => setDepth(Number.parseInt(e.target.value, 10))}
-						className="w-full"
-					/>
-					<p className="mt-1 text-xs text-gray-400">
-						Target {usedDepth}
-						{capped ? ` (screen caps ~${screenCap} — zoom in for more)` : ''}
-					</p>
-					<p className="mt-1 text-xs text-gray-500">Transport bar scrubs construction depth</p>
-				</div>
-
 				<div className="space-y-1 font-mono text-xs">
 					<div>
 						Center: ({center[0].toFixed(5)}, {center[1].toFixed(5)})
@@ -184,8 +145,6 @@ const SierpinskiOverlay = ({
 const SierpinskiTriangle = () => {
 	const [center, setCenter] = useState([0, 0])
 	const [zoom, setZoom] = useState(0.65)
-	const [depth, setDepth] = useState(7)
-	const [viewH, setViewH] = useState(() => window.innerHeight)
 	const {
 		isPaused,
 		animationSpeed,
@@ -196,15 +155,6 @@ const SierpinskiTriangle = () => {
 	} = useAnimation()
 	const depthProgressRef = useRef(0)
 	const wasReplayingRef = useRef(false)
-
-	useEffect(() => {
-		const onResize = () => setViewH(window.innerHeight)
-		window.addEventListener('resize', onResize)
-		return () => window.removeEventListener('resize', onResize)
-	}, [])
-
-	const screenCap = screenDepthCap(zoom, viewH)
-	const usedDepth = Math.min(depth, screenCap, 48)
 
 	const [uniforms] = useState({
 		u_center: { value: new Vector2(center[0], center[1]) },
@@ -221,15 +171,14 @@ const SierpinskiTriangle = () => {
 		uniforms.u_zoom.value = zoom
 	}, [zoom, uniforms])
 
-	// Map transport-bar progress → recursive construction depth (GPU analog of particle n).
 	useEffect(() => {
 		if (isScreenshotMode()) {
-			uniforms.u_maxDepth.value = usedDepth
-			reportProgress(usedDepth, usedDepth)
+			uniforms.u_maxDepth.value = MAX_DEPTH
+			reportProgress(MAX_DEPTH, MAX_DEPTH)
 			return
 		}
 
-		const total = Math.max(usedDepth, 1)
+		const total = MAX_DEPTH
 		depthProgressRef.current = Math.min(depthProgressRef.current, total)
 
 		let frame = 0
@@ -265,7 +214,6 @@ const SierpinskiTriangle = () => {
 		frame = requestAnimationFrame(loop)
 		return () => cancelAnimationFrame(frame)
 	}, [
-		usedDepth,
 		isPaused,
 		animationSpeed,
 		manualProgress,
@@ -284,16 +232,7 @@ const SierpinskiTriangle = () => {
 				uniforms={uniforms}
 				cameraPosition={[0, 0, 1]}
 			/>
-			<SierpinskiOverlay
-				center={center}
-				setCenter={setCenter}
-				zoom={zoom}
-				setZoom={setZoom}
-				depth={depth}
-				setDepth={setDepth}
-				usedDepth={usedDepth}
-				screenCap={screenCap}
-			/>
+			<SierpinskiOverlay center={center} setCenter={setCenter} zoom={zoom} setZoom={setZoom} />
 		</>
 	)
 }
@@ -307,13 +246,11 @@ SierpinskiTriangle.getDescription = () => (
 		sub-triangles; if all weights stay below ½ the sample falls in a removed void.
 		<br />
 		<br />
-		<strong>Transport bar:</strong> scrubs construction depth (solid triangle → successive removals) —
-		the shader analog of particle <code>n</code>.
+		<strong>Transport bar:</strong> scrubs construction depth 0→{MAX_DEPTH} (solid triangle → successive
+		removals).
 		<br />
 		<br />
-		<strong>Zoom:</strong> scroll to magnify under the cursor; drag to pan. Depth past what the screen can
-		resolve is capped (otherwise the gasket turns into sparse sparkles); zoom in to unlock deeper
-		recursion. Float32 usually holds to about 10⁶–10⁷×.
+		<strong>Zoom:</strong> scroll to magnify under the cursor; drag to pan.
 		<br />
 		<br />
 		Corner remap (weight <code>α ≥ ½</code>):
