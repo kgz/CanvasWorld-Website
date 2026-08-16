@@ -1,5 +1,3 @@
-precision mediump float;
-
 uniform vec2 u_center;
 uniform float u_zoom;
 uniform int u_maxIterations;
