@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lorenz — CanvasWorld</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+</head>
+<body>
+  <div class="canvas-app panel-open" data-od-id="canvas-app">
+    <header class="canvas-topbar" data-od-id="canvas-topbar">
+      <a class="wordmark" href="home.html" data-od-id="canvas-nav-wordmark">CanvasWorld</a>
+
+      <div class="canvas-topbar-title">
+        <span class="viz-tag" data-od-id="viz-kind">Attractor</span>
+        <h1 data-od-id="viz-title">Lorenz</h1>
+      </div>
+
+      <div class="canvas-topbar-spacer"></div>
+
+      <div class="canvas-topbar-actions" data-od-id="canvas-topbar-actions">
+        <button type="button" class="chrome-btn" data-od-id="panel-toggle" aria-expanded="true" aria-controls="side-panel">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="6" y1="2.5" x2="6" y2="13.5" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span>Params</span>
+        </button>
+        <a class="chrome-btn" href="home.html#gallery" data-od-id="canvas-nav-gallery">
+          <span>Gallery</span>
+        </a>
+        <a class="chrome-btn" href="#" data-od-id="canvas-nav-blog">
+          <span>Blog</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="canvas-body" data-od-id="canvas-body">
+      <section class="stage" data-od-id="stage">
+        <canvas class="stage-canvas" data-od-id="stage-canvas" aria-hidden="true"></canvas>
+        <div class="stage-vignette" aria-hidden="true"></div>
+        <!-- FPS HUD: stage top-right inset — preferred over transport tuck; clear of left panel & speed chips. Hide: .fps-counter.is-hidden or data-hide-fps on .canvas-app -->
+        <div class="fps-counter" data-od-id="fps-counter" aria-hidden="true">
+          <span class="fps-value" data-od-id="fps-value">60</span>
+          <span class="fps-unit">FPS</span>
+        </div>
+      </section>
+
+      <div class="stage-scrim" data-od-id="stage-scrim"></div>
+
+      <aside class="side-panel" id="side-panel" data-od-id="side-panel">
+        <div class="side-panel-inner">
+          <section class="panel-section" data-od-id="panel-section-params">
+            <h2 class="panel-section-title">Parameters</h2>
+            <p class="panel-lede">Tune the constants that govern the system. Changes re-trace the trajectory from its seed.</p>
+
+            <div class="param-row">
+              <div class="param-row-head">
+                <label class="param-label" for="param-sigma">σ · sigma</label>
+                <span class="param-value" data-od-id="param-sigma-value">10.0</span>
+              </div>
+              <input type="range" id="param-sigma" data-od-id="param-sigma" min="1" max="20" step="0.5" value="10" />
+            </div>
+
+            <div class="param-row">
+              <div class="param-row-head">
+                <label class="param-label" for="param-rho">ρ · rho</label>
+                <span class="param-value" data-od-id="param-rho-value">28.0</span>
+              </div>
+              <input type="range" id="param-rho" data-od-id="param-rho" min="5" max="60" step="1" value="28" />
+            </div>
+
+            <div class="param-row">
+              <div class="param-row-head">
+                <label class="param-label" for="param-beta">β · beta</label>
+                <span class="param-value" data-od-id="param-beta-value">2.7</span>
+              </div>
+              <input type="range" id="param-beta" data-od-id="param-beta" min="0.5" max="6" step="0.1" value="2.7" />
+            </div>
+          </section>
+
+          <section class="panel-section" data-od-id="panel-section-about">
+            <h2 class="panel-section-title">About</h2>
+            <p class="panel-lede">
+              Discovered by Edward Lorenz in 1963 as a simplified model of atmospheric
+              convection. Three coupled, deterministic equations produce a trajectory
+              that never repeats and never settles — the signature of chaos.
+            </p>
+            <pre class="math-block" data-od-id="math-block">dx/dt = σ(y − x)
+dy/dt = x(ρ − z) − y
+dz/dt = xy − βz</pre>
+          </section>
+
+          <section class="panel-section" data-od-id="panel-section-explore">
+            <h2 class="panel-section-title">Explore</h2>
+            <ul class="explore-list" data-od-id="explore-list">
+              <li><span class="explore-item is-current" data-od-id="explore-item-lorenz">Lorenz <span class="explore-item-kind">Now viewing</span></span></li>
+              <li><a class="explore-item" href="home.html#gallery" data-od-id="explore-item-aizawa">Aizawa <span class="explore-item-kind">Attractor</span></a></li>
+              <li><a class="explore-item" href="home.html#gallery" data-od-id="explore-item-thomas">Thomas <span class="explore-item-kind">Attractor</span></a></li>
+              <li><a class="explore-item" href="home.html#gallery" data-od-id="explore-item-chen">Chen <span class="explore-item-kind">Attractor</span></a></li>
+              <li><a class="explore-item" href="home.html#gallery" data-od-id="explore-item-halvorsen">Halvorsen <span class="explore-item-kind">Attractor</span></a></li>
+              <li><a class="explore-item" href="home.html#gallery" data-od-id="explore-item-mandelbrot">Mandelbrot <span class="explore-item-kind">Fractal</span></a></li>
+            </ul>
+          </section>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="transport" data-od-id="transport">
+      <button type="button" class="transport-btn transport-play" data-od-id="transport-play" aria-label="Pause">
+        <svg data-icon="pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx="1"/><rect x="9.5" y="2.5" width="3" height="11" rx="1"/></svg>
+        <svg data-icon="play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="display:none"><path d="M4 2.6c0-.9 1-1.4 1.7-.9l8 5.4c.6.4.6 1.3 0 1.7l-8 5.4c-.7.5-1.7 0-1.7-.9V2.6Z"/></svg>
+      </button>
+      <button type="button" class="transport-btn" data-od-id="transport-replay" aria-label="Replay">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M13.5 2.6v3.2h-3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="transport-scrub" data-od-id="transport-scrub">
+        <input type="range" id="transport-progress" data-od-id="transport-progress" min="0" max="9000" step="1" value="0" aria-label="Trajectory progress" />
+        <span class="transport-count" data-od-id="transport-count">n = 0 / 9,000</span>
+      </div>
+
+      <div class="speed-group" data-od-id="speed-group">
+        <button type="button" class="speed-btn" data-speed="0.5" data-od-id="speed-btn-0-5">0.5×</button>
+        <button type="button" class="speed-btn is-active" data-speed="1" data-od-id="speed-btn-1">1×</button>
+        <button type="button" class="speed-btn" data-speed="2" data-od-id="speed-btn-2">2×</button>
+        <button type="button" class="speed-btn" data-speed="4" data-od-id="speed-btn-4">4×</button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var canvas = document.querySelector('[data-od-id="stage-canvas"]');
+      var app = document.querySelector('[data-od-id="canvas-app"]');
+      if (!canvas || !app) return;
+
+      var ctx = canvas.getContext('2d');
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var width, height;
+
+      var TOTAL = 9000;
+      var DT = 0.006;
+      var xs = new Float32Array(TOTAL);
+      var ys = new Float32Array(TOTAL);
+      var zs = new Float32Array(TOTAL);
+
+      var sigma = 10, rho = 28, beta = 2.7;
+      var drawnCount = 0;
+      var isPlaying = true;
+      var speed = 1;
+      var rotation = 0.6;
+      var lastFrame = null;
+      var fpsSmoothed = 60;
+      var fpsLastPaint = 0;
+
+      var progressInput = document.querySelector('[data-od-id="transport-progress"]');
+      var countLabel = document.querySelector('[data-od-id="transport-count"]');
+      var fpsValue = document.querySelector('[data-od-id="fps-value"]');
+      var playBtn = document.querySelector('[data-od-id="transport-play"]');
+      var replayBtn = document.querySelector('[data-od-id="transport-replay"]');
+      var speedBtns = Array.prototype.slice.call(document.querySelectorAll('.speed-btn'));
+      var sigmaInput = document.querySelector('[data-od-id="param-sigma"]');
+      var rhoInput = document.querySelector('[data-od-id="param-rho"]');
+      var betaInput = document.querySelector('[data-od-id="param-beta"]');
+      var sigmaValue = document.querySelector('[data-od-id="param-sigma-value"]');
+      var rhoValue = document.querySelector('[data-od-id="param-rho-value"]');
+      var betaValue = document.querySelector('[data-od-id="param-beta-value"]');
+
+      function formatCount(n) {
+        var clamped = Math.round(Math.min(TOTAL, Math.max(0, n)));
+        return clamped.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      function computeTrajectory() {
+        var x = 0.1, y = 0, z = 0;
+        for (var i = 0; i < TOTAL; i++) {
+          var dx = sigma * (y - x);
+          var dy = x * (rho - z) - y;
+          var dz = x * y - beta * z;
+          x += dx * DT;
+          y += dy * DT;
+          z += dz * DT;
+          xs[i] = x;
+          ys[i] = y;
+          zs[i] = z;
+        }
+      }
+
+      function resize() {
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      var accentInk = [61, 214, 198];
+      var coolInk = [184, 196, 214];
+
+      function render() {
+        ctx.fillStyle = '#05070a';
+        ctx.fillRect(0, 0, width, height);
+
+        if (drawnCount < 2) return;
+
+        var scale = Math.min(width, height) / 62;
+        var cx = width / 2;
+        var cy = height / 2 + Math.min(height, width) * 0.06;
+        var cosR = Math.cos(rotation);
+        var sinR = Math.sin(rotation);
+
+        var chunk = 55;
+        for (var start = 0; start < drawnCount - 1; start += chunk) {
+          var end = Math.min(start + chunk + 1, drawnCount);
+          var age = start / TOTAL;
+          var alpha = 0.12 + age * 0.62;
+          var color = age > 0.6 ? coolInk : accentInk;
+
+          ctx.beginPath();
+          for (var i = start; i < end; i++) {
+            var px = xs[i], pz = zs[i] - 25;
+            var rx = px * cosR - pz * sinR;
+            var rz = px * sinR + pz * cosR;
+            var sx = cx + rx * scale;
+            var sy = cy - (ys[i] * 0.62 + rz * 0.5) * scale * 0.9;
+            if (i === start) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+          }
+          ctx.strokeStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + alpha.toFixed(3) + ')';
+          ctx.lineWidth = 1.1;
+          ctx.stroke();
+        }
+      }
+
+      function syncScrub() {
+        progressInput.value = String(Math.round(Math.min(TOTAL, Math.max(0, drawnCount))));
+        countLabel.textContent = 'n = ' + formatCount(drawnCount) + ' / ' + formatCount(TOTAL);
+      }
+
+      function setPlaying(next) {
+        isPlaying = next;
+        playBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+        playBtn.querySelector('[data-icon="pause"]').style.display = isPlaying ? '' : 'none';
+        playBtn.querySelector('[data-icon="play"]').style.display = isPlaying ? 'none' : '';
+      }
+
+      function paintFps(t, dtMs) {
+        if (!fpsValue) return;
+        if (dtMs > 0) {
+          fpsSmoothed = fpsSmoothed * 0.88 + (1000 / dtMs) * 0.12;
+        }
+        if (t - fpsLastPaint < 200 && fpsLastPaint !== 0) return;
+        fpsLastPaint = t;
+        fpsValue.textContent = String(Math.max(1, Math.round(fpsSmoothed)));
+      }
+
+      function tick(t) {
+        var dtMs = lastFrame == null ? 16 : Math.min(t - lastFrame, 48);
+        lastFrame = t;
+
+        if (isPlaying && drawnCount < TOTAL) {
+          drawnCount = Math.min(TOTAL, Math.max(0, drawnCount + (dtMs / 1000) * 480 * speed));
+          syncScrub();
+        }
+
+        if (!reduceMotion) {
+          rotation += (dtMs / 1000) * 0.05;
+        }
+
+        render();
+        paintFps(t, dtMs);
+
+        if (!reduceMotion || isPlaying) {
+          requestAnimationFrame(tick);
+        } else {
+          rafPending = false;
+        }
+      }
+
+      var rafPending = false;
+      function ensureLoop() {
+        if (rafPending) return;
+        rafPending = true;
+        lastFrame = null;
+        requestAnimationFrame(function (t) {
+          rafPending = true;
+          tick(t);
+        });
+      }
+
+      playBtn.addEventListener('click', function () {
+        if (!isPlaying && drawnCount >= TOTAL) drawnCount = 0;
+        setPlaying(!isPlaying);
+        if (isPlaying) ensureLoop();
+      });
+
+      replayBtn.addEventListener('click', function () {
+        drawnCount = 0;
+        syncScrub();
+        setPlaying(true);
+        ensureLoop();
+      });
+
+      progressInput.addEventListener('input', function () {
+        drawnCount = Number(progressInput.value);
+        setPlaying(false);
+        countLabel.textContent = 'n = ' + formatCount(Math.round(drawnCount)) + ' / ' + formatCount(TOTAL);
+        render();
+      });
+
+      speedBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          speed = Number(btn.getAttribute('data-speed'));
+          speedBtns.forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+        });
+      });
+
+      function onParamChange() {
+        sigma = Number(sigmaInput.value);
+        rho = Number(rhoInput.value);
+        beta = Number(betaInput.value);
+        sigmaValue.textContent = sigma.toFixed(1);
+        rhoValue.textContent = rho.toFixed(1);
+        betaValue.textContent = beta.toFixed(1);
+        computeTrajectory();
+        drawnCount = 0;
+        syncScrub();
+        setPlaying(true);
+        ensureLoop();
+      }
+
+      [sigmaInput, rhoInput, betaInput].forEach(function (input) {
+        input.addEventListener('input', onParamChange);
+      });
+
+      window.addEventListener('resize', function () {
+        resize();
+        render();
+      });
+
+      computeTrajectory();
+      resize();
+      syncScrub();
+
+      if (reduceMotion) {
+        drawnCount = TOTAL;
+        syncScrub();
+        setPlaying(false);
+        render();
+      } else {
+        ensureLoop();
+      }
+    })();
+
+    (function () {
+      var app = document.querySelector('[data-od-id="canvas-app"]');
+      var toggle = document.querySelector('[data-od-id="panel-toggle"]');
+      var scrim = document.querySelector('[data-od-id="stage-scrim"]');
+      if (!app || !toggle) return;
+
+      function setOpen(open) {
+        app.classList.toggle('panel-open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+      }
+
+      toggle.addEventListener('click', function () {
+        setOpen(!app.classList.contains('panel-open'));
+      });
+
+      if (scrim) {
+        scrim.addEventListener('click', function () {
+          setOpen(false);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

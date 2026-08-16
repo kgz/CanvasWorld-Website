@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "canvas.html",
+  "entry": "canvas.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-08-16T09:07:41.700Z",
+  "updatedAt": "2026-08-16T09:07:41.700Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

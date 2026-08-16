@@ -1,4 +1,4 @@
-import { OrbitControls, PointMaterial, Stats } from '@react-three/drei'
+import { OrbitControls, PointMaterial } from '@react-three/drei'
 import type { RenderCallback } from '@react-three/fiber'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
@@ -224,7 +224,6 @@ const TestShaderPlane = ({ uniforms, onScroll }: { uniforms: { u_offset: { value
 const Base = <T,>(props: TPointsProps<T>) => {
   const isShaderMode = props.renderMode === ERenderMode.SHADER
   const canvas = useRef<HTMLCanvasElement>(null)
-  const stats = useRef<any>(null)
   const screenshot = isScreenshotMode()
 
   useEffect(() => {
@@ -234,10 +233,8 @@ const Base = <T,>(props: TPointsProps<T>) => {
     return () => {}
   }, [isShaderMode, props])
 
-  const isIframe = new URLSearchParams(window.location.search).get('iframe') !== null
   const page = window.location.pathname.split('/').pop() || ''
   const title = page.split(/(?=[A-Z])/).join(' ')
-  const showHud = !isIframe && !screenshot
 
   const description = useMemo(() => {
     const desc = 'description' in props ? props.description : undefined
@@ -256,7 +253,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
           camera={('cameraPosition' in props && props.cameraPosition) ? { position: props.cameraPosition } : { position: [0, 0, 1], fov: 75 }}
           dpr={window.devicePixelRatio}
           gl={canvasGlProps()}
-          style={{ width: '100%', height: '100vh', background: '#000' }}
+          style={{ width: '100%', height: '100%', background: '#000' }}
           onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
         >
           <ShaderPlane 
@@ -264,7 +261,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
             fragmentShader={props.fragmentShader}
             uniforms={props.uniforms}
           />
-          {showHud && <Stats />}
         </Canvas>
       </>
     )
@@ -310,7 +306,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
           camera={{ position: [0, 0, 1], fov: 75 }}
           dpr={window.devicePixelRatio}
           gl={canvasGlProps()}
-          style={{ width: '100%', height: '100vh', background: '#000' }}
+          style={{ width: '100%', height: '100%', background: '#000' }}
           onCreated={({ gl }) => {
             tagVizCanvas(gl.domElement)
             if (isScreenshotMode()) {
@@ -319,7 +315,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
           }}
         >
           <TestShaderPlane uniforms={testUniforms} onScroll={handleScroll} />
-          {showHud && <Stats />}
         </Canvas>
       </>
     )
@@ -341,7 +336,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
         camera={particleCamera}
         dpr={window.devicePixelRatio}
         gl={canvasGlProps()}
-        style={{ width: '100%', height: '100vh', background: '#000' }}
+        style={{ width: '100%', height: '100%', background: '#000' }}
         onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
       >
         <Points
@@ -353,7 +348,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
           colorAlpha={props.colorAlpha}
         />
         {!screenshot && <OrbitControls enableDamping dampingFactor={0.05} />}
-        {showHud && <Stats />}
       </Canvas>
     </>
   )

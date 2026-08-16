@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../@store/store'
 import { setData } from '../@store/WebSlice'
@@ -7,22 +7,74 @@ import { isScreenshotMode, resetScreenshotReady } from '../modules/screenshotMod
 import { useMatomo } from '@datapunt/matomo-tracker-react'
 import Index from './index-new'
 import 'katex/dist/katex.min.css'
-import { Play, Pause, RotateCcw } from 'lucide-react'
 import { AnimationProvider, useAnimation } from '../context/AnimationContext'
+import styles from './canvasChrome.module.css'
+
+const FONT_HREF =
+	'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,500;600;700&family=Source+Sans+3:wght@400;600&display=swap'
+
+const SPEED_PRESETS = [0.5, 1, 2, 4] as const
 
 type ModernCanvasPageProps = {
 	route: TRoute
 	isIframe: boolean
 }
 
+function formatCategory(category: string): string {
+	if (!category) return 'Viz'
+	return category.charAt(0).toUpperCase() + category.slice(1)
+}
+
+function useCanvasFonts() {
+	useEffect(() => {
+		const id = 'cw-canvas-fonts'
+		if (document.getElementById(id)) return
+		const link = document.createElement('link')
+		link.id = id
+		link.rel = 'stylesheet'
+		link.href = FONT_HREF
+		document.head.appendChild(link)
+	}, [])
+}
+
+function FpsCounter() {
+	const [fps, setFps] = useState(60)
+
+	useEffect(() => {
+		let smoothed = 60
+		let last = 0
+		let lastPaint = 0
+		let raf = 0
+
+		const tick = (t: number) => {
+			const dtMs = last === 0 ? 16 : Math.min(t - last, 48)
+			last = t
+			smoothed = smoothed * 0.88 + (1000 / dtMs) * 0.12
+			if (lastPaint === 0 || t - lastPaint >= 200) {
+				lastPaint = t
+				setFps(Math.max(1, Math.round(smoothed)))
+			}
+			raf = requestAnimationFrame(tick)
+		}
+
+		raf = requestAnimationFrame(tick)
+		return () => {
+			cancelAnimationFrame(raf)
+		}
+	}, [])
+
+	return (
+		<div className={styles.fpsCounter} aria-hidden="true">
+			<span className={styles.fpsValue}>{fps}</span>
+			<span className={styles.fpsUnit}>FPS</span>
+		</div>
+	)
+}
+
 function AnimationTransportBar({
-	sidebarOpen,
-	isIframe,
 	enabled,
 	progressLabel,
 }: {
-	sidebarOpen: boolean
-	isIframe: boolean
 	enabled: boolean
 	progressLabel: string
 }) {
@@ -45,80 +97,103 @@ function AnimationTransportBar({
 	const isPlaying = !isPaused
 
 	return (
-		<div
-			className="fixed bottom-0 z-50 glass-effect border-t border-gray-700/50"
-			style={{ left: sidebarOpen && !isIframe ? '20rem' : '0', right: '0' }}
-		>
-			<div className="max-w-7xl mx-auto px-4 py-3">
-				<div className="flex items-center justify-between gap-4">
-					<button
-						type="button"
-						onClick={() => {
-							if (isComplete) {
-								replay()
-							} else {
-								setPaused(!isPaused)
-							}
-						}}
-						className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300 text-white flex-shrink-0"
-					>
-						{isComplete ? <RotateCcw size={24} /> : isPlaying ? <Pause size={24} /> : <Play size={24} />}
-					</button>
+		<footer className={styles.transport}>
+			<button
+				type="button"
+				className={`${styles.transportBtn} ${styles.transportPlay}`}
+				aria-label={isPlaying ? 'Pause' : 'Play'}
+				onClick={() => {
+					if (isComplete) {
+						replay()
+					} else {
+						setPaused(!isPaused)
+					}
+				}}
+			>
+				{isPlaying && !isComplete ? (
+					<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+						<rect x="3.5" y="2.5" width="3" height="11" rx="1" />
+						<rect x="9.5" y="2.5" width="3" height="11" rx="1" />
+					</svg>
+				) : (
+					<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+						<path d="M4 2.6c0-.9 1-1.4 1.7-.9l8 5.4c.6.4.6 1.3 0 1.7l-8 5.4c-.7.5-1.7 0-1.7-.9V2.6Z" />
+					</svg>
+				)}
+			</button>
+			<button
+				type="button"
+				className={styles.transportBtn}
+				aria-label="Replay"
+				onClick={() => {
+					replay()
+				}}
+			>
+				<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+					<path
+						d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16"
+						stroke="currentColor"
+						strokeWidth="1.3"
+						strokeLinecap="round"
+					/>
+					<path
+						d="M13.5 2.6v3.2h-3.2"
+						stroke="currentColor"
+						strokeWidth="1.3"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+				</svg>
+			</button>
 
-					<div className="flex items-center gap-2 flex-shrink-0">
-						<span className="text-xs text-gray-400">Speed:</span>
-						<input
-							type="range"
-							min="0.1"
-							max="5"
-							step="0.1"
-							value={animationSpeed}
-							onChange={(e) => {
-								setSpeed(parseFloat(e.target.value))
-							}}
-							className="w-24 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-						/>
-						<span className="text-xs text-gray-300 font-mono w-8">
-							{animationSpeed.toFixed(1)}x
-						</span>
-					</div>
-
-					<div className="flex-1 mx-4">
-						<input
-							type="range"
-							min="0"
-							max={Math.max(totalParticles, 1)}
-							value={Math.min(particlesDrawn, totalParticles)}
-							onChange={(e) => {
-								setManualProgress(parseInt(e.target.value, 10))
-							}}
-							onMouseUp={() => {
-								setManualProgress(null)
-							}}
-							onTouchEnd={() => {
-								setManualProgress(null)
-							}}
-							className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-						/>
-					</div>
-
-					<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg flex-shrink-0">
-						<span className="font-semibold">{progressLabel} = </span>
-						<span>
-							{particlesDrawn.toLocaleString()} / {totalParticles.toLocaleString()}
-						</span>
-					</div>
-				</div>
+			<div className={styles.transportScrub}>
+				<input
+					type="range"
+					min={0}
+					max={Math.max(totalParticles, 1)}
+					value={Math.min(particlesDrawn, totalParticles)}
+					aria-label="Trajectory progress"
+					onChange={(e) => {
+						setManualProgress(parseInt(e.target.value, 10))
+					}}
+					onMouseUp={() => {
+						setManualProgress(null)
+					}}
+					onTouchEnd={() => {
+						setManualProgress(null)
+					}}
+				/>
+				<span className={styles.transportCount}>
+					{progressLabel} = {particlesDrawn.toLocaleString()} / {totalParticles.toLocaleString()}
+				</span>
 			</div>
-		</div>
+
+			<div className={styles.speedGroup}>
+				{SPEED_PRESETS.map((speed) => (
+					<button
+						key={speed}
+						type="button"
+						className={`${styles.speedBtn}${animationSpeed === speed ? ` ${styles.speedBtnActive}` : ''}`}
+						onClick={() => {
+							setSpeed(speed)
+						}}
+					>
+						{speed}×
+					</button>
+				))}
+			</div>
+		</footer>
 	)
 }
 
 function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 	const dispatch = useAppDispatch()
-	const { datData, data } = useAppSelector(state => state.WebSlice)
+	const { datData, data } = useAppSelector((state) => state.WebSlice)
 	const screenshot = isScreenshotMode()
-	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe && !screenshot)
+	const bareStage = screenshot || isIframe
+	const [panelOpen, setPanelOpen] = React.useState(!bareStage)
+
+	useCanvasFonts()
 
 	useEffect(() => {
 		resetScreenshotReady()
@@ -138,10 +213,13 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 	const progressLabelRaw = Reflect.get(route.element, 'progressLabel')
 	const progressLabel = typeof progressLabelRaw === 'string' ? progressLabelRaw : 'n'
 
-	if (screenshot) {
+	const hasParams = Boolean(datData && Object.keys(datData.options).length > 0)
+	const hasExamples = Boolean(datData.examples && datData.examples.length > 0)
+
+	if (bareStage) {
 		return (
-			<div className="min-h-screen bg-black text-white">
-				<div className="h-screen w-screen bg-black">
+			<div className={styles.stageOnly}>
+				<div className={styles.stageOnlyInner}>
 					<route.element />
 				</div>
 			</div>
@@ -149,53 +227,94 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-900 text-white">
-			<nav className="fixed top-0 left-0 right-0 z-50 glass-effect">
-				<div className="max-w-7xl mx-auto px-4 py-4">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center space-x-4">
-							<button
-								type="button"
-								onClick={() => setSidebarOpen(!sidebarOpen)}
-								className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300"
-							>
-								<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-								</svg>
-							</button>
-							<Link to="/" className="text-gray-300 hover:text-white transition-colors duration-300">
-								<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-								</svg>
-							</Link>
-							<Link to="/" className="text-2xl font-bold gradient-text">
-								CanvasWorld
-							</Link>
-						</div>
-						<h1 className="text-xl font-semibold text-white">{route.name}</h1>
-						<div className="flex items-center space-x-4" />
-					</div>
-				</div>
-			</nav>
+		<div className={`${styles.app}${panelOpen ? ` ${styles.panelOpen}` : ''}`}>
+			<header className={styles.topbar}>
+				<Link className={styles.wordmark} to="/">
+					CanvasWorld
+				</Link>
 
-			<div className="flex pt-16">
-				<div
-					className={`transition-all duration-300 ease-in-out ${
-						sidebarOpen && !isIframe ? 'w-80 opacity-100' : 'w-0 opacity-0'
-					} bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 h-[calc(100vh-4rem)] flex-shrink-0 overflow-y-auto overflow-x-hidden`}
-				>
-					<div className="p-6">
-						{datData && Object.keys(datData.options).length > 0 && (
-							<div className="mb-6">
-								<h2 className="text-lg font-semibold text-white mb-3">Controls</h2>
-								<div className="space-y-4">
-									{Object.entries(datData.options).map(([key, option]) => (
-										<div key={key}>
-											<label className="block text-sm font-medium text-gray-300 mb-1">
-												{key}
-											</label>
+				<div className={styles.topbarTitle}>
+					<span className={styles.vizTag}>{formatCategory(route.category)}</span>
+					<h1>{route.name}</h1>
+				</div>
+
+				<div className={styles.topbarSpacer} />
+
+				<div className={styles.topbarActions}>
+					<button
+						type="button"
+						className={styles.chromeBtn}
+						aria-expanded={panelOpen}
+						aria-controls="side-panel"
+						onClick={() => {
+							setPanelOpen(!panelOpen)
+						}}
+					>
+						<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+							<rect
+								x="1.5"
+								y="2.5"
+								width="13"
+								height="11"
+								rx="1.5"
+								stroke="currentColor"
+								strokeWidth="1.3"
+							/>
+							<line x1="6" y1="2.5" x2="6" y2="13.5" stroke="currentColor" strokeWidth="1.3" />
+						</svg>
+						<span className={styles.chromeBtnLabel}>Params</span>
+					</button>
+					<Link className={styles.chromeBtn} to="/#gallery">
+						<span className={styles.chromeBtnLabel}>Gallery</span>
+					</Link>
+				</div>
+			</header>
+
+			<div className={styles.body}>
+				<section className={styles.stage}>
+					<div className={styles.stageHost}>
+						<route.element />
+					</div>
+					<div className={styles.vignette} aria-hidden="true" />
+					<FpsCounter />
+				</section>
+
+				<button
+					type="button"
+					className={styles.scrim}
+					aria-label="Close parameters"
+					onClick={() => {
+						setPanelOpen(false)
+					}}
+				/>
+
+				<aside className={styles.sidePanel} id="side-panel">
+					<div className={styles.sidePanelInner}>
+						{hasParams && (
+							<section className={styles.panelSection}>
+								<h2 className={styles.panelSectionTitle}>Parameters</h2>
+								<p className={styles.panelLede}>
+									Tune the constants that govern the system. Changes re-trace the trajectory from its
+									seed.
+								</p>
+								{Object.entries(datData.options).map(([key, option]) => {
+									const value = data[key] ?? option.initialValue
+									const display =
+										typeof value === 'number' ? value : Number(value)
+									return (
+										<div key={key} className={styles.paramRow}>
+											<div className={styles.paramRowHead}>
+												<label className={styles.paramLabel} htmlFor={`param-${key}`}>
+													{key}
+												</label>
+												<span className={styles.paramValue}>
+													{Number.isFinite(display) ? display : String(value)}
+												</span>
+											</div>
 											{key === 'x0' || key === 'y0' ? (
 												<input
+													id={`param-${key}`}
+													className={styles.paramNumber}
 													type="number"
 													min={option.min}
 													max={option.max}
@@ -204,93 +323,94 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 													onChange={(e) => {
 														dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }))
 													}}
-													className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
 												/>
 											) : (
-												<>
-													<input
-														type="range"
-														min={option.min}
-														max={option.max}
-														step={option.step || 0.001}
-														value={data[key] || option.initialValue}
-														onChange={(e) => {
-															dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }))
-														}}
-														className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-													/>
-													<div className="flex justify-between text-xs text-gray-400 mt-1">
-														<span>{option.min}</span>
-														<span className="font-mono">{data[key] || option.initialValue}</span>
-														<span>{option.max}</span>
-													</div>
-												</>
+												<input
+													id={`param-${key}`}
+													type="range"
+													min={option.min}
+													max={option.max}
+													step={option.step || 0.001}
+													value={data[key] || option.initialValue}
+													onChange={(e) => {
+														dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }))
+													}}
+												/>
 											)}
 										</div>
-									))}
-								</div>
-							</div>
+									)
+								})}
+							</section>
 						)}
 
-						{datData.examples && datData.examples.length > 0 && (
-							<div className="mb-6">
-								<h2 className="text-lg font-semibold text-white mb-3">Examples</h2>
-								<div className="space-y-2">
+						{hasExamples && (
+							<section className={styles.panelSection}>
+								<h2 className={styles.panelSectionTitle}>Examples</h2>
+								<ul className={styles.exampleList}>
 									{datData.examples.map((example, index) => (
-										<button
-											key={index}
-											type="button"
-											onClick={() => {
-												dispatch(setData(example))
-											}}
-											className="w-full text-left p-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors duration-300"
-										>
-											<div className="text-sm text-white font-medium">Example {index + 1}</div>
-											<div className="text-xs text-gray-400 mt-1">
-												{Object.entries(example).map(([key, value]) => `${key}: ${value}`).join(', ')}
-											</div>
-										</button>
+										<li key={index}>
+											<button
+												type="button"
+												className={styles.exampleBtn}
+												onClick={() => {
+													dispatch(setData(example))
+												}}
+											>
+												Example {index + 1}
+												<span className={styles.exampleMeta}>
+													{Object.entries(example)
+														.map(([key, value]) => `${key}: ${value}`)
+														.join(', ')}
+												</span>
+											</button>
+										</li>
 									))}
-								</div>
-							</div>
+								</ul>
+							</section>
 						)}
 
-						<div className="mb-6">
-							<h2 className="text-lg font-semibold text-white mb-3">About</h2>
-							<div className="text-gray-300 text-sm leading-relaxed">
-								{description}
-							</div>
-						</div>
-						<div>
-							<h2 className="text-lg font-semibold text-white mb-3">Explore</h2>
-							<div className="space-y-1">
-								{routes.slice(0, 8).map((exploreRoute) => (
-									<Link
-										key={exploreRoute.slug}
-										to={'/' + exploreRoute.slug}
-										className="block p-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors duration-300"
-									>
-										{exploreRoute.name}
-									</Link>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
+						<section className={styles.panelSection}>
+							<h2 className={styles.panelSectionTitle}>About</h2>
+							<div className={styles.aboutBody}>{description}</div>
+						</section>
 
-				<div className="flex-1 ml-0">
-					<div className="h-[calc(100vh-4rem)] bg-gray-900 relative">
-						<route.element />
+						<section className={styles.panelSection}>
+							<h2 className={styles.panelSectionTitle}>Explore</h2>
+							<ul className={styles.exploreList}>
+								{(() => {
+									const others = routes.filter((r) => r.slug !== route.slug).slice(0, 7)
+									const exploreRoutes = [route, ...others]
+									return exploreRoutes.map((exploreRoute) => {
+										const current = exploreRoute.slug === route.slug
+										if (current) {
+											return (
+												<li key={exploreRoute.slug}>
+													<span className={`${styles.exploreItem} ${styles.exploreItemCurrent}`}>
+														{exploreRoute.name}
+														<span className={styles.exploreItemKind}>Now viewing</span>
+													</span>
+												</li>
+											)
+										}
+										return (
+											<li key={exploreRoute.slug}>
+												<Link className={styles.exploreItem} to={'/' + exploreRoute.slug}>
+													{exploreRoute.name}
+													<span className={styles.exploreItemKind}>
+														{formatCategory(exploreRoute.category)}
+													</span>
+												</Link>
+											</li>
+										)
+									})
+								})()}
+							</ul>
+						</section>
 					</div>
-				</div>
+				</aside>
 			</div>
 
-			<AnimationTransportBar
-				sidebarOpen={sidebarOpen}
-				isIframe={isIframe}
-				enabled={transportEnabled}
-				progressLabel={progressLabel}
-			/>
+			<AnimationTransportBar enabled={transportEnabled} progressLabel={progressLabel} />
 		</div>
 	)
 }
