@@ -3,6 +3,8 @@ import { Vector2 } from 'three'
 import { BlockMath } from 'react-katex'
 import Base from '../_base'
 import { ERenderMode } from '../../@types/gui'
+import { useAnimation } from '../../context/AnimationContext'
+import { isScreenshotMode } from '../../modules/screenshotMode'
 import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
 import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
 
@@ -121,6 +123,7 @@ const SierpinskiOverlay = ({
 
 	return (
 		<>
+			{/* Leave the transport bar clickable */}
 			<div
 				ref={overlayRef}
 				onMouseDown={handleMouseDown}
@@ -129,7 +132,10 @@ const SierpinskiOverlay = ({
 				onMouseLeave={handleMouseUp}
 				style={{
 					position: 'fixed',
-					inset: 0,
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: '4.5rem',
 					cursor: isDragging ? 'grabbing' : 'grab',
 					pointerEvents: 'auto',
 				}}
@@ -137,7 +143,7 @@ const SierpinskiOverlay = ({
 
 			<div className="fixed top-20 right-4 z-50 w-64 space-y-4 rounded-lg bg-gray-800/90 p-4 text-white backdrop-blur-sm">
 				<div>
-					<label className="mb-1 block text-sm">Depth: {depth}</label>
+					<label className="mb-1 block text-sm">Max depth: {depth}</label>
 					<input
 						type="range"
 						min={1}
@@ -148,9 +154,10 @@ const SierpinskiOverlay = ({
 						className="w-full"
 					/>
 					<p className="mt-1 text-xs text-gray-400">
-						Drawing at {usedDepth}
+						Target {usedDepth}
 						{capped ? ` (screen caps ~${screenCap} — zoom in for more)` : ''}
 					</p>
+					<p className="mt-1 text-xs text-gray-500">Transport bar scrubs construction depth</p>
 				</div>
 
 				<div className="space-y-1 font-mono text-xs">
@@ -179,6 +186,16 @@ const SierpinskiTriangle = () => {
 	const [zoom, setZoom] = useState(0.65)
 	const [depth, setDepth] = useState(7)
 	const [viewH, setViewH] = useState(() => window.innerHeight)
+	const {
+		isPaused,
+		animationSpeed,
+		manualProgress,
+		reportProgress,
+		currentProgressRef,
+		particlesDrawn,
+	} = useAnimation()
+	const depthProgressRef = useRef(0)
+	const wasReplayingRef = useRef(false)
 
 	useEffect(() => {
 		const onResize = () => setViewH(window.innerHeight)
@@ -192,7 +209,7 @@ const SierpinskiTriangle = () => {
 	const [uniforms] = useState({
 		u_center: { value: new Vector2(center[0], center[1]) },
 		u_zoom: { value: zoom },
-		u_maxDepth: { value: usedDepth },
+		u_maxDepth: { value: 0 },
 		u_resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
 	})
 
@@ -204,9 +221,59 @@ const SierpinskiTriangle = () => {
 		uniforms.u_zoom.value = zoom
 	}, [zoom, uniforms])
 
+	// Map transport-bar progress → recursive construction depth (GPU analog of particle n).
 	useEffect(() => {
-		uniforms.u_maxDepth.value = usedDepth
-	}, [usedDepth, uniforms])
+		if (isScreenshotMode()) {
+			uniforms.u_maxDepth.value = usedDepth
+			reportProgress(usedDepth, usedDepth)
+			return
+		}
+
+		const total = Math.max(usedDepth, 1)
+		depthProgressRef.current = Math.min(depthProgressRef.current, total)
+
+		let frame = 0
+		let last = performance.now()
+
+		const loop = (now: number) => {
+			const dt = Math.min(0.05, (now - last) / 1000)
+			last = now
+
+			if (particlesDrawn === 0 && !isPaused) {
+				if (!wasReplayingRef.current) {
+					depthProgressRef.current = 0
+					wasReplayingRef.current = true
+				}
+			} else if (particlesDrawn > 0) {
+				wasReplayingRef.current = false
+			}
+
+			if (manualProgress !== null) {
+				depthProgressRef.current = Math.min(Math.max(manualProgress, 0), total)
+			} else if (!isPaused) {
+				depthProgressRef.current = Math.min(total, depthProgressRef.current + dt * 1.6 * animationSpeed)
+			}
+
+			currentProgressRef.current = depthProgressRef.current
+			const drawn = Math.floor(depthProgressRef.current)
+			uniforms.u_maxDepth.value = drawn
+			reportProgress(drawn, total)
+
+			frame = requestAnimationFrame(loop)
+		}
+
+		frame = requestAnimationFrame(loop)
+		return () => cancelAnimationFrame(frame)
+	}, [
+		usedDepth,
+		isPaused,
+		animationSpeed,
+		manualProgress,
+		particlesDrawn,
+		reportProgress,
+		currentProgressRef,
+		uniforms,
+	])
 
 	return (
 		<>
@@ -231,12 +298,17 @@ const SierpinskiTriangle = () => {
 	)
 }
 
-SierpinskiTriangle.isShaderViz = true
+SierpinskiTriangle.usesTransportBar = true
+SierpinskiTriangle.progressLabel = 'depth'
 
 SierpinskiTriangle.getDescription = () => (
 	<>
 		GPU Sierpiński gasket: each pixel’s barycentric coordinates are iteratively remapped into corner
 		sub-triangles; if all weights stay below ½ the sample falls in a removed void.
+		<br />
+		<br />
+		<strong>Transport bar:</strong> scrubs construction depth (solid triangle → successive removals) —
+		the shader analog of particle <code>n</code>.
 		<br />
 		<br />
 		<strong>Zoom:</strong> scroll to magnify under the cursor; drag to pan. Depth past what the screen can
