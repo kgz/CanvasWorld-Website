@@ -129,9 +129,9 @@
     "slug": "sierpinski_triangle",
     "title": "Sierpiński Triangle",
     "category": "fractal",
-    "description": "The Sierpiński triangle is a fractal gasket formed by recursively removing the central triangle from an equilateral triangle. This viz tests grid samples for recursive membership.",
+    "description": "GPU Sierpiński gasket with scroll-zoom and drag-pan. Each pixel tests barycentric membership through recursive corner remaps until a void or max depth.",
     "thumbnail": "/chaos/icons/sierpinski_triangle.png",
-    "renderMode": "webgl",
+    "renderMode": "shader",
     "active": true
   }
 ]

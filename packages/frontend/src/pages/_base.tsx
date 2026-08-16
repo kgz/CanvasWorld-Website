@@ -69,14 +69,8 @@ const Points = <T,>({
 // ------------------------------------------------------------
 const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: TShaderProps) => {
   const materialRef = useRef<THREE.ShaderMaterial | null>(null)
-  const { gl, size, camera } = useThree()
+  const { gl, size, viewport } = useThree()
   const readySent = useRef(false)
-
-  // Lock zoom for orthographic fractal mode
-  useFrame(() => {
-    camera.zoom = 1
-    camera.updateProjectionMatrix()
-  })
 
   // Resize uniform
   useEffect(() => {
@@ -89,13 +83,10 @@ const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: TShaderProps) =
     return () => {}
   }, [size.width, size.height, gl])
 
-  // CRITICAL: Force uniforms update every frame (same pattern that worked in test)
   useFrame(() => {
     const mat = materialRef.current
     if (mat && mat.uniforms) {
-      // Force Three.js to upload uniforms to GPU and re-render
       mat.uniformsNeedUpdate = true
-      mat.needsUpdate = true
 
       if (!readySent.current && isScreenshotMode()) {
         readySent.current = true
@@ -105,13 +96,15 @@ const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: TShaderProps) =
   })
 
   return (
-    <mesh>
-      <planeGeometry args={[2, 2]} />
-      <rawShaderMaterial
+    <mesh scale={[viewport.width, viewport.height, 1]} frustumCulled={false}>
+      <planeGeometry args={[1, 1]} />
+      <shaderMaterial
         ref={materialRef}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
         uniforms={uniforms}
+        depthTest={false}
+        depthWrite={false}
       />
     </mesh>
   )

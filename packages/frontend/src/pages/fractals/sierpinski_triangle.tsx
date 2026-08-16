@@ -1,125 +1,228 @@
-import type { RootState } from '@react-three/fiber'
-
+import { useCallback, useEffect, useRef, useState, type Dispatch, type MouseEvent, type SetStateAction } from 'react'
+import { Vector2 } from 'three'
 import { BlockMath } from 'react-katex'
-import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
-import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/WebSlice'
-import { useAppDispatch, useAppSelector } from '../../@store/store'
-import { useAnimationState } from '../../hooks/useAnimationState'
-import { indexToXY, xyToIndex } from '../../utils/matrixCoords'
-import { equilateralVertices, sierpinskiMember } from '../../utils/sierpinski'
+import { ERenderMode } from '../../@types/gui'
+import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
+import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
 
-const GRID_W = 500
-const GRID_H = 400
-const NUM_PARTICLES = GRID_W * GRID_H
-/** Maps GUI scale (~1–3) into default particle camera space (z≈400). */
-const WORLD = 200
+type OverlayProps = {
+	center: number[]
+	setCenter: Dispatch<SetStateAction<number[]>>
+	zoom: number
+	setZoom: Dispatch<SetStateAction<number>>
+	depth: number
+	setDepth: Dispatch<SetStateAction<number>>
+	effectiveDepth: number
+}
 
-const CREAM: [number, number, number] = [0.96, 0.93, 0.86]
-
-const SierpinskiTriangle = () => {
-	const dispatch = useAppDispatch()
-	const { data } = useAppSelector((state) => state.WebSlice)
-	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
-
-	const datData: TDatData = useMemo(
-		() => ({
-			options: {
-				scale: {
-					initialValue: 1.65,
-					min: 0.8,
-					max: 3.5,
-					step: 0.01,
-				},
-				depth: {
-					initialValue: 1,
-					min: 0,
-					max: 8,
-					step: 1,
-				},
-			},
-			examples: [
-				{ scale: 1.65, depth: 1 },
-				{ scale: 1.65, depth: 3 },
-				{ scale: 2.2, depth: 2 },
-			],
-		}),
-		[],
-	)
-
-	type TData = TDataFromObject<(typeof datData)['options']>
+const SierpinskiOverlay = ({
+	center,
+	setCenter,
+	zoom,
+	setZoom,
+	depth,
+	setDepth,
+	effectiveDepth,
+}: OverlayProps) => {
+	const [isDragging, setIsDragging] = useState(false)
+	const [dragStart, setDragStart] = useState([0, 0])
+	const canvasRef = useRef<HTMLCanvasElement | null>(null)
+	const overlayRef = useRef<HTMLDivElement | null>(null)
 
 	useEffect(() => {
-		void dispatch(setDatData(datData))
-		void dispatch(
-			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
-		)
-	}, [datData, dispatch])
-
-	const tick: TParticleProps<TData>['tick'] = (
-		positions: Float32Array,
-		colors: Float32Array,
-		_state: RootState,
-		delta: number,
-		_frame?: XRFrame | undefined,
-	) => {
-		const scale = data.scale !== undefined ? data.scale : datData.options.scale.initialValue
-		const depth = data.depth !== undefined ? Math.round(data.depth) : Math.round(datData.options.depth.initialValue)
-
-		const totalParticles = positions.length / 2
-		// Grid membership is static — fill quickly (shared attractor rate is ~2k/s).
-		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta * 50)
-
-		const worldScale = scale * WORLD
-		const [v0, v1, v2] = equilateralVertices(worldScale)
-		const s = worldScale * 0.95
-
-		for (let i = 0; i < totalParticles; i++) {
-			if (i < particlesToDraw) {
-				const { x, y } = indexToXY(i, GRID_W)
-				const idx = xyToIndex(x, y, GRID_W)
-				const u = GRID_W <= 1 ? 0.5 : x / (GRID_W - 1)
-				const v = GRID_H <= 1 ? 0.5 : y / (GRID_H - 1)
-				const px = -s * Math.sqrt(3) * 0.5 + u * s * Math.sqrt(3)
-				const py = s - v * (s - -s / 2)
-
-				const inside = sierpinskiMember([px, py], v0, v1, v2, depth)
-				positions.set([px, py], idx * 2)
-				if (inside) {
-					colors.set(CREAM, idx * 3)
-				} else {
-					colors.set([0, 0, 0], idx * 3)
-				}
+		const findCanvas = () => {
+			const canvas = document.querySelector('#cw-viz-canvas')
+			if (canvas instanceof HTMLCanvasElement) {
+				canvasRef.current = canvas
 			} else {
-				positions.set([9999, 9999], i * 2)
-				colors.set([0, 0, 0], i * 3)
+				window.setTimeout(findCanvas, 100)
 			}
 		}
+		findCanvas()
+	}, [])
 
-		updateProgressUI(particlesToDraw, totalParticles)
-		checkCompletion(particlesToDraw, totalParticles)
+	const handleMouseDown = useCallback((e: MouseEvent) => {
+		setIsDragging(true)
+		setDragStart([e.clientX, e.clientY])
+	}, [])
 
-		return { positions, colors }
+	const handleMouseMove = useCallback(
+		(e: MouseEvent) => {
+			if (!isDragging) return
+			const dx = (e.clientX - dragStart[0]) / (zoom * window.innerHeight)
+			const dy = (dragStart[1] - e.clientY) / (zoom * window.innerHeight)
+			setCenter((prev) => [prev[0] - dx, prev[1] - dy])
+			setDragStart([e.clientX, e.clientY])
+		},
+		[isDragging, dragStart, zoom, setCenter],
+	)
+
+	const handleMouseUp = useCallback(() => {
+		setIsDragging(false)
+	}, [])
+
+	const handleReset = () => {
+		setCenter([0, 0])
+		setZoom(0.65)
+		setDepth(7)
 	}
 
-	// Grid spacing ≈ (scale*WORLD*√3)/GRID_W → ~1.1 at default scale; size matches cell fill.
-	return <Base<TData> dimension={EDimensions.TWO_D} numParticles={NUM_PARTICLES} tick={tick} pointSize={1.2} />
+	const handleWheelDiv = useCallback(
+		(e: WheelEvent) => {
+			e.preventDefault()
+			const canvas = canvasRef.current || document.querySelector('#cw-viz-canvas')
+			if (!(canvas instanceof HTMLCanvasElement)) return
+
+			const rect = canvas.getBoundingClientRect()
+			const canvasWidth = canvas.width || rect.width
+			const canvasHeight = canvas.height || rect.height
+
+			const mouseX = e.clientX - rect.left
+			const mouseY = e.clientY - rect.top
+
+			const scaleX = canvasWidth / rect.width
+			const scaleY = canvasHeight / rect.height
+			const shaderX = mouseX * scaleX
+			const shaderY = (rect.height - mouseY) * scaleY
+
+			const dx = (shaderX - canvasWidth / 2) / (zoom * canvasHeight)
+			const dy = (shaderY - canvasHeight / 2) / (zoom * canvasHeight)
+			const worldX = center[0] + dx
+			const worldY = center[1] + dy
+
+			const zoomDelta = -e.deltaY * 0.0003
+			const newZoom = Math.min(1e7, Math.max(0.05, zoom * (1 + zoomDelta)))
+
+			const newDx = (shaderX - canvasWidth / 2) / (newZoom * canvasHeight)
+			const newDy = (shaderY - canvasHeight / 2) / (newZoom * canvasHeight)
+			setZoom(newZoom)
+			setCenter([worldX - newDx, worldY - newDy])
+		},
+		[zoom, center, setZoom, setCenter],
+	)
+
+	useEffect(() => {
+		const overlay = overlayRef.current
+		if (!overlay) return
+		overlay.addEventListener('wheel', handleWheelDiv, { passive: false })
+		return () => overlay.removeEventListener('wheel', handleWheelDiv)
+	}, [handleWheelDiv])
+
+	return (
+		<>
+			<div
+				ref={overlayRef}
+				onMouseDown={handleMouseDown}
+				onMouseMove={handleMouseMove}
+				onMouseUp={handleMouseUp}
+				onMouseLeave={handleMouseUp}
+				style={{
+					position: 'fixed',
+					inset: 0,
+					cursor: isDragging ? 'grabbing' : 'grab',
+					pointerEvents: 'auto',
+				}}
+			/>
+
+			<div className="fixed top-20 right-4 z-50 w-64 space-y-4 rounded-lg bg-gray-800/90 p-4 text-white backdrop-blur-sm">
+				<div>
+					<label className="mb-1 block text-sm">Base depth: {depth}</label>
+					<input
+						type="range"
+						min={1}
+						max={32}
+						step={1}
+						value={depth}
+						onChange={(e) => setDepth(Number.parseInt(e.target.value, 10))}
+						className="w-full"
+					/>
+					<p className="mt-1 text-xs text-gray-400">Effective (zoom-boosted): {effectiveDepth}</p>
+				</div>
+
+				<div className="space-y-1 font-mono text-xs">
+					<div>
+						Center: ({center[0].toFixed(5)}, {center[1].toFixed(5)})
+					</div>
+					<div>Zoom: {zoom.toExponential(2)}×</div>
+				</div>
+
+				<button
+					type="button"
+					onClick={handleReset}
+					className="w-full rounded bg-gray-700 px-4 py-2 transition-colors hover:bg-gray-600"
+				>
+					Reset View
+				</button>
+
+				<p className="text-xs text-gray-400 italic">Scroll to zoom · drag to pan</p>
+			</div>
+		</>
+	)
+}
+
+const SierpinskiTriangle = () => {
+	const [center, setCenter] = useState([0, 0])
+	const [zoom, setZoom] = useState(0.65)
+	const [depth, setDepth] = useState(7)
+
+	const zoomBoost = Math.max(0, Math.floor(Math.log2(Math.max(zoom, 1)) * 1.25))
+	const effectiveDepth = Math.min(48, depth + zoomBoost)
+
+	const [uniforms] = useState({
+		u_center: { value: new Vector2(center[0], center[1]) },
+		u_zoom: { value: zoom },
+		u_maxDepth: { value: effectiveDepth },
+		u_resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
+	})
+
+	useEffect(() => {
+		uniforms.u_center.value.set(center[0], center[1])
+	}, [center, uniforms])
+
+	useEffect(() => {
+		uniforms.u_zoom.value = zoom
+	}, [zoom, uniforms])
+
+	useEffect(() => {
+		uniforms.u_maxDepth.value = effectiveDepth
+	}, [effectiveDepth, uniforms])
+
+	return (
+		<>
+			<Base
+				renderMode={ERenderMode.SHADER}
+				vertexShader={vertexShader}
+				fragmentShader={fragmentShader}
+				uniforms={uniforms}
+				cameraPosition={[0, 0, 1]}
+			/>
+			<SierpinskiOverlay
+				center={center}
+				setCenter={setCenter}
+				zoom={zoom}
+				setZoom={setZoom}
+				depth={depth}
+				setDepth={setDepth}
+				effectiveDepth={effectiveDepth}
+			/>
+		</>
+	)
 }
 
 SierpinskiTriangle.getDescription = () => (
 	<>
-		Each screen sample is a cell in a row-major grid: index <code>i</code> maps to <code>(x, y)</code> with width{' '}
-		<code>{GRID_W}</code>, height <code>{GRID_H}</code>.
+		GPU Sierpiński gasket: each pixel’s barycentric coordinates are iteratively remapped into corner
+		sub-triangles; if all weights stay below ½ the sample falls in a removed void.
 		<br />
 		<br />
-		Recursive Sierpinski: subdivide the equilateral triangle into four; remove the center triangle; repeat on the three
-		corners. Depth 1 is one removal (three solid triangles with a central void), matching a pixelated gasket.
+		<strong>Zoom:</strong> scroll to magnify under the cursor; drag to pan. Base depth sets recursion; zoom
+		adds extra levels automatically so detail keeps appearing as you dive in (until float32 precision
+		gives out around 10⁶–10⁷×).
 		<br />
 		<br />
-		Membership (corners <code>a, b, c</code>, depth <code>d &gt; 0</code>): remove points inside the middle triangle; else
-		union of the three corner sub-triangles at depth <code>d - 1</code>.
-		<BlockMath math="T_d = T^{(1)}_{a,m_{ab},m_{ca}} \cup T^{(1)}_{m_{ab},b,m_{bc}} \cup T^{(1)}_{m_{ca},m_{bc},c}" />
+		Corner remap (weight <code>α ≥ ½</code>):
+		<BlockMath math="(\alpha,\beta,\gamma) \mapsto (2\alpha-1,\,2\beta,\,2\gamma)" />
 	</>
 )
 
