@@ -21,10 +21,10 @@
     "slug": "brusselator",
     "title": "Brusselator",
     "category": "map",
-    "description": "The Brusselator is a chaotic map defined by the following equations: x_{n+1} = 1 + x_n + a \\cdot x_n^2 \\cdot y_n - (b + 1) \\cdot x_n, y_{n+1} = b \\cdot x_n - a \\cdot x_n^2 \\cdot y_n",
+    "description": "The Brusselator is an autocatalytic chemical oscillator. This visualization integrates dx/dt = a - (b+1)x + x^2 y, dy/dt = b x - x^2 y with an Euler step.",
     "thumbnail": "/chaos/icons/brusselator.png",
     "renderMode": "webgl",
-    "active": false
+    "active": true
   },
   {
     "slug": "clifford_attractor",

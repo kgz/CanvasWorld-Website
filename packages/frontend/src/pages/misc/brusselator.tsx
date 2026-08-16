@@ -1,151 +1,40 @@
-import type { RootState } from '@react-three/fiber'
-import * as THREE from 'three'
-
 import { BlockMath } from 'react-katex'
-import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
-import Base from '../_base'
-import type { ComponentProps } from 'react'
-import { useEffect, useMemo } from 'react'
-import { setDatData, setData } from '../../@store/WebSlice'
-import { useAppDispatch, useAppSelector } from '../../@store/store'
-import type { TRoutes } from '../../@types/routes'
-import { useAnimationState } from '../../hooks/useAnimationState'
+import { createAttractorPage } from '../_attractorPage'
+import { brusselatorTick } from '../../utils/brusselator'
 
-const { sin, cos } = Math
+const Brusselator = createAttractorPage({
+	params: {
+		a: { initialValue: 1, min: 0.1, max: 3, step: 0.0001 },
+		b: { initialValue: 3, min: 0.1, max: 5, step: 0.0001 },
+		dt: { initialValue: 0.02, min: 0.001, max: 0.1, step: 0.001 },
+	},
+	examples: [
+		{ a: 1, b: 3, dt: 0.02 },
+		{ a: 1, b: 2.5, dt: 0.02 },
+		{ a: 0.5, b: 1.2, dt: 0.02 },
+	],
+	seed: { x: 1, y: 1 },
+	scale: 60,
+	color: 'hsl-chunk',
+	cameraPosition: [0, 0, -350],
+	iterate: (x, y, p) => brusselatorTick(x, y, p.a, p.b, p.dt),
+	description: () => (
+		<>
+			The Brusselator is a theoretical model of an autocatalytic chemical oscillator, introduced by Ilya Prigogine
+			and collaborators. This visualization integrates the continuous ODEs with a fixed Euler step.
+			<br />
+			<br />
+			<strong>Definition:</strong>
+			<BlockMath math={'\\frac{dx}{dt} = a - (b + 1)x + x^2 y'} />
+			<BlockMath math={'\\frac{dy}{dt} = b x - x^2 y'} />
+			<br />
+			For a classic oscillatory regime try a = 1, b = 3.
+			<br />
+			<br />
+			<strong>Limits:</strong>
+			<BlockMath math="a \\in [0.1, 3],\\quad b \\in [0.1, 5],\\quad dt \\in [0.001, 0.1]" />
+		</>
+	),
+})
 
-const CliffordAttractor = () => {
-	const dispatch = useAppDispatch()
-	const { data } = useAppSelector(state => state.WebSlice)
-	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
-
-	const datData = useMemo(
-		() =>
-			({
-				options: {
-					a: {
-						initialValue: 1.7,
-						min: -3,
-						max: 3,
-						step: 0.000001,
-					},
-					b: {
-						initialValue: 1.8,
-						min: -3,
-						max: 3,
-						step: 0.000001,
-					},
-					c: {
-						initialValue: 1.9,
-						min: -3,
-						max: 3,
-						step: 0.000001,
-					},
-					d: {
-						initialValue: 0.4,
-						min: -3,
-						max: 3,
-						step: 0.000001,
-					},
-				},
-				examples: [],
-			}) as TDatData,
-		[],
-	)
-
-	type TData = TDataFromObject<(typeof datData)['options']>
-
-	useEffect(() => {
-		
-
-		void dispatch(setDatData(datData))
-		void dispatch(
-			setData(Object.fromEntries(Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]))),
-		)
-	}, [datData, dispatch])
-
-	const tick: TPointsProps<TData>['tick'] = (
-		positions: Float32Array,
-		colors: Float32Array,
-		state: RootState,
-		delta: number,
-		frame?: XRFrame | undefined,
-	) => {
-		let x = -2,
-			y = -2
-		const { a, b, c, d } = data
-
-		// Use fallback values if parameters are undefined
-		const safeA = a !== undefined ? a : datData.options.a.initialValue
-		const safeB = b !== undefined ? b : datData.options.b.initialValue
-		const safeC = c !== undefined ? c : datData.options.c.initialValue
-		const safeD = d !== undefined ? d : datData.options.d.initialValue
-
-		const totalParticles = positions.length / EDimensions.TWO_D
-		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
-
-		for (let i = 0; i < totalParticles; i++) {
-			if (i < particlesToDraw) {
-				const nx = Math.sin(safeA * y) + safeC * Math.cos(safeA * x)
-				const ny = Math.sin(safeB * x) + safeD * Math.cos(safeB * y)
-
-				x = nx
-				y = ny
-
-				positions.set([x * 100, y * 100], i * 2)
-
-				if (i >= particlesToDraw - 100) {
-					colors.set([1.0, 1.0, 0.0], i * 3)
-				} else {
-					const color = new THREE.Color()
-					color.setHex(0xf87b3)
-					colors.set([color.r, color.g, color.b], i * 3)
-				}
-			} else {
-				positions.set([9999, 9999], i * 2)
-				colors.set([0, 0, 0], i * 3)
-			}
-		}
-
-		updateProgressUI(particlesToDraw, totalParticles)
-		checkCompletion(particlesToDraw, totalParticles)
-
-		return { positions, colors }
-	}
-
-	return (
-		<Base<TData>
-			dimension={EDimensions.TWO_D}
-			numParticles={200_000}
-			tick={tick}
-			pointSize={0.5}
-			cameraPosition={[0, 0, -500]}
-		/>
-	)
-}
-
-
-// Add static description function to the component
-CliffordAttractor.getDescription = () => (
-	<>
-		The Clifford Attractor is a 2D strange attractor.
-		<br />
-		<br />
-		It is characterized by two iterative equations that determine the x and y coordinates of discrete steps in the
-		path of a particle across a 2D space. <br />
-		The starting point (x0, y0) and the values of four parameters (a, b, c, d) influence the shape of the
-		attractor.
-		<br />
-		<br />
-		It is named after Clifford Pickover, who described it in his book Chaos in Wonderland (1994).
-		<br />
-		<br />
-		Definition: <br />
-		<BlockMath math={'x_{n+1} = sin(a * y_n) + c * cos(a * x_n)'} />
-		<BlockMath math={'y_{n+1} = sin(b * x_n) + d * cos(b * y_n)'} />
-		<br />
-		Limits: <br />
-		<BlockMath math="a,b,c,d \\in [-3, 3]" />
-	</>
-)
-
-export default CliffordAttractor
+export default Brusselator
