@@ -8,8 +8,8 @@ varying vec2 vUv;
 const vec2 A = vec2(0.0, 0.75);
 const vec2 B = vec2(-0.86602540378, -0.75);
 const vec2 C = vec2(0.86602540378, -0.75);
-const vec3 CREAM = vec3(0.97, 0.94, 0.88);
-const vec3 VOID_COL = vec3(0.02, 0.02, 0.025);
+const vec3 FILL = vec3(0.91, 0.93, 0.96);
+const vec3 VOID_COL = vec3(0.02, 0.027, 0.039);
 
 vec3 barycentric(vec2 p) {
 	vec2 v0 = B - A;
@@ -88,6 +88,6 @@ void main() {
 		0.25 * gasketSample(p + vec2(-o.x, o.y), depth) +
 		0.25 * gasketSample(p + vec2(0.0, -o.y), depth);
 
-	vec3 color = mix(VOID_COL, CREAM, clamp(m, 0.0, 1.0));
+	vec3 color = mix(VOID_COL, FILL, clamp(m, 0.0, 1.0));
 	gl_FragColor = vec4(color, 1.0);
 }
