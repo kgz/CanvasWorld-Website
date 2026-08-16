@@ -5,9 +5,10 @@ import { gingerbreadManTick } from '../../utils/gingerbreadMan'
 const GingerbreadMan = createAttractorPage({
 	params: {},
 	seed: { x: -0.1, y: 0 },
-	scale: 20,
+	// Map is offset from origin; recenter so default camera frames the cookie.
+	scale: (x, y) => [x * 50 - 125, y * 50 - 125],
 	color: 'hsl-chunk',
-	cameraPosition: [0, 0, -775],
+	cameraPosition: [0, 0, -400],
 	iterate: (x, y) => gingerbreadManTick(x, y),
 	description: () => (
 		<>

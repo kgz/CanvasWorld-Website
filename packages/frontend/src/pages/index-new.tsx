@@ -8,8 +8,11 @@ const FONT_HREF =
 	'https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;600;700&family=Source+Sans+3:wght@400;600&display=swap'
 
 function iconUrl(slug: string): string {
-	const backend = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'
-	return `${backend}/chaos/icons/${slug}.png`
+	const backend = import.meta.env.VITE_BACKEND_URL
+	if (typeof backend === 'string' && backend.length > 0) {
+		return `${backend.replace(/\/$/, '')}/chaos/icons/${slug}.png`
+	}
+	return `/chaos/icons/${slug}.png`
 }
 
 function vizKind(name: string): string {
