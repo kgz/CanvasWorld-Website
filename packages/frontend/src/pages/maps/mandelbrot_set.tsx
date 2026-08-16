@@ -310,6 +310,8 @@ const MandelbrotSet = () => {
 	)
 }
 
+MandelbrotSet.isShaderViz = true
+
 MandelbrotSet.getDescription = () => (
 	<>
 		The Mandelbrot set is one of the most famous fractals in mathematics, discovered by Benoit Mandelbrot in 1980.

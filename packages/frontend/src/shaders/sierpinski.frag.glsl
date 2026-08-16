@@ -8,6 +8,8 @@ varying vec2 vUv;
 const vec2 A = vec2(0.0, 0.75);
 const vec2 B = vec2(-0.86602540378, -0.75);
 const vec2 C = vec2(0.86602540378, -0.75);
+const vec3 CREAM = vec3(0.97, 0.94, 0.88);
+const vec3 VOID_COL = vec3(0.02, 0.02, 0.025);
 
 vec3 barycentric(vec2 p) {
 	vec2 v0 = B - A;
@@ -25,29 +27,22 @@ vec3 barycentric(vec2 p) {
 	return vec3(u, v, w);
 }
 
-void main() {
-	float resY = max(u_resolution.y, 1.0);
-	vec2 p = (gl_FragCoord.xy - u_resolution * 0.5) / (u_zoom * resY);
-	p += u_center;
-
+// 1 = on finite gasket, 0 = hole or outside
+float gasketSample(vec2 p, int maxDepth) {
 	vec3 bary = barycentric(p);
 	float u = bary.x;
 	float v = bary.y;
 	float w = bary.z;
 
 	if (u < 0.0 || v < 0.0 || w < 0.0) {
-		gl_FragColor = vec4(0.015, 0.015, 0.02, 1.0);
-		return;
+		return 0.0;
 	}
 
-	float hitDepth = -1.0;
-	int maxDepth = u_maxDepth;
 	for (int i = 0; i < 64; i++) {
 		if (i >= maxDepth) break;
 
 		if (u < 0.5 && v < 0.5 && w < 0.5) {
-			hitDepth = float(i);
-			break;
+			return 0.0;
 		}
 
 		if (u >= 0.5) {
@@ -65,14 +60,34 @@ void main() {
 		}
 	}
 
-	vec3 color;
-	if (hitDepth < 0.0) {
-		color = vec3(0.97, 0.94, 0.88);
-	} else {
-		// Near-black voids; slight lift by depth so nested holes stay readable while zooming
-		float t = hitDepth / max(float(maxDepth), 1.0);
-		color = vec3(0.025 + 0.04 * t);
+	return 1.0;
+}
+
+void main() {
+	float resY = max(u_resolution.y, 1.0);
+	float pixel = 1.0 / max(u_zoom * resY, 1.0);
+
+	// Don't recurse finer than ~1px — deeper than that just sparkles (aliasing).
+	float useful = log2(max(1.5 / pixel, 1.0)) + 0.75;
+	int depth = u_maxDepth;
+	if (depth > int(useful)) {
+		depth = int(useful);
+	}
+	if (depth < 1) {
+		depth = 1;
 	}
 
+	vec2 p = (gl_FragCoord.xy - u_resolution * 0.5) / (u_zoom * resY);
+	p += u_center;
+
+	// 4-tap AA so edges stay solid instead of flickering into sparse points
+	vec2 o = vec2(pixel * 0.35);
+	float m =
+		0.25 * gasketSample(p, depth) +
+		0.25 * gasketSample(p + vec2(o.x, o.y), depth) +
+		0.25 * gasketSample(p + vec2(-o.x, o.y), depth) +
+		0.25 * gasketSample(p + vec2(0.0, -o.y), depth);
+
+	vec3 color = mix(VOID_COL, CREAM, clamp(m, 0.0, 1.0));
 	gl_FragColor = vec4(color, 1.0);
 }

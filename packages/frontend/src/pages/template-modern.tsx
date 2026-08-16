@@ -18,9 +18,11 @@ type ModernCanvasPageProps = {
 function AnimationTransportBar({
 	sidebarOpen,
 	isIframe,
+	enabled,
 }: {
 	sidebarOpen: boolean
 	isIframe: boolean
+	enabled: boolean
 }) {
 	const {
 		isPaused,
@@ -33,6 +35,10 @@ function AnimationTransportBar({
 		setManualProgress,
 		replay,
 	} = useAnimation()
+
+	if (!enabled) {
+		return null
+	}
 
 	const isPlaying = !isPaused
 
@@ -271,7 +277,11 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 				</div>
 			</div>
 
-			<AnimationTransportBar sidebarOpen={sidebarOpen} isIframe={isIframe} />
+			<AnimationTransportBar
+				sidebarOpen={sidebarOpen}
+				isIframe={isIframe}
+				enabled={route.renderMode !== 'shader' && Reflect.get(route.element, 'isShaderViz') !== true}
+			/>
 		</div>
 	)
 }
