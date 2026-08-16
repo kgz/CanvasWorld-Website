@@ -50,6 +50,10 @@ export default defineConfig({
 				target: 'http://localhost:' + (process.env.BACKEND_PORT || '8080'),
 				changeOrigin: true,
 			},
+			'/chaos/icons': {
+				target: 'http://localhost:' + (process.env.BACKEND_PORT || '8080'),
+				changeOrigin: true,
+			},
 		},
 	},
 	resolve: {
