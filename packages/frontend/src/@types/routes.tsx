@@ -14,6 +14,7 @@ import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
 import MandelbrotSet from '../pages/maps/mandelbrot_set'
 import Brusselator from '../pages/misc/brusselator'
+import SierpinskiTriangle from '../pages/fractals/sierpinski_triangle'
 
 export type CatalogEntry = {
 	slug: string
@@ -52,6 +53,7 @@ const components: Record<string, ComponentType> = {
 	gingerbread_man: GingerbreadMan,
 	ikeda_map: IkedaMap,
 	mandelbrot_set: MandelbrotSet,
+	sierpinski_triangle: SierpinskiTriangle,
 }
 
 const catalogEntries: CatalogEntry[] = catalog
