@@ -37,8 +37,8 @@ function parseSlugArg(argv) {
 
 async function waitForDrawnCanvas(page) {
 	await page.waitForFunction(() => window.__CW_READY__ === true, null, { timeout: 45000 })
-	// Let a couple of presented frames land (preserveDrawingBuffer must be on).
-	await page.waitForTimeout(800)
+	// Let several presented frames land (line trails need drawRange + GPU upload).
+	await page.waitForTimeout(1500)
 }
 
 async function captureSlug(page, slug) {
@@ -47,8 +47,54 @@ async function captureSlug(page, slug) {
 	await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
 	await page.waitForSelector('#cw-viz-canvas', { timeout: 30000 })
 	await waitForDrawnCanvas(page)
-	const canvas = page.locator('#cw-viz-canvas')
-	const buf = await canvas.screenshot({ type: 'png' })
+
+	// Supersample (deviceScaleFactor 2) then high-quality downsample — headless MSAA
+	// on 1px line strips is weak; gallery cards look blotchy without this.
+	// Optional solidify: crush AA fringes to a flat stroke color (soft translucent
+	// trails wash gray when downscaled).
+	const solidify = slug === 'lorenz_attractor' ? { r: 102, g: 255, b: 224 } : null
+	const dataUrl = await page.evaluate((flat) => {
+		const src = document.querySelector('#cw-viz-canvas')
+		if (!(src instanceof HTMLCanvasElement)) {
+			return null
+		}
+		const out = document.createElement('canvas')
+		out.width = 1280
+		out.height = 960
+		const ctx = out.getContext('2d')
+		if (!ctx) {
+			return null
+		}
+		ctx.imageSmoothingEnabled = true
+		ctx.imageSmoothingQuality = 'high'
+		ctx.fillStyle = '#000'
+		ctx.fillRect(0, 0, out.width, out.height)
+		ctx.drawImage(src, 0, 0, out.width, out.height)
+		if (flat) {
+			const img = ctx.getImageData(0, 0, out.width, out.height)
+			const d = img.data
+			for (let i = 0; i < d.length; i += 4) {
+				if (d[i] + d[i + 1] + d[i + 2] > 20) {
+					d[i] = flat.r
+					d[i + 1] = flat.g
+					d[i + 2] = flat.b
+					d[i + 3] = 255
+				} else {
+					d[i] = 0
+					d[i + 1] = 0
+					d[i + 2] = 0
+					d[i + 3] = 255
+				}
+			}
+			ctx.putImageData(img, 0, 0)
+		}
+		return out.toDataURL('image/png')
+	}, solidify)
+
+	if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/png;base64,')) {
+		throw new Error('downsample capture failed')
+	}
+	const buf = Buffer.from(dataUrl.slice('data:image/png;base64,'.length), 'base64')
 	const out = path.join(OUT_DIR, `${slug}.png`)
 	await writeFile(out, buf)
 	console.log(`  saved ${out} (${buf.length} bytes)`)
@@ -68,7 +114,11 @@ async function main() {
 			'--ignore-gpu-blocklist',
 		],
 	})
-	const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+	// Match gallery card 4:3; 2× DPR then downsample (headless MSAA is weak on 1px lines).
+	const page = await browser.newPage({
+		viewport: { width: 1280, height: 960 },
+		deviceScaleFactor: 2,
+	})
 
 	let failed = 0
 	for (const slug of slugs) {
