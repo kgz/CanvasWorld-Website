@@ -126,12 +126,12 @@
     "active": true
   },
   {
-    "slug": "sierpiński_triangle",
+    "slug": "sierpinski_triangle",
     "title": "Sierpiński Triangle",
     "category": "fractal",
-    "description": "The Sierpiński triangle is a fractal obtained by recursively removing the central triangle from an equilateral triangle (chaos-game / IFS form in the interactive viz).",
-    "thumbnail": "/chaos/icons/sierpiński_triangle.png",
+    "description": "The Sierpiński triangle is a fractal gasket formed by recursively removing the central triangle from an equilateral triangle. This viz tests grid samples for recursive membership.",
+    "thumbnail": "/chaos/icons/sierpinski_triangle.png",
     "renderMode": "webgl",
-    "active": false
+    "active": true
   }
 ]
