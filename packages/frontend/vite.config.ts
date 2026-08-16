@@ -57,6 +57,7 @@ export default defineConfig({
 			{ find: '@s', replacement: path.resolve(__dirname, 'src/@styles') },
 			{ find: '@t', replacement: path.resolve(__dirname, 'src/@types') },
 			{ find: '@a', replacement: path.resolve(__dirname, 'src/@assets') },
+			{ find: '@cw/routes', replacement: path.resolve(__dirname, '../shared/routes.json') },
 		],
 	},
 })

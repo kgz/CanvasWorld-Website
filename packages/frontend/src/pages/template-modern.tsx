@@ -3,7 +3,6 @@ import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../@store/store';
 import { SetMenuOpen, setData } from '../@store/WebSlice';
 import routes from '../@types/routes';
-import { genPath } from '../modules/genPath';
 import { isScreenshotMode, resetScreenshotReady } from '../modules/screenshotMode';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { useEffect, useMemo } from 'react';
@@ -185,7 +184,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 									{routes.slice(0, 8).map((route, index) => (
 										<Link
 											key={index}
-											to={"/" + genPath(route.name)}
+											to={"/" + route.slug}
 											className="block p-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors duration-300"
 										>
 											{route.name}
@@ -311,7 +310,7 @@ const Template = () => {
 				return (
 					<Route
 						key={index}
-						path={"/" + genPath(route.name)}
+						path={"/" + route.slug}
 						element={
 							<ModernCanvasPage route={route} isIframe={isIframe} />
 						}

@@ -76,13 +76,7 @@ func (s *ScreenshotService) ScreenshotAttractor(routeName string) error {
 }
 
 func (s *ScreenshotService) ScreenshotAllAttractors() error {
-	routes := getRoutes()
-
-	for routeName := range routes {
-		// Skip BE-only stubs that are not active FE pages
-		if routeName == "brusselator" {
-			continue
-		}
+	for _, routeName := range activeSlugs() {
 		if err := s.ScreenshotAttractor(routeName); err != nil {
 			log.Printf("Failed to screenshot %s: %v", routeName, err)
 		}

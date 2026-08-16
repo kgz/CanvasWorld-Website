@@ -1,0 +1,137 @@
+[
+  {
+    "slug": "bedhead_attractor",
+    "title": "Bedhead Attractor",
+    "category": "attractor",
+    "description": "The Bedhead Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(x \\cdot y/b) \\cdot y + cos(a \\cdot x - y), y_{n+1} = x + sin(y)/b",
+    "thumbnail": "/chaos/icons/bedhead_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "bogdanov_map",
+    "title": "Bogdanov Map",
+    "category": "map",
+    "description": "The Bogdanov Map is a chaotic map defined by the following equations: x_{n+1} = y_n + 1 - a \\cdot x_n^2, y_{n+1} = b \\cdot x_n",
+    "thumbnail": "/chaos/icons/bogdanov_map.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "brusselator",
+    "title": "Brusselator",
+    "category": "map",
+    "description": "The Brusselator is a chaotic map defined by the following equations: x_{n+1} = 1 + x_n + a \\cdot x_n^2 \\cdot y_n - (b + 1) \\cdot x_n, y_{n+1} = b \\cdot x_n - a \\cdot x_n^2 \\cdot y_n",
+    "thumbnail": "/chaos/icons/brusselator.png",
+    "renderMode": "webgl",
+    "active": false
+  },
+  {
+    "slug": "clifford_attractor",
+    "title": "Clifford Attractor",
+    "category": "attractor",
+    "description": "The Clifford Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(a \\cdot y_n) + c \\cdot cos(a \\cdot x_n), y_{n+1} = sin(b \\cdot x_n) + d \\cdot cos(b \\cdot y_n)",
+    "thumbnail": "/chaos/icons/clifford_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "fractal_dream_attractor",
+    "title": "Fractal Dream Attractor",
+    "category": "attractor",
+    "description": "The Fractal Dream Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(y_n \\cdot b) + c \\cdot sin(x_n \\cdot b), y_{n+1} = sin(x_n \\cdot a) + d \\cdot sin(y_n \\cdot a)",
+    "thumbnail": "/chaos/icons/fractal_dream_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "gumowski-mira_attractor",
+    "title": "Gumowski-Mira Attractor",
+    "category": "attractor",
+    "description": "The Gumowski-Mira Attractor is a chaotic attractor defined by the following equations: x_{n+1} = b \\cdot y_n + a \\cdot x_n + x_n \\cdot (x_n^2 + y_n^2), y_{n+1} = -b \\cdot x_n + a \\cdot y_n + y_n \\cdot (x_n^2 + y_n^2)",
+    "thumbnail": "/chaos/icons/gumowski-mira_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "henon_map",
+    "title": "Henon Map",
+    "category": "map",
+    "description": "The Henon Map is a chaotic map defined by the following equations: x_{n+1} = 1 - a \\cdot x_n^2 + y_n, y_{n+1} = b \\cdot x_n",
+    "thumbnail": "/chaos/icons/henon_map.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "hopalong_attractor",
+    "title": "Hopalong Attractor",
+    "category": "attractor",
+    "description": "The Hopalong Attractor is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
+    "thumbnail": "/chaos/icons/hopalong_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "hopalong_attractor_positive",
+    "title": "Hopalong Attractor Positive",
+    "category": "attractor",
+    "description": "The Hopalong Attractor Positive is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
+    "thumbnail": "/chaos/icons/hopalong_attractor_positive.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "hopalong_attractor_additive",
+    "title": "Hopalong Attractor Additive",
+    "category": "attractor",
+    "description": "The Hopalong Attractor Additive is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
+    "thumbnail": "/chaos/icons/hopalong_attractor_additive.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "hopalong_attractor_sinusoidal",
+    "title": "Hopalong Attractor Sinusoidal",
+    "category": "attractor",
+    "description": "The Hopalong Attractor (Sinusoidal) is a chaotic attractor that replaces the square-root term with a sine, blending periodic motion with fractal structure.",
+    "thumbnail": "/chaos/icons/hopalong_attractor_sinusoidal.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "gingerbread_man",
+    "title": "Gingerbread Man",
+    "category": "attractor",
+    "description": "WIP",
+    "thumbnail": "/chaos/icons/gingerbread_man.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "ikeda_map",
+    "title": "Ikeda Map",
+    "category": "map",
+    "description": "The Ikeda Map is a chaotic map defined by the following equations: x_{n+1} = 1 + c \\cdot (x_n \\cdot cos(t) - y_n \\cdot sin(t)), y_{n+1} = c \\cdot (x_n \\cdot sin(t) + y_n \\cdot cos(t))",
+    "thumbnail": "/chaos/icons/ikeda_map.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "mandelbrot_set",
+    "title": "Mandelbrot Set",
+    "category": "fractal",
+    "description": "The Mandelbrot Set is defined by iterating z_{n+1} = z_n^2 + c for complex c; the set is those c for which the sequence remains bounded.",
+    "thumbnail": "/chaos/icons/mandelbrot_set.png",
+    "renderMode": "shader",
+    "active": true
+  },
+  {
+    "slug": "sierpiński_triangle",
+    "title": "Sierpiński Triangle",
+    "category": "fractal",
+    "description": "The Sierpiński triangle is a fractal obtained by recursively removing the central triangle from an equilateral triangle (chaos-game / IFS form in the interactive viz).",
+    "thumbnail": "/chaos/icons/sierpiński_triangle.png",
+    "renderMode": "webgl",
+    "active": false
+  }
+]

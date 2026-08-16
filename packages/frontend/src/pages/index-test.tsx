@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../@store/store';
 import routes from '../@types/routes';
-import { genPath } from '../modules/genPath';
 
 function Index() {
 	const dispatch = useAppDispatch();
@@ -20,7 +19,7 @@ function Index() {
 						<div key={index} className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
 							<h3 className="text-lg font-semibold text-white mb-2">{route.name}</h3>
 							<img
-								src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'}/chaos/icons/${genPath(route.name)}.png`}
+								src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'}/chaos/icons/${route.slug}.png`}
 								alt={route.name}
 								className="w-full h-32 object-cover rounded"
 							/>

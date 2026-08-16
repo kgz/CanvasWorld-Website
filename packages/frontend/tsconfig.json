@@ -17,9 +17,13 @@
 	  "isolatedModules": true,
 	  "noEmit": true,
 	  "jsx": "react-jsx",
-	  "noImplicitAny": false
+	  "noImplicitAny": false,
+	  "baseUrl": ".",
+	  "paths": {
+		"@cw/routes": ["../shared/routes.json"]
+	  }
 	},
 	"include": ["src", "src/dummy_data.ts"],
 	"exclude": ["node_modules", "build", "scripts", "acceptance-tests", "webpack", "jest", "src/setupTests.ts"],
 	"references": [{ "path": "./tsconfig.node.json" }]
-  }
+}
