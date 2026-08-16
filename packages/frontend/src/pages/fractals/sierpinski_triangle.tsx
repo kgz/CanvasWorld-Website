@@ -7,8 +7,10 @@ import { useAnimation } from '../../context/AnimationContext'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
 import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
+import styles from '../maps/mandelbrotHud.module.css'
 
 const MAX_DEPTH = 10
+const DEFAULT_ZOOM = 0.88
 
 type OverlayProps = {
 	center: number[]
@@ -17,7 +19,16 @@ type OverlayProps = {
 	setZoom: Dispatch<SetStateAction<number>>
 }
 
+function findVizCanvas(): HTMLCanvasElement | null {
+	const el = document.querySelector('#cw-viz-canvas')
+	return el instanceof HTMLCanvasElement ? el : null
+}
+
 const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) => {
+	const screenshot = isScreenshotMode()
+	const isIframe = new URLSearchParams(window.location.search).get('iframe') !== null
+	const bare = screenshot || isIframe
+
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragStart, setDragStart] = useState([0, 0])
 	const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -25,8 +36,8 @@ const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) =
 
 	useEffect(() => {
 		const findCanvas = () => {
-			const canvas = document.querySelector('#cw-viz-canvas')
-			if (canvas instanceof HTMLCanvasElement) {
+			const canvas = findVizCanvas()
+			if (canvas) {
 				canvasRef.current = canvas
 			} else {
 				window.setTimeout(findCanvas, 100)
@@ -43,8 +54,10 @@ const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) =
 	const handleMouseMove = useCallback(
 		(e: MouseEvent) => {
 			if (!isDragging) return
-			const dx = (e.clientX - dragStart[0]) / (zoom * window.innerHeight)
-			const dy = (dragStart[1] - e.clientY) / (zoom * window.innerHeight)
+			const canvas = canvasRef.current || findVizCanvas()
+			const height = canvas?.clientHeight || window.innerHeight
+			const dx = (e.clientX - dragStart[0]) / (zoom * height)
+			const dy = (dragStart[1] - e.clientY) / (zoom * height)
 			setCenter((prev) => [prev[0] - dx, prev[1] - dy])
 			setDragStart([e.clientX, e.clientY])
 		},
@@ -57,14 +70,14 @@ const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) =
 
 	const handleReset = () => {
 		setCenter([0, 0])
-		setZoom(0.65)
+		setZoom(DEFAULT_ZOOM)
 	}
 
 	const handleWheelDiv = useCallback(
 		(e: WheelEvent) => {
 			e.preventDefault()
-			const canvas = canvasRef.current || document.querySelector('#cw-viz-canvas')
-			if (!(canvas instanceof HTMLCanvasElement)) return
+			const canvas = canvasRef.current || findVizCanvas()
+			if (!canvas) return
 
 			const rect = canvas.getBoundingClientRect()
 			const canvasWidth = canvas.width || rect.width
@@ -101,42 +114,41 @@ const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) =
 		return () => overlay.removeEventListener('wheel', handleWheelDiv)
 	}, [handleWheelDiv])
 
+	const hit = (
+		<div
+			ref={overlayRef}
+			className={styles.hitLayer}
+			onMouseDown={handleMouseDown}
+			onMouseMove={handleMouseMove}
+			onMouseUp={handleMouseUp}
+			onMouseLeave={handleMouseUp}
+			style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+		/>
+	)
+
+	if (bare) {
+		return hit
+	}
+
 	return (
 		<>
-			<div
-				ref={overlayRef}
-				onMouseDown={handleMouseDown}
-				onMouseMove={handleMouseMove}
-				onMouseUp={handleMouseUp}
-				onMouseLeave={handleMouseUp}
-				style={{
-					position: 'fixed',
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: '4.5rem',
-					cursor: isDragging ? 'grabbing' : 'grab',
-					pointerEvents: 'auto',
-				}}
-			/>
+			{hit}
 
-			<div className="fixed top-20 right-4 z-50 w-64 space-y-4 rounded-lg bg-gray-800/90 p-4 text-white backdrop-blur-sm">
-				<div className="space-y-1 font-mono text-xs">
+			<div className={styles.hud}>
+				<div className={styles.meta} aria-hidden="true">
 					<div>
 						Center: ({center[0].toFixed(5)}, {center[1].toFixed(5)})
 					</div>
 					<div>Zoom: {zoom.toExponential(2)}×</div>
 				</div>
 
-				<button
-					type="button"
-					onClick={handleReset}
-					className="w-full rounded bg-gray-700 px-4 py-2 transition-colors hover:bg-gray-600"
-				>
-					Reset View
-				</button>
+				<div className={styles.actions}>
+					<button type="button" className={styles.btn} onClick={handleReset}>
+						Reset
+					</button>
+				</div>
 
-				<p className="text-xs text-gray-400 italic">Scroll to zoom · drag to pan</p>
+				<p className={styles.hint}>Scroll to zoom · drag to pan</p>
 			</div>
 		</>
 	)
@@ -144,7 +156,7 @@ const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) =
 
 const SierpinskiTriangle = () => {
 	const [center, setCenter] = useState([0, 0])
-	const [zoom, setZoom] = useState(0.65)
+	const [zoom, setZoom] = useState(DEFAULT_ZOOM)
 	const {
 		isPaused,
 		animationSpeed,
@@ -224,7 +236,7 @@ const SierpinskiTriangle = () => {
 	])
 
 	return (
-		<>
+		<div className={styles.root}>
 			<Base
 				renderMode={ERenderMode.SHADER}
 				vertexShader={vertexShader}
@@ -233,7 +245,7 @@ const SierpinskiTriangle = () => {
 				cameraPosition={[0, 0, 1]}
 			/>
 			<SierpinskiOverlay center={center} setCenter={setCenter} zoom={zoom} setZoom={setZoom} />
-		</>
+		</div>
 	)
 }
 
