@@ -14,3 +14,11 @@ packages/backend/.env
 # Local TLS (mkcert / vite HTTPS)
 *.pem
 packages/frontend/certs/
+
+# Build / local tooling output (rewritten constantly)
+packages/frontend/dist/
+packages/backend/tmp/
+*.backup
+
+# Editor / agent local state
+.cursor/
