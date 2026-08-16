@@ -15,7 +15,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "thumbs": "node scripts/capture-thumbs.mjs"
+    "thumbs": "node scripts/capture-thumbs.mjs",
+    "smoke:brusselator": "node scripts/smoke-brusselator.mjs"
   },
   "author": "Mat Frayne",
   "license": "ISC",

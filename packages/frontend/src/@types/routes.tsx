@@ -13,6 +13,7 @@ import HopalongAttractorSinusoidal from '../pages/attractors/hopalong_attractor_
 import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
 import MandelbrotSet from '../pages/maps/mandelbrot_set'
+import Brusselator from '../pages/misc/brusselator'
 
 export type CatalogEntry = {
 	slug: string
@@ -39,6 +40,7 @@ export type TRoutes = TRoute[]
 const components: Record<string, ComponentType> = {
 	bedhead_attractor: BedheadAttractor,
 	bogdanov_map: BogdanovMap,
+	brusselator: Brusselator,
 	clifford_attractor: CliffordAttractor,
 	fractal_dream_attractor: FractalDreamAttractor,
 	'gumowski-mira_attractor': GumowskiMiraAttractor,
