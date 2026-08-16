@@ -19,10 +19,12 @@ function AnimationTransportBar({
 	sidebarOpen,
 	isIframe,
 	enabled,
+	progressLabel,
 }: {
 	sidebarOpen: boolean
 	isIframe: boolean
 	enabled: boolean
+	progressLabel: string
 }) {
 	const {
 		isPaused,
@@ -85,7 +87,7 @@ function AnimationTransportBar({
 						<input
 							type="range"
 							min="0"
-							max={totalParticles}
+							max={Math.max(totalParticles, 1)}
 							value={Math.min(particlesDrawn, totalParticles)}
 							onChange={(e) => {
 								setManualProgress(parseInt(e.target.value, 10))
@@ -101,7 +103,7 @@ function AnimationTransportBar({
 					</div>
 
 					<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg flex-shrink-0">
-						<span className="font-semibold">n = </span>
+						<span className="font-semibold">{progressLabel} = </span>
 						<span>
 							{particlesDrawn.toLocaleString()} / {totalParticles.toLocaleString()}
 						</span>
@@ -129,6 +131,12 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 		}
 		return <div>Loading description...</div>
 	}, [route])
+
+	const transportEnabled =
+		Reflect.get(route.element, 'usesTransportBar') === true ||
+		(route.renderMode !== 'shader' && Reflect.get(route.element, 'isShaderViz') !== true)
+	const progressLabelRaw = Reflect.get(route.element, 'progressLabel')
+	const progressLabel = typeof progressLabelRaw === 'string' ? progressLabelRaw : 'n'
 
 	if (screenshot) {
 		return (
@@ -280,7 +288,8 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 			<AnimationTransportBar
 				sidebarOpen={sidebarOpen}
 				isIframe={isIframe}
-				enabled={route.renderMode !== 'shader' && Reflect.get(route.element, 'isShaderViz') !== true}
+				enabled={transportEnabled}
+				progressLabel={progressLabel}
 			/>
 		</div>
 	)
