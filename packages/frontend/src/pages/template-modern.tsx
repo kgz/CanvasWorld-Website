@@ -231,7 +231,7 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 		<div className={`${styles.app}${panelOpen ? ` ${styles.panelOpen}` : ''}`}>
 			<header className={styles.topbar}>
 				<Link className={styles.wordmark} to="/">
-					CanvasWorld
+					Classical Chaos
 				</Link>
 
 				<div className={styles.topbarTitle}>

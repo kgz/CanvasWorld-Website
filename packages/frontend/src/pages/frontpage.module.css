@@ -131,8 +131,8 @@
   margin: 0;
   font-family: var(--cw-font-display);
   font-weight: 600;
-  font-size: clamp(64px, 10vw, 148px);
-  line-height: 0.96;
+  font-size: clamp(48px, 8vw, 112px);
+  line-height: 0.98;
   letter-spacing: -0.02em;
   color: var(--cw-fg);
 }
@@ -262,7 +262,7 @@
 }
 
 .galleryHead h2 {
-  margin: 10px 0 0;
+  margin: 0;
   font-family: var(--cw-font-display);
   font-size: clamp(28px, 3vw, 38px);
   font-weight: 600;
