@@ -16,15 +16,15 @@ const App = () => {
 			<Toaster position="bottom-left" reverseOrder={false} />
 			<BrowserRouter basename="/chaos">
 				<Helmet>
-					<title>Chaos</title>
-					<meta name="description" content="Chaos Attractors" />
+					<title>Classical Chaos</title>
+					<meta name="description" content="Interactive sketches of classical dynamical systems." />
 					<meta name="theme-color" content="#008f68" />
-					<meta property="og:title" content="Chaos Attractors" />
-					<meta property="og:description" content="Chaos Attractors" />
+					<meta property="og:title" content="Classical Chaos" />
+					<meta property="og:description" content="Interactive sketches of classical dynamical systems." />
 					{/* <meta property="og:image" content="https://i.imgur.com/4M7IWwP.png" /> */}
 					<meta property="og:url" content="https://matf.dev/chaos" />
-					<meta name="twitter:title" content="Chaos Attractors" />
-					<meta name="twitter:description" content="Chaos Attractors" />
+					<meta name="twitter:title" content="Classical Chaos" />
+					<meta name="twitter:description" content="Interactive sketches of classical dynamical systems." />
 					{/* <meta name="twitter:image" content="https://i.imgur.com/4M7IWwP.png" /> */}
 					<meta name="twitter:card" content="summary_large_image" />
 				</Helmet>

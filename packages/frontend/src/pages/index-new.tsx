@@ -158,7 +158,7 @@ function Index() {
 			>
 				<div className={styles.siteNavInner}>
 					<Link className={styles.wordmark} to="/">
-						CanvasWorld
+						Classical Chaos
 					</Link>
 					<nav className={styles.navLinks}>
 						<a href="#gallery">Gallery</a>
@@ -172,7 +172,7 @@ function Index() {
 				<div className={styles.heroVignette} aria-hidden="true" />
 
 				<div className={styles.heroContent}>
-					<h1 className={styles.heroBrand}>CanvasWorld</h1>
+					<h1 className={styles.heroBrand}>Classical Chaos</h1>
 					<p className={styles.heroSub}>
 						Interactive sketches of classical dynamical systems.
 					</p>
