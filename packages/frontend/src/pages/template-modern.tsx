@@ -1,54 +1,128 @@
-import React from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../@store/store';
-import { SetMenuOpen, setData } from '../@store/WebSlice';
-import routes from '../@types/routes';
-import { isScreenshotMode, resetScreenshotReady } from '../modules/screenshotMode';
-import { useMatomo } from '@datapunt/matomo-tracker-react';
-import { useEffect, useMemo } from 'react';
-import Index from './index-new';
-import { BlockMath } from 'react-katex';
-import 'katex/dist/katex.min.css';
-import { Play, Pause, RotateCcw } from 'lucide-react';
+import React, { useEffect, useMemo } from 'react'
+import { Link, Route, Routes, useLocation } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../@store/store'
+import { setData } from '../@store/WebSlice'
+import routes, { type TRoute } from '../@types/routes'
+import { isScreenshotMode, resetScreenshotReady } from '../modules/screenshotMode'
+import { useMatomo } from '@datapunt/matomo-tracker-react'
+import Index from './index-new'
+import 'katex/dist/katex.min.css'
+import { Play, Pause, RotateCcw } from 'lucide-react'
+import { AnimationProvider, useAnimation } from '../context/AnimationContext'
 
-// Route components are imported dynamically via route.element
+type ModernCanvasPageProps = {
+	route: TRoute
+	isIframe: boolean
+}
 
-const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, isIframe }) => {
-	const dispatch = useAppDispatch();
-	const { datData, data } = useAppSelector(state => state.WebSlice);
-	const screenshot = isScreenshotMode();
-	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe && !screenshot);
-	const [isPlaying, setIsPlaying] = React.useState(true);
-	const [speed, setSpeed] = React.useState(1);
-	const [isComplete, setIsComplete] = React.useState(false);
+function AnimationTransportBar({
+	sidebarOpen,
+	isIframe,
+}: {
+	sidebarOpen: boolean
+	isIframe: boolean
+}) {
+	const {
+		isPaused,
+		setPaused,
+		animationSpeed,
+		setSpeed,
+		isComplete,
+		particlesDrawn,
+		totalParticles,
+		setManualProgress,
+		replay,
+	} = useAnimation()
+
+	const isPlaying = !isPaused
+
+	return (
+		<div
+			className="fixed bottom-0 z-50 glass-effect border-t border-gray-700/50"
+			style={{ left: sidebarOpen && !isIframe ? '20rem' : '0', right: '0' }}
+		>
+			<div className="max-w-7xl mx-auto px-4 py-3">
+				<div className="flex items-center justify-between gap-4">
+					<button
+						type="button"
+						onClick={() => {
+							if (isComplete) {
+								replay()
+							} else {
+								setPaused(!isPaused)
+							}
+						}}
+						className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300 text-white flex-shrink-0"
+					>
+						{isComplete ? <RotateCcw size={24} /> : isPlaying ? <Pause size={24} /> : <Play size={24} />}
+					</button>
+
+					<div className="flex items-center gap-2 flex-shrink-0">
+						<span className="text-xs text-gray-400">Speed:</span>
+						<input
+							type="range"
+							min="0.1"
+							max="5"
+							step="0.1"
+							value={animationSpeed}
+							onChange={(e) => {
+								setSpeed(parseFloat(e.target.value))
+							}}
+							className="w-24 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+						/>
+						<span className="text-xs text-gray-300 font-mono w-8">
+							{animationSpeed.toFixed(1)}x
+						</span>
+					</div>
+
+					<div className="flex-1 mx-4">
+						<input
+							type="range"
+							min="0"
+							max={totalParticles}
+							value={Math.min(particlesDrawn, totalParticles)}
+							onChange={(e) => {
+								setManualProgress(parseInt(e.target.value, 10))
+							}}
+							onMouseUp={() => {
+								setManualProgress(null)
+							}}
+							onTouchEnd={() => {
+								setManualProgress(null)
+							}}
+							className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+						/>
+					</div>
+
+					<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg flex-shrink-0">
+						<span className="font-semibold">n = </span>
+						<span>
+							{particlesDrawn.toLocaleString()} / {totalParticles.toLocaleString()}
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
+	const dispatch = useAppDispatch()
+	const { datData, data } = useAppSelector(state => state.WebSlice)
+	const screenshot = isScreenshotMode()
+	const [sidebarOpen, setSidebarOpen] = React.useState(!isIframe && !screenshot)
 
 	useEffect(() => {
-		resetScreenshotReady();
-	}, [route.name]);
+		resetScreenshotReady()
+	}, [route.name])
 
-	// Get description from the route component's static function
-	const description = React.useMemo(() => {
-		if (route.element && route.element.getDescription) {
-			return route.element.getDescription();
+	const description = useMemo(() => {
+		const getDescription = Reflect.get(route.element, 'getDescription')
+		if (typeof getDescription === 'function') {
+			return getDescription.call(route.element)
 		}
-		return <div>Loading description...</div>;
-	}, [route]);
-
-	// Listen for animation completion
-	useEffect(() => {
-		const handleAnimationComplete = (event: CustomEvent) => {
-			setIsComplete(event.detail.complete);
-			if (event.detail.complete) {
-				setIsPlaying(false);
-			}
-		};
-
-		window.addEventListener('animationComplete', handleAnimationComplete as EventListener);
-
-		return () => {
-			window.removeEventListener('animationComplete', handleAnimationComplete as EventListener);
-		};
-	}, []);
+		return <div>Loading description...</div>
+	}, [route])
 
 	if (screenshot) {
 		return (
@@ -57,17 +131,17 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 					<route.element />
 				</div>
 			</div>
-		);
+		)
 	}
 
 	return (
 		<div className="min-h-screen bg-gray-900 text-white">
-			{/* Navigation Header */}
 			<nav className="fixed top-0 left-0 right-0 z-50 glass-effect">
 				<div className="max-w-7xl mx-auto px-4 py-4">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-4">
 							<button
+								type="button"
 								onClick={() => setSidebarOpen(!sidebarOpen)}
 								className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300"
 							>
@@ -85,27 +159,23 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 							</Link>
 						</div>
 						<h1 className="text-xl font-semibold text-white">{route.name}</h1>
-						<div className="flex items-center space-x-4">
-							{/* Empty space for future elements */}
-						</div>
+						<div className="flex items-center space-x-4" />
 					</div>
 				</div>
 			</nav>
 
 			<div className="flex pt-16">
-				{/* Sidebar */}
-				<div className={`transition-all duration-300 ease-in-out ${
-					sidebarOpen && !isIframe 
-						? 'w-80 opacity-100' 
-						: 'w-0 opacity-0'
-				} bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 h-[calc(100vh-4rem)] flex-shrink-0 overflow-y-auto overflow-x-hidden`}>
+				<div
+					className={`transition-all duration-300 ease-in-out ${
+						sidebarOpen && !isIframe ? 'w-80 opacity-100' : 'w-0 opacity-0'
+					} bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 h-[calc(100vh-4rem)] flex-shrink-0 overflow-y-auto overflow-x-hidden`}
+				>
 					<div className="p-6">
-						{/* Controls */}
 						{datData && Object.keys(datData.options).length > 0 && (
 							<div className="mb-6">
 								<h2 className="text-lg font-semibold text-white mb-3">Controls</h2>
 								<div className="space-y-4">
-									{Object.entries(datData.options).map(([key, option]: [string, any]) => (
+									{Object.entries(datData.options).map(([key, option]) => (
 										<div key={key}>
 											<label className="block text-sm font-medium text-gray-300 mb-1">
 												{key}
@@ -118,7 +188,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 													step={option.step || 0.001}
 													value={data[key] || option.initialValue}
 													onChange={(e) => {
-														dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }));
+														dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }))
 													}}
 													className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
 												/>
@@ -131,7 +201,7 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 														step={option.step || 0.001}
 														value={data[key] || option.initialValue}
 														onChange={(e) => {
-															dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }));
+															dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }))
 														}}
 														className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
 													/>
@@ -148,16 +218,16 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 							</div>
 						)}
 
-						{/* Examples */}
 						{datData.examples && datData.examples.length > 0 && (
 							<div className="mb-6">
 								<h2 className="text-lg font-semibold text-white mb-3">Examples</h2>
 								<div className="space-y-2">
-									{datData.examples.map((example: any, index: number) => (
+									{datData.examples.map((example, index) => (
 										<button
 											key={index}
+											type="button"
 											onClick={() => {
-												dispatch(setData(example));
+												dispatch(setData(example))
 											}}
 											className="w-full text-left p-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors duration-300"
 										>
@@ -171,155 +241,75 @@ const ModernCanvasPage: React.FC<{ route: any; isIframe: boolean }> = ({ route, 
 							</div>
 						)}
 
-						{/* Description */}
 						<div className="mb-6">
 							<h2 className="text-lg font-semibold text-white mb-3">About</h2>
 							<div className="text-gray-300 text-sm leading-relaxed">
 								{description}
 							</div>
 						</div>
-							<div>
-								<h2 className="text-lg font-semibold text-white mb-3">Explore</h2>
-								<div className="space-y-1">
-									{routes.slice(0, 8).map((route, index) => (
-										<Link
-											key={index}
-											to={"/" + route.slug}
-											className="block p-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors duration-300"
-										>
-											{route.name}
-										</Link>
-									))}
-								</div>
+						<div>
+							<h2 className="text-lg font-semibold text-white mb-3">Explore</h2>
+							<div className="space-y-1">
+								{routes.slice(0, 8).map((exploreRoute) => (
+									<Link
+										key={exploreRoute.slug}
+										to={'/' + exploreRoute.slug}
+										className="block p-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors duration-300"
+									>
+										{exploreRoute.name}
+									</Link>
+								))}
 							</div>
 						</div>
 					</div>
+				</div>
 
-				{/* Main Canvas Area */}
-				<div className={`flex-1 ${sidebarOpen && !isIframe ? 'ml-0' : 'ml-0'}`}>
+				<div className="flex-1 ml-0">
 					<div className="h-[calc(100vh-4rem)] bg-gray-900 relative">
 						<route.element />
 					</div>
 				</div>
 			</div>
 
-			{/* Animation Controls - Bottom of Screen */}
-			<div className="fixed bottom-0 z-50 glass-effect border-t border-gray-700/50" style={{ left: sidebarOpen && !isIframe ? '20rem' : '0', right: '0' }}>
-				<div className="max-w-7xl mx-auto px-4 py-3">
-					<div className="flex items-center justify-between gap-4">
-						{/* Play/Pause/Replay Button */}
-						<button
-							id="play-pause-btn"
-							onClick={() => {
-								if (isComplete) {
-									// Replay: reset animation
-									setIsComplete(false);
-									setIsPlaying(true);
-									window.dispatchEvent(new CustomEvent('replayAnimation'));
-								} else {
-									// Toggle play/pause
-									setIsPlaying(!isPlaying);
-									window.dispatchEvent(new CustomEvent('toggleAnimation', { 
-										detail: { paused: isPlaying } 
-									}));
-								}
-							}}
-							className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-300 text-white flex-shrink-0"
-						>
-							{isComplete ? <RotateCcw size={24} /> : (isPlaying ? <Pause size={24} /> : <Play size={24} />)}
-						</button>
-
-						{/* Speed Control */}
-						<div className="flex items-center gap-2 flex-shrink-0">
-							<span className="text-xs text-gray-400">Speed:</span>
-							<input
-								type="range"
-								min="0.1"
-								max="5"
-								step="0.1"
-								value={speed}
-								onChange={(e) => {
-									const value = parseFloat(e.target.value);
-									setSpeed(value);
-									window.dispatchEvent(new CustomEvent('setAnimationSpeed', { 
-										detail: { speed: value } 
-									}));
-								}}
-								className="w-24 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-							/>
-							<span className="text-xs text-gray-300 font-mono w-8">{speed.toFixed(1)}x</span>
-						</div>
-
-						{/* Progress Slider */}
-						<div className="flex-1 mx-4">
-							<input
-								id="progress-slider"
-								type="range"
-								min="0"
-								max="200000"
-								value="0"
-								onChange={(e) => {
-									const value = parseInt(e.target.value);
-									window.dispatchEvent(new CustomEvent('setAnimationProgress', { 
-										detail: { progress: value } 
-									}));
-								}}
-								onMouseUp={() => {
-									window.dispatchEvent(new CustomEvent('releaseAnimationProgress'));
-								}}
-								onTouchEnd={() => {
-									window.dispatchEvent(new CustomEvent('releaseAnimationProgress'));
-								}}
-								className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-							/>
-						</div>
-
-						{/* Progress Text */}
-						<div className="text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-lg flex-shrink-0">
-							<span className="font-semibold">n = </span>
-							<span id="progress-text">0 / 200,000</span>
-						</div>
-					</div>
-				</div>
-			</div>
+			<AnimationTransportBar sidebarOpen={sidebarOpen} isIframe={isIframe} />
 		</div>
-	);
-};
+	)
+}
+
+const ModernCanvasPage = ({ route, isIframe }: ModernCanvasPageProps) => (
+	<AnimationProvider key={route.slug}>
+		<ModernCanvasPageInner route={route} isIframe={isIframe} />
+	</AnimationProvider>
+)
 
 const Template = () => {
-	const dispatch = useAppDispatch();
-	const { trackPageView } = useMatomo();
-	const loc = useLocation();
+	const { trackPageView } = useMatomo()
+	const loc = useLocation()
 
-	// Track page view
 	useEffect(() => {
-		console.log('tracking', loc);
 		trackPageView({
-			href: loc.pathname + loc.search
-		});
-	}, [trackPageView, loc]);
+			href: loc.pathname + loc.search,
+		})
+	}, [trackPageView, loc])
 
 	const isIframe = useMemo(() => {
-		const params = new URLSearchParams(window.location.search);
-		return params.get('iframe') !== null;
-	}, []);
+		const params = new URLSearchParams(window.location.search)
+		return params.get('iframe') !== null
+	}, [])
 
 	return (
 		<Routes>
-			{routes.map((route, index) => {
-				return (
-					<Route
-						key={index}
-						path={"/" + route.slug}
-						element={
-							<ModernCanvasPage route={route} isIframe={isIframe} />
-						}
-					/>
-				);
-			})}
+			{routes.map((route) => (
+				<Route
+					key={route.slug}
+					path={'/' + route.slug}
+					element={<ModernCanvasPage route={route} isIframe={isIframe} />}
+				/>
+			))}
 			<Route path="*" element={<Index />} />
 		</Routes>
-	);
-};
+	)
+}
 
-export default ModernCanvasPage;
+export default ModernCanvasPage
+export { Template }
