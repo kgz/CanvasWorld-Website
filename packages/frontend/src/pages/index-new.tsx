@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import routes from '../@types/routes'
-import { genPath } from '../modules/genPath'
 import { HeroInkCanvas } from './HeroInkCanvas'
 import styles from './frontpage.module.css'
 
@@ -206,17 +205,14 @@ function Index() {
 				<div>
 					<h3 className={styles.galleryGroupTitle}>Visualizations</h3>
 					<div className={styles.vizGrid}>
-						{routes.map((route, index) => {
-							const slug = genPath(route.name)
-							return (
+						{routes.map((route, index) => (
 								<GalleryCard
-									key={slug}
+									key={route.slug}
 									name={route.name}
-									slug={slug}
+									slug={route.slug}
 									index={index}
 								/>
-							)
-						})}
+							))}
 					</div>
 				</div>
 			</section>

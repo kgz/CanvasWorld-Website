@@ -1,69 +1,109 @@
 package main
 
 import (
-	"strings"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"sync"
 )
 
+type CatalogEntry struct {
+	Slug        string `json:"slug"`
+	Title       string `json:"title"`
+	Category    string `json:"category"`
+	Description string `json:"description"`
+	Thumbnail   string `json:"thumbnail"`
+	RenderMode  string `json:"renderMode"`
+	Active      bool   `json:"active"`
+}
+
+// Route is the API/SSR projection keyed by slug.
 type Route struct {
 	Description string `json:"description"`
+	Title       string `json:"title,omitempty"`
+	Category    string `json:"category,omitempty"`
+	Thumbnail   string `json:"thumbnail,omitempty"`
+	RenderMode  string `json:"renderMode,omitempty"`
+	Active      bool   `json:"active"`
+}
+
+var (
+	catalogOnce sync.Once
+	catalogErr  error
+	catalogList []CatalogEntry
+	routesBySlug map[string]Route
+)
+
+func resolveCatalogPath() string {
+	if p := os.Getenv("CW_ROUTES_CATALOG"); p != "" {
+		return p
+	}
+	candidates := []string{
+		"routes.json",
+		"../shared/routes.json",
+		"packages/shared/routes.json",
+	}
+	for _, c := range candidates {
+		if _, err := os.Stat(c); err == nil {
+			return c
+		}
+	}
+	return "../shared/routes.json"
+}
+
+func loadCatalog() {
+	catalogOnce.Do(func() {
+		path := resolveCatalogPath()
+		data, err := os.ReadFile(path)
+		if err != nil {
+			catalogErr = fmt.Errorf("route catalog %q: %w", path, err)
+			return
+		}
+		var entries []CatalogEntry
+		if err := json.Unmarshal(data, &entries); err != nil {
+			catalogErr = fmt.Errorf("route catalog %q: %w", path, err)
+			return
+		}
+		catalogList = entries
+		routesBySlug = make(map[string]Route, len(entries))
+		for _, e := range entries {
+			routesBySlug[e.Slug] = Route{
+				Description: e.Description,
+				Title:       e.Title,
+				Category:    e.Category,
+				Thumbnail:   e.Thumbnail,
+				RenderMode:  e.RenderMode,
+				Active:      e.Active,
+			}
+		}
+		log.Printf("loaded route catalog %s (%d entries)", path, len(entries))
+	})
+}
+
+func getCatalog() []CatalogEntry {
+	loadCatalog()
+	if catalogErr != nil {
+		log.Fatal(catalogErr)
+	}
+	return catalogList
 }
 
 func getRoutes() map[string]Route {
-	routes := make(map[string]Route)
-
-	routes["bedhead_attractor"] = Route{
-		Description: "The Bedhead Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(x \\cdot y/b) \\cdot y + cos(a \\cdot x - y), y_{n+1} = x + sin(y)/b",
+	loadCatalog()
+	if catalogErr != nil {
+		log.Fatal(catalogErr)
 	}
-	routes["bogdanov_map"] = Route{
-		Description: "The Bogdanov Map is a chaotic map defined by the following equations: x_{n+1} = y_n + 1 - a \\cdot x_n^2, y_{n+1} = b \\cdot x_n",
-	}
-	routes["brusselator"] = Route{
-		Description: "The Brusselator is a chaotic map defined by the following equations: x_{n+1} = 1 + x_n + a \\cdot x_n^2 \\cdot y_n - (b + 1) \\cdot x_n, y_{n+1} = b \\cdot x_n - a \\cdot x_n^2 \\cdot y_n",
-	}
-	routes["clifford_attractor"] = Route{
-		Description: "The Clifford Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(a \\cdot y_n) + c \\cdot cos(a \\cdot x_n), y_{n+1} = sin(b \\cdot x_n) + d \\cdot cos(b \\cdot y_n)",
-	}
-	routes["fractal_dream_attractor"] = Route{
-		Description: "The Fractal Dream Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(y_n \\cdot b) + c \\cdot sin(x_n \\cdot b), y_{n+1} = sin(x_n \\cdot a) + d \\cdot sin(y_n \\cdot a)",
-	}
-	routes["gumowski-mira_attractor"] = Route{
-		Description: "The Gumowski-Mira Attractor is a chaotic attractor defined by the following equations: x_{n+1} = b \\cdot y_n + a \\cdot x_n + x_n \\cdot (x_n^2 + y_n^2), y_{n+1} = -b \\cdot x_n + a \\cdot y_n + y_n \\cdot (x_n^2 + y_n^2)",
-	}
-	routes["henon_map"] = Route{
-		Description: "The Henon Map is a chaotic map defined by the following equations: x_{n+1} = 1 - a \\cdot x_n^2 + y_n, y_{n+1} = b \\cdot x_n",
-	}
-	routes["hopalong_attractor"] = Route{
-		Description: "The Hopalong Attractor is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
-	}
-	routes["hopalong_attractor_positive"] = Route{
-		Description: "The Hopalong Attractor Positive is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
-	}
-	routes["hopalong_attractor_additive"] = Route{
-		Description: "The Hopalong Attractor Additive is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
-	}
-	routes["hopalong_attractor_sinusoidal"] = Route{
-		Description: "The Hopalong Attractor (Sinusoidal) is a chaotic attractor that replaces the square-root term with a sine, blending periodic motion with fractal structure.",
-	}
-	routes["gingerbread_man"] = Route{
-		Description: "WIP",
-	}
-	routes["ikeda_map"] = Route{
-		Description: "The Ikeda Map is a chaotic map defined by the following equations: x_{n+1} = 1 + c \\cdot (x_n \\cdot cos(t) - y_n \\cdot sin(t)), y_{n+1} = c \\cdot (x_n \\cdot sin(t) + y_n \\cdot cos(t))",
-	}
-	routes["mandelbrot_set"] = Route{
-		Description: "The Mandelbrot Set is defined by iterating z_{n+1} = z_n^2 + c for complex c; the set is those c for which the sequence remains bounded.",
-	}
-	routes["sierpiński_triangle"] = Route{
-		Description: "The Sierpiński triangle is a fractal obtained by recursively removing the central triangle from an equilateral triangle (chaos-game / IFS form in the interactive viz).",
-	}
-
-	return routes
+	return routesBySlug
 }
 
-func genPath(path string) string {
-	cleanPath := strings.TrimSpace(strings.ReplaceAll(path, " ", ""))
-	if !strings.HasPrefix(cleanPath, "/") {
-		cleanPath = "/" + cleanPath
+func activeSlugs() []string {
+	entries := getCatalog()
+	out := make([]string, 0, len(entries))
+	for _, e := range entries {
+		if e.Active {
+			out = append(out, e.Slug)
+		}
 	}
-	return strings.TrimSuffix(cleanPath, "/")
+	return out
 }

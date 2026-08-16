@@ -27,7 +27,11 @@ func serveSSR(c *fiber.Ctx) error {
 	// Customize meta tags for specific routes
 	if exists {
 		routeKey := strings.TrimPrefix(path, "/")
-		title = fmt.Sprintf("%s - CanvasWorld", strings.ReplaceAll(routeKey, "_", " "))
+		if route.Title != "" {
+			title = fmt.Sprintf("%s - CanvasWorld", route.Title)
+		} else {
+			title = fmt.Sprintf("%s - CanvasWorld", strings.ReplaceAll(routeKey, "_", " "))
+		}
 		description = route.Description
 		image = fmt.Sprintf("/chaos/icons/%s.png", routeKey)
 	}

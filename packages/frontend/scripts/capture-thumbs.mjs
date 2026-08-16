@@ -11,30 +11,20 @@
  *   pnpm thumbs -- --slug clifford_attractor
  */
 import { chromium } from 'playwright'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { readFile, mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const OUT_DIR = path.resolve(__dirname, '../../backend/static/images')
+const CATALOG_PATH = path.resolve(__dirname, '../../shared/routes.json')
 const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3002').replace(/\/$/, '')
 
-const SLUGS = [
-	'bedhead_attractor',
-	'bogdanov_map',
-	'clifford_attractor',
-	'fractal_dream_attractor',
-	'gumowski-mira_attractor',
-	'henon_map',
-	'hopalong_attractor',
-	'hopalong_attractor_positive',
-	'hopalong_attractor_additive',
-	'hopalong_attractor_sinusoidal',
-	'gingerbread_man',
-	'ikeda_map',
-	'mandelbrot_set',
-	'sierpiński_triangle',
-]
+async function loadActiveSlugs() {
+	const raw = await readFile(CATALOG_PATH, 'utf8')
+	const entries = JSON.parse(raw)
+	return entries.filter((e) => e.active).map((e) => e.slug)
+}
 
 function parseSlugArg(argv) {
 	const filtered = argv.filter((a) => a !== '--')
@@ -66,7 +56,7 @@ async function captureSlug(page, slug) {
 
 async function main() {
 	const only = parseSlugArg(process.argv.slice(2))
-	const slugs = only ? [only] : SLUGS
+	const slugs = only ? [only] : await loadActiveSlugs()
 
 	await mkdir(OUT_DIR, { recursive: true })
 

@@ -3,7 +3,6 @@ import { Link, NavLink } from 'react-router-dom'
 
 import { useAppDispatch } from '../@store/store'
 import routes from '../@types/routes'
-import { genPath } from '../modules/genPath'
 import { Card, CardHeader, CardMedia } from '@mui/material'
 import { pink, yellow } from '@mui/material/colors'
 import { Center } from '@react-three/drei'
@@ -87,14 +86,14 @@ function Index() {
 			>
 				{routes.map((route, index) => {
 					return (
-						<Link key={index} to={"/" + genPath(route.name)}>
+						<Link key={route.slug} to={"/" + route.slug}>
 							{/* {route.name} */}
 
 							<Card sx={{ maxWidth: 345, maxHeight: 450 }}>
 								<CardHeader title={route.name} subheader={'September 14, 2016'} />
 								<CardMedia
 									component="img"
-									src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'}/chaos/icons/${genPath(route.name)}.png`}
+									src={`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:9090'}/chaos/icons/${route.slug}.png`}
 									height="194"
 								></CardMedia>
 							</Card>

@@ -13,6 +13,9 @@ COPY packages/frontend/package.json packages/frontend/pnpm-lock.yaml* ./
 # Install dependencies
 RUN pnpm install
 
+# Shared catalog (imported via @cw/routes)
+COPY packages/shared/ ../shared/
+
 # Copy frontend source
 COPY packages/frontend/ ./
 
@@ -48,6 +51,9 @@ WORKDIR /root/
 
 # Copy built backend
 COPY --from=backend-builder /app/main .
+
+# Shared route catalog (loaded at runtime)
+COPY packages/shared/routes.json ./routes.json
 
 # Copy built frontend
 COPY --from=frontend-builder /app/frontend/dist ./dist

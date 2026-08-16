@@ -8,7 +8,6 @@ import { TransitionGroup } from 'react-transition-group'
 import { NavLink } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import routes from '../@types/routes'
-import { genPath } from './genPath'
 import OutsideAlerter from '../@types/onClickOutside'
 import SearchIcon from '@mui/icons-material/Search'
 import LastPage from '@mui/icons-material/LastPage'
@@ -276,7 +275,7 @@ const Menu = ({ title }: TProps) => {
 												<NavLink
 													key={index}
 													className={({ isActive }) => 'test ' + style.menuItem + ' ' + (isActive ? style.active : '')}
-													to={"/" + genPath(route.name)}
+													to={"/" + route.slug}
 												>
 													{route.name}
 												</NavLink>

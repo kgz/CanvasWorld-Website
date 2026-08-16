@@ -1,7 +1,7 @@
+import type { ComponentType } from 'react'
+import catalog from '@cw/routes'
 import BedheadAttractor from '../pages/attractors/bedhead_attractor'
 import BogdanovMap from '../pages/maps/bogdanov_map'
-import Test from '../pages/maps/bogdanov_map'
-import Brusselator from '../pages/misc/brusselator'
 import CliffordAttractor from '../pages/attractors/clifford_attractor'
 import FractalDreamAttractor from '../pages/attractors/fractal_dream_attractor'
 import GumowskiMiraAttractor from '../pages/attractors/gumowski_mira_attractor'
@@ -14,74 +14,66 @@ import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
 import MandelbrotSet from '../pages/maps/mandelbrot_set'
 
-export type TRoutes = {
+export type CatalogEntry = {
+	slug: string
+	title: string
+	category: string
+	description: string
+	thumbnail: string
+	renderMode: string
+	active: boolean
+}
+
+export type TRoute = {
 	name: string
-	element: {
-		(): JSX.Element
-	}
-}[]
+	slug: string
+	category: string
+	description: string
+	thumbnail: string
+	renderMode: string
+	element: ComponentType
+}
+
+export type TRoutes = TRoute[]
+
+const components: Record<string, ComponentType> = {
+	bedhead_attractor: BedheadAttractor,
+	bogdanov_map: BogdanovMap,
+	clifford_attractor: CliffordAttractor,
+	fractal_dream_attractor: FractalDreamAttractor,
+	'gumowski-mira_attractor': GumowskiMiraAttractor,
+	henon_map: HenonMap,
+	hopalong_attractor: HopalongAttractor,
+	hopalong_attractor_positive: HopalongAttractorPositive,
+	hopalong_attractor_additive: HopalongAttractorAdditive,
+	hopalong_attractor_sinusoidal: HopalongAttractorSinusoidal,
+	gingerbread_man: GingerbreadMan,
+	ikeda_map: IkedaMap,
+	mandelbrot_set: MandelbrotSet,
+}
+
+const catalogEntries: CatalogEntry[] = catalog
+
+const routes: TRoutes = catalogEntries
+	.filter((entry) => entry.active)
+	.map((entry) => {
+		const element = components[entry.slug]
+		if (!element) {
+			throw new Error(`active catalog entry "${entry.slug}" has no FE component`)
+		}
+		return {
+			name: entry.title,
+			slug: entry.slug,
+			category: entry.category,
+			description: entry.description,
+			thumbnail: entry.thumbnail,
+			renderMode: entry.renderMode,
+			element,
+		}
+	})
 
 export const routesV1 = []
 
 export const BaseRoute = null
-
-const routes: TRoutes = [
-	{
-		name: 'Bedhead Attractor',
-		element: BedheadAttractor,
-	},
-	{
-		name: 'Bogdanov Map',
-		element: BogdanovMap,
-	},
-	// {
-	// 	name: 'Brusselator',
-	// 	element: Brusselator,
-	// },
-	{
-		name: 'Clifford Attractor',
-		element: CliffordAttractor,
-	},
-	{
-		name: 'Fractal Dream Attractor',
-		element: FractalDreamAttractor,
-	},
-	{
-		name: 'Gumowski-Mira Attractor',
-		element: GumowskiMiraAttractor,
-	},
-	{
-		name: 'Henon Map',
-		element: HenonMap,
-	},
-	{
-		name: 'Hopalong Attractor',
-		element: HopalongAttractor,
-	},
-	{
-		name: 'Hopalong Attractor Positive',
-		element: HopalongAttractorPositive,
-	},
-	{
-		name: 'Hopalong Attractor Additive',
-		element: HopalongAttractorAdditive,
-	},
-	{
-		name: 'Hopalong Attractor Sinusoidal',
-		element: HopalongAttractorSinusoidal,
-	},
-	{
-		name: 'Gingerbread Man',
-		element: GingerbreadMan,
-	},
-	{
-		name: 'Ikeda Map',
-		element: IkedaMap,
-	},
-	{
-		name: 'Mandelbrot Set',
-		element: MandelbrotSet,
-	},
-]
 
 export default routes
