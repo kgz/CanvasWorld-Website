@@ -86,6 +86,17 @@ const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: TShaderProps) =
   useFrame(() => {
     const mat = materialRef.current
     if (mat && mat.uniforms) {
+      // Keep resolution locked to the live drawable size (chrome stage resizes).
+      if (mat.uniforms.u_resolution) {
+        const w = size.width * gl.getPixelRatio()
+        const h = size.height * gl.getPixelRatio()
+        if (w > 0 && h > 0) {
+          const res = mat.uniforms.u_resolution.value
+          if (res.x !== w || res.y !== h) {
+            res.set(w, h)
+          }
+        }
+      }
       mat.uniformsNeedUpdate = true
 
       if (!readySent.current && isScreenshotMode()) {
