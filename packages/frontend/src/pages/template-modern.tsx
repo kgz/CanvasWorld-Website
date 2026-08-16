@@ -192,12 +192,25 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 	const { datData, data } = useAppSelector((state) => state.WebSlice)
 	const screenshot = isScreenshotMode()
 	const bareStage = screenshot || isIframe
-	const [panelOpen, setPanelOpen] = React.useState(!bareStage)
+	const [panelOpen, setPanelOpen] = React.useState(() => {
+		if (screenshot || isIframe) return false
+		return window.matchMedia('(min-width: 901px)').matches
+	})
 
 	useCanvasFonts()
 
 	useEffect(() => {
 		resetScreenshotReady()
+	}, [route.name])
+
+	useEffect(() => {
+		const mq = window.matchMedia('(max-width: 900px)')
+		const closeOnNarrow = () => {
+			if (mq.matches) setPanelOpen(false)
+		}
+		closeOnNarrow()
+		mq.addEventListener('change', closeOnNarrow)
+		return () => mq.removeEventListener('change', closeOnNarrow)
 	}, [route.name])
 
 	const description = useMemo(() => {
@@ -245,6 +258,7 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 					<button
 						type="button"
 						className={styles.chromeBtn}
+						aria-label="Parameters"
 						aria-expanded={panelOpen}
 						aria-controls="side-panel"
 						onClick={() => {
@@ -265,7 +279,45 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 						</svg>
 						<span className={styles.chromeBtnLabel}>Params</span>
 					</button>
-					<Link className={styles.chromeBtn} to="/#gallery">
+					<Link className={styles.chromeBtn} to="/#gallery" aria-label="Gallery">
+						<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+							<rect
+								x="1.5"
+								y="1.5"
+								width="5"
+								height="5"
+								rx="1"
+								stroke="currentColor"
+								strokeWidth="1.3"
+							/>
+							<rect
+								x="9.5"
+								y="1.5"
+								width="5"
+								height="5"
+								rx="1"
+								stroke="currentColor"
+								strokeWidth="1.3"
+							/>
+							<rect
+								x="1.5"
+								y="9.5"
+								width="5"
+								height="5"
+								rx="1"
+								stroke="currentColor"
+								strokeWidth="1.3"
+							/>
+							<rect
+								x="9.5"
+								y="9.5"
+								width="5"
+								height="5"
+								rx="1"
+								stroke="currentColor"
+								strokeWidth="1.3"
+							/>
+						</svg>
 						<span className={styles.chromeBtnLabel}>Gallery</span>
 					</Link>
 				</div>
@@ -291,6 +343,23 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 
 				<aside className={styles.sidePanel} id="side-panel">
 					<div className={styles.sidePanelInner}>
+						<button
+							type="button"
+							className={styles.panelClose}
+							aria-label="Close panel"
+							onClick={() => {
+								setPanelOpen(false)
+							}}
+						>
+							<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+								<path
+									d="M4 4l8 8M12 4l-8 8"
+									stroke="currentColor"
+									strokeWidth="1.4"
+									strokeLinecap="round"
+								/>
+							</svg>
+						</button>
 						{hasParams && (
 							<section className={styles.panelSection}>
 								<h2 className={styles.panelSectionTitle}>Parameters</h2>

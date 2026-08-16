@@ -251,6 +251,34 @@
   padding: 22px 20px 26px;
 }
 
+.panelClose {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  float: right;
+  width: 40px;
+  height: 40px;
+  margin: -6px -6px 8px 8px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--surface) 88%, transparent);
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.panelClose svg {
+  width: 14px;
+  height: 14px;
+}
+
+.panelClose:hover {
+  border-color: color-mix(in oklch, var(--accent) 55%, var(--border));
+  color: var(--accent);
+}
+
 .sidePanelInner::-webkit-scrollbar {
   width: 8px;
 }
@@ -613,11 +641,15 @@ a.exploreItem:hover {
     top: 0;
     left: 0;
     bottom: 0;
-    width: min(360px, 84vw);
+    width: min(320px, 78vw);
     border-radius: 0;
     border-left: none;
     border-top: none;
     border-bottom: none;
+  }
+
+  .panelClose {
+    display: inline-flex;
   }
 
   .panelOpen .scrim {
@@ -640,6 +672,13 @@ a.exploreItem:hover {
     display: none;
   }
 
+  .chromeBtn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+
   .fpsCounter {
     top: 10px;
     right: var(--gap-md);
@@ -648,16 +687,57 @@ a.exploreItem:hover {
   }
 
   .transport {
-    flex-wrap: wrap;
-    padding: 10px var(--gap-md);
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 10px;
+    padding: 10px var(--gap-md) calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .transport > .transportPlay {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .transport > .transportBtn:not(.transportPlay) {
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .transportScrub {
-    order: 1;
+    grid-column: 1 / -1;
+    grid-row: 2;
     width: 100%;
   }
 
   .speedGroup {
-    order: 2;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .speedBtn {
+    min-height: 36px;
+    padding: 8px 11px;
+  }
+
+  .app input[type="range"]::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+  }
+
+  .app input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+  }
+
+  .transportCount {
+    font-size: 11px;
+  }
+
+  .sidePanelInner {
+    padding: 18px 16px calc(22px + env(safe-area-inset-bottom, 0px));
   }
 }

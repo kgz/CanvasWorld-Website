@@ -405,7 +405,17 @@
 
 @media (max-width: 720px) {
   .siteNav {
-    padding: 18px var(--cw-gap-md);
+    padding: 16px var(--cw-gap-md);
+  }
+
+  .navLinks {
+    gap: 18px;
+  }
+
+  .navLinks a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 
   .hero {
@@ -416,9 +426,19 @@
     padding: 0 var(--cw-gap-md);
   }
 
+  .heroBrand {
+    font-size: clamp(56px, 16vw, 110px);
+  }
+
   .heroCtaGroup {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    width: min(100%, 320px);
+  }
+
+  .btn {
+    min-height: 44px;
+    justify-content: center;
   }
 
   .gallery {
@@ -427,11 +447,16 @@
 
   .vizGrid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
 }
 
 @media (max-width: 460px) {
   .vizGrid {
     grid-template-columns: 1fr;
+  }
+
+  .wordmark {
+    font-size: 17px;
   }
 }
