@@ -6,6 +6,12 @@ import { ERenderMode } from '../../@types/gui'
 import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
 import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
 
+/** Recursion finer than ~1px only aliases into sparse sparkles. */
+const screenDepthCap = (zoom: number, heightPx: number): number => {
+	const pixel = 1 / Math.max(zoom * Math.max(heightPx, 1), 1)
+	return Math.max(1, Math.floor(Math.log2(Math.max(1.5 / pixel, 1)) + 0.75))
+}
+
 type OverlayProps = {
 	center: number[]
 	setCenter: Dispatch<SetStateAction<number[]>>
@@ -13,7 +19,8 @@ type OverlayProps = {
 	setZoom: Dispatch<SetStateAction<number>>
 	depth: number
 	setDepth: Dispatch<SetStateAction<number>>
-	effectiveDepth: number
+	usedDepth: number
+	screenCap: number
 }
 
 const SierpinskiOverlay = ({
@@ -23,7 +30,8 @@ const SierpinskiOverlay = ({
 	setZoom,
 	depth,
 	setDepth,
-	effectiveDepth,
+	usedDepth,
+	screenCap,
 }: OverlayProps) => {
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragStart, setDragStart] = useState([0, 0])
@@ -109,6 +117,8 @@ const SierpinskiOverlay = ({
 		return () => overlay.removeEventListener('wheel', handleWheelDiv)
 	}, [handleWheelDiv])
 
+	const capped = depth > screenCap
+
 	return (
 		<>
 			<div
@@ -127,17 +137,20 @@ const SierpinskiOverlay = ({
 
 			<div className="fixed top-20 right-4 z-50 w-64 space-y-4 rounded-lg bg-gray-800/90 p-4 text-white backdrop-blur-sm">
 				<div>
-					<label className="mb-1 block text-sm">Base depth: {depth}</label>
+					<label className="mb-1 block text-sm">Depth: {depth}</label>
 					<input
 						type="range"
 						min={1}
-						max={32}
+						max={24}
 						step={1}
 						value={depth}
 						onChange={(e) => setDepth(Number.parseInt(e.target.value, 10))}
 						className="w-full"
 					/>
-					<p className="mt-1 text-xs text-gray-400">Effective (zoom-boosted): {effectiveDepth}</p>
+					<p className="mt-1 text-xs text-gray-400">
+						Drawing at {usedDepth}
+						{capped ? ` (screen caps ~${screenCap} — zoom in for more)` : ''}
+					</p>
 				</div>
 
 				<div className="space-y-1 font-mono text-xs">
@@ -165,14 +178,21 @@ const SierpinskiTriangle = () => {
 	const [center, setCenter] = useState([0, 0])
 	const [zoom, setZoom] = useState(0.65)
 	const [depth, setDepth] = useState(7)
+	const [viewH, setViewH] = useState(() => window.innerHeight)
 
-	const zoomBoost = Math.max(0, Math.floor(Math.log2(Math.max(zoom, 1)) * 1.25))
-	const effectiveDepth = Math.min(48, depth + zoomBoost)
+	useEffect(() => {
+		const onResize = () => setViewH(window.innerHeight)
+		window.addEventListener('resize', onResize)
+		return () => window.removeEventListener('resize', onResize)
+	}, [])
+
+	const screenCap = screenDepthCap(zoom, viewH)
+	const usedDepth = Math.min(depth, screenCap, 48)
 
 	const [uniforms] = useState({
 		u_center: { value: new Vector2(center[0], center[1]) },
 		u_zoom: { value: zoom },
-		u_maxDepth: { value: effectiveDepth },
+		u_maxDepth: { value: usedDepth },
 		u_resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
 	})
 
@@ -185,8 +205,8 @@ const SierpinskiTriangle = () => {
 	}, [zoom, uniforms])
 
 	useEffect(() => {
-		uniforms.u_maxDepth.value = effectiveDepth
-	}, [effectiveDepth, uniforms])
+		uniforms.u_maxDepth.value = usedDepth
+	}, [usedDepth, uniforms])
 
 	return (
 		<>
@@ -204,11 +224,14 @@ const SierpinskiTriangle = () => {
 				setZoom={setZoom}
 				depth={depth}
 				setDepth={setDepth}
-				effectiveDepth={effectiveDepth}
+				usedDepth={usedDepth}
+				screenCap={screenCap}
 			/>
 		</>
 	)
 }
+
+SierpinskiTriangle.isShaderViz = true
 
 SierpinskiTriangle.getDescription = () => (
 	<>
@@ -216,9 +239,9 @@ SierpinskiTriangle.getDescription = () => (
 		sub-triangles; if all weights stay below ½ the sample falls in a removed void.
 		<br />
 		<br />
-		<strong>Zoom:</strong> scroll to magnify under the cursor; drag to pan. Base depth sets recursion; zoom
-		adds extra levels automatically so detail keeps appearing as you dive in (until float32 precision
-		gives out around 10⁶–10⁷×).
+		<strong>Zoom:</strong> scroll to magnify under the cursor; drag to pan. Depth past what the screen can
+		resolve is capped (otherwise the gasket turns into sparse sparkles); zoom in to unlock deeper
+		recursion. Float32 usually holds to about 10⁶–10⁷×.
 		<br />
 		<br />
 		Corner remap (weight <code>α ≥ ½</code>):
