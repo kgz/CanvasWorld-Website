@@ -13,8 +13,9 @@ const HopalongAttractor = createAttractorPage({
 		{ a: 1.4, b: 5.157895, c: -4.561404 },
 	],
 	seed: { x: 0.03, y: 0.01 },
-	scale: 1,
+	scale: 5,
 	color: 'hsl-chunk',
+	cameraPosition: [0, 0, -220],
 	iterate: (x, y, p) => {
 		const xn = y - 1 - Math.sqrt(Math.abs(p.b * x - p.c)) * Math.sign(x - 1)
 		const yn = p.a - x - 1
