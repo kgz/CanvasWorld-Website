@@ -13,6 +13,8 @@ import { equilateralVertices, sierpinskiMember } from '../../utils/sierpinski'
 const GRID_W = 500
 const GRID_H = 400
 const NUM_PARTICLES = GRID_W * GRID_H
+/** Maps GUI scale (~1–3) into default particle camera space (z≈400). */
+const WORLD = 200
 
 const CREAM: [number, number, number] = [0.96, 0.93, 0.86]
 
@@ -66,10 +68,12 @@ const SierpinskiTriangle = () => {
 		const depth = data.depth !== undefined ? Math.round(data.depth) : Math.round(datData.options.depth.initialValue)
 
 		const totalParticles = positions.length / 2
-		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
+		// Grid membership is static — fill quickly (shared attractor rate is ~2k/s).
+		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta * 50)
 
-		const [v0, v1, v2] = equilateralVertices(scale)
-		const s = scale * 0.95
+		const worldScale = scale * WORLD
+		const [v0, v1, v2] = equilateralVertices(worldScale)
+		const s = worldScale * 0.95
 
 		for (let i = 0; i < totalParticles; i++) {
 			if (i < particlesToDraw) {
@@ -99,7 +103,8 @@ const SierpinskiTriangle = () => {
 		return { positions, colors }
 	}
 
-	return <Base<TData> dimension={EDimensions.TWO_D} numParticles={NUM_PARTICLES} tick={tick} pointSize={2.8} />
+	// Grid spacing ≈ (scale*WORLD*√3)/GRID_W → ~1.1 at default scale; size matches cell fill.
+	return <Base<TData> dimension={EDimensions.TWO_D} numParticles={NUM_PARTICLES} tick={tick} pointSize={1.2} />
 }
 
 SierpinskiTriangle.getDescription = () => (
