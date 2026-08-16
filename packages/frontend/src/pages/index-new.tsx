@@ -172,20 +172,16 @@ function Index() {
 				<div className={styles.heroVignette} aria-hidden="true" />
 
 				<div className={styles.heroContent}>
-					<p className={styles.eyebrow}>A visualization laboratory</p>
 					<h1 className={styles.heroBrand}>CanvasWorld</h1>
-					<p className={styles.heroHeadline}>
-						Strange attractors, iterated maps, and fractals — rendered as living systems.
-					</p>
 					<p className={styles.heroSub}>
-						Explore the geometry that emerges when simple equations run millions of times.
+						Interactive sketches of classical dynamical systems.
 					</p>
 					<div className={styles.heroCtaGroup}>
 						<a className={styles.btnPrimary} href="#gallery">
-							Enter gallery
+							Browse visualisations
 						</a>
 						<button type="button" className={styles.btnGhost} onClick={pickRandom}>
-							Random visualization
+							Random
 						</button>
 					</div>
 				</div>
@@ -197,33 +193,23 @@ function Index() {
 
 			<section className={styles.gallery} id="gallery">
 				<div className={styles.galleryHead}>
-					<p className={styles.eyebrow}>The gallery</p>
-					<h2>
-						{routes.length} systems, one canvas
-					</h2>
-					<p className={styles.lede}>
-						Each visualization below is a live parameter space. Click in to tune constants
-						and watch the structure fold, branch, or dissolve.
-					</p>
+					<h2>Visualisations</h2>
 				</div>
 
-				<div>
-					<h3 className={styles.galleryGroupTitle}>Visualizations</h3>
-					<div className={styles.vizGrid}>
-						{routes.map((route, index) => (
-								<GalleryCard
-									key={route.slug}
-									name={route.name}
-									slug={route.slug}
-									index={index}
-								/>
-							))}
-					</div>
+				<div className={styles.vizGrid}>
+					{routes.map((route, index) => (
+						<GalleryCard
+							key={route.slug}
+							name={route.name}
+							slug={route.slug}
+							index={index}
+						/>
+					))}
 				</div>
 			</section>
 
 			<footer className={styles.siteFooter} id="about">
-				<p>CanvasWorld — a visualization laboratory for dynamical systems.</p>
+				<p>Interactive sketches of classical dynamical systems.</p>
 			</footer>
 		</div>
 	)
