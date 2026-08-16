@@ -117,6 +117,15 @@
     "active": true
   },
   {
+    "slug": "lorenz_attractor",
+    "title": "Lorenz Attractor",
+    "category": "attractor",
+    "description": "Classic 3D Lorenz system rendered as a GPU line trail (green→white): dx/dt = σ(y-x), dy/dt = x(ρ-z)-y, dz/dt = xy-βz with σ=10, ρ=28, β=8/3.",
+    "thumbnail": "/chaos/icons/lorenz_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "mandelbrot_set",
     "title": "Mandelbrot Set",
     "category": "fractal",

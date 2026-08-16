@@ -53,6 +53,11 @@ export default defineConfig({
 			'/chaos/icons': {
 				target: 'http://localhost:' + (process.env.BACKEND_PORT || '8080'),
 				changeOrigin: true,
+				configure: (proxy) => {
+					proxy.on('proxyRes', (proxyRes) => {
+						proxyRes.headers['cache-control'] = 'no-store'
+					})
+				},
 			},
 		},
 	},

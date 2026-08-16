@@ -1,7 +1,7 @@
 import { isScreenshotMode } from '../modules/screenshotMode'
 import { useAnimation } from '../context/AnimationContext'
 
-export const useAnimationState = () => {
+export const useAnimationState = (options?: { baseSpeed?: number }) => {
 	const {
 		isPaused,
 		manualProgress,
@@ -10,12 +10,12 @@ export const useAnimationState = () => {
 		reportProgress,
 	} = useAnimation()
 
+	const baseSpeed = options?.baseSpeed ?? 2000
+
 	const calculateParticlesToDraw = (totalParticles: number, delta: number) => {
 		if (isScreenshotMode()) {
 			return totalParticles
 		}
-
-		const baseSpeed = 2000
 
 		let particlesToDraw: number
 		if (manualProgress !== null) {

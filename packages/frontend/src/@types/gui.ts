@@ -60,13 +60,24 @@ export type TShaderProps = {
  */
 export type TParticleProps<T> = {
 	renderMode?: ERenderMode.PARTICLES
-	tick: (positions: Float32Array, colors: Float32Array, state: RootState, delta: number, frame?: _XRFrame) => void
+	tick: (
+		positions: Float32Array,
+		colors: Float32Array,
+		state: RootState,
+		delta: number,
+		frame?: _XRFrame,
+	) => void | number
 	numParticles: number
 	dimension: EDimensions
 	pointSize?: number
 	singleColor?: THREE.Color
 	cameraPosition?: Vector3
 	colorAlpha?: boolean
+	/** GPU line strip instead of points (drawRange follows tick return count). */
+	drawMode?: 'points' | 'line'
+	lineOpacity?: number
+	autoRotate?: boolean
+	autoRotateSpeed?: number
 	setCanvasRef?: (ref: RefObject<HTMLCanvasElement>) => void
 }
 

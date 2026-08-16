@@ -15,7 +15,9 @@ const tagVizCanvas = (canvas: HTMLCanvasElement) => {
 }
 
 const canvasGlProps = () =>
-  isScreenshotMode() ? { preserveDrawingBuffer: true as const } : undefined
+  isScreenshotMode()
+    ? { antialias: true as const, preserveDrawingBuffer: true as const }
+    : { antialias: true as const }
 
 
 // ------------------------------------------------------------
@@ -31,20 +33,29 @@ const Points = <T,>({
 }: TParticleProps<T>) => {
   const points = useRef<THREE.Points>(null)
   const readySent = useRef(false)
+  const drawnRef = useRef(0)
 
   const positions = useMemo(() => new Float32Array(numParticles * dimension), [numParticles, dimension])
   const colors = useMemo(() => new Float32Array(numParticles * (colorAlpha ? 4 : 3)), [numParticles, colorAlpha])
+  const size = pointSize ?? 0.015
+  // Sizes >= 1 are treated as CSS pixels (gallery thumbs need a thick stroke).
+  const pixelSized = size >= 1
 
   const loop: RenderCallback = (state, delta) => {
-    tick(positions, colors, state, delta)
+    const result = tick(positions, colors, state, delta)
+    if (typeof result === 'number') {
+      drawnRef.current = Math.max(0, Math.min(numParticles, Math.floor(result)))
+    }
 
     const geo = points.current?.geometry
-    if (geo?.attributes.position) geo.attributes.position.needsUpdate = true
-    if (geo?.attributes.color) geo.attributes.color.needsUpdate = true
+    if (geo) {
+      if (geo.attributes.position) geo.attributes.position.needsUpdate = true
+      if (geo.attributes.color) geo.attributes.color.needsUpdate = true
+      geo.setDrawRange(0, drawnRef.current > 0 ? drawnRef.current : numParticles)
+    }
 
-    if (!readySent.current && isScreenshotMode()) {
+    if (!readySent.current && isScreenshotMode() && drawnRef.current >= numParticles) {
       readySent.current = true
-      // next paint after buffer update
       requestAnimationFrame(() => markScreenshotReady())
     }
   }
@@ -59,8 +70,79 @@ const Points = <T,>({
           <bufferAttribute attach="attributes-color" count={colors.length / (colorAlpha ? 4 : 3)} array={colors} itemSize={colorAlpha ? 4 : 3} />
         )}
       </bufferGeometry>
-      <PointMaterial size={pointSize ?? 0.015} color={singleColor ?? new THREE.Color(0xffffff)} vertexColors={!singleColor} />
+      <PointMaterial
+        size={size}
+        sizeAttenuation={!pixelSized}
+        color={singleColor ?? new THREE.Color(0xffffff)}
+        vertexColors={!singleColor}
+        transparent={false}
+        depthWrite={false}
+      />
     </points>
+  )
+}
+
+// ------------------------------------------------------------
+// GPU line-strip trail (same tick + n progress as points)
+// ------------------------------------------------------------
+const LineTrail = <T,>({
+  tick,
+  numParticles,
+  dimension,
+  colorAlpha = false,
+  lineOpacity = 0.8,
+}: TParticleProps<T>) => {
+  const line = useRef<THREE.Line>(null)
+  const readySent = useRef(false)
+  const drawnRef = useRef(0)
+
+  const positions = useMemo(() => new Float32Array(numParticles * dimension), [numParticles, dimension])
+  const colors = useMemo(() => new Float32Array(numParticles * (colorAlpha ? 4 : 3)), [numParticles, colorAlpha])
+
+  const loop: RenderCallback = (state, delta) => {
+    const result = tick(positions, colors, state, delta)
+    if (typeof result === 'number') {
+      drawnRef.current = Math.max(0, Math.min(numParticles, Math.floor(result)))
+    }
+
+    const geo = line.current?.geometry
+    if (geo) {
+      if (geo.attributes.position) geo.attributes.position.needsUpdate = true
+      if (geo.attributes.color) geo.attributes.color.needsUpdate = true
+      geo.setDrawRange(0, drawnRef.current)
+    }
+
+    if (!readySent.current && isScreenshotMode() && drawnRef.current >= numParticles) {
+      readySent.current = true
+      requestAnimationFrame(() => markScreenshotReady())
+    }
+  }
+
+  useFrame(loop)
+
+  return (
+    <line ref={line}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={positions.length / dimension}
+          array={positions}
+          itemSize={dimension}
+        />
+        <bufferAttribute
+          attach="attributes-color"
+          count={colors.length / (colorAlpha ? 4 : 3)}
+          array={colors}
+          itemSize={colorAlpha ? 4 : 3}
+        />
+      </bufferGeometry>
+      <lineBasicMaterial
+        vertexColors
+        transparent={lineOpacity < 1}
+        opacity={lineOpacity}
+        depthWrite={false}
+      />
+    </line>
   )
 }
 
@@ -350,15 +432,32 @@ const Base = <T,>(props: TPointsProps<T>) => {
         style={{ width: '100%', height: '100%', background: '#000' }}
         onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
       >
-        <Points
-          tick={props.tick}
-          numParticles={props.numParticles}
-          dimension={props.dimension}
-          pointSize={props.pointSize}
-          singleColor={props.singleColor}
-          colorAlpha={props.colorAlpha}
-        />
-        {!screenshot && <OrbitControls enableDamping dampingFactor={0.05} />}
+        {props.drawMode === 'line' ? (
+          <LineTrail
+            tick={props.tick}
+            numParticles={props.numParticles}
+            dimension={props.dimension}
+            colorAlpha={props.colorAlpha}
+            lineOpacity={props.lineOpacity}
+          />
+        ) : (
+          <Points
+            tick={props.tick}
+            numParticles={props.numParticles}
+            dimension={props.dimension}
+            pointSize={props.pointSize}
+            singleColor={props.singleColor}
+            colorAlpha={props.colorAlpha}
+          />
+        )}
+        {!screenshot && (
+          <OrbitControls
+            enableDamping
+            dampingFactor={0.05}
+            autoRotate={props.autoRotate === true}
+            autoRotateSpeed={props.autoRotateSpeed ?? 0.4}
+          />
+        )}
       </Canvas>
     </>
   )
