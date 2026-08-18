@@ -17,20 +17,20 @@ function iconUrl(slug: string): string {
 	return `/chaos/icons/${slug}.png?v=${ver}`
 }
 
-function vizKind(name: string): string {
-	const lower = name.toLowerCase()
-	if (lower.includes('map') || lower.includes('set')) return 'Map'
-	if (lower.includes('fractal')) return 'Fractal'
-	return 'Attractor'
+function formatCategory(category: string): string {
+	if (!category) return 'Viz'
+	return category.charAt(0).toUpperCase() + category.slice(1)
 }
 
 function GalleryCard({
 	name,
 	slug,
+	category,
 	index,
 }: {
 	name: string
 	slug: string
+	category: string
 	index: number
 }) {
 	const ref = useRef<HTMLAnchorElement>(null)
@@ -95,7 +95,7 @@ function GalleryCard({
 			)}
 			<span className={styles.vizCardBody}>
 				<span className={styles.vizName}>{name}</span>
-				<span className={styles.vizKind}>{vizKind(name)}</span>
+				<span className={styles.vizKind}>{formatCategory(category)}</span>
 			</span>
 		</Link>
 	)
@@ -202,6 +202,7 @@ function Index() {
 							key={route.slug}
 							name={route.name}
 							slug={route.slug}
+							category={route.category}
 							index={index}
 						/>
 					))}
