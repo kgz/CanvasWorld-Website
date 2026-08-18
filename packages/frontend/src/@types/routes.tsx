@@ -17,6 +17,7 @@ import MandelbrotSet from '../pages/maps/mandelbrot_set'
 import JuliaSet from '../pages/maps/julia_set'
 import Brusselator from '../pages/misc/brusselator'
 import SierpinskiTriangle from '../pages/fractals/sierpinski_triangle'
+import CalabiYau from '../pages/misc/calabi_yau'
 
 export type CatalogEntry = {
 	slug: string
@@ -58,6 +59,7 @@ const components: Record<string, ComponentType> = {
 	mandelbrot_set: MandelbrotSet,
 	julia_set: JuliaSet,
 	sierpinski_triangle: SierpinskiTriangle,
+	calabi_yau: CalabiYau,
 }
 
 const catalogEntries: CatalogEntry[] = catalog

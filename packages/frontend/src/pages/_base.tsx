@@ -6,7 +6,7 @@ import * as THREE from 'three'
 import style from '../@scss/template.module.scss'
 import { Helmet } from 'react-helmet'
 import { renderToString } from 'react-dom/server'
-import { EDimensions, ERenderMode, type TPointsProps, type TParticleProps, type TShaderProps } from '../@types/gui'
+import { isMeshProps, isParticleProps, isShaderProps, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
 import { isScreenshotMode, markScreenshotReady } from '../modules/screenshotMode'
 
 const tagVizCanvas = (canvas: HTMLCanvasElement) => {
@@ -146,10 +146,58 @@ const LineTrail = <T,>({
   )
 }
 
+const MeshSurface = ({
+  positions,
+  indices,
+  colors,
+  progressTick,
+}: Pick<TMeshProps, 'positions' | 'indices' | 'colors' | 'progressTick'>) => {
+  const readySent = useRef(false)
+
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+    geo.setIndex(new THREE.BufferAttribute(indices, 1))
+    geo.computeVertexNormals()
+    geo.setDrawRange(0, isScreenshotMode() ? indices.length : 0)
+    return geo
+  }, [positions, indices, colors])
+
+  useEffect(() => {
+    return () => {
+      geometry.dispose()
+    }
+  }, [geometry])
+
+  useFrame((_, delta) => {
+    if (progressTick) {
+      const count = progressTick(delta)
+      const tris = Math.max(0, Math.floor(count / 3) * 3)
+      geometry.setDrawRange(0, Math.min(indices.length, tris))
+    }
+    if (!readySent.current && isScreenshotMode()) {
+      readySent.current = true
+      requestAnimationFrame(() => markScreenshotReady())
+    }
+  })
+
+  return (
+    <mesh geometry={geometry}>
+      <meshStandardMaterial
+        vertexColors
+        roughness={0.45}
+        metalness={0.12}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  )
+}
+
 // ------------------------------------------------------------
 // Shader fullscreen plane
 // ------------------------------------------------------------
-const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: TShaderProps) => {
+const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: Pick<TShaderProps, 'vertexShader' | 'fragmentShader' | 'uniforms'>) => {
   const materialRef = useRef<THREE.ShaderMaterial | null>(null)
   const { gl, size, viewport } = useThree()
   const readySent = useRef(false)
@@ -315,27 +363,21 @@ const TestShaderPlane = ({ uniforms, onScroll }: { uniforms: { u_offset: { value
 // Base wrapper
 // ------------------------------------------------------------
 const Base = <T,>(props: TPointsProps<T>) => {
-  const isShaderMode = props.renderMode === ERenderMode.SHADER
   const canvas = useRef<HTMLCanvasElement>(null)
   const screenshot = isScreenshotMode()
 
   useEffect(() => {
-    if (!isShaderMode && 'setCanvasRef' in props && props.setCanvasRef) {
+    if (isParticleProps(props) && props.setCanvasRef) {
       props.setCanvasRef(canvas)
     }
     return () => {}
-  }, [isShaderMode, props])
+  }, [props])
 
   const page = window.location.pathname.split('/').pop() || ''
   const title = page.split(/(?=[A-Z])/).join(' ')
+  const description = `Interactive visualization of ${title}`
 
-  const description = useMemo(() => {
-    const desc = 'description' in props ? props.description : undefined
-    return desc || `Interactive visualization of ${title}`
-  }, [props, title])
-
-  // Shader mode - use actual shader if uniforms provided, otherwise test
-  if (isShaderMode && 'vertexShader' in props && 'fragmentShader' in props && 'uniforms' in props) {
+  if (isShaderProps(props)) {
     return (
       <>
         <Helmet>
@@ -360,7 +402,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
   }
 
   // TEST MODE: Simple two squares (for debugging uniform updates)
-  if (isShaderMode) {
+  if (isShaderProps(props)) {
     const [offset, setOffset] = useState([0, 0])
     
     const testUniforms = useRef({
@@ -411,6 +453,51 @@ const Base = <T,>(props: TPointsProps<T>) => {
         </Canvas>
       </>
     )
+  }
+
+  if (isMeshProps(props)) {
+    const meshCamera = {
+      position: props.cameraPosition ?? [0, 0, 4],
+      fov: 75,
+    }
+
+    return (
+      <>
+        <Helmet>
+          <title>{title}</title>
+          <meta name="description" content={description} />
+        </Helmet>
+        <Canvas
+          camera={meshCamera}
+          dpr={window.devicePixelRatio}
+          gl={canvasGlProps()}
+          style={{ width: '100%', height: '100%', background: '#000' }}
+          onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
+        >
+          <ambientLight intensity={0.42} />
+          <directionalLight position={[5, 8, 6]} intensity={1.15} />
+          <directionalLight position={[-5, -3, -4]} intensity={0.38} />
+          <MeshSurface
+            positions={props.positions}
+            indices={props.indices}
+            colors={props.colors}
+            progressTick={props.progressTick}
+          />
+          {!screenshot && (
+            <OrbitControls
+              enableDamping
+              dampingFactor={0.05}
+              autoRotate={props.autoRotate === true}
+              autoRotateSpeed={props.autoRotateSpeed ?? 0.4}
+            />
+          )}
+        </Canvas>
+      </>
+    )
+  }
+
+  if (!isParticleProps(props)) {
+    return null
   }
 
   // Original particle/points mode

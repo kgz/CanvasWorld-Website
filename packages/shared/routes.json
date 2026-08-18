@@ -151,5 +151,14 @@
     "thumbnail": "/chaos/icons/sierpinski_triangle.png",
     "renderMode": "shader",
     "active": true
+  },
+  {
+    "slug": "calabi_yau",
+    "title": "Calabi–Yau Manifold",
+    "category": "misc",
+    "description": "Hanson 3D projection of a 2-real slice of the Fermat quintic z₁ⁿ + z₂ⁿ = 1 (n=5). Lit mesh of all n×n Riemann patches; not the full 6-real Calabi–Yau 3-fold.",
+    "thumbnail": "/chaos/icons/calabi_yau.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]

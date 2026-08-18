@@ -81,17 +81,34 @@ export type TParticleProps<T> = {
 	setCanvasRef?: (ref: RefObject<HTMLCanvasElement>) => void
 }
 
+export type TMeshProps = {
+	drawMode: 'mesh'
+	positions: Float32Array
+	indices: Uint32Array
+	colors: Float32Array
+	cameraPosition?: Vector3
+	autoRotate?: boolean
+	autoRotateSpeed?: number
+	progressTick?: (delta: number) => number
+}
+
 /**
- * Represents the props for Base component - can be either particle or shader based.
- * For particle mode, pass all TParticleProps. For shader mode, pass TShaderProps.
+ * Represents the props for Base component - particles, shader, or indexed mesh.
  * @template T The type of data for the TPoints component.
  */
-export type TPointsProps<T> = TParticleProps<T> | TShaderProps
+export type TPointsProps<T> = TParticleProps<T> | TShaderProps | TMeshProps
+
+export function isMeshProps<T>(props: TPointsProps<T>): props is TMeshProps {
+	return 'drawMode' in props && props.drawMode === 'mesh'
+}
 
 /**
  * Type guard to check if props are for particle rendering
  */
 export function isParticleProps<T>(props: TPointsProps<T>): props is TParticleProps<T> {
+	if (isMeshProps(props)) {
+		return false
+	}
 	return !('renderMode' in props) || props.renderMode === ERenderMode.PARTICLES
 }
 
