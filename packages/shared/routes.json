@@ -178,5 +178,14 @@
     "thumbnail": "/chaos/icons/barth_sextic.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "boy_surface",
+    "title": "Boy's Surface",
+    "category": "misc",
+    "description": "Bryant–Kusner immersion of the real projective plane RP² in R³. A triple point and self-intersections; not an embedding.",
+    "thumbnail": "/chaos/icons/boy_surface.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
