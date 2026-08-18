@@ -196,5 +196,14 @@
     "thumbnail": "/chaos/icons/dini_surface.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "roman_surface",
+    "title": "Roman Surface",
+    "category": "misc",
+    "description": "Steiner’s Roman surface: a self-intersecting immersion of the real projective plane RP², meshed from the standard trigonometric parametrization.",
+    "thumbnail": "/chaos/icons/roman_surface.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
