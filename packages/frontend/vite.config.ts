@@ -7,6 +7,12 @@ export default defineConfig({
 		postcss: './postcss.config.js',
 	},
 	plugins: [
+		{
+			name: 'watch-shared-catalog',
+			configureServer(server) {
+				server.watcher.add(path.resolve(__dirname, '../shared/routes.json'))
+			},
+		},
 		react({
 			// Enable React Refresh for hot reloading
 			fastRefresh: true,
