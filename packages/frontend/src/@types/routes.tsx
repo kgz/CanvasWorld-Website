@@ -18,6 +18,7 @@ import JuliaSet from '../pages/maps/julia_set'
 import Brusselator from '../pages/misc/brusselator'
 import SierpinskiTriangle from '../pages/fractals/sierpinski_triangle'
 import CalabiYau from '../pages/misc/calabi_yau'
+import Gyroid from '../pages/misc/gyroid'
 
 export type CatalogEntry = {
 	slug: string
@@ -60,6 +61,7 @@ const components: Record<string, ComponentType> = {
 	julia_set: JuliaSet,
 	sierpinski_triangle: SierpinskiTriangle,
 	calabi_yau: CalabiYau,
+	gyroid: Gyroid,
 }
 
 const catalogEntries: CatalogEntry[] = catalog

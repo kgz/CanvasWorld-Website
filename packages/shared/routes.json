@@ -160,5 +160,14 @@
     "thumbnail": "/chaos/icons/calabi_yau.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "gyroid",
+    "title": "Gyroid",
+    "category": "misc",
+    "description": "Schoen gyroid: triply periodic minimal surface meshed from sin x cos y + sin y cos z + sin z cos x = t on a 2π cell.",
+    "thumbnail": "/chaos/icons/gyroid.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
