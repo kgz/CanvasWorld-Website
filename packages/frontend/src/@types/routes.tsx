@@ -19,6 +19,7 @@ import Brusselator from '../pages/misc/brusselator'
 import SierpinskiTriangle from '../pages/fractals/sierpinski_triangle'
 import CalabiYau from '../pages/misc/calabi_yau'
 import Gyroid from '../pages/misc/gyroid'
+import BarthSextic from '../pages/misc/barth_sextic'
 
 export type CatalogEntry = {
 	slug: string
@@ -62,6 +63,7 @@ const components: Record<string, ComponentType> = {
 	sierpinski_triangle: SierpinskiTriangle,
 	calabi_yau: CalabiYau,
 	gyroid: Gyroid,
+	barth_sextic: BarthSextic,
 }
 
 const catalogEntries: CatalogEntry[] = catalog

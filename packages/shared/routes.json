@@ -169,5 +169,14 @@
     "thumbnail": "/chaos/icons/gyroid.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "barth_sextic",
+    "title": "Barth Sextic",
+    "category": "misc",
+    "description": "Barth’s degree-6 algebraic surface with icosahedral symmetry. Affine chart meshed from the golden-ratio implicit; 65 ordinary double points.",
+    "thumbnail": "/chaos/icons/barth_sextic.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
