@@ -178,5 +178,14 @@
     "thumbnail": "/chaos/icons/barth_sextic.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "dini_surface",
+    "title": "Dini's Surface",
+    "category": "misc",
+    "description": "Dini’s surface: a pseudospherical helicoid (twisted tractrix). Parametric mesh with radius a and twist b.",
+    "thumbnail": "/chaos/icons/dini_surface.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
