@@ -1,18 +1,19 @@
 import { BlockMath, InlineMath } from 'react-katex'
-import { useEffect, useMemo } from 'react'
-import { type TDatData, type TDataFromObject } from '../../@types/gui'
+import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
+import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import { buildDiniMesh, clampRadius, clampTwist } from '../../utils/diniSurface'
+import { clampRadius, clampTwist, DINI_MAX_POINTS, sampleDiniCloud } from '../../utils/diniSurface'
 
 const DiniSurface = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
+	const seeded = useRef(false)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 12000,
+		baseSpeed: 28000,
 	})
 
 	const datData = useMemo(
@@ -46,27 +47,35 @@ const DiniSurface = () => {
 
 	const radius = clampRadius(data.a ?? datData.options.a.initialValue)
 	const twist = clampTwist(data.b ?? datData.options.b.initialValue)
+	const dRadius = useDeferredValue(radius)
+	const dTwist = useDeferredValue(twist)
+	const cloud = useMemo(() => sampleDiniCloud(dRadius, dTwist), [dRadius, dTwist])
 
-	const mesh = useMemo(() => buildDiniMesh(radius, twist), [radius, twist])
+	useEffect(() => {
+		seeded.current = false
+	}, [cloud])
 
-	const tick = (delta: number) => {
-		const total = mesh.indices.length
-		const toDraw = calculateParticlesToDraw(total, delta)
-		updateProgressUI(toDraw, total)
-		checkCompletion(toDraw, total)
+	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
+		if (!seeded.current) {
+			positions.set(cloud.positions)
+			colors.set(cloud.colors)
+			seeded.current = true
+		}
+		const toDraw = calculateParticlesToDraw(DINI_MAX_POINTS, delta)
+		updateProgressUI(toDraw, DINI_MAX_POINTS)
+		checkCompletion(toDraw, DINI_MAX_POINTS)
 		return toDraw
 	}
 
 	return (
 		<Base<TData>
-			drawMode="mesh"
-			positions={mesh.positions}
-			indices={mesh.indices}
-			colors={mesh.colors}
-			progressTick={tick}
+			dimension={EDimensions.THREE_D}
+			numParticles={DINI_MAX_POINTS}
+			pointSize={1.15}
+			tick={tick}
+			cameraPosition={[0, 0, 3.7]}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.32}
-			cameraPosition={[0, 0, 3.7]}
 		/>
 	)
 }
@@ -75,7 +84,7 @@ DiniSurface.getDescription = () => (
 	<>
 		Dini’s surface (1866) is a helicoid of a tractrix: a constant-negative-curvature
 		(pseudospherical) surface with a helical twist. When the twist vanishes it is a band of the
-		pseudosphere.
+		pseudosphere. UV isoline particle wire — no lit mesh.
 		<br />
 		<br />
 		<strong>Parametrization</strong> with radius <InlineMath math="a" /> and twist{' '}
@@ -87,7 +96,7 @@ DiniSurface.getDescription = () => (
 		/>
 		<br />
 		UI <InlineMath math="a" /> is the radius, <InlineMath math="b" /> the helical pitch. Transport{' '}
-		<code>n</code> reveals triangles.
+		<code>n</code> reveals points.
 	</>
 )
 
