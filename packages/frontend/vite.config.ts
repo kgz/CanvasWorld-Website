@@ -4,6 +4,8 @@ import path from 'path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+	// Production is mounted at https://matf.dev/chaos (Traefik PathPrefix + strip).
+	base: process.env.NODE_ENV === 'production' ? '/chaos/' : '/',
 	css: {
 		postcss: './postcss.config.js',
 	},

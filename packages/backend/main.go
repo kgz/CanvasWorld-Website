@@ -93,62 +93,62 @@ func isBot(userAgent string) bool {
 }
 
 func main() {
-	// Initialize Fiber with HTML template engine
-	var templateDir string
-	if config.Env == "production" {
-		templateDir = "../frontend/dist"
-	} else {
-		templateDir = "templates"
+	prod := config.Env == "production"
+	distDir := getEnv("DIST_DIR", "")
+	if distDir == "" {
+		if prod {
+			distDir = "dist"
+		} else {
+			distDir = "../frontend/dist"
+		}
 	}
+	imagesDir := getEnv("IMAGES_DIR", "static/images")
 
+	templateDir := "templates"
 	engine := html.New(templateDir, ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
 
-	// Middleware
 	app.Use(logger.New())
 	app.Use(recover.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173,https://localhost:5173",
+		AllowOrigins: "http://localhost:5173,https://localhost:5173,https://matf.dev",
 		AllowMethods: "GET,POST,PUT,DELETE",
 		AllowHeaders: "Origin,Content-Type,Accept,Authorization",
 	}))
 
-	// Serve screenshot images (always needed)
+	// Icons: keep /chaos/icons for absolute URLs; /icons after Traefik strip_prefix=/chaos
 	app.Use("/chaos/icons", filesystem.New(filesystem.Config{
-		Root:   http.Dir("static/images"),
+		Root:   http.Dir(imagesDir),
+		Browse: false,
+	}))
+	app.Use("/icons", filesystem.New(filesystem.Config{
+		Root:   http.Dir(imagesDir),
 		Browse: false,
 	}))
 
-	// Serve built frontend files (both dev and production)
-	// In development, this allows direct access to port 8080 to work
 	app.Use("/static", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
+		Root:   http.Dir(distDir),
 		Browse: false,
 	}))
-
-	// Serve built frontend assets
 	app.Use("/assets", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist/assets"),
+		Root:   http.Dir(distDir + "/assets"),
 		Browse: false,
 	}))
-
-	// Serve other frontend files (favicon, manifest, etc.)
 	app.Use("/favicon.ico", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
+		Root:   http.Dir(distDir),
 		Browse: false,
 	}))
 	app.Use("/manifest.json", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
+		Root:   http.Dir(distDir),
 		Browse: false,
 	}))
 	app.Use("/robots.txt", filesystem.New(filesystem.Config{
-		Root:   http.Dir("../frontend/dist"),
+		Root:   http.Dir(distDir),
 		Browse: false,
 	}))
 
-	// API routes
 	api := app.Group("/api")
 	api.Get("/version", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"version": "0.0.1"})
@@ -170,25 +170,17 @@ func main() {
 		return c.JSON(fiber.Map{"message": "All screenshots taken"})
 	})
 
-	// Bot detection middleware for SSR
 	app.Use(func(c *fiber.Ctx) error {
-		userAgent := c.Get("User-Agent")
-
-		if isBot(userAgent) {
-			// Serve SSR HTML with meta tags for bots
+		if isBot(c.Get("User-Agent")) {
 			return serveSSR(c)
 		}
-
-		// For regular users, serve the SPA
 		return c.Next()
 	})
 
-	// Catch-all route for SPA
 	app.Get("*", func(c *fiber.Ctx) error {
 		path := c.Path()
 		routes := getRoutes()
 
-		// Get route info if it exists
 		var route Route
 		var exists bool
 		if path != "/" && path != "" {
@@ -196,12 +188,10 @@ func main() {
 			route, exists = routes[routeKey]
 		}
 
-		// Default meta tags
 		title := "CanvasWorld - Mathematical Attractors"
 		description := "Explore beautiful mathematical attractors and chaotic systems through interactive visualizations."
 		image := "/chaos/icons/mandelbrot_set.png"
 
-		// Customize meta tags for specific routes
 		if exists {
 			routeKey := strings.TrimPrefix(path, "/")
 			if route.Title != "" {
@@ -213,15 +203,20 @@ func main() {
 			image = fmt.Sprintf("/chaos/icons/%s.png", routeKey)
 		}
 
+		if prod {
+			// Vite-built index (hashed /chaos/assets/…); Traefik strips /chaos → /assets
+			return c.SendFile(distDir + "/index.html")
+		}
+
 		return c.Render("index", fiber.Map{
 			"Title":       title,
 			"Description": description,
 			"Image":       image,
 			"Path":        path,
-			"IsDev":       config.Env == "development",
+			"IsDev":       true,
 		})
 	})
 
-	log.Printf("Server starting on port %s", config.Port)
+	log.Printf("Server starting on port %s (env=%s dist=%s)", config.Port, config.Env, distDir)
 	log.Fatal(app.Listen(":" + config.Port))
 }

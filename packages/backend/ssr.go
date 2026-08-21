@@ -47,17 +47,17 @@ func serveSSR(c *fiber.Ctx) error {
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://canvasworld.dev%s">
+    <meta property="og:url" content="https://matf.dev/chaos%s">
     <meta property="og:title" content="%s">
     <meta property="og:description" content="%s">
-    <meta property="og:image" content="https://canvasworld.dev%s">
+    <meta property="og:image" content="https://matf.dev%s">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://canvasworld.dev%s">
+    <meta property="twitter:url" content="https://matf.dev/chaos%s">
     <meta property="twitter:title" content="%s">
     <meta property="twitter:description" content="%s">
-    <meta property="twitter:image" content="https://canvasworld.dev%s">
+    <meta property="twitter:image" content="https://matf.dev%s">
     
     <!-- Discord -->
     <meta property="og:site_name" content="CanvasWorld">
