@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import {
-	buildEnneperMesh,
 	clampSpan,
 	DEFAULT_SPAN,
+	ENNEPER_MAX_POINTS,
 	enneperPoint,
+	sampleEnneperIsolines,
 	SPAN_MAX,
 	SPAN_MIN,
-	UV_RES,
 } from '../../utils/enneperSurface'
 
 describe('enneperPoint', () => {
@@ -35,21 +35,29 @@ describe('enneperPoint', () => {
 	})
 })
 
-describe('buildEnneperMesh', () => {
-	it('builds a finite UV-grid mesh', () => {
-		const mesh = buildEnneperMesh(DEFAULT_SPAN)
-		expect(mesh.positions.length / 3).toBe((UV_RES + 1) * (UV_RES + 1))
-		expect(mesh.indices.length).toBe(UV_RES * UV_RES * 6)
-		expect(mesh.indices.length % 3).toBe(0)
-		expect(mesh.colors.length).toBe(mesh.positions.length)
-		for (let i = 0; i < mesh.positions.length; i++) {
-			expect(Number.isFinite(mesh.positions[i])).toBe(true)
+describe('sampleEnneperIsolines', () => {
+	it('builds a fixed-size UV wire', () => {
+		const cloud = sampleEnneperIsolines()
+		expect(cloud.count).toBe(ENNEPER_MAX_POINTS)
+		expect(cloud.positions.length).toBe(ENNEPER_MAX_POINTS * 3)
+		expect(cloud.colors.length).toBe(cloud.positions.length)
+		for (let i = 0; i < 300; i++) {
+			expect(Number.isFinite(cloud.positions[i])).toBe(true)
 		}
 	})
 
-	it('clamps span', () => {
+	it('clamps span and keeps colour chroma', () => {
 		expect(clampSpan(0)).toBe(SPAN_MIN)
 		expect(clampSpan(9)).toBe(SPAN_MAX)
 		expect(clampSpan(DEFAULT_SPAN)).toBe(DEFAULT_SPAN)
+		const cloud = sampleEnneperIsolines(16, 16, 40, DEFAULT_SPAN)
+		let maxChroma = 0
+		for (let i = 0; i < cloud.count; i++) {
+			const r = cloud.colors[i * 3]
+			const g = cloud.colors[i * 3 + 1]
+			const b = cloud.colors[i * 3 + 2]
+			maxChroma = Math.max(maxChroma, Math.max(r, g, b) - Math.min(r, g, b))
+		}
+		expect(maxChroma).toBeGreaterThan(0.3)
 	})
 })

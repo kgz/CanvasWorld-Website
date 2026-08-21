@@ -210,7 +210,7 @@
     "slug": "enneper_surface",
     "title": "Enneper Surface",
     "category": "misc",
-    "description": "Enneper’s minimal surface from the classical polynomial parametrization on a square UV domain. Lit mesh; span sets |u|,|v| so the self-intersections read.",
+    "description": "Enneper’s minimal surface as a UV isoline particle wire. Span sets |u|,|v| so the self-intersections read.",
     "thumbnail": "/chaos/icons/enneper_surface.png",
     "renderMode": "webgl",
     "active": true

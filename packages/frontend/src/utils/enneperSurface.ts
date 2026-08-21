@@ -1,9 +1,15 @@
 const EPS = 1e-15
+const TARGET_R = 1.7
 
-export const UV_RES = 48
 export const SPAN_MIN = 1.2
 export const SPAN_MAX = 2.5
 export const DEFAULT_SPAN = 1.8
+
+/** Fixed isoline budget (u-curves + v-curves). */
+export const ENNEPER_NU = 48
+export const ENNEPER_NV = 48
+export const ENNEPER_DETAIL = 200
+export const ENNEPER_MAX_POINTS = (ENNEPER_NU + ENNEPER_NV) * ENNEPER_DETAIL
 
 export function clampSpan(span: number): number {
 	return Math.min(SPAN_MAX, Math.max(SPAN_MIN, span))
@@ -20,31 +26,30 @@ export function enneperPoint(u: number, v: number): { x: number; y: number; z: n
 	}
 }
 
-export type EnneperMesh = {
+export type EnneperCloud = {
 	positions: Float32Array
-	indices: Uint32Array
 	colors: Float32Array
+	count: number
 }
 
-function centerAndScale(positions: Float32Array, targetRadius: number) {
-	const vcount = positions.length / 3
-	if (vcount === 0) {
+function centerAndScale(positions: Float32Array, count: number, targetRadius: number) {
+	if (count === 0) {
 		return
 	}
 	let cx = 0
 	let cy = 0
 	let cz = 0
-	for (let i = 0; i < vcount; i++) {
+	for (let i = 0; i < count; i++) {
 		cx += positions[i * 3]
 		cy += positions[i * 3 + 1]
 		cz += positions[i * 3 + 2]
 	}
-	cx /= vcount
-	cy /= vcount
-	cz /= vcount
+	cx /= count
+	cy /= count
+	cz /= count
 
 	let maxR = 0
-	for (let i = 0; i < vcount; i++) {
+	for (let i = 0; i < count; i++) {
 		const x = positions[i * 3] - cx
 		const y = positions[i * 3 + 1] - cy
 		const z = positions[i * 3 + 2] - cz
@@ -60,86 +65,71 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 		return
 	}
 	const s = targetRadius / maxR
-	for (let i = 0; i < positions.length; i++) {
+	for (let i = 0; i < count * 3; i++) {
 		positions[i] *= s
 	}
 }
 
-export function buildEnneperMesh(span: number): EnneperMesh {
+/** Coral → amber → teal along UV. */
+function writeUvRibbon(colors: Float32Array, i: number, uN: number, vN: number) {
+	const t = Math.min(1, Math.max(0, 0.55 * uN + 0.45 * vN))
+	if (t < 0.5) {
+		const s = t / 0.5
+		colors[i] = 1
+		colors[i + 1] = 0.22 + 0.55 * s
+		colors[i + 2] = 0.32 + 0.05 * s
+		return
+	}
+	const s = (t - 0.5) / 0.5
+	colors[i] = 1 - 0.82 * s
+	colors[i + 1] = 0.77 + 0.2 * s
+	colors[i + 2] = 0.37 + 0.58 * s
+}
+
+/** Constant-u / constant-v isolines on the Enneper domain. */
+export function sampleEnneperIsolines(
+	nu = ENNEPER_NU,
+	nv = ENNEPER_NV,
+	samples = ENNEPER_DETAIL,
+	span = DEFAULT_SPAN,
+): EnneperCloud {
 	const s = clampSpan(span)
-	const grid = UV_RES
-	const vertsPerSide = grid + 1
-	const vertCount = vertsPerSide * vertsPerSide
-	const positions = new Float32Array(vertCount * 3)
-	const colors = new Float32Array(vertCount * 3)
-	const indices = new Uint32Array(grid * grid * 6)
+	const count = (nu + nv) * samples
+	const positions = new Float32Array(count * 3)
+	const colors = new Float32Array(count * 3)
+	let i = 0
 
-	let minX = Infinity
-	let minY = Infinity
-	let minZ = Infinity
-	let maxX = -Infinity
-	let maxY = -Infinity
-	let maxZ = -Infinity
-
-	for (let iy = 0; iy < vertsPerSide; iy++) {
-		const v = -s + (2 * s * iy) / grid
-		for (let ix = 0; ix < vertsPerSide; ix++) {
-			const u = -s + (2 * s * ix) / grid
+	for (let iu = 0; iu < nu; iu++) {
+		const uN = nu <= 1 ? 0.5 : iu / (nu - 1)
+		const u = -s + 2 * s * uN
+		for (let t = 0; t < samples; t++) {
+			const vN = samples <= 1 ? 0.5 : t / (samples - 1)
+			const v = -s + 2 * s * vN
 			const p = enneperPoint(u, v)
-			const vi = iy * vertsPerSide + ix
-			positions[vi * 3] = p.x
-			positions[vi * 3 + 1] = p.y
-			positions[vi * 3 + 2] = p.z
-			if (p.x < minX) {
-				minX = p.x
-			}
-			if (p.y < minY) {
-				minY = p.y
-			}
-			if (p.z < minZ) {
-				minZ = p.z
-			}
-			if (p.x > maxX) {
-				maxX = p.x
-			}
-			if (p.y > maxY) {
-				maxY = p.y
-			}
-			if (p.z > maxZ) {
-				maxZ = p.z
-			}
+			const i3 = i * 3
+			positions[i3] = p.x
+			positions[i3 + 1] = p.y
+			positions[i3 + 2] = p.z
+			writeUvRibbon(colors, i3, uN, vN)
+			i += 1
+		}
+	}
+	for (let iv = 0; iv < nv; iv++) {
+		const vN = nv <= 1 ? 0.5 : iv / (nv - 1)
+		const v = -s + 2 * s * vN
+		for (let t = 0; t < samples; t++) {
+			const uN = samples <= 1 ? 0.5 : t / (samples - 1)
+			const u = -s + 2 * s * uN
+			const p = enneperPoint(u, v)
+			const i3 = i * 3
+			positions[i3] = p.x
+			positions[i3 + 1] = p.y
+			positions[i3 + 2] = p.z
+			writeUvRibbon(colors, i3, uN, vN)
+			i += 1
 		}
 	}
 
-	const dx = maxX - minX || 1
-	const dy = maxY - minY || 1
-	const dz = maxZ - minZ || 1
-	for (let i = 0; i < positions.length; i += 3) {
-		const nx = (positions[i] - minX) / dx
-		const ny = (positions[i + 1] - minY) / dy
-		const nz = (positions[i + 2] - minZ) / dz
-		colors[i] = 0.72 + 0.22 * nx
-		colors[i + 1] = 0.42 + 0.28 * ny
-		colors[i + 2] = 0.18 + 0.55 * (1 - nz)
-	}
-
-	let t = 0
-	for (let iy = 0; iy < grid; iy++) {
-		for (let ix = 0; ix < grid; ix++) {
-			const a = iy * vertsPerSide + ix
-			const b = a + 1
-			const c = a + vertsPerSide
-			const d = c + 1
-			indices[t] = a
-			indices[t + 1] = c
-			indices[t + 2] = b
-			indices[t + 3] = b
-			indices[t + 4] = c
-			indices[t + 5] = d
-			t += 6
-		}
-	}
-
-	centerAndScale(positions, 1.7)
-	return { positions, indices, colors }
+	centerAndScale(positions, count, TARGET_R)
+	return { positions, colors, count }
 }
