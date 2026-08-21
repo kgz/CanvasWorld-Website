@@ -6,12 +6,10 @@ import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import {
-	clampCurves,
-	clampDetail,
-	clampHomotopy,
-	sampleBoyIsolines,
-} from '../../utils/boySurface'
+import { clampHomotopy, sampleBoyIsolines } from '../../utils/boySurface'
+
+const CURVES = 48
+const DETAIL = 160
 
 const BoyJuryIsolines = () => {
 	const dispatch = useAppDispatch()
@@ -25,16 +23,8 @@ const BoyJuryIsolines = () => {
 		(): TDatData => ({
 			options: {
 				k: { initialValue: 1, min: 0, max: 1, step: 0.01 },
-				curves: { initialValue: 48, min: 16, max: 80, step: 1 },
-				detail: { initialValue: 160, min: 64, max: 280, step: 4 },
 			},
-			examples: [
-				{ k: 0, curves: 40, detail: 140 },
-				{ k: 0.25, curves: 48, detail: 160 },
-				{ k: 0.5, curves: 52, detail: 180 },
-				{ k: 0.75, curves: 56, detail: 180 },
-				{ k: 1, curves: 64, detail: 200 },
-			],
+			examples: [{ k: 0 }, { k: 0.25 }, { k: 0.5 }, { k: 0.75 }, { k: 1 }],
 		}),
 		[],
 	)
@@ -53,13 +43,7 @@ const BoyJuryIsolines = () => {
 	}, [datData, dispatch])
 
 	const k = clampHomotopy(data.k ?? datData.options.k.initialValue)
-	const curves = clampCurves(data.curves ?? datData.options.curves.initialValue)
-	const detail = clampDetail(data.detail ?? datData.options.detail.initialValue)
-
-	const cloud = useMemo(
-		() => sampleBoyIsolines(curves, curves, detail, k),
-		[curves, detail, k],
-	)
+	const cloud = useMemo(() => sampleBoyIsolines(CURVES, CURVES, DETAIL, k), [k])
 
 	useEffect(() => {
 		seeded.current = false
@@ -92,21 +76,14 @@ const BoyJuryIsolines = () => {
 
 BoyJuryIsolines.getDescription = () => (
 	<>
-		Morin–Apéry family of immersions of <InlineMath math="\mathbb{RP}^2" />: scrub{' '}
-		<InlineMath math="k" /> from the Roman surface (<InlineMath math="k=0" />) to Boy’s surface (
-		<InlineMath math="k=1" />
-		). Isoline wire (legacy points), not the lit mesh.
+		Morin–Apéry family: scrub <InlineMath math="k" /> from the Roman surface (
+		<InlineMath math="k=0" />) to Boy’s surface (<InlineMath math="k=1" />
+		). Isoline wire (legacy points).
 		<br />
 		<br />
-		<strong>Homotopy</strong> (same UV chart as MathWorld / mathcurve):
-		<BlockMath
-			math={
-				'\\mathrm{denom}=2-k\\sqrt{2}\\,\\sin 3u\\,\\sin 2v'
-			}
-		/>
+		<BlockMath math={'\\mathrm{denom}=2-k\\sqrt{2}\\,\\sin 3u\\,\\sin 2v'} />
 		<br />
-		UI <InlineMath math="k" /> is the family parameter, <code>curves</code> how many u/v isolines,{' '}
-		<code>detail</code> samples along each. Transport <code>n</code> reveals points.
+		Transport <code>n</code> reveals points.
 	</>
 )
 
