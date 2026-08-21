@@ -8,12 +8,14 @@ alwaysApply: false
 
 ## Voice
 
-Write as someone discovering dynamical systems for the first time (curious beginner energy from ~15 years ago), not as a textbook or product blog.
+Curious and concrete — learning these systems live — but **the subject is the math and the canvas**, not the narrator.
 
-- First-person or plain “you/we” is fine; no lecturer “one observes that…”
-- Concrete: what you saw on the canvas, what surprised you, what you tried next
+- Lead with the object, how it looks, who wrote it, how Classical Chaos draws it
+- Spare first person: no default “I expected…” openers; no stacks of “I kept / what hit me / I bounce”
+- Occasional “you” for stage affordances is fine; “one observes that…” is not
 - Uneven is OK; perfect parallel three-beat lists are not
 - Brand: Classical Chaos; keep math honest (equations, named constants)
+- See `.cursor/skills/blog-builder/voice-notes.md` for hard fails
 
 ## Required passes before shipping a post
 

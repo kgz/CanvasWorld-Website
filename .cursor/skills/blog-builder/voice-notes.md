@@ -35,13 +35,36 @@ Bad (Clifford / old “render-loop”): particle budgets, 24k vs 200k, DPR caps,
 - Issue numbers, “About still wrong”, “site truth vs catalog”
 - “embed chrome”, “transport `n`” without plain language first
 
+### “I expected…” opener formula (hard fail across the corpus)
+Bad (Barth / Boy / Brusselator / Enneper / Schwarz / … — user Aug 2026: every post starting this way sounds like AI):
+
+> I expected a smooth algebraic blob. What showed up looked more like…
+> I kept waiting for a sealed outside…
+> I opened it expecting a clean saddle…
+
+Same template: expectation → soft letdown → “what showed up.” Fine **once** in a while as real grain; not as the default first sentence for every notebook.
+
+**Do instead:** Vary openings — name the object, what is on the canvas, who wrote it, a concrete detail, a question.
+
+### Narrator-first “I” as the whole post (hard fail)
+Bad (user Aug 2026: why is it always “I” — just write the blog about the thing):
+
+> Icosahedral spikes on a black field — that is what hit me first…
+> I kept wondering whether the spikes lived in the math…
+> I bounce classic (φ,1,1) against…
+
+The notebook can stay curious and concrete without making the author the subject. Prefer **the surface / map / equation / canvas** as the grammatical subject.
+
+**Do instead:** “Barth’s sextic is…”, “The cloud grows in…”, “Raising mix sharpens the spikes…”. Occasional “you” for affordances is fine. Spare “I” for rare, earned asides — not every paragraph.
+
 ## Preferred beats
 
-1. What surprised you / what you saw
+1. The object / what is on the canvas (not the narrator’s feelings)
 2. Live viz
 3. Math or mechanism (support, not spine)
 4. Short “full canvas” invite (positive, linked) + Callout
 5. No “does not have…” paragraphs
+6. No default “I expected…” / “what hit me first” openers
 
 ## Tracked user quotes
 
@@ -53,6 +76,8 @@ Bad (Clifford / old “render-loop”): particle budgets, 24k vs 200k, DPR caps,
 | Aug 2026 | mandelbrot-escape | Don’t write bare `` `/mandelbrot_set` `` — use a real markdown link |
 | Aug 2026 | mandelbrot-escape | Don’t sell by listing missing features (no turbo / power steering) |
 | Aug 2026 | OD slugs | `render-loop` → `clifford` (via `clifford-60fps`); `l-systems` → `sierpinski-gasket`. Engineering FPS/budget posts rejected — readers want origin + what the map does. |
+| Aug 2026 | corpus | “I expected…” / “I kept waiting…” as default opener on every post — sounds like AI; vary openings |
+| Aug 2026 | corpus | Narrator-first “I” (“what hit me first”, “I bounce…”) — write about the viz/math, not the author |
 
 ## Catalog links in prose
 

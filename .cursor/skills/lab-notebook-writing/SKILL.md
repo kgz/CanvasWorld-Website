@@ -39,13 +39,14 @@ Paste gate verdicts into the chat (or PR notes) when finishing.
 
 ## Voice (target)
 
-Write like someone who has never touched this stuff before and is discovering it live — the same energy as starting chaos toys ~15 years ago.
+Curious and concrete — like learning these systems live — but **the subject is the math and the canvas**, not the narrator.
 
-- Curious, concrete, slightly uneven; not a lecture or marketing page
-- Say what you saw, what broke your intuition, what you clicked next
+- Lead with the object, what it looks like, who wrote it, how Classical Chaos draws it
+- Slightly uneven is fine; lecture and marketing are not
+- Spare first person: no default “I expected…” openers; no paragraph stack of “I kept / I bounce / what hit me”
 - Math stays correct; Classical Chaos brand; no fake authority
 
-Quick ban hints (full scan is `ai-prose-filter`): no delve/tapestry/crucible, no em-dash piles, no “In this post we explored…”.
+Quick ban hints (full scan is `ai-prose-filter`): no delve/tapestry/crucible, no em-dash piles, no “In this post we explored…”. See also [blog-builder/voice-notes.md](../blog-builder/voice-notes.md).
 
 ## Step A — Fact sheet only
 
