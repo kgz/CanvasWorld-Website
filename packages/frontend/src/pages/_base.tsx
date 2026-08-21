@@ -1,4 +1,4 @@
-import { OrbitControls, PointMaterial } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import type { RenderCallback } from '@react-three/fiber'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
@@ -70,11 +70,13 @@ const Points = <T,>({
           <bufferAttribute attach="attributes-color" count={colors.length / (colorAlpha ? 4 : 3)} array={colors} itemSize={colorAlpha ? 4 : 3} />
         )}
       </bufferGeometry>
-      <PointMaterial
+      {/* drei PointMaterial's soft-circle shader drops vertex colours — use stock PointsMaterial */}
+      <pointsMaterial
         size={size}
         sizeAttenuation={!pixelSized}
-        color={singleColor ?? new THREE.Color(0xffffff)}
+        color={singleColor ?? '#ffffff'}
         vertexColors={!singleColor}
+        toneMapped={false}
         transparent={false}
         depthWrite={false}
       />

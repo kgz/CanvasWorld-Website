@@ -44,3 +44,17 @@ describe('sampleBarthCloud', () => {
 		}
 	})
 })
+
+describe('barth colors', () => {
+	it('has saturated non-gray variance', () => {
+		const cloud = sampleBarthCloud()
+		let maxChroma = 0
+		for (let i = 0; i < 5000; i++) {
+			const r = cloud.colors[i * 3]
+			const g = cloud.colors[i * 3 + 1]
+			const b = cloud.colors[i * 3 + 2]
+			maxChroma = Math.max(maxChroma, Math.max(r, g, b) - Math.min(r, g, b))
+		}
+		expect(maxChroma).toBeGreaterThan(0.3)
+	})
+})
