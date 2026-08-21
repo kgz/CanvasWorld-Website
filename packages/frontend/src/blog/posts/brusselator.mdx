@@ -1,0 +1,50 @@
+export const meta = {
+	slug: 'brusselator',
+	title: 'Brusselator: a chemical oscillator as a phase-plane trail',
+	tag: 'Maps',
+	excerpt:
+		'The Brusselator is a theoretical chemical oscillator: two concentrations chase a closed cycle in the phase plane. Classical Chaos draws that orbit as a live trail.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'brusselator',
+	featured: false,
+	order: 90,
+}
+
+
+The Brusselator is a theoretical autocatalytic chemical oscillator from Ilya Prigogine and the Brussels school (the name is from Brussels). On Classical Chaos it is continuous well-mixed ODEs: Euler-integrate the rates, then paint `(x, y)` as a trail in the phase plane. Spatial reaction–diffusion — the BZ dish movie, spots on a grid — is a different kind of viz.
+
+<VizEmbed slug="brusselator" label="Brusselator" animateN />
+
+## Equations
+
+Defaults sit at `a = 1`, `b = 3`, `dt = 0.02`, seed `(1, 1)`.
+
+<BlockMath math={'\\frac{dx}{dt} = a - (b+1)x + x^{2}y'} />
+<BlockMath math={'\\frac{dy}{dt} = bx - x^{2}y'} />
+
+One forward-Euler step per sample:
+
+```ts
+const dx = a - (b + 1) * x + x * x * y
+const dy = b * x - x * x * y
+x = x + dx * dt
+y = y + dy * dt
+```
+
+`dt` gets clamped so the step stays sane. If `|x|` or `|y|` blow past about 100, the state gets clamped too.
+
+Color walks the trail in hsl chunks; the tip often reads yellower than the older path.
+
+## What the trail shows
+
+With `a = 1`, `b = 3` the path looks closed. Concentrations chase each other along that cycle and do not settle to a quiet point. Smaller `b` changes how the path sits and how it settles.
+
+## Full canvas
+
+On the [full Brusselator stage](/brusselator) twist `a` / `b` / `dt` (about `[0.1, 3]`, `[0.1, 5]`, `[0.001, 0.1]`), try the example presets `(1, 3, 0.02)`, `(1, 2.5, 0.02)`, and `(0.5, 1.2, 0.02)`, scrub how long the trail is, and drag to rotate the view. The trail rebuilds from `(1, 1)`.
+
+<Callout to="/brusselator">
+	<strong>Goto full canvas</strong>
+	Twist `a` / `b` / `dt`, try the presets, scrub the trail, drag to rotate the view.
+</Callout>

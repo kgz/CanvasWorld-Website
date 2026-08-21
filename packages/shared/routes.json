@@ -19,9 +19,9 @@
   },
   {
     "slug": "brusselator",
-    "title": "Brusselator",
+    "title": "Brusselator (ODE)",
     "category": "map",
-    "description": "The Brusselator is an autocatalytic chemical oscillator. This visualization integrates dx/dt = a - (b+1)x + x^2 y, dy/dt = b x - x^2 y with an Euler step.",
+    "description": "Well-mixed Brusselator ODEs drawn as a phase-orbit trail (Euler step): dx/dt = a-(b+1)x+x^2 y, dy/dt = bx-x^2 y. Not a spatial reaction–diffusion field.",
     "thumbnail": "/chaos/icons/brusselator.png",
     "renderMode": "webgl",
     "active": true
