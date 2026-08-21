@@ -59,7 +59,7 @@ const BoyJuryLines = () => {
 			lineOpacity={0.92}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.32}
-			cameraPosition={[0, 0.15, 2.05]}
+			cameraPosition={[0, 0, 4.2]}
 		/>
 	)
 }
