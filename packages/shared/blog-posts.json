@@ -6,13 +6,22 @@
 	},
 	"posts": [
 		{
+			"slug": "aizawa-funnel",
+			"title": "Aizawa’s round shell with a hole through it",
+			"excerpt": "The Aizawa attractor fills a ball-like shell with a funnel down the middle: six ODE knobs and a cool-to-warm trail on Classical Chaos, ported from the old CanvasWorld workshop.",
+			"tag": "Attractors",
+			"thumbSlug": "aizawa_attractor",
+			"order": 5,
+			"featured": true
+		},
+		{
 			"slug": "lorenz-never-closes",
 			"title": "Why the Lorenz attractor never closes",
 			"excerpt": "Why the Lorenz butterfly never settles into a loop, and how Classical Chaos draws that trail with three ODEs and a simple Euler step.",
 			"tag": "Attractors",
 			"thumbSlug": "lorenz_attractor",
 			"order": 10,
-			"featured": true
+			"featured": false
 		},
 		{
 			"slug": "hopalong-family",
