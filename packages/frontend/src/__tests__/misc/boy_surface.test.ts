@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { boyPoint, buildBoyMesh } from '../../utils/boySurface'
+import { boyPoint, buildBoyMesh, clampHomotopy } from '../../utils/boySurface'
 
 describe('boyPoint', () => {
 	it('is finite on a UV sample', () => {
@@ -7,6 +7,14 @@ describe('boyPoint', () => {
 		expect(Number.isFinite(p.x)).toBe(true)
 		expect(Number.isFinite(p.y)).toBe(true)
 		expect(Number.isFinite(p.z)).toBe(true)
+	})
+
+	it('moves along the Roman→Boy homotopy', () => {
+		const a = boyPoint(0.7, 0.9, 0)
+		const b = boyPoint(0.7, 0.9, 1)
+		expect(a.x !== b.x || a.y !== b.y || a.z !== b.z).toBe(true)
+		expect(clampHomotopy(9)).toBe(1)
+		expect(clampHomotopy(-1)).toBe(0)
 	})
 })
 

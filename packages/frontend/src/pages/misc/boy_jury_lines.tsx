@@ -1,16 +1,17 @@
 import type { RootState } from '@react-three/fiber'
-import { InlineMath } from 'react-katex'
+import { BlockMath, InlineMath } from 'react-katex'
 import { useEffect, useMemo, useRef } from 'react'
 import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
-import { useAppDispatch } from '../../@store/store'
+import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import { sampleBoyScanline } from '../../utils/boySurface'
+import { clampHomotopy, sampleBoyScanline } from '../../utils/boySurface'
 
 const BoyJuryLines = () => {
 	const dispatch = useAppDispatch()
+	const { data } = useAppSelector((state) => state.WebSlice)
 	const seeded = useRef(false)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
 		baseSpeed: 28000,
@@ -18,8 +19,16 @@ const BoyJuryLines = () => {
 
 	const datData = useMemo(
 		(): TDatData => ({
-			options: {},
-			examples: [],
+			options: {
+				k: { initialValue: 1, min: 0, max: 1, step: 0.01 },
+			},
+			examples: [
+				{ k: 0 },
+				{ k: 0.25 },
+				{ k: 0.5 },
+				{ k: 0.75 },
+				{ k: 1 },
+			],
 		}),
 		[],
 	)
@@ -28,10 +37,21 @@ const BoyJuryLines = () => {
 
 	useEffect(() => {
 		void dispatch(setDatData(datData))
-		void dispatch(setData({}))
+		void dispatch(
+			setData(
+				Object.fromEntries(
+					Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]),
+				),
+			),
+		)
 	}, [datData, dispatch])
 
-	const cloud = useMemo(() => sampleBoyScanline(), [])
+	const k = clampHomotopy(data.k ?? datData.options.k.initialValue)
+	const cloud = useMemo(() => sampleBoyScanline(200, 140, k), [k])
+
+	useEffect(() => {
+		seeded.current = false
+	}, [cloud])
 
 	const tick: TParticleProps<TData>['tick'] = (
 		positions: Float32Array,
@@ -66,12 +86,14 @@ const BoyJuryLines = () => {
 
 BoyJuryLines.getDescription = () => (
 	<>
-		Jury page: line-scan trail of Morin–Apéry Boy’s surface (immersion of{' '}
-		<InlineMath math="\mathbb{RP}^2" /> in <InlineMath math="\mathbb{R}^3" />
-		). Legacy GPU line strip like Lorenz — not mesh. Temporary — for render-mode comparison only.
+		Legacy line-scan of the Morin–Apéry family. Scrub <InlineMath math="k" /> from Roman (
+		<InlineMath math="k=0" />) to Boy (<InlineMath math="k=1" />
+		).
 		<br />
 		<br />
-		Transport <code>n</code> reveals the scanline trail.
+		<BlockMath math={'\\mathrm{denom}=2-k\\sqrt{2}\\,\\sin 3u\\,\\sin 2v'} />
+		<br />
+		Transport <code>n</code> reveals the trail.
 	</>
 )
 

@@ -47,11 +47,12 @@ function cdiv(a: Complex, b: Complex): Complex | null {
 	}
 }
 
-/** Morin–Apéry Boy immersion (homotopy parameter 1). u,v ∈ [0, π]. */
-export function boyPoint(u: number, v: number): BoyPoint {
+/** Morin–Apéry family: k=0 ≈ Roman, k=1 = Boy. u,v ∈ [0, π]. */
+export function boyPoint(u: number, v: number, k = 1): BoyPoint {
+	const kk = clampHomotopy(k)
 	const s2v = Math.sin(2 * v)
 	const cv2 = Math.cos(v) * Math.cos(v)
-	let d = 2 - SQRT2 * Math.sin(3 * u) * s2v
+	let d = 2 - kk * SQRT2 * Math.sin(3 * u) * s2v
 	if (Math.abs(d) < DENOM_EPS) {
 		d = d >= 0 ? DENOM_EPS : -DENOM_EPS
 	}
@@ -60,6 +61,18 @@ export function boyPoint(u: number, v: number): BoyPoint {
 		y: (SQRT2 * Math.sin(2 * u) * cv2 - Math.sin(u) * s2v) / d,
 		z: (3 * cv2) / d,
 	}
+}
+
+export function clampHomotopy(k: number): number {
+	return Math.min(1, Math.max(0, k))
+}
+
+export function clampCurves(curves: number): number {
+	return Math.min(80, Math.max(16, Math.round(curves)))
+}
+
+export function clampDetail(detail: number): number {
+	return Math.min(280, Math.max(64, Math.round(detail)))
 }
 
 /** Bryant–Kusner on the unit disk (w = re + i im). */
@@ -218,11 +231,11 @@ export function sampleBoyCloud(nu = 96, nv = 96): BoyCloud {
  * Row-major UV scan as one polyline (legacy line trail).
  * Odd rows reverse so the strip snakes continuously.
  */
-export function sampleBoyScanline(nu = 200, nv = 140): BoyCloud {
+export function sampleBoyScanline(nu = 200, nv = 140, k = 1): BoyCloud {
 	const count = nu * nv
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)
-	let k = 0
+	let i = 0
 	for (let iv = 0; iv < nv; iv++) {
 		const vN = nv <= 1 ? 0 : iv / (nv - 1)
 		const v = Math.PI * vN
@@ -231,12 +244,12 @@ export function sampleBoyScanline(nu = 200, nv = 140): BoyCloud {
 			const iu = reverse ? nu - 1 - t : t
 			const uN = nu <= 1 ? 0 : iu / (nu - 1)
 			const u = Math.PI * uN
-			const p = boyPoint(u, v)
-			positions[k] = p.x
-			positions[k + 1] = p.y
-			positions[k + 2] = p.z
-			writeUvRibbon(colors, k, uN, vN)
-			k += 3
+			const p = boyPoint(u, v, k)
+			positions[i] = p.x
+			positions[i + 1] = p.y
+			positions[i + 2] = p.z
+			writeUvRibbon(colors, i, uN, vN)
+			i += 3
 		}
 	}
 	centerAndScale(positions, TARGET_R)
@@ -244,23 +257,23 @@ export function sampleBoyScanline(nu = 200, nv = 140): BoyCloud {
 }
 
 /** Constant-u / constant-v curves as a dense point wire. */
-export function sampleBoyIsolines(nu = 64, nv = 64, samples = 200): BoyCloud {
+export function sampleBoyIsolines(nu = 64, nv = 64, samples = 200, k = 1): BoyCloud {
 	const count = (nu + nv) * samples
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)
-	let k = 0
+	let i = 0
 	for (let iu = 0; iu < nu; iu++) {
 		const uN = nu <= 1 ? 0 : iu / (nu - 1)
 		const u = Math.PI * uN
 		for (let s = 0; s < samples; s++) {
 			const vN = samples <= 1 ? 0 : s / (samples - 1)
 			const v = Math.PI * vN
-			const p = boyPoint(u, v)
-			positions[k] = p.x
-			positions[k + 1] = p.y
-			positions[k + 2] = p.z
-			writeUvRibbon(colors, k, uN, vN)
-			k += 3
+			const p = boyPoint(u, v, k)
+			positions[i] = p.x
+			positions[i + 1] = p.y
+			positions[i + 2] = p.z
+			writeUvRibbon(colors, i, uN, vN)
+			i += 3
 		}
 	}
 	for (let iv = 0; iv < nv; iv++) {
@@ -269,12 +282,12 @@ export function sampleBoyIsolines(nu = 64, nv = 64, samples = 200): BoyCloud {
 		for (let s = 0; s < samples; s++) {
 			const uN = samples <= 1 ? 0 : s / (samples - 1)
 			const u = Math.PI * uN
-			const p = boyPoint(u, v)
-			positions[k] = p.x
-			positions[k + 1] = p.y
-			positions[k + 2] = p.z
-			writeUvRibbon(colors, k, uN, vN)
-			k += 3
+			const p = boyPoint(u, v, k)
+			positions[i] = p.x
+			positions[i + 1] = p.y
+			positions[i + 2] = p.z
+			writeUvRibbon(colors, i, uN, vN)
+			i += 3
 		}
 	}
 	centerAndScale(positions, TARGET_R)
