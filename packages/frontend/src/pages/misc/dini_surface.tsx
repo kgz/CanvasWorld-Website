@@ -73,7 +73,7 @@ const DiniSurface = () => {
 			numParticles={DINI_MAX_POINTS}
 			pointSize={1.15}
 			tick={tick}
-			cameraPosition={[0, 0, 3.7]}
+			cameraPosition={[3.6, 0.35, 0]}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.32}
 		/>
