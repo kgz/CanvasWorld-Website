@@ -3,8 +3,20 @@ export type Complex = {
 	im: number
 }
 
+/** Fixed GPU budget so degree/proj scrubs don't remount buffers / reset transport `n`. */
+export const CALABI_MAX_POINTS = 30_000
+/** Baked grid per patch — interactive remesh stays cheap. */
+const GRID_RES = 20
+const TARGET_R = 1.65
 const EPS = 1e-15
 const DOMAIN_PAD = 1e-4
+
+export type CalabiYauCloud = {
+	positions: Float32Array
+	colors: Float32Array
+	/** Always CALABI_MAX_POINTS (padded). */
+	count: number
+}
 
 export function cadd(a: Complex, b: Complex): Complex {
 	return { re: a.re + b.re, im: a.im + b.im }
@@ -56,6 +68,10 @@ export function clampRes(res: number): number {
 	return Math.min(36, Math.max(6, Math.round(res)))
 }
 
+export function clampProj(proj: number): number {
+	return Math.min(Math.PI, Math.max(0, proj))
+}
+
 export function fermatPair(
 	x: number,
 	y: number,
@@ -81,31 +97,24 @@ export function projectCalabiYau(
 	}
 }
 
-export type CalabiYauMesh = {
-	positions: Float32Array
-	indices: Uint32Array
-	colors: Float32Array
-}
-
-function centerAndScale(positions: Float32Array, targetRadius: number) {
-	const vcount = positions.length / 3
-	if (vcount === 0) {
+function centerAndScale(positions: Float32Array, count: number, targetRadius: number) {
+	if (count === 0) {
 		return
 	}
 	let cx = 0
 	let cy = 0
 	let cz = 0
-	for (let i = 0; i < vcount; i++) {
+	for (let i = 0; i < count; i++) {
 		cx += positions[i * 3]
 		cy += positions[i * 3 + 1]
 		cz += positions[i * 3 + 2]
 	}
-	cx /= vcount
-	cy /= vcount
-	cz /= vcount
+	cx /= count
+	cy /= count
+	cz /= count
 
 	let maxR = 0
-	for (let i = 0; i < vcount; i++) {
+	for (let i = 0; i < count; i++) {
 		const x = positions[i * 3] - cx
 		const y = positions[i * 3 + 1] - cy
 		const z = positions[i * 3 + 2] - cz
@@ -121,73 +130,93 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 		return
 	}
 	const s = targetRadius / maxR
-	for (let i = 0; i < positions.length; i++) {
+	for (let i = 0; i < count * 3; i++) {
 		positions[i] *= s
 	}
 }
 
-export function buildCalabiYauMesh(n: number, proj: number, res: number): CalabiYauMesh {
+/** Coral → amber → teal by direction (reads on black). */
+function writeRibbon(colors: Float32Array, i: number, x: number, y: number, z: number) {
+	const r = Math.hypot(x, y, z) || 1
+	const u = 0.5 + 0.5 * (x / r)
+	const v = 0.5 + 0.5 * (y / r)
+	const w = 0.5 + 0.5 * (z / r)
+	const t = Math.min(1, Math.max(0, 0.45 * u + 0.25 * v + 0.3 * (1 - w)))
+	if (t < 0.5) {
+		const s = t / 0.5
+		colors[i] = 1
+		colors[i + 1] = 0.2 + 0.55 * s
+		colors[i + 2] = 0.28 + 0.08 * s
+		return
+	}
+	const s = (t - 0.5) / 0.5
+	colors[i] = 1 - 0.82 * s
+	colors[i + 1] = 0.75 + 0.22 * s
+	colors[i + 2] = 0.36 + 0.58 * s
+}
+
+/** Hanson-slice samples as a particle cloud (no lit triangles). */
+export function sampleCalabiYauCloud(n: number, proj: number): CalabiYauCloud {
 	const degree = clampDegree(n)
-	const grid = clampRes(res)
+	const a = clampProj(proj)
+	const grid = GRID_RES
 	const vertsPerSide = grid + 1
 	const patchCount = degree * degree
 	const vertsPerPatch = vertsPerSide * vertsPerSide
-	const positions = new Float32Array(patchCount * vertsPerPatch * 3)
-	const colors = new Float32Array(patchCount * vertsPerPatch * 3)
-	const indices = new Uint32Array(patchCount * grid * grid * 6)
+	const rawTotal = patchCount * vertsPerPatch
 
+	const scratch = new Float32Array(rawTotal * 3)
 	const x0 = DOMAIN_PAD
 	const x1 = Math.PI / 2 - DOMAIN_PAD
 	const y0 = -Math.PI / 2 + DOMAIN_PAD
 	const y1 = Math.PI / 2 - DOMAIN_PAD
 
-	let patch = 0
+	let vi = 0
 	for (let k1 = 0; k1 < degree; k1++) {
-		const t1 = degree <= 1 ? 0 : k1 / (degree - 1)
 		for (let k2 = 0; k2 < degree; k2++) {
-			const t2 = degree <= 1 ? 0 : k2 / (degree - 1)
-			const cr = 0.28 + 0.72 * t1
-			const cg = 0.1 + 0.58 * t2
-			const cb = 0.48 + 0.42 * (1 - t1)
-			const base = patch * vertsPerPatch
-
 			for (let iy = 0; iy < vertsPerSide; iy++) {
 				const y = y0 + ((y1 - y0) * iy) / grid
 				for (let ix = 0; ix < vertsPerSide; ix++) {
 					const x = x0 + ((x1 - x0) * ix) / grid
 					const { z1, z2 } = fermatPair(x, y, degree, k1, k2)
-					const p = projectCalabiYau(z1, z2, proj)
-					const vi = base + iy * vertsPerSide + ix
-					positions[vi * 3] = p.x
-					positions[vi * 3 + 1] = p.y
-					positions[vi * 3 + 2] = p.z
-					colors[vi * 3] = cr
-					colors[vi * 3 + 1] = cg
-					colors[vi * 3 + 2] = cb
+					const p = projectCalabiYau(z1, z2, a)
+					scratch[vi * 3] = p.x
+					scratch[vi * 3 + 1] = p.y
+					scratch[vi * 3 + 2] = p.z
+					vi++
 				}
 			}
-
-			const ibase = patch * grid * grid * 6
-			let t = 0
-			for (let iy = 0; iy < grid; iy++) {
-				for (let ix = 0; ix < grid; ix++) {
-					const a = base + iy * vertsPerSide + ix
-					const b = a + 1
-					const c = a + vertsPerSide
-					const d = c + 1
-					indices[ibase + t] = a
-					indices[ibase + t + 1] = c
-					indices[ibase + t + 2] = b
-					indices[ibase + t + 3] = b
-					indices[ibase + t + 4] = c
-					indices[ibase + t + 5] = d
-					t += 6
-				}
-			}
-			patch++
 		}
 	}
 
-	centerAndScale(positions, 1.65)
-	return { positions, indices, colors }
+	centerAndScale(scratch, rawTotal, TARGET_R)
+
+	const positions = new Float32Array(CALABI_MAX_POINTS * 3)
+	const colors = new Float32Array(CALABI_MAX_POINTS * 3)
+	const raw = Math.min(rawTotal, CALABI_MAX_POINTS)
+	for (let i = 0; i < raw; i++) {
+		const i3 = i * 3
+		positions[i3] = scratch[i3]
+		positions[i3 + 1] = scratch[i3 + 1]
+		positions[i3 + 2] = scratch[i3 + 2]
+		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2])
+	}
+	if (raw > 0) {
+		const px = positions[0]
+		const py = positions[1]
+		const pz = positions[2]
+		const cr = colors[0]
+		const cg = colors[1]
+		const cb = colors[2]
+		for (let i = raw; i < CALABI_MAX_POINTS; i++) {
+			const i3 = i * 3
+			positions[i3] = px
+			positions[i3 + 1] = py
+			positions[i3 + 2] = pz
+			colors[i3] = cr
+			colors[i3 + 1] = cg
+			colors[i3 + 2] = cb
+		}
+	}
+	return { positions, colors, count: CALABI_MAX_POINTS }
 }

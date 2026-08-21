@@ -20,6 +20,11 @@ import SierpinskiTriangle from '../pages/fractals/sierpinski_triangle'
 import CalabiYau from '../pages/misc/calabi_yau'
 import Gyroid from '../pages/misc/gyroid'
 import BarthSextic from '../pages/misc/barth_sextic'
+import SchwarzP from '../pages/misc/schwarz_p'
+import DiniSurface from '../pages/misc/dini_surface'
+import RomanSurface from '../pages/misc/roman_surface'
+import EnneperSurface from '../pages/misc/enneper_surface'
+import BoySurface from '../pages/misc/boy_surface'
 
 export type CatalogEntry = {
 	slug: string
@@ -64,6 +69,11 @@ const components: Record<string, ComponentType> = {
 	calabi_yau: CalabiYau,
 	gyroid: Gyroid,
 	barth_sextic: BarthSextic,
+	schwarz_p: SchwarzP,
+	dini_surface: DiniSurface,
+	roman_surface: RomanSurface,
+	enneper_surface: EnneperSurface,
+	boy_surface: BoySurface,
 }
 
 const catalogEntries: CatalogEntry[] = catalog

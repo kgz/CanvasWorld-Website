@@ -6,31 +6,33 @@ import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import { GYROID_MAX_POINTS, clampIso, clampTiles, sampleGyroidCloud } from '../../utils/gyroid'
+import {
+	clampSpan,
+	DEFAULT_SPAN,
+	ENNEPER_DETAIL,
+	ENNEPER_MAX_POINTS,
+	ENNEPER_NU,
+	ENNEPER_NV,
+	sampleEnneperIsolines,
+	SPAN_MAX,
+	SPAN_MIN,
+} from '../../utils/enneperSurface'
 
-const Gyroid = () => {
+const EnneperSurface = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
 	const seeded = useRef(false)
-	const cloudRef = useRef<ReturnType<typeof sampleGyroidCloud> | null>(null)
+	const cloudRef = useRef<ReturnType<typeof sampleEnneperIsolines> | null>(null)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 28000,
+		baseSpeed: 32000,
 	})
 
 	const datData = useMemo(
 		(): TDatData => ({
 			options: {
-				t: { initialValue: 0, min: -1.2, max: 1.2, step: 0.01 },
-				tiles: { initialValue: 2, min: 1, max: 4, step: 1 },
+				span: { initialValue: DEFAULT_SPAN, min: SPAN_MIN, max: SPAN_MAX, step: 0.05 },
 			},
-			examples: [
-				{ t: 0, tiles: 2 },
-				{ t: 0.45, tiles: 2 },
-				{ t: -0.35, tiles: 2 },
-				{ t: 0, tiles: 3 },
-				{ t: 0, tiles: 4 },
-				{ t: 0, tiles: 1 },
-			],
+			examples: [{ span: 1.6 }, { span: DEFAULT_SPAN }, { span: 2.0 }, { span: 2.4 }],
 		}),
 		[],
 	)
@@ -48,9 +50,11 @@ const Gyroid = () => {
 		)
 	}, [datData, dispatch])
 
-	const iso = clampIso(data.t ?? datData.options.t.initialValue)
-	const tiles = clampTiles(data.tiles ?? datData.options.tiles.initialValue)
-	const cloud = useMemo(() => sampleGyroidCloud(iso, tiles), [iso, tiles])
+	const span = clampSpan(data.span ?? datData.options.span.initialValue)
+	const cloud = useMemo(
+		() => sampleEnneperIsolines(ENNEPER_NU, ENNEPER_NV, ENNEPER_DETAIL, span),
+		[span],
+	)
 	if (cloudRef.current !== cloud) {
 		cloudRef.current = cloud
 		seeded.current = false
@@ -63,38 +67,40 @@ const Gyroid = () => {
 			colors.set(next.colors)
 			seeded.current = true
 		}
-		const toDraw = calculateParticlesToDraw(GYROID_MAX_POINTS, delta)
-		updateProgressUI(toDraw, GYROID_MAX_POINTS)
-		checkCompletion(toDraw, GYROID_MAX_POINTS)
+		const toDraw = calculateParticlesToDraw(ENNEPER_MAX_POINTS, delta)
+		updateProgressUI(toDraw, ENNEPER_MAX_POINTS)
+		checkCompletion(toDraw, ENNEPER_MAX_POINTS)
 		return toDraw
 	}
 
 	return (
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
-			numParticles={GYROID_MAX_POINTS}
+			numParticles={ENNEPER_MAX_POINTS}
 			pointSize={1.15}
 			tick={tick}
-			cameraPosition={[0, 0, 2.15]}
+			cameraPosition={[0, 0, 3.4]}
 			autoRotate={!isScreenshotMode()}
-			autoRotateSpeed={0.28}
+			autoRotateSpeed={0.32}
 		/>
 	)
 }
 
-Gyroid.getDescription = () => (
+EnneperSurface.getDescription = () => (
 	<>
-		Schoen’s gyroid (1970) is a triply periodic minimal surface: a two-sided labyrinth that repeats
-		on a cubic lattice. Particle wire of the trigonometric implicit (a close approximation to the
-		true minimal surface) — no lit mesh.
+		Enneper’s minimal surface (1864) is a complete immersed minimal surface with a polynomial
+		parametrization. UV isoline particle wire — no lit mesh. Default domain is large enough that the
+		self-intersections read.
 		<br />
 		<br />
-		<strong>Level set</strong> on <InlineMath math="[0, 2\pi\cdot\mathrm{tiles}]^3" />:
-		<BlockMath math={'\\sin x\\,\\cos y + \\sin y\\,\\cos z + \\sin z\\,\\cos x = t'} />
+		<strong>Parametrization</strong> on <InlineMath math="u,v \in [-\mathrm{span},\mathrm{span}]" />:
+		<BlockMath math={'x = u - u^3/3 + u v^2'} />
+		<BlockMath math={'y = v - v^3/3 + v u^2'} />
+		<BlockMath math={'z = u^2 - v^2'} />
 		<br />
-		UI <InlineMath math="t" /> is the iso-level (0 = balanced gyroid), <InlineMath math="tiles" />{' '}
-		repeats the cell. Transport <code>n</code> reveals points.
+		UI <InlineMath math="\mathrm{span}" /> is the |u|,|v| domain. Transport <code>n</code> reveals
+		points.
 	</>
 )
 
-export default Gyroid
+export default EnneperSurface

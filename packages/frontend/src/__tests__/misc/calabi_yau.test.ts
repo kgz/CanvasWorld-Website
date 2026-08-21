@@ -1,12 +1,14 @@
 import { describe, it, expect } from 'vitest'
 import {
-	buildCalabiYauMesh,
+	CALABI_MAX_POINTS,
 	cadd,
 	clampDegree,
+	clampProj,
 	clampRes,
 	cpow,
 	fermatPair,
 	projectCalabiYau,
+	sampleCalabiYauCloud,
 } from '../../utils/calabiYau'
 
 describe('Calabi–Yau Hanson slice', () => {
@@ -26,20 +28,45 @@ describe('Calabi–Yau Hanson slice', () => {
 		expect(Number.isFinite(p.z)).toBe(true)
 	})
 
-	it('builds n×n patches at the requested resolution', () => {
-		const n = 5
-		const res = 8
-		const mesh = buildCalabiYauMesh(n, 0.4, res)
-		const vertsPerPatch = (res + 1) * (res + 1)
-		expect(mesh.positions.length / 3).toBe(n * n * vertsPerPatch)
-		expect(mesh.indices.length).toBe(n * n * res * res * 6)
-		expect(mesh.colors.length).toBe(mesh.positions.length)
-	})
-
-	it('clamps degree and res', () => {
+	it('clamps degree, proj, and res', () => {
 		expect(clampDegree(1.2)).toBe(2)
 		expect(clampDegree(9)).toBe(8)
+		expect(clampProj(-1)).toBe(0)
+		expect(clampProj(4)).toBe(Math.PI)
 		expect(clampRes(3)).toBe(6)
 		expect(clampRes(80)).toBe(36)
+	})
+})
+
+describe('sampleCalabiYauCloud', () => {
+	it('builds a fixed-size particle cloud', () => {
+		const cloud = sampleCalabiYauCloud(5, 0.4)
+		expect(cloud.count).toBe(CALABI_MAX_POINTS)
+		expect(cloud.positions.length).toBe(CALABI_MAX_POINTS * 3)
+		expect(cloud.colors.length).toBe(cloud.positions.length)
+		for (let i = 0; i < 300; i++) {
+			expect(Number.isFinite(cloud.positions[i])).toBe(true)
+		}
+	})
+
+	it('keeps count stable across degree changes', () => {
+		const a = sampleCalabiYauCloud(3, 0.2)
+		const b = sampleCalabiYauCloud(8, 1.1)
+		expect(a.count).toBe(CALABI_MAX_POINTS)
+		expect(b.count).toBe(CALABI_MAX_POINTS)
+	})
+})
+
+describe('calabi colors', () => {
+	it('has saturated non-gray variance', () => {
+		const cloud = sampleCalabiYauCloud(5, 0.4)
+		let maxChroma = 0
+		for (let i = 0; i < 5000; i++) {
+			const r = cloud.colors[i * 3]
+			const g = cloud.colors[i * 3 + 1]
+			const b = cloud.colors[i * 3 + 2]
+			maxChroma = Math.max(maxChroma, Math.max(r, g, b) - Math.min(r, g, b))
+		}
+		expect(maxChroma).toBeGreaterThan(0.3)
 	})
 })

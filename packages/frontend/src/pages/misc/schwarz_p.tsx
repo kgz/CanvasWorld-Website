@@ -6,13 +6,13 @@ import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import { GYROID_MAX_POINTS, clampIso, clampTiles, sampleGyroidCloud } from '../../utils/gyroid'
+import { SCHWARZ_MAX_POINTS, clampIso, clampTiles, sampleSchwarzPCloud } from '../../utils/schwarzP'
 
-const Gyroid = () => {
+const SchwarzP = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
 	const seeded = useRef(false)
-	const cloudRef = useRef<ReturnType<typeof sampleGyroidCloud> | null>(null)
+	const cloudRef = useRef<ReturnType<typeof sampleSchwarzPCloud> | null>(null)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
 		baseSpeed: 28000,
 	})
@@ -50,7 +50,7 @@ const Gyroid = () => {
 
 	const iso = clampIso(data.t ?? datData.options.t.initialValue)
 	const tiles = clampTiles(data.tiles ?? datData.options.tiles.initialValue)
-	const cloud = useMemo(() => sampleGyroidCloud(iso, tiles), [iso, tiles])
+	const cloud = useMemo(() => sampleSchwarzPCloud(iso, tiles), [iso, tiles])
 	if (cloudRef.current !== cloud) {
 		cloudRef.current = cloud
 		seeded.current = false
@@ -63,16 +63,16 @@ const Gyroid = () => {
 			colors.set(next.colors)
 			seeded.current = true
 		}
-		const toDraw = calculateParticlesToDraw(GYROID_MAX_POINTS, delta)
-		updateProgressUI(toDraw, GYROID_MAX_POINTS)
-		checkCompletion(toDraw, GYROID_MAX_POINTS)
+		const toDraw = calculateParticlesToDraw(SCHWARZ_MAX_POINTS, delta)
+		updateProgressUI(toDraw, SCHWARZ_MAX_POINTS)
+		checkCompletion(toDraw, SCHWARZ_MAX_POINTS)
 		return toDraw
 	}
 
 	return (
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
-			numParticles={GYROID_MAX_POINTS}
+			numParticles={SCHWARZ_MAX_POINTS}
 			pointSize={1.15}
 			tick={tick}
 			cameraPosition={[0, 0, 2.15]}
@@ -82,19 +82,19 @@ const Gyroid = () => {
 	)
 }
 
-Gyroid.getDescription = () => (
+SchwarzP.getDescription = () => (
 	<>
-		Schoen’s gyroid (1970) is a triply periodic minimal surface: a two-sided labyrinth that repeats
-		on a cubic lattice. Particle wire of the trigonometric implicit (a close approximation to the
-		true minimal surface) — no lit mesh.
+		Schwarz’s primitive (P) surface is a triply periodic minimal surface: a two-sided labyrinth that
+		repeats on a cubic lattice. Particle wire of the trigonometric implicit (a close approximation to
+		the true minimal surface) — no lit mesh.
 		<br />
 		<br />
 		<strong>Level set</strong> on <InlineMath math="[0, 2\pi\cdot\mathrm{tiles}]^3" />:
-		<BlockMath math={'\\sin x\\,\\cos y + \\sin y\\,\\cos z + \\sin z\\,\\cos x = t'} />
+		<BlockMath math={'\\cos x + \\cos y + \\cos z = t'} />
 		<br />
-		UI <InlineMath math="t" /> is the iso-level (0 = balanced gyroid), <InlineMath math="tiles" />{' '}
-		repeats the cell. Transport <code>n</code> reveals points.
+		UI <InlineMath math="t" /> is the iso-level (0 = balanced P), <InlineMath math="tiles" /> repeats
+		the cell. Transport <code>n</code> reveals points.
 	</>
 )
 
-export default Gyroid
+export default SchwarzP

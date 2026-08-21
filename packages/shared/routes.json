@@ -156,7 +156,7 @@
     "slug": "calabi_yau",
     "title": "Calabi–Yau Manifold",
     "category": "misc",
-    "description": "Hanson 3D projection of a 2-real slice of the Fermat quintic z₁ⁿ + z₂ⁿ = 1 (n=5). Lit mesh of all n×n Riemann patches; not the full 6-real Calabi–Yau 3-fold.",
+    "description": "Hanson 3D projection of a 2-real slice of the Fermat quintic as a particle wire. Morph degree n and projection angle a; not the full 6-real Calabi–Yau 3-fold.",
     "thumbnail": "/chaos/icons/calabi_yau.png",
     "renderMode": "webgl",
     "active": true
@@ -165,7 +165,7 @@
     "slug": "gyroid",
     "title": "Gyroid",
     "category": "misc",
-    "description": "Schoen gyroid: triply periodic minimal surface meshed from sin x cos y + sin y cos z + sin z cos x = t on a 2π cell.",
+    "description": "Schoen gyroid as a particle wire: triply periodic minimal surface from sin x cos y + sin y cos z + sin z cos x = t on a 2π cell.",
     "thumbnail": "/chaos/icons/gyroid.png",
     "renderMode": "webgl",
     "active": true
@@ -174,8 +174,53 @@
     "slug": "barth_sextic",
     "title": "Barth Sextic",
     "category": "misc",
-    "description": "Barth’s degree-6 algebraic surface with icosahedral symmetry. Affine chart meshed from the golden-ratio implicit; 65 ordinary double points.",
+    "description": "Barth’s degree-6 icosahedral surface as a particle wire. Morph tau (golden lattice), radius (sphere term), mix (spikes vs shell).",
     "thumbnail": "/chaos/icons/barth_sextic.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "schwarz_p",
+    "title": "Schwarz P",
+    "category": "misc",
+    "description": "Schwarz primitive (P) as a particle wire. Morph iso-level t and tiles on the cos x + cos y + cos z = t labyrinth.",
+    "thumbnail": "/chaos/icons/schwarz_p.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "dini_surface",
+    "title": "Dini's Surface",
+    "category": "misc",
+    "description": "Dini’s surface: a pseudospherical helicoid (twisted tractrix). UV isoline particle wire with radius a and twist b.",
+    "thumbnail": "/chaos/icons/dini_surface.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "roman_surface",
+    "title": "Roman Surface",
+    "category": "misc",
+    "description": "Steiner’s Roman surface: RP² immersion as a UV isoline particle wire. Morph squash stretches z before normalize.",
+    "thumbnail": "/chaos/icons/roman_surface.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "enneper_surface",
+    "title": "Enneper Surface",
+    "category": "misc",
+    "description": "Enneper’s minimal surface as a UV isoline particle wire. Span sets |u|,|v| so the self-intersections read.",
+    "thumbnail": "/chaos/icons/enneper_surface.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "boy_surface",
+    "title": "Boy's Surface",
+    "category": "misc",
+    "description": "Immersion of RP² in R³ as a polar isoline wire. Morph k: Roman→Apéry Boy; bryant: Apéry→Bryant–Kusner three-balls.",
+    "thumbnail": "/chaos/icons/boy_surface.png",
     "renderMode": "webgl",
     "active": true
   }

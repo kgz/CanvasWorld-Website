@@ -2,20 +2,13 @@ import { polygoniseGrid } from './isosurface'
 
 const PERIOD = Math.PI * 2
 /** Fixed GPU budget so param scrubs don't remount buffers / reset `n`. */
-export const GYROID_MAX_POINTS = 120_000
+export const SCHWARZ_MAX_POINTS = 120_000
+const TARGET_R = 1.7
 /** Samples along one period; higher tile counts use a slightly coarser grid. */
 const GRID_RES = 32
-const TARGET_R = 1.7
 
-export type GyroidCloud = {
-	positions: Float32Array
-	colors: Float32Array
-	/** Always GYROID_MAX_POINTS (padded). */
-	count: number
-}
-
-export function gyroidField(x: number, y: number, z: number): number {
-	return Math.sin(x) * Math.cos(y) + Math.sin(y) * Math.cos(z) + Math.sin(z) * Math.cos(x)
+export function schwarzPField(x: number, y: number, z: number): number {
+	return Math.cos(x) + Math.cos(y) + Math.cos(z)
 }
 
 export function clampIso(t: number): number {
@@ -24,6 +17,13 @@ export function clampIso(t: number): number {
 
 export function clampTiles(tiles: number): number {
 	return Math.min(4, Math.max(1, Math.round(tiles)))
+}
+
+export type SchwarzPCloud = {
+	positions: Float32Array
+	colors: Float32Array
+	/** Always SCHWARZ_MAX_POINTS (padded). */
+	count: number
 }
 
 function centerAndScaleTiles(
@@ -69,10 +69,9 @@ function writeRibbon(colors: Float32Array, i: number, x: number, y: number, z: n
 }
 
 /** Isosurface vertices as a particle cloud (no lit triangles). */
-export function sampleGyroidCloud(iso = 0, tiles = 2): GyroidCloud {
+export function sampleSchwarzPCloud(iso = 0, tiles = 2): SchwarzPCloud {
 	const t = clampIso(iso)
 	const nTiles = clampTiles(tiles)
-	/** Keep MC cost sane as the domain grows with tiles. */
 	const samplesPer = nTiles >= 4 ? 20 : nTiles >= 3 ? 24 : GRID_RES
 	const nx = samplesPer * nTiles + 1
 	const extent = PERIOD * nTiles
@@ -87,19 +86,18 @@ export function sampleGyroidCloud(iso = 0, tiles = 2): GyroidCloud {
 			const y = j * cellSize
 			for (let i = 0; i < nx; i++) {
 				const x = i * cellSize
-				values[i + nx * (j + nx * k)] = gyroidField(x, y, z) - t
+				values[i + nx * (j + nx * k)] = schwarzPField(x, y, z) - t
 			}
 		}
 	}
 
 	const mesh = polygoniseGrid(values, nx, nx, nx, origin, cell)
 	const total = mesh.positions.length / 3
-	const keep = Math.min(total, GYROID_MAX_POINTS)
-	/** Prefix truncate biases one side of the cell — stride so the cloud stays centered. */
+	const keep = Math.min(total, SCHWARZ_MAX_POINTS)
 	const stride = total > keep ? total / keep : 1
 
-	const positions = new Float32Array(GYROID_MAX_POINTS * 3)
-	const colors = new Float32Array(GYROID_MAX_POINTS * 3)
+	const positions = new Float32Array(SCHWARZ_MAX_POINTS * 3)
+	const colors = new Float32Array(SCHWARZ_MAX_POINTS * 3)
 	for (let i = 0; i < keep; i++) {
 		const src = Math.min(total - 1, Math.floor(i * stride)) * 3
 		const i3 = i * 3
@@ -119,7 +117,7 @@ export function sampleGyroidCloud(iso = 0, tiles = 2): GyroidCloud {
 		const cr = colors[0]
 		const cg = colors[1]
 		const cb = colors[2]
-		for (let i = keep; i < GYROID_MAX_POINTS; i++) {
+		for (let i = keep; i < SCHWARZ_MAX_POINTS; i++) {
 			const i3 = i * 3
 			positions[i3] = px
 			positions[i3 + 1] = py
@@ -129,5 +127,5 @@ export function sampleGyroidCloud(iso = 0, tiles = 2): GyroidCloud {
 			colors[i3 + 2] = cb
 		}
 	}
-	return { positions, colors, count: GYROID_MAX_POINTS }
+	return { positions, colors, count: SCHWARZ_MAX_POINTS }
 }

@@ -1,6 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import { polygoniseGrid } from '../../utils/isosurface'
-import { buildGyroidMesh, clampIso, clampRes, clampTiles, gyroidField } from '../../utils/gyroid'
+import {
+	GYROID_MAX_POINTS,
+	clampIso,
+	clampTiles,
+	gyroidField,
+	sampleGyroidCloud,
+} from '../../utils/gyroid'
 
 describe('gyroid field', () => {
 	it('is 2π-periodic', () => {
@@ -35,31 +41,62 @@ describe('polygoniseGrid', () => {
 	})
 })
 
-describe('buildGyroidMesh', () => {
-	it('builds a finite default cell', () => {
-		const mesh = buildGyroidMesh(0, 16, 1)
-		expect(mesh.indices.length).toBeGreaterThan(100)
-		expect(mesh.positions.length).toBeGreaterThan(0)
-		expect(mesh.colors.length).toBe(mesh.positions.length)
-		for (let i = 0; i < mesh.positions.length; i++) {
-			expect(Number.isFinite(mesh.positions[i])).toBe(true)
+describe('sampleGyroidCloud', () => {
+	it('builds a fixed-size particle cloud', () => {
+		const cloud = sampleGyroidCloud(0, 1)
+		expect(cloud.count).toBe(GYROID_MAX_POINTS)
+		expect(cloud.positions.length).toBe(GYROID_MAX_POINTS * 3)
+		expect(cloud.colors.length).toBe(cloud.positions.length)
+		for (let i = 0; i < 300; i++) {
+			expect(Number.isFinite(cloud.positions[i])).toBe(true)
 		}
 	})
 
-	it('builds a 36-sample cell in under 8s', () => {
+	it('samples default cell in under 8s', () => {
 		const t0 = Date.now()
-		const mesh = buildGyroidMesh(0, 36, 1)
+		const cloud = sampleGyroidCloud(0, 1)
 		const ms = Date.now() - t0
-		expect(mesh.indices.length).toBeGreaterThan(1000)
+		expect(cloud.count).toBe(GYROID_MAX_POINTS)
 		expect(ms).toBeLessThan(8000)
 	})
 
 	it('clamps params', () => {
 		expect(clampIso(9)).toBe(1.2)
 		expect(clampIso(-9)).toBe(-1.2)
-		expect(clampRes(2)).toBe(16)
-		expect(clampRes(99)).toBe(56)
 		expect(clampTiles(0)).toBe(1)
-		expect(clampTiles(8)).toBe(2)
+		expect(clampTiles(8)).toBe(4)
+	})
+
+	it('keeps the cloud centered when tiles overflow the budget', () => {
+		const cloud = sampleGyroidCloud(0, 4)
+		let cx = 0
+		let cy = 0
+		let cz = 0
+		const step = 17
+		let n = 0
+		for (let i = 0; i < cloud.count; i += step) {
+			cx += cloud.positions[i * 3]
+			cy += cloud.positions[i * 3 + 1]
+			cz += cloud.positions[i * 3 + 2]
+			n += 1
+		}
+		cx /= n
+		cy /= n
+		cz /= n
+		expect(Math.hypot(cx, cy, cz)).toBeLessThan(0.08)
+	})
+})
+
+describe('gyroid colors', () => {
+	it('has saturated non-gray variance', () => {
+		const cloud = sampleGyroidCloud()
+		let maxChroma = 0
+		for (let i = 0; i < 5000; i++) {
+			const r = cloud.colors[i * 3]
+			const g = cloud.colors[i * 3 + 1]
+			const b = cloud.colors[i * 3 + 2]
+			maxChroma = Math.max(maxChroma, Math.max(r, g, b) - Math.min(r, g, b))
+		}
+		expect(maxChroma).toBeGreaterThan(0.3)
 	})
 })
