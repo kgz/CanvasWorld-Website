@@ -60,7 +60,7 @@ function flattenElements(children: ReactNode): ReactElement[] {
 function embedSrc(slug: string, particles: number | 'full' | undefined, animateN: boolean): string {
 	const q = new URLSearchParams()
 	q.set('iframe', '1')
-	q.set('v', 'serp1')
+	q.set('v', 'fit6')
 	if (animateN) {
 		q.set('n', 'animate')
 	}

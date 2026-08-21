@@ -1,0 +1,55 @@
+export const meta = {
+	slug: 'boy-surface',
+	title: 'Boy surface: the immersion that has to cross',
+	tag: 'Surfaces',
+	excerpt:
+		'Boy surface crosses itself in 3D: Werner Boy’s 1901 immersion of the real projective plane, with a triple point and no clean outside. Classical Chaos draws it as a polar isoline wire that grows in.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'boy_surface',
+	featured: false,
+	order: 160,
+}
+
+
+I kept waiting for a sealed outside. Boy surface never gives you one. The drawing has to pass through itself in space. That is the point: this picture is allowed to cross; a clean embedding would forbid that. Werner Boy found this immersion of the real projective plane (RP²) in ordinary 3-space in 1901, with self-intersections and a triple point — three sheets meeting in one place. The wire has to cross.
+
+Classical Chaos samples the surface as a polar isoline wire (rings and rays), then drops those samples as a 3D point cloud. Color follows the polar pair `(r, θ)`. Watching it fill in, the crossings stay readable because you see lines meet, not a solid shell that hides them.
+
+<VizEmbed slug="boy_surface" label="Boy surface" animateN />
+
+## Wire that grows in
+
+The embed lights more of the wire over time until the whole cage is there. I expected a filled mesh the first time. The isoline cage is what made the triple point feel obvious instead of buried.
+
+## Two morphs, one blend
+
+On the [full Boy stage](/boy_surface) two morphs sit next to each other. Defaults land at `k = 1` and `bryant = 1`. Knob `k` walks from a Roman-like cousin at `0` toward Boy at `1`. Knob `bryant` (call it `b`) walks from petal shapes at `0` toward a three-balls look at `1`.
+
+Each side gets centered and scaled, then mixed:
+
+<BlockMath math={'p = (1 - b)\\, P_{\\mathrm{Ap\\acute{e}ry}}(k) + b\\, P_{\\mathrm{Bryant}}'} />
+
+```ts
+const p =
+  (1 - b) * aperyPoint(k, r, theta) + b * bryantPoint(r, theta)
+```
+
+Change `k` or `bryant` there and the cloud resamples; the grow-in restarts from the seed. I thought I was only bending what was already drawn. The wire rebuilds.
+
+Example presets on that stage jump the same story in two clicks: Roman-ish `(0, 0)` to full Boy `(1, 1)`. I often park halfway on `bryant` when the blend is what I am staring at.
+
+## Polar disk in, two charts out
+
+The domain is a disk in polar `(r, θ)`. That disk maps into Apéry’s `(u, v)` and into Bryant–Kusner’s complex `w` on the unit disk.
+
+Apéry uses
+
+<BlockMath math={'u = \\theta / 2,\\qquad v = \\pi r'} />
+
+with `(u, v)` in `[0, π]`. Bryant–Kusner works with complex `w` on that same unit disk. I do not need the full closed form memorized to feel the morph: `k` tilts toward Boy; `bryant` fattens petals into three balls.
+
+<Callout to="/boy_surface">
+	<strong>Goto full canvas</strong>
+	Morph with `k` and `bryant`, try the example presets, and spin the wire on the [full Boy stage](/boy_surface).
+</Callout>
