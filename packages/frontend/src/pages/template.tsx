@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Index from './index-new'
 import Blog from './blog'
+import PostPage from './PostPage'
 import routes from '../@types/routes'
 import { useMatomo } from '@datapunt/matomo-tracker-react'
 import { useEffect, useMemo } from 'react'
@@ -38,6 +39,7 @@ const Template = () => {
 				)
 			})}
 			<Route path="/blog" element={<Blog />} />
+			<Route path="/blog/:slug" element={<PostPage />} />
 			<Route path="*" element={<Index />} />
 		</Routes>
 	)

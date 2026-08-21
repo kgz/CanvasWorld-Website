@@ -1,0 +1,25 @@
+export const meta = {
+	slug: 'mandelbrot-escape',
+	title: 'Escape time: how the Mandelbrot boundary gets drawn',
+	tag: 'Fractals',
+	excerpt:
+		'Every pixel is a tiny experiment — iterate, check the bound, count the steps. The boundary is where the answer stops being obvious.',
+	dateLabel: 'Jun 2026',
+	readMinutes: 7,
+	thumbSlug: 'mandelbrot_set',
+	order: 40,
+}
+
+
+Every pixel is a tiny experiment — iterate, check the bound, count the steps. The boundary is where the answer stops being obvious.
+
+<VizEmbed slug="mandelbrot_set" label="Mandelbrot" />
+
+## Iterate, measure, colour
+
+For each complex seed we run `z ← z² + c` until `|z|` escapes a bailout or we hit the iteration cap. The step count becomes colour. Smooth colouring softens banding; the silhouette is still the escape-time set.
+
+<Callout>
+  <strong>Explore</strong>
+  Open the full Mandelbrot view to pan and zoom the boundary where iteration counts thrash.
+</Callout>

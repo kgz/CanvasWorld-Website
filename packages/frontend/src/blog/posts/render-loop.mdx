@@ -1,0 +1,24 @@
+export const meta = {
+	slug: 'render-loop',
+	title: 'Rendering nine thousand points at sixty frames a second',
+	tag: 'Engineering',
+	excerpt:
+		'How the canvas stage batches trajectory segments, ages their opacity, and keeps a single context fast enough to feel alive.',
+	dateLabel: 'Jul 2026',
+	readMinutes: 5,
+	order: 30,
+}
+
+
+The stage has to feel continuous without redrawing the entire history every frame. We batch trajectory segments, age opacity by index, and keep the draw path thin enough that a mid laptop still holds sixty frames when several embeds are awake.
+
+## Budget before beauty
+
+Particle count, DPR, and auto-rotate are dials. Notebook embeds start conservative and pause when offscreen so a Hopalong grid does not melt the tab.
+
+<VizEmbed slug="clifford_attractor" label="Clifford" />
+
+<Callout>
+  <strong>Full chrome</strong>
+  Open any attractor and scrub transport — progress is a first-class control, not an afterthought.
+</Callout>

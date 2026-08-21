@@ -5,6 +5,7 @@ import { EDimensions, type TDatData, type TParticleProps } from '../@types/gui'
 import { setDatData, setData } from '../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../@store/store'
 import { useAnimationState } from '../hooks/useAnimationState'
+import { resolveParticleCount } from '../modules/embedMode'
 import Base from './_base'
 
 export type ParamDef = {
@@ -75,9 +76,11 @@ export function createAttractorPage(config: AttractorPageConfig): AttractorPageC
 		trailLength = 100,
 		numParticles = 200_000,
 		pointSize = 0.5,
-		cameraPosition,
+		cameraPosition = [0, 0, 220],
 		description,
 	} = config
+
+	const camZ = Math.abs(cameraPosition[2] ?? 220)
 
 	const AttractorPage = () => {
 		const dispatch = useAppDispatch()
@@ -142,16 +145,16 @@ export function createAttractorPage(config: AttractorPageConfig): AttractorPageC
 			updateProgressUI(particlesToDraw, totalParticles)
 			checkCompletion(particlesToDraw, totalParticles)
 
-			return { positions, colors }
+			return particlesToDraw
 		}
 
 		return (
 			<Base
 				dimension={EDimensions.TWO_D}
-				numParticles={numParticles}
+				numParticles={resolveParticleCount(numParticles)}
 				tick={tick}
 				pointSize={pointSize}
-				cameraPosition={cameraPosition}
+				cameraPosition={[0, 0, camZ]}
 			/>
 		)
 	}

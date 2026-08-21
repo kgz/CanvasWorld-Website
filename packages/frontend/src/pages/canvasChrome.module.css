@@ -582,20 +582,32 @@ a.exploreItem:hover {
 }
 
 .stageOnly {
-  min-height: 100vh;
+  position: relative;
   width: 100%;
+  height: 100vh;
+  min-height: 100%;
   background: #000;
   color: #fff;
+  overflow: hidden;
 }
 
 .stageOnlyInner {
-  height: 100vh;
-  width: 100vw;
+  /* % only — never 100vw (iframe overflow shifts WebGL centre right on HiDPI) */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   background: #000;
-  position: relative;
 }
 
 .stageOnlyInner > * {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Same as .stageHost — without this, buffer px can become CSS size (dpr>1 → right shift) */
+.stageOnlyInner :global(canvas) {
+  display: block;
   width: 100% !important;
   height: 100% !important;
 }

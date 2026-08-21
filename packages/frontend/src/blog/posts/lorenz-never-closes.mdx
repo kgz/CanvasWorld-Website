@@ -1,0 +1,44 @@
+export const meta = {
+	slug: 'lorenz-never-closes',
+	title: 'Why the Lorenz attractor never closes',
+	tag: 'Attractors',
+	excerpt:
+		'Three coupled equations, one seed, and a trajectory that folds back on itself forever without ever repeating. A short tour of sensitivity, butterfly wings, and why "chaotic" doesn\'t mean "random."',
+	dateLabel: 'Aug 2026',
+	readMinutes: 6,
+	featured: true,
+	thumbSlug: 'lorenz_attractor',
+	order: 10,
+}
+
+
+Three coupled equations, one seed, and a trajectory that folds forever without repeating. Lorenz’s 1963 convection model is the textbook strange attractor — deterministic, bounded, and sensitive to the tiniest nudge.
+
+<VizEmbed slug="lorenz_attractor" label="Lorenz" animateN />
+
+## Chaotic ≠ random
+
+Every point on the butterfly is the result of an ordinary differential equation. There is no noise term. What looks like chance is sensitivity: two seeds that differ by `1e-8` diverge until they occupy opposite wings.
+
+```
+dx/dt = σ(y − x)
+dy/dt = x(ρ − z) − y
+dz/dt = xy − βz
+```
+
+With the classic constants `σ = 10`, `ρ = 28`, `β = 8/3`, the flow stays inside a bounded region of phase space yet never settles onto a closed orbit. That combination — bounded + aperiodic — is the signature of a strange attractor.
+
+## Why it never closes
+
+A periodic orbit would return to the exact same `(x, y, z)` after a finite time. Lorenz’s trajectory comes arbitrarily close to past states and then peels away. Numerically we integrate with a fixed step; the picture is an approximation, but the topology survives: two lobes joined at a saddle.
+
+> The “never closes” claim is about the continuous flow, not about floating-point loops. Finite precision will eventually cycle — the attractor itself does not.
+
+## What Classical Chaos draws
+
+We precompute a trajectory buffer, then reveal it over time while slowly rotating the projected view. Opacity ages with index so older segments fall back and the leading edge stays bright — the same chrome language as the full stage.
+
+<Callout>
+  <strong>Try it</strong>
+  Open the full Lorenz canvas to scrub progress, change σ / ρ / β, and watch the wings reshape from the same seed.
+</Callout>

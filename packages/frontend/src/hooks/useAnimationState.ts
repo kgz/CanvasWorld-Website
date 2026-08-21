@@ -1,3 +1,4 @@
+import { isEmbedFullReveal } from '../modules/embedMode'
 import { isScreenshotMode } from '../modules/screenshotMode'
 import { useAnimation } from '../context/AnimationContext'
 
@@ -13,7 +14,7 @@ export const useAnimationState = (options?: { baseSpeed?: number }) => {
 	const baseSpeed = options?.baseSpeed ?? 2000
 
 	const calculateParticlesToDraw = (totalParticles: number, delta: number) => {
-		if (isScreenshotMode()) {
+		if (isScreenshotMode() || isEmbedFullReveal()) {
 			return totalParticles
 		}
 

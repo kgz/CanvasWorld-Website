@@ -1,0 +1,29 @@
+export const meta = {
+	slug: 'parameters-as-interface',
+	title: 'Parameters as the primary interface',
+	tag: 'Design notes',
+	excerpt:
+		'Why every visualization ships with sliders before it ships with anything else — and how that decision shaped the side-panel layout.',
+	dateLabel: 'Mar 2026',
+	readMinutes: 4,
+	thumbSlug: 'lorenz_attractor',
+	order: 70,
+}
+
+
+Every visualization ships with sliders before it ships with anything else. The side panel is not chrome for chrome’s sake — it is the product: change a constant, re-seed the trajectory, watch the structure respond.
+
+<VizEmbed slug="lorenz_attractor" label="Lorenz" animateN />
+
+## Why params first
+
+A static render of Lorenz is a poster. A live ρ slider is a laboratory. Shipping params early forced the chrome layout: floating left panel, transport below, stage full-bleed — everything else subordinates to “can I change the system?”
+
+## Copy that stays scientific
+
+Labels keep the Greek letter and the Latin name. Values stay mono and tabular. We avoid marketing adjectives next to the controls; the trajectory is the copy.
+
+<Callout>
+  <strong>On the full stage</strong>
+  Open Lorenz and push ρ toward 20 or past 40 — same seed, new constants, recomputed buffer.
+</Callout>

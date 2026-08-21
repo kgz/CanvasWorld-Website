@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { NOTEBOOK_POSTS } from '../blog/posts'
+import { posts } from '../blog/registry'
+import { formatPostMeta } from '../blog/types'
 import styles from './blog.module.css'
 
 const FONT_HREF =
@@ -20,8 +21,8 @@ function Blog() {
 	const [navScrolled, setNavScrolled] = useState(false)
 	const [thumbBroken, setThumbBroken] = useState(false)
 
-	const featured = NOTEBOOK_POSTS.find((p) => p.featured)
-	const rest = NOTEBOOK_POSTS.filter((p) => !p.featured)
+	const featured = posts.find((p) => p.meta.featured) ?? posts[0]
+	const rest = posts.filter((p) => p.slug !== featured?.slug)
 
 	useEffect(() => {
 		const existing = document.querySelector(`link[data-cw-frontpage-fonts="1"]`)
@@ -75,11 +76,11 @@ function Blog() {
 
 				{featured ? (
 					<section className={styles.featuredSection}>
-						<a className={styles.featured} href={featured.href ?? '#'}>
-							{featured.thumbSlug && !thumbBroken ? (
+						<Link className={styles.featured} to={`/blog/${featured.slug}`}>
+							{featured.meta.thumbSlug && !thumbBroken ? (
 								<img
 									className={styles.featuredArt}
-									src={iconUrl(featured.thumbSlug)}
+									src={iconUrl(featured.meta.thumbSlug)}
 									alt=""
 									onError={() => setThumbBroken(true)}
 								/>
@@ -87,12 +88,12 @@ function Blog() {
 								<span className={styles.featuredArtFallback} aria-hidden="true" />
 							)}
 							<span className={styles.featuredBody}>
-								<span className={styles.postTag}>{featured.tag}</span>
-								<span className={styles.featuredTitle}>{featured.title}</span>
-								<span className={styles.postExcerpt}>{featured.excerpt}</span>
-								<span className={styles.postMeta}>{featured.meta}</span>
+								<span className={styles.postTag}>{featured.meta.tag}</span>
+								<span className={styles.featuredTitle}>{featured.meta.title}</span>
+								<span className={styles.postExcerpt}>{featured.meta.excerpt}</span>
+								<span className={styles.postMeta}>{formatPostMeta(featured.meta)}</span>
 							</span>
-						</a>
+						</Link>
 					</section>
 				) : null}
 
@@ -100,13 +101,13 @@ function Blog() {
 					<h2 className={styles.groupTitle}>More notes</h2>
 					<div className={styles.postGrid}>
 						{rest.map((post) => (
-							<article key={post.id} className={styles.postCard}>
-								<a href={post.href ?? '#'}>
-									<span className={styles.postTag}>{post.tag}</span>
-									<span className={styles.postCardTitle}>{post.title}</span>
-									<span className={styles.postExcerpt}>{post.excerpt}</span>
-									<span className={styles.postMeta}>{post.meta}</span>
-								</a>
+							<article key={post.slug} className={styles.postCard}>
+								<Link to={`/blog/${post.slug}`}>
+									<span className={styles.postTag}>{post.meta.tag}</span>
+									<span className={styles.postCardTitle}>{post.meta.title}</span>
+									<span className={styles.postExcerpt}>{post.meta.excerpt}</span>
+									<span className={styles.postMeta}>{formatPostMeta(post.meta)}</span>
+								</Link>
 							</article>
 						))}
 					</div>

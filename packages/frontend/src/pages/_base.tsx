@@ -1,12 +1,13 @@
 import { OrbitControls } from '@react-three/drei'
 import type { RenderCallback } from '@react-three/fiber'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react'
 import * as THREE from 'three'
 import style from '../@scss/template.module.scss'
 import { Helmet } from 'react-helmet'
 import { renderToString } from 'react-dom/server'
-import { isMeshProps, isParticleProps, isShaderProps, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
+import { isMeshProps, isParticleProps, isShaderProps, EDimensions, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
+import { isEmbedMode } from '../modules/embedMode'
 import { isScreenshotMode, markScreenshotReady } from '../modules/screenshotMode'
 
 const tagVizCanvas = (canvas: HTMLCanvasElement) => {
@@ -19,6 +20,110 @@ const canvasGlProps = () =>
     ? { antialias: true as const, preserveDrawingBuffer: true as const }
     : { antialias: true as const }
 
+/** Embed/screenshot: lock framing. Full page keeps OrbitControls zoom. */
+function shouldAutoFrame2D(): boolean {
+  return isEmbedMode() || isScreenshotMode()
+}
+
+/** Half-height of the fixed 2D ortho view (width = halfH * aspect). */
+const ORTHO_HALF_H = 1
+
+/** Mass-centre only — keeps catalog scale so full-page zoom still works. */
+function center2D(xy: Float32Array, count: number, out: Float32Array) {
+  if (count <= 0) {
+    return
+  }
+  let sumX = 0
+  let sumY = 0
+  for (let i = 0; i < count; i++) {
+    sumX += xy[i * 2]
+    sumY += xy[i * 2 + 1]
+  }
+  const cx = sumX / count
+  const cy = sumY / count
+  for (let i = 0; i < count; i++) {
+    out[i * 3] = xy[i * 2] - cx
+    out[i * 3 + 1] = xy[i * 2 + 1] - cy
+    out[i * 3 + 2] = 0
+  }
+}
+
+/**
+ * Embed framing: mass-centre + uniform-scale into fixed ortho view.
+ * Hopalong clouds are density-asymmetric; bbox mid looks right-shifted.
+ */
+function fit2DIntoOrthoView(
+  xy: Float32Array,
+  count: number,
+  aspect: number,
+  out: Float32Array,
+  fill = 0.9,
+) {
+  if (count <= 0) {
+    return
+  }
+  let minX = Infinity
+  let minY = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
+  let sumX = 0
+  let sumY = 0
+  for (let i = 0; i < count; i++) {
+    const x = xy[i * 2]
+    const y = xy[i * 2 + 1]
+    if (x < minX) minX = x
+    if (y < minY) minY = y
+    if (x > maxX) maxX = x
+    if (y > maxY) maxY = y
+    sumX += x
+    sumY += y
+  }
+  const cx = sumX / count
+  const cy = sumY / count
+  const halfW = Math.max(cx - minX, maxX - cx, 1e-9)
+  const halfH = Math.max(cy - minY, maxY - cy, 1e-9)
+  const viewHalfW = ORTHO_HALF_H * Math.max(aspect, 1e-9)
+  const viewHalfH = ORTHO_HALF_H
+  const s = Math.min((viewHalfW * fill) / halfW, (viewHalfH * fill) / halfH)
+  for (let i = 0; i < count; i++) {
+    out[i * 3] = (xy[i * 2] - cx) * s
+    out[i * 3 + 1] = (xy[i * 2 + 1] - cy) * s
+    out[i * 3 + 2] = 0
+  }
+}
+
+/** Embed-only: fixed ortho frustum. Never run on full page (kills zoom). */
+function Lock2DCamera({ z }: { z: number }) {
+  const camera = useThree((s) => s.camera)
+  const size = useThree((s) => s.size)
+  const gl = useThree((s) => s.gl)
+
+  useLayoutEffect(() => {
+    const el = gl.domElement
+    el.style.width = '100%'
+    el.style.height = '100%'
+    el.style.display = 'block'
+
+    camera.position.set(0, 0, z)
+    camera.rotation.set(0, 0, 0)
+    camera.up.set(0, 1, 0)
+    camera.manual = true
+
+    if (camera instanceof THREE.OrthographicCamera) {
+      const aspect = size.height > 0 ? size.width / size.height : 1
+      camera.left = -ORTHO_HALF_H * aspect
+      camera.right = ORTHO_HALF_H * aspect
+      camera.top = ORTHO_HALF_H
+      camera.bottom = -ORTHO_HALF_H
+      camera.zoom = 1
+      camera.near = 0.1
+      camera.far = Math.max(z * 10, 1000)
+      camera.updateProjectionMatrix()
+    }
+  }, [camera, gl, size.width, size.height, z])
+
+  return null
+}
 
 // ------------------------------------------------------------
 // Particle Points Renderer
@@ -34,27 +139,66 @@ const Points = <T,>({
   const points = useRef<THREE.Points>(null)
   const readySent = useRef(false)
   const drawnRef = useRef(0)
+  const viewSize = useThree((s) => s.size)
+  const posAttr = useRef<THREE.BufferAttribute | null>(null)
+  const colorAttr = useRef<THREE.BufferAttribute | null>(null)
+  const autoFrame = shouldAutoFrame2D()
 
   const positions = useMemo(() => new Float32Array(numParticles * dimension), [numParticles, dimension])
+  const positions3 = useMemo(() => new Float32Array(numParticles * 3), [numParticles])
   const colors = useMemo(() => new Float32Array(numParticles * (colorAlpha ? 4 : 3)), [numParticles, colorAlpha])
   const size = pointSize ?? 0.015
-  // Sizes >= 1 are treated as CSS pixels (gallery thumbs need a thick stroke).
   const pixelSized = size >= 1
 
-  const loop: RenderCallback = (state, delta) => {
-    const result = tick(positions, colors, state, delta)
+  useLayoutEffect(() => {
+    const geo = points.current?.geometry
+    if (!geo) {
+      return
+    }
+    const pos = new THREE.BufferAttribute(positions3, 3)
+    pos.setUsage(THREE.DynamicDrawUsage)
+    geo.setAttribute('position', pos)
+    posAttr.current = pos
+
+    if (!singleColor) {
+      const col = new THREE.BufferAttribute(colors, colorAlpha ? 4 : 3)
+      col.setUsage(THREE.DynamicDrawUsage)
+      geo.setAttribute('color', col)
+      colorAttr.current = col
+    }
+  }, [positions3, colors, singleColor, colorAlpha])
+
+  const loop: RenderCallback = (_state, delta) => {
+    const result = tick(positions, colors, _state, delta)
     if (typeof result === 'number') {
       drawnRef.current = Math.max(0, Math.min(numParticles, Math.floor(result)))
+    }
+    const drawn = drawnRef.current
+
+    if (dimension === EDimensions.TWO_D) {
+      if (autoFrame) {
+        const aspect = viewSize.height > 0 ? viewSize.width / viewSize.height : 1
+        fit2DIntoOrthoView(positions, drawn, aspect, positions3)
+      } else {
+        center2D(positions, drawn, positions3)
+      }
+    } else {
+      positions3.set(positions)
+    }
+
+    if (posAttr.current) {
+      posAttr.current.needsUpdate = true
+    }
+    if (colorAttr.current) {
+      colorAttr.current.needsUpdate = true
     }
 
     const geo = points.current?.geometry
     if (geo) {
-      if (geo.attributes.position) geo.attributes.position.needsUpdate = true
-      if (geo.attributes.color) geo.attributes.color.needsUpdate = true
-      geo.setDrawRange(0, drawnRef.current > 0 ? drawnRef.current : numParticles)
+      geo.setDrawRange(0, drawn > 0 ? drawn : numParticles)
     }
 
-    if (!readySent.current && isScreenshotMode() && drawnRef.current >= numParticles) {
+    if (!readySent.current && isScreenshotMode() && drawn >= numParticles) {
       readySent.current = true
       requestAnimationFrame(() => markScreenshotReady())
     }
@@ -64,13 +208,7 @@ const Points = <T,>({
 
   return (
     <points ref={points}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={positions.length / dimension} array={positions} itemSize={dimension} />
-        {!singleColor && (
-          <bufferAttribute attach="attributes-color" count={colors.length / (colorAlpha ? 4 : 3)} array={colors} itemSize={colorAlpha ? 4 : 3} />
-        )}
-      </bufferGeometry>
-      {/* drei PointMaterial's soft-circle shader drops vertex colours — use stock PointsMaterial */}
+      <bufferGeometry />
       <pointsMaterial
         size={size}
         sizeAttenuation={!pixelSized}
@@ -503,10 +641,30 @@ const Base = <T,>(props: TPointsProps<T>) => {
   }
 
   // Original particle/points mode
-  const particleCamera =
-    'cameraPosition' in props && props.cameraPosition
-      ? { position: props.cameraPosition, fov: 75 }
-      : { position: [0, 0, 400] as [number, number, number], fov: 75 }
+  const is2D = props.dimension === EDimensions.TWO_D
+  const embed2D = is2D && shouldAutoFrame2D()
+  const rawCam = props.cameraPosition
+  const rawZ = Array.isArray(rawCam)
+    ? rawCam[2]
+    : rawCam && typeof rawCam === 'object' && 'z' in rawCam
+      ? Reflect.get(rawCam, 'z')
+      : undefined
+  const camZ = Math.abs(typeof rawZ === 'number' ? rawZ : 220)
+  const particleCamera = embed2D
+    ? {
+        manual: true,
+        position: [0, 0, camZ] as [number, number, number],
+        near: 0.1,
+        far: Math.max(camZ * 10, 1000),
+        zoom: 1,
+        left: -1,
+        right: 1,
+        top: 1,
+        bottom: -1,
+      }
+    : rawCam
+      ? { position: rawCam, fov: 75 }
+      : { position: [0, 0, camZ] as [number, number, number], fov: 75 }
 
   return (
     <>
@@ -515,12 +673,24 @@ const Base = <T,>(props: TPointsProps<T>) => {
         <meta name="description" content={description} />
       </Helmet>
       <Canvas
+        orthographic={embed2D}
         camera={particleCamera}
-        dpr={window.devicePixelRatio}
+        dpr={[1, 2]}
         gl={canvasGlProps()}
         style={{ width: '100%', height: '100%', background: '#000' }}
-        onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
+        onCreated={({ gl, camera }) => {
+          tagVizCanvas(gl.domElement)
+          gl.domElement.style.width = '100%'
+          gl.domElement.style.height = '100%'
+          gl.domElement.style.display = 'block'
+          if (embed2D) {
+            camera.manual = true
+            camera.position.set(0, 0, camZ)
+            camera.rotation.set(0, 0, 0)
+          }
+        }}
       >
+        {embed2D ? <Lock2DCamera z={camZ} /> : null}
         {props.drawMode === 'line' ? (
           <LineTrail
             tick={props.tick}
@@ -539,11 +709,12 @@ const Base = <T,>(props: TPointsProps<T>) => {
             colorAlpha={props.colorAlpha}
           />
         )}
-        {!screenshot && (
+        {!screenshot && !embed2D && (
           <OrbitControls
             enableDamping
             dampingFactor={0.05}
-            autoRotate={props.autoRotate === true}
+            enableRotate={!is2D}
+            autoRotate={!is2D && props.autoRotate === true}
             autoRotateSpeed={props.autoRotateSpeed ?? 0.4}
           />
         )}

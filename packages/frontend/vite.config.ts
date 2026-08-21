@@ -1,3 +1,4 @@
+import mdx from '@mdx-js/rollup'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { defineConfig } from 'vite'
@@ -7,6 +8,10 @@ export default defineConfig({
 		postcss: './postcss.config.js',
 	},
 	plugins: [
+		{
+			enforce: 'pre',
+			...mdx({ providerImportSource: '@mdx-js/react' }),
+		},
 		{
 			name: 'watch-shared-catalog',
 			configureServer(server) {

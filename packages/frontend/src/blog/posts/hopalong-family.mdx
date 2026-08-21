@@ -1,0 +1,29 @@
+export const meta = {
+	slug: 'hopalong-family',
+	title: 'Four Hopalongs, one seed language',
+	tag: 'Attractors',
+	excerpt:
+		'Classic, positive, additive, and sinusoidal Hopalong side by side — same embed chrome, different recurrence, so the differences stay obvious.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'hopalong_attractor',
+	order: 20,
+}
+
+
+Barry Martin’s Hopalong map is a discrete recurrence that paints a cloud of points. Small changes to the update rule reshape the whole field. Below, four catalog variants run together so you can compare them without flipping tabs.
+
+<VizEmbedGrid>
+  <VizEmbed slug="hopalong_attractor" label="Classic" particles={16000} />
+  <VizEmbed slug="hopalong_attractor_positive" label="Positive" particles={16000} />
+  <VizEmbed slug="hopalong_attractor_additive" label="Additive" particles={16000} />
+  <VizEmbed slug="hopalong_attractor_sinusoidal" label="Sinusoidal" particles={16000} />
+</VizEmbedGrid>
+
+## Why multi-live matters
+
+A single embed forces serial comparison — you remember the last frame instead of seeing the difference. Side-by-side embeds are the point of the notebook: modest particle budgets, load one at a time, pause when offscreen.
+<Callout>
+  <strong>Open any full stage</strong>
+  Use “Open full” on a card to take that variant into the full parameter chrome.
+</Callout>
