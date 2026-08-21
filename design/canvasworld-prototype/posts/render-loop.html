@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rendering nine thousand points at sixty frames — CanvasWorld</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+</head>
+<body>
+  <header class="site-nav" data-od-id="site-nav">
+    <div class="site-nav-inner">
+      <a class="wordmark" href="../index.html" data-od-id="nav-wordmark">CanvasWorld</a>
+      <nav data-od-id="nav-links">
+        <a href="../home.html#gallery" data-od-id="nav-link-gallery">Gallery</a>
+        <a href="../blog.html" data-od-id="nav-link-blog">Blog</a>
+        <a href="../home.html#about" data-od-id="nav-link-about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="doc-shell" data-od-id="doc-render-loop">
+    <a class="doc-back" href="../blog.html" data-od-id="doc-back">← Lab notebook</a>
+
+    <header class="doc-header">
+      <span class="post-tag">Engineering</span>
+      <h1 data-od-id="doc-title">Rendering nine thousand points at sixty frames a second</h1>
+      <p class="post-meta">Jul 2026 · 5 min read</p>
+    </header>
+
+    <article class="md" data-od-id="doc-body">
+      <p>
+        The full Lorenz stage holds a 9,000-sample buffer. Drawing each sample as its
+        own path would stall the main thread. The trick is batching: stroke short
+        polylines, age their opacity by index, and never rebuild the trajectory unless
+        a parameter actually changes.
+      </p>
+
+      <figure class="mini-player" data-mini="lorenz" data-od-id="mini-render-loop">
+        <div class="mini-stage">
+          <canvas class="mini-canvas" aria-hidden="true"></canvas>
+          <div class="fps-counter" data-od-id="fps-counter" aria-hidden="true">
+            <span class="fps-value" data-od-id="fps-value">60</span>
+            <span class="fps-unit">FPS</span>
+          </div>
+        </div>
+        <figcaption class="mini-bar">
+          <span class="mini-label">Batched stroke · FPS HUD</span>
+          <div class="mini-actions">
+            <button type="button" class="mini-btn" data-mini-play aria-label="Pause">
+              <svg data-icon="pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx="1"/><rect x="9.5" y="2.5" width="3" height="11" rx="1"/></svg>
+              <svg data-icon="play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.6c0-.9 1-1.4 1.7-.9l8 5.4c.6.4.6 1.3 0 1.7l-8 5.4c-.7.5-1.7 0-1.7-.9V2.6Z"/></svg>
+            </button>
+            <a class="mini-link" href="../canvas.html">Open full →</a>
+          </div>
+        </figcaption>
+      </figure>
+
+      <h2>Precompute once</h2>
+      <p>
+        Integration happens offline into typed arrays. The rAF loop only advances a
+        <code>drawnCount</code> cursor and redraws. Changing σ / ρ / β recomputes the
+        buffer; scrubbing does not.
+      </p>
+
+      <pre><code>for (start = 0; start &lt; drawn - 1; start += chunk) {
+  beginPath()
+  // lineTo projected samples in [start, end)
+  strokeStyle = rgba(…, ageAlpha)
+  stroke()
+}</code></pre>
+
+      <h2>Why chunks matter</h2>
+      <p>
+        One giant path forces the browser to rebuild a huge stroke every frame.
+        Chunks of ~50 segments keep GPU work predictable and let us tint early vs late
+        trajectory differently without per-vertex shaders.
+      </p>
+
+      <div class="callout">
+        <strong>Budget</strong>
+        Target: stay under ~8ms of canvas work on a mid laptop at 1× speed with the
+        default 9k buffer. The mini player here uses a smaller buffer so the FPS chip
+        stays honest on weaker machines.
+      </div>
+    </article>
+
+    <nav class="doc-footer-nav">
+      <a href="lorenz-never-closes.html">← Lorenz never closes</a>
+      <a class="next" href="mandelbrot-escape.html">Next: Escape time →</a>
+    </nav>
+  </main>
+
+  <footer class="site-footer" data-od-id="site-footer">
+    <p>CanvasWorld — a visualization laboratory for dynamical systems. <a href="../blog.html">Lab notebook</a></p>
+  </footer>
+  <script src="../js/mini-players.js"></script>
+</body>
+</html>

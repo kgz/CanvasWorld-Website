@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The lab notebook — CanvasWorld</title>
+  <link rel="stylesheet" href="css/shared.css" />
+</head>
+<body>
+  <header class="site-nav" data-od-id="site-nav">
+    <div class="site-nav-inner">
+      <a class="wordmark" href="index.html" data-od-id="nav-wordmark">CanvasWorld</a>
+      <nav data-od-id="nav-links">
+        <a href="home.html#gallery" data-od-id="nav-link-gallery">Gallery</a>
+        <a href="blog.html" aria-current="page" data-od-id="nav-link-blog">Blog</a>
+        <a href="home.html#about" data-od-id="nav-link-about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="blog-hero" data-od-id="blog-hero">
+      <p class="eyebrow">Field notes</p>
+      <h1 data-od-id="blog-title">The lab notebook</h1>
+      <p class="lede">
+        Notes on the mathematics, rendering techniques, and design decisions behind
+        CanvasWorld — written as the systems get built, not after.
+      </p>
+    </section>
+
+    <section class="post-featured-section" data-od-id="post-featured-section">
+      <a class="post-featured" href="posts/lorenz-never-closes.html" data-od-id="post-featured-lorenz">
+        <span class="viz-thumb post-featured-art" data-viz="lorenz" aria-hidden="true"></span>
+        <span class="post-featured-body">
+          <span class="post-tag">Attractors</span>
+          <span class="post-featured-title">Why the Lorenz attractor never closes</span>
+          <span class="post-excerpt">
+            Three coupled equations, one seed, and a trajectory that folds back on itself
+            forever without ever repeating. A short tour of sensitivity, butterfly wings,
+            and why "chaotic" doesn't mean "random."
+          </span>
+          <span class="post-meta">Aug 2026 · 6 min read</span>
+        </span>
+      </a>
+    </section>
+
+    <section class="post-list-section" data-od-id="post-list">
+      <h2 class="gallery-group-title">More notes</h2>
+      <div class="post-grid" data-od-id="post-grid">
+        <article class="post-card" data-od-id="post-card-render-loop">
+          <a href="posts/render-loop.html" data-od-id="post-card-render-loop-link">
+            <span class="post-tag">Engineering</span>
+            <span class="post-card-title">Rendering nine thousand points at sixty frames a second</span>
+            <span class="post-excerpt">
+              How the canvas stage batches trajectory segments, ages their opacity, and
+              keeps a single 2D context fast enough to feel alive.
+            </span>
+            <span class="post-meta">Jul 2026 · 5 min read</span>
+          </a>
+        </article>
+
+        <article class="post-card" data-od-id="post-card-mandelbrot">
+          <a href="posts/mandelbrot-escape.html" data-od-id="post-card-mandelbrot-link">
+            <span class="post-tag">Fractals</span>
+            <span class="post-card-title">Escape time: how the Mandelbrot boundary gets drawn</span>
+            <span class="post-excerpt">
+              Every pixel is a tiny experiment — iterate, check the bound, count the steps.
+              The boundary is where the answer stops being obvious.
+            </span>
+            <span class="post-meta">Jun 2026 · 7 min read</span>
+          </a>
+        </article>
+
+        <article class="post-card" data-od-id="post-card-hud">
+          <a href="posts/hud-void.html" data-od-id="post-card-hud-link">
+            <span class="post-tag">Design notes</span>
+            <span class="post-card-title">A HUD that doesn't compete with the void</span>
+            <span class="post-excerpt">
+              Swapping the default mrdoob-style perf stats for a quiet mono readout that
+              earns its place in the chrome instead of shouting over it.
+            </span>
+            <span class="post-meta">Jun 2026 · 4 min read</span>
+          </a>
+        </article>
+
+        <article class="post-card" data-od-id="post-card-l-systems">
+          <a href="posts/l-systems.html" data-od-id="post-card-l-systems-link">
+            <span class="post-tag">Fractals</span>
+            <span class="post-card-title">L-systems: a grammar for trees</span>
+            <span class="post-excerpt">
+              Rewrite a string a dozen times, hand it to a turtle, and a branching
+              structure falls out — no geometry required, just substitution rules.
+            </span>
+            <span class="post-meta">May 2026 · 5 min read</span>
+          </a>
+        </article>
+
+        <article class="post-card" data-od-id="post-card-halvorsen">
+          <a href="posts/halvorsen.html" data-od-id="post-card-halvorsen-link">
+            <span class="post-tag">Attractors</span>
+            <span class="post-card-title">Halvorsen and the cost of symmetry</span>
+            <span class="post-excerpt">
+              A cyclically symmetric system that still manages to look nothing like its
+              own reflection. Notes on picking constants that stay in bounds.
+            </span>
+            <span class="post-meta">Apr 2026 · 5 min read</span>
+          </a>
+        </article>
+
+        <article class="post-card" data-od-id="post-card-params">
+          <a href="posts/parameters.html" data-od-id="post-card-params-link">
+            <span class="post-tag">Design notes</span>
+            <span class="post-card-title">Parameters as the primary interface</span>
+            <span class="post-excerpt">
+              Why every visualization ships with sliders before it ships with anything
+              else — and how that decision shaped the side-panel layout.
+            </span>
+            <span class="post-meta">Mar 2026 · 4 min read</span>
+          </a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="about" data-od-id="site-footer">
+    <p>CanvasWorld — a visualization laboratory for dynamical systems. <a href="index.html" data-od-id="footer-link-index">Prototype index</a></p>
+  </footer>
+</body>
+</html>

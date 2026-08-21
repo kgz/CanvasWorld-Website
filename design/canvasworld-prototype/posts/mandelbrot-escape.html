@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Escape time: Mandelbrot boundary — CanvasWorld</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+</head>
+<body>
+  <header class="site-nav" data-od-id="site-nav">
+    <div class="site-nav-inner">
+      <a class="wordmark" href="../index.html" data-od-id="nav-wordmark">CanvasWorld</a>
+      <nav data-od-id="nav-links">
+        <a href="../home.html#gallery" data-od-id="nav-link-gallery">Gallery</a>
+        <a href="../blog.html" data-od-id="nav-link-blog">Blog</a>
+        <a href="../home.html#about" data-od-id="nav-link-about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="doc-shell" data-od-id="doc-mandelbrot">
+    <a class="doc-back" href="../blog.html" data-od-id="doc-back">← Lab notebook</a>
+
+    <header class="doc-header">
+      <span class="post-tag">Fractals</span>
+      <h1 data-od-id="doc-title">Escape time: how the Mandelbrot boundary gets drawn</h1>
+      <p class="post-meta">Jun 2026 · 7 min read</p>
+    </header>
+
+    <article class="md" data-od-id="doc-body">
+      <p>
+        Every pixel is a tiny experiment. Map screen coordinates to a complex plane,
+        iterate <code>z → z² + c</code>, and count how long the orbit stays inside
+        radius 2. The boundary is where that count refuses to settle.
+      </p>
+
+      <figure class="mini-player" data-mini="mandelbrot" data-od-id="mini-mandelbrot">
+        <div class="mini-stage">
+          <canvas class="mini-canvas" aria-hidden="true"></canvas>
+        </div>
+        <figcaption class="mini-bar">
+          <span class="mini-label">Escape-time · Seahorse valley</span>
+          <div class="mini-actions">
+            <button type="button" class="mini-btn" data-mini-play aria-label="Pause">
+              <svg data-icon="pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx="1"/><rect x="9.5" y="2.5" width="3" height="11" rx="1"/></svg>
+              <svg data-icon="play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.6c0-.9 1-1.4 1.7-.9l8 5.4c.6.4.6 1.3 0 1.7l-8 5.4c-.7.5-1.7 0-1.7-.9V2.6Z"/></svg>
+            </button>
+            <a class="mini-link" href="../home.html#gallery">Gallery →</a>
+          </div>
+        </figcaption>
+      </figure>
+
+      <h2>The experiment</h2>
+      <pre><code>z₀ = 0
+zₙ₊₁ = zₙ² + c
+escape if |z| &gt; 2</code></pre>
+
+      <p>
+        Points that never escape are painted as the set (here: near-void). Escapers
+        get a color from their iteration count. Higher max-iter sharpens filaments;
+        lower max-iter keeps the prototype responsive.
+      </p>
+
+      <h2>Why the boundary is interesting</h2>
+      <p>
+        Interior and far exterior are cheap. Near the edge, orbits linger — that is
+        where most of the work (and the visual detail) lives. Zooming into seahorse
+        valley multiplies that cost; production ports push the loop to GLSL.
+      </p>
+
+      <blockquote>
+        This mini player deliberately caps iterations so the page stays interactive.
+        The gallery Mandelbrot will trade CPU for fidelity once it ships as a full stage.
+      </blockquote>
+    </article>
+
+    <nav class="doc-footer-nav">
+      <a href="render-loop.html">← Render loop</a>
+      <a class="next" href="hud-void.html">Next: HUD in the void →</a>
+    </nav>
+  </main>
+
+  <footer class="site-footer" data-od-id="site-footer">
+    <p>CanvasWorld — a visualization laboratory for dynamical systems. <a href="../blog.html">Lab notebook</a></p>
+  </footer>
+  <script src="../js/mini-players.js"></script>
+</body>
+</html>

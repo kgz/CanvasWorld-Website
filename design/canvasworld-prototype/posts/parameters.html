@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parameters as the primary interface — CanvasWorld</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+</head>
+<body>
+  <header class="site-nav" data-od-id="site-nav">
+    <div class="site-nav-inner">
+      <a class="wordmark" href="../index.html" data-od-id="nav-wordmark">CanvasWorld</a>
+      <nav data-od-id="nav-links">
+        <a href="../home.html#gallery" data-od-id="nav-link-gallery">Gallery</a>
+        <a href="../blog.html" data-od-id="nav-link-blog">Blog</a>
+        <a href="../home.html#about" data-od-id="nav-link-about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="doc-shell" data-od-id="doc-params">
+    <a class="doc-back" href="../blog.html" data-od-id="doc-back">← Lab notebook</a>
+
+    <header class="doc-header">
+      <span class="post-tag">Design notes</span>
+      <h1 data-od-id="doc-title">Parameters as the primary interface</h1>
+      <p class="post-meta">Mar 2026 · 4 min read</p>
+    </header>
+
+    <article class="md" data-od-id="doc-body">
+      <p>
+        Every visualization ships with sliders before it ships with anything else.
+        The side panel is not chrome for chrome’s sake — it is the product: change a
+        constant, re-seed the trajectory, watch the structure respond.
+      </p>
+
+      <figure class="mini-player" data-mini="lorenz" data-od-id="mini-params">
+        <div class="mini-stage">
+          <canvas class="mini-canvas" aria-hidden="true"></canvas>
+        </div>
+        <figcaption class="mini-bar">
+          <span class="mini-label">Lorenz · live params</span>
+          <div class="mini-actions">
+            <button type="button" class="mini-btn" data-mini-play aria-label="Pause">
+              <svg data-icon="pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx="1"/><rect x="9.5" y="2.5" width="3" height="11" rx="1"/></svg>
+              <svg data-icon="play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.6c0-.9 1-1.4 1.7-.9l8 5.4c.6.4.6 1.3 0 1.7l-8 5.4c-.7.5-1.7 0-1.7-.9V2.6Z"/></svg>
+            </button>
+            <a class="mini-link" href="../canvas.html">Full panel →</a>
+          </div>
+        </figcaption>
+        <div class="mini-params" data-od-id="mini-params-controls">
+          <div class="param-row">
+            <div class="param-row-head">
+              <label class="param-label" for="mini-sigma">σ · sigma</label>
+              <span class="param-value" data-mini-sigma-val>10.0</span>
+            </div>
+            <input type="range" id="mini-sigma" data-mini-sigma min="1" max="20" step="0.5" value="10" />
+          </div>
+          <div class="param-row">
+            <div class="param-row-head">
+              <label class="param-label" for="mini-rho">ρ · rho</label>
+              <span class="param-value" data-mini-rho-val>28.0</span>
+            </div>
+            <input type="range" id="mini-rho" data-mini-rho min="5" max="60" step="1" value="28" />
+          </div>
+          <div class="param-row">
+            <div class="param-row-head">
+              <label class="param-label" for="mini-beta">β · beta</label>
+              <span class="param-value" data-mini-beta-val>2.7</span>
+            </div>
+            <input type="range" id="mini-beta" data-mini-beta min="0.5" max="6" step="0.1" value="2.7" />
+          </div>
+        </div>
+      </figure>
+
+      <h2>Why params first</h2>
+      <p>
+        A static render of Lorenz is a poster. A live ρ slider is a laboratory.
+        Shipping params early forced the chrome layout: floating left panel, transport
+        below, stage full-bleed — everything else subordinates to “can I change the system?”
+      </p>
+
+      <h2>Copy that stays scientific</h2>
+      <p>
+        Labels keep the Greek letter and the Latin name. Values stay mono and tabular.
+        We avoid marketing adjectives next to the controls; the trajectory is the copy.
+      </p>
+
+      <div class="callout">
+        <strong>Drag above</strong>
+        Push ρ down toward 20 or up past 40 and watch the wings thin or thrash — same
+        seed, new constants, recomputed buffer.
+      </div>
+    </article>
+
+    <nav class="doc-footer-nav">
+      <a href="halvorsen.html">← Halvorsen</a>
+      <a class="next" href="../blog.html">Back to notebook →</a>
+    </nav>
+  </main>
+
+  <footer class="site-footer" data-od-id="site-footer">
+    <p>CanvasWorld — a visualization laboratory for dynamical systems. <a href="../blog.html">Lab notebook</a></p>
+  </footer>
+  <script src="../js/mini-players.js"></script>
+</body>
+</html>

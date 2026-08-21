@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "blog.html",
+  "entry": "blog.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-08-21T07:45:32.438Z",
+  "updatedAt": "2026-08-21T07:45:32.438Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

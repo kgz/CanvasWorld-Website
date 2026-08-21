@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "posts/halvorsen.html",
+  "entry": "posts/halvorsen.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-08-21T07:53:47.001Z",
+  "updatedAt": "2026-08-21T07:53:47.001Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

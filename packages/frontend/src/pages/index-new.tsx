@@ -162,6 +162,7 @@ function Index() {
 					</Link>
 					<nav className={styles.navLinks}>
 						<a href="#gallery">Gallery</a>
+						<Link to="/blog">Notebook</Link>
 						<a href="#about">About</a>
 					</nav>
 				</div>
