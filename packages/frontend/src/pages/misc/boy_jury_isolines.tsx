@@ -9,15 +9,15 @@ import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import {
 	clampCurves,
+	clampDetail,
 	clampHomotopy,
 	sampleBoyIsolines,
 } from '../../utils/boySurface'
 
-/** Baked samples along each isoline — density knob is `curves` only. */
-const DETAIL = 160
-/** Max isolines per family (u and v). Keeps GPU buffer size fixed so `n` stays stable. */
+/** Max isolines per family (u and v). Fixed GPU buffer so `n` stays stable. */
 const MAX_CURVES = 80
-const MAX_POINTS = (MAX_CURVES + MAX_CURVES) * DETAIL
+const MAX_DETAIL = 280
+const MAX_POINTS = (MAX_CURVES + MAX_CURVES) * MAX_DETAIL
 
 const BoyJuryIsolines = () => {
 	const dispatch = useAppDispatch()
@@ -33,13 +33,17 @@ const BoyJuryIsolines = () => {
 		(): TDatData => ({
 			options: {
 				k: { initialValue: 1, min: 0, max: 1, step: 0.01 },
-				curves: { initialValue: 48, min: 16, max: MAX_CURVES, step: 1 },
+				/** How many separate u- and v-wires (sparse cage ↔ dense cage). */
+				curves: { initialValue: 40, min: 16, max: MAX_CURVES, step: 1 },
+				/** Points along each wire — crank this for tight lobe packing. */
+				detail: { initialValue: 200, min: 64, max: MAX_DETAIL, step: 4 },
 			},
 			examples: [
-				{ k: 0, curves: 40 },
-				{ k: 0.5, curves: 48 },
-				{ k: 1, curves: 48 },
-				{ k: 1, curves: 72 },
+				{ k: 1, curves: 28, detail: 120 },
+				{ k: 1, curves: 40, detail: 200 },
+				{ k: 1, curves: 36, detail: 280 },
+				{ k: 0.5, curves: 48, detail: 220 },
+				{ k: 0, curves: 40, detail: 200 },
 			],
 		}),
 		[],
@@ -60,7 +64,8 @@ const BoyJuryIsolines = () => {
 
 	const k = clampHomotopy(data.k ?? datData.options.k.initialValue)
 	const curves = clampCurves(data.curves ?? datData.options.curves.initialValue)
-	const cloud = useMemo(() => sampleBoyIsolines(curves, curves, DETAIL, k), [curves, k])
+	const detail = clampDetail(data.detail ?? datData.options.detail.initialValue)
+	const cloud = useMemo(() => sampleBoyIsolines(curves, curves, detail, k), [curves, detail, k])
 
 	useEffect(() => {
 		seeded.current = false
@@ -112,8 +117,12 @@ BoyJuryIsolines.getDescription = () => (
 		<br />
 		<BlockMath math={'\\mathrm{denom}=2-k\\sqrt{2}\\,\\sin 3u\\,\\sin 2v'} />
 		<br />
-		UI <code>curves</code> is how many constant-u and constant-v isolines (wire density). Transport{' '}
-		<code>n</code> reveals points — stays put when you change <code>curves</code>.
+		<code>curves</code> = how many separate wires.
+		<br />
+		<code>detail</code> = points packed along each wire — that is what tightens the three lobes into dense
+		balls (try the third example: medium curves, max detail).
+		<br />
+		Transport <code>n</code> reveals points.
 	</>
 )
 
