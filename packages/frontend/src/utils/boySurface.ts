@@ -1,8 +1,10 @@
 const EPS = 1e-15
 const DENOM_EPS = 1e-8
 const SQRT2 = Math.sqrt(2)
+const SQRT5 = Math.sqrt(5)
 const U_RES = 80
 const V_RES = 80
+const TARGET_R = 1.7
 
 export type BoyPoint = {
 	x: number
@@ -14,6 +16,35 @@ export type BoyMesh = {
 	positions: Float32Array
 	indices: Uint32Array
 	colors: Float32Array
+}
+
+export type BoyCloud = {
+	positions: Float32Array
+	colors: Float32Array
+	count: number
+}
+
+type Complex = {
+	re: number
+	im: number
+}
+
+function cmul(a: Complex, b: Complex): Complex {
+	return {
+		re: a.re * b.re - a.im * b.im,
+		im: a.re * b.im + a.im * b.re,
+	}
+}
+
+function cdiv(a: Complex, b: Complex): Complex | null {
+	const d = b.re * b.re + b.im * b.im
+	if (d < DENOM_EPS) {
+		return null
+	}
+	return {
+		re: (a.re * b.re + a.im * b.im) / d,
+		im: (a.im * b.re - a.re * b.im) / d,
+	}
 }
 
 /** Morin–Apéry Boy immersion (homotopy parameter 1). u,v ∈ [0, π]. */
@@ -29,6 +60,39 @@ export function boyPoint(u: number, v: number): BoyPoint {
 		y: (SQRT2 * Math.sin(2 * u) * cv2 - Math.sin(u) * s2v) / d,
 		z: (3 * cv2) / d,
 	}
+}
+
+/** Bryant–Kusner on the unit disk (w = re + i im). */
+export function boyPointBryant(re: number, im: number): BoyPoint | null {
+	const w: Complex = { re, im }
+	const w2 = cmul(w, w)
+	const w3 = cmul(w2, w)
+	const w4 = cmul(w2, w2)
+	const w6 = cmul(w3, w3)
+	const denom: Complex = {
+		re: w6.re + SQRT5 * w3.re - 1,
+		im: w6.im + SQRT5 * w3.im,
+	}
+	const q1 = cdiv(cmul(w, { re: 1 - w4.re, im: -w4.im }), denom)
+	const q2 = cdiv(cmul(w, { re: 1 + w4.re, im: w4.im }), denom)
+	const q3 = cdiv({ re: 1 + w6.re, im: w6.im }, denom)
+	if (q1 === null || q2 === null || q3 === null) {
+		return null
+	}
+	const g1 = -1.5 * q1.im
+	const g2 = -1.5 * q2.re
+	const g3 = q3.im - 0.5
+	const n2 = g1 * g1 + g2 * g2 + g3 * g3
+	if (n2 < DENOM_EPS) {
+		return null
+	}
+	const x = g1 / n2
+	const y = g2 / n2
+	const z = g3 / n2
+	if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+		return null
+	}
+	return { x, y, z }
 }
 
 function centerAndScale(positions: Float32Array, targetRadius: number) {
@@ -70,6 +134,20 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 	}
 }
 
+function xyzColors(positions: Float32Array): Float32Array {
+	const colors = new Float32Array(positions.length)
+	const span = TARGET_R * 2
+	for (let i = 0; i < positions.length; i += 3) {
+		const u = (positions[i] + TARGET_R) / span
+		const v = (positions[i + 1] + TARGET_R) / span
+		const w = (positions[i + 2] + TARGET_R) / span
+		colors[i] = 0.72 + 0.22 * u
+		colors[i + 1] = 0.42 + 0.28 * v
+		colors[i + 2] = 0.18 + 0.55 * (1 - w)
+	}
+	return colors
+}
+
 export function buildBoyMesh(): BoyMesh {
 	const uCount = U_RES + 1
 	const vCount = V_RES + 1
@@ -97,15 +175,148 @@ export function buildBoyMesh(): BoyMesh {
 		}
 	}
 
-	centerAndScale(positions, 1.7)
-	const colors = new Float32Array(positions.length)
-	for (let i = 0; i < positions.length; i += 3) {
-		const uu = (positions[i] + 1.7) / 3.4
-		const vv = (positions[i + 1] + 1.7) / 3.4
-		const w = (positions[i + 2] + 1.7) / 3.4
-		colors[i] = 0.72 + 0.22 * uu
-		colors[i + 1] = 0.42 + 0.28 * vv
-		colors[i + 2] = 0.18 + 0.55 * (1 - w)
+	centerAndScale(positions, TARGET_R)
+	return { positions, indices: new Uint32Array(idx), colors: xyzColors(positions) }
+}
+
+/** UV grid as a particle cloud (legacy dots). */
+export function sampleBoyCloud(nu = 96, nv = 96): BoyCloud {
+	const count = nu * nv
+	const positions = new Float32Array(count * 3)
+	let k = 0
+	for (let iv = 0; iv < nv; iv++) {
+		const v = (Math.PI * iv) / (nv - 1)
+		for (let iu = 0; iu < nu; iu++) {
+			const u = (Math.PI * iu) / (nu - 1)
+			const p = boyPoint(u, v)
+			positions[k++] = p.x
+			positions[k++] = p.y
+			positions[k++] = p.z
+		}
 	}
-	return { positions, indices: new Uint32Array(idx), colors }
+	centerAndScale(positions, TARGET_R)
+	return { positions, colors: xyzColors(positions), count }
+}
+
+/**
+ * Row-major UV scan as one polyline (legacy line trail).
+ * Odd rows reverse so the strip snakes continuously.
+ */
+export function sampleBoyScanline(nu = 120, nv = 80): BoyCloud {
+	const count = nu * nv
+	const positions = new Float32Array(count * 3)
+	let k = 0
+	for (let iv = 0; iv < nv; iv++) {
+		const v = (Math.PI * iv) / (nv - 1)
+		const reverse = iv % 2 === 1
+		for (let t = 0; t < nu; t++) {
+			const iu = reverse ? nu - 1 - t : t
+			const u = (Math.PI * iu) / (nu - 1)
+			const p = boyPoint(u, v)
+			positions[k++] = p.x
+			positions[k++] = p.y
+			positions[k++] = p.z
+		}
+	}
+	centerAndScale(positions, TARGET_R)
+	return { positions, colors: xyzColors(positions), count }
+}
+
+/** Constant-u and constant-v curves as a dense point wire. */
+export function sampleBoyIsolines(nu = 36, nv = 36, samples = 128): BoyCloud {
+	const count = (nu + nv) * samples
+	const positions = new Float32Array(count * 3)
+	let k = 0
+	for (let iu = 0; iu < nu; iu++) {
+		const u = (Math.PI * iu) / (nu - 1)
+		for (let s = 0; s < samples; s++) {
+			const v = (Math.PI * s) / (samples - 1)
+			const p = boyPoint(u, v)
+			positions[k++] = p.x
+			positions[k++] = p.y
+			positions[k++] = p.z
+		}
+	}
+	for (let iv = 0; iv < nv; iv++) {
+		const v = (Math.PI * iv) / (nv - 1)
+		for (let s = 0; s < samples; s++) {
+			const u = (Math.PI * s) / (samples - 1)
+			const p = boyPoint(u, v)
+			positions[k++] = p.x
+			positions[k++] = p.y
+			positions[k++] = p.z
+		}
+	}
+	centerAndScale(positions, TARGET_R)
+	return { positions, colors: xyzColors(positions), count }
+}
+
+export function buildBryantBoyMesh(): BoyMesh {
+	const nr = 48
+	const nt = 96
+	const origin = boyPointBryant(0, 0)
+	const pts: (BoyPoint | null)[] = [origin]
+	for (let ir = 1; ir <= nr; ir++) {
+		const r = ir / nr
+		for (let it = 0; it < nt; it++) {
+			const th = (2 * Math.PI * it) / nt
+			pts.push(boyPointBryant(r * Math.cos(th), r * Math.sin(th)))
+		}
+	}
+
+	const vertIndex: number[] = []
+	for (let i = 0; i < pts.length; i++) {
+		vertIndex.push(-1)
+	}
+	const pos: number[] = []
+	const idx: number[] = []
+
+	const ensureVert = (i: number): number => {
+		if (vertIndex[i] >= 0) {
+			return vertIndex[i]
+		}
+		const p = pts[i]
+		if (p === null) {
+			return -1
+		}
+		const vi = pos.length / 3
+		pos.push(p.x, p.y, p.z)
+		vertIndex[i] = vi
+		return vi
+	}
+
+	const emit = (a: number, b: number, c: number) => {
+		if (pts[a] === null || pts[b] === null || pts[c] === null) {
+			return
+		}
+		const ia = ensureVert(a)
+		const ib = ensureVert(b)
+		const ic = ensureVert(c)
+		if (ia < 0 || ib < 0 || ic < 0) {
+			return
+		}
+		idx.push(ia, ib, ic)
+	}
+
+	const ringIndex = (ir: number, it: number) => 1 + (ir - 1) * nt + it
+
+	for (let it = 0; it < nt; it++) {
+		const it2 = (it + 1) % nt
+		emit(0, ringIndex(1, it), ringIndex(1, it2))
+	}
+	for (let ir = 1; ir < nr; ir++) {
+		for (let it = 0; it < nt; it++) {
+			const it2 = (it + 1) % nt
+			const a = ringIndex(ir, it)
+			const b = ringIndex(ir, it2)
+			const c = ringIndex(ir + 1, it)
+			const d = ringIndex(ir + 1, it2)
+			emit(a, c, b)
+			emit(b, c, d)
+		}
+	}
+
+	const positions = new Float32Array(pos)
+	centerAndScale(positions, TARGET_R)
+	return { positions, indices: new Uint32Array(idx), colors: xyzColors(positions) }
 }
