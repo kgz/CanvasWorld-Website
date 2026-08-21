@@ -16,6 +16,7 @@ type BlogPost struct {
 	ThumbSlug string `json:"thumbSlug"`
 	Order     int    `json:"order"`
 	Featured  bool   `json:"featured"`
+	BodyHTML  string `json:"bodyHtml"`
 }
 
 type blogCatalogFile struct {

@@ -27,6 +27,8 @@ const rootEl = document.getElementById('root')
 if (!rootEl) {
 	throw new Error('root element missing')
 }
+// Crawler-visible copy injected by the backend; drop once the SPA mounts.
+document.getElementById('cw-seo')?.remove()
 const root = ReactDOM.createRoot(rootEl)
 
 // const instance = createInstance({
