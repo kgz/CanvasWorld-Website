@@ -27,6 +27,7 @@ import EnneperSurface from '../pages/misc/enneper_surface'
 import BoySurface from '../pages/misc/boy_surface'
 import BoyJuryBryant from '../pages/misc/boy_jury_bryant'
 import BoyJuryPoints from '../pages/misc/boy_jury_points'
+import BoyJuryLines from '../pages/misc/boy_jury_lines'
 
 export type CatalogEntry = {
 	slug: string
@@ -78,6 +79,7 @@ const components: Record<string, ComponentType> = {
 	boy_surface: BoySurface,
 	boy_jury_bryant: BoyJuryBryant,
 	boy_jury_points: BoyJuryPoints,
+	boy_jury_lines: BoyJuryLines,
 }
 
 const catalogEntries: CatalogEntry[] = catalog

@@ -241,5 +241,14 @@
     "thumbnail": "/chaos/icons/boy_jury_points.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "boy_jury_lines",
+    "title": "Boy Jury · Lines",
+    "category": "misc",
+    "description": "Jury line-scan of Morin–Apéry Boy’s surface — legacy GPU line trail for render-mode comparison.",
+    "thumbnail": "/chaos/icons/boy_jury_lines.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
