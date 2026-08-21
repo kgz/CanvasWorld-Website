@@ -93,22 +93,24 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 	}
 }
 
-function writeRibbon(colors: Float32Array, i: number, x: number, y: number, z: number, span: number) {
-	const u = (x + span) / (2 * span)
-	const v = (y + span) / (2 * span)
-	const w = (z + span) / (2 * span)
-	const t = Math.min(1, Math.max(0, 0.4 * u + 0.35 * v + 0.25 * (1 - w)))
+/** Coral → amber → teal by direction (reads on black; old map was too pale). */
+function writeRibbon(colors: Float32Array, i: number, x: number, y: number, z: number) {
+	const r = Math.hypot(x, y, z) || 1
+	const u = 0.5 + 0.5 * (x / r)
+	const v = 0.5 + 0.5 * (y / r)
+	const w = 0.5 + 0.5 * (z / r)
+	const t = Math.min(1, Math.max(0, 0.45 * u + 0.25 * v + 0.3 * (1 - w)))
 	if (t < 0.5) {
 		const s = t / 0.5
-		colors[i] = 0.95
-		colors[i + 1] = 0.35 + 0.45 * s
-		colors[i + 2] = 0.55 + 0.2 * s
+		colors[i] = 1
+		colors[i + 1] = 0.2 + 0.55 * s
+		colors[i + 2] = 0.28 + 0.08 * s
 		return
 	}
 	const s = (t - 0.5) / 0.5
-	colors[i] = 0.95 - 0.55 * s
-	colors[i + 1] = 0.8 + 0.1 * s
-	colors[i + 2] = 0.75 + 0.15 * s
+	colors[i] = 1 - 0.82 * s
+	colors[i + 1] = 0.75 + 0.22 * s
+	colors[i + 2] = 0.36 + 0.58 * s
 }
 
 /** Isosurface vertices as a particle cloud (no lit triangles). */
@@ -146,7 +148,7 @@ export function sampleBarthCloud(tau = BARTH_PHI, radius = 1, mix = 1): BarthClo
 		positions[i3] = mesh.positions[i3]
 		positions[i3 + 1] = mesh.positions[i3 + 1]
 		positions[i3 + 2] = mesh.positions[i3 + 2]
-		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2], TARGET_R)
+		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2])
 	}
 	if (raw > 0) {
 		const px = positions[0]
