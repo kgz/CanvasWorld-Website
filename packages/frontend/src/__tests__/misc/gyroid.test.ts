@@ -66,6 +66,25 @@ describe('sampleGyroidCloud', () => {
 		expect(clampTiles(0)).toBe(1)
 		expect(clampTiles(8)).toBe(4)
 	})
+
+	it('keeps the cloud centered when tiles overflow the budget', () => {
+		const cloud = sampleGyroidCloud(0, 4)
+		let cx = 0
+		let cy = 0
+		let cz = 0
+		const step = 17
+		let n = 0
+		for (let i = 0; i < cloud.count; i += step) {
+			cx += cloud.positions[i * 3]
+			cy += cloud.positions[i * 3 + 1]
+			cz += cloud.positions[i * 3 + 2]
+			n += 1
+		}
+		cx /= n
+		cy /= n
+		cz /= n
+		expect(Math.hypot(cx, cy, cz)).toBeLessThan(0.08)
+	})
 })
 
 describe('gyroid colors', () => {

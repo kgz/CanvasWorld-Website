@@ -27,8 +27,8 @@ export function clampTiles(tiles: number): number {
 	return Math.min(4, Math.max(1, Math.round(tiles)))
 }
 
-function centerAndScale(positions: Float32Array, targetRadius: number) {
-	const vcount = positions.length / 3
+function centerAndScale(positions: Float32Array, targetRadius: number, count?: number) {
+	const vcount = count ?? positions.length / 3
 	if (vcount === 0) {
 		return
 	}
@@ -61,7 +61,7 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 		return
 	}
 	const s = targetRadius / maxR
-	for (let i = 0; i < positions.length; i++) {
+	for (let i = 0; i < vcount * 3; i++) {
 		positions[i] *= s
 	}
 }
@@ -111,26 +111,33 @@ export function sampleGyroidCloud(iso = 0, tiles = 2): GyroidCloud {
 	}
 
 	const mesh = polygoniseGrid(values, nx, nx, nx, origin, cell)
-	centerAndScale(mesh.positions, TARGET_R)
+	const total = mesh.positions.length / 3
+	const keep = Math.min(total, GYROID_MAX_POINTS)
+	/** Prefix truncate biases one side of the cell — stride so the cloud stays centered. */
+	const stride = total > keep ? total / keep : 1
 
 	const positions = new Float32Array(GYROID_MAX_POINTS * 3)
 	const colors = new Float32Array(GYROID_MAX_POINTS * 3)
-	const raw = Math.min(mesh.positions.length / 3, GYROID_MAX_POINTS)
-	for (let i = 0; i < raw; i++) {
+	for (let i = 0; i < keep; i++) {
+		const src = Math.min(total - 1, Math.floor(i * stride)) * 3
 		const i3 = i * 3
-		positions[i3] = mesh.positions[i3]
-		positions[i3 + 1] = mesh.positions[i3 + 1]
-		positions[i3 + 2] = mesh.positions[i3 + 2]
+		positions[i3] = mesh.positions[src]
+		positions[i3 + 1] = mesh.positions[src + 1]
+		positions[i3 + 2] = mesh.positions[src + 2]
+	}
+	centerAndScale(positions, TARGET_R, keep)
+	for (let i = 0; i < keep; i++) {
+		const i3 = i * 3
 		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2])
 	}
-	if (raw > 0) {
+	if (keep > 0) {
 		const px = positions[0]
 		const py = positions[1]
 		const pz = positions[2]
 		const cr = colors[0]
 		const cg = colors[1]
 		const cb = colors[2]
-		for (let i = raw; i < GYROID_MAX_POINTS; i++) {
+		for (let i = keep; i < GYROID_MAX_POINTS; i++) {
 			const i3 = i * 3
 			positions[i3] = px
 			positions[i3 + 1] = py
