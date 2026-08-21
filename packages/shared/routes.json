@@ -174,7 +174,7 @@
     "slug": "barth_sextic",
     "title": "Barth Sextic",
     "category": "misc",
-    "description": "Barth’s degree-6 algebraic surface with icosahedral symmetry. Affine chart meshed from the golden-ratio implicit; 65 ordinary double points.",
+    "description": "Barth’s degree-6 icosahedral surface as a particle wire. Morph tau (golden lattice), radius (sphere term), mix (spikes vs shell).",
     "thumbnail": "/chaos/icons/barth_sextic.png",
     "renderMode": "webgl",
     "active": true
