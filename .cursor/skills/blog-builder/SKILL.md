@@ -75,6 +75,8 @@ Spawn a **new** agent with **only**:
 - MDX shape (`export const meta`, no body H1, `VizEmbed`, optional `Callout to=…`)
 - Excerpt: search-shaped topic first, implementation second
 - Never name repo paths / filenames / internal APIs in prose
+- Avoid **spec-sheet voice**: particle budgets, iframe queue, camera z, framing scale, and long default dumps belong later or not at all — lead with what you see and why it matters
+- **Never** put an affordance inventory before/after `<VizEmbed>` (Pause/Open full/knobs/HUD/scrub lists). Curiosity → embed; knobs belong in Callout or a short full-canvas section. See [voice-notes.md](voice-notes.md).
 
 **Do not** paste source articles or prior draft prose into the writer.
 

@@ -52,7 +52,10 @@ Curious non-expert or lightly technical person:
 ### 2. Language / tone
 
 - Clarity, jargon load, awkward phrases
-- Lab-notebook discoverer voice vs lecture or marketing gloss
+- Lab-notebook discoverer voice vs lecture, marketing gloss, or **spec-sheet / catalog inventory** (param dumps, particle budgets, camera z, framing scale) before the reader has a reason to care
+- Prefer what you saw on the cards over engine notes; math supports the looking
+- **Hard fail:** affordance inventory next to the embed (pan/zoom/pause/knobs/HUD/Open full stacked). See [blog-builder/voice-notes.md](../blog-builder/voice-notes.md)
+- **Hard fail:** selling by listing what the notebook lacks (“does not do click-to-Julia…”) — pitch what the full stage offers instead
 - Quote specific sentences when flagging
 
 ### 3. On-page SEO wording
