@@ -201,7 +201,7 @@
     "slug": "roman_surface",
     "title": "Roman Surface",
     "category": "misc",
-    "description": "Steiner’s Roman surface: a self-intersecting immersion of the real projective plane RP², meshed from the standard trigonometric parametrization.",
+    "description": "Steiner’s Roman surface: RP² immersion as a UV isoline particle wire. Morph squash stretches z before normalize.",
     "thumbnail": "/chaos/icons/roman_surface.png",
     "renderMode": "webgl",
     "active": true
