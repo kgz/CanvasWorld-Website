@@ -1,7 +1,6 @@
 import { polygoniseGrid } from './isosurface'
 
 const PERIOD = Math.PI * 2
-const EPS = 1e-15
 /** Fixed GPU budget so param scrubs don't remount buffers / reset `n`. */
 export const GYROID_MAX_POINTS = 120_000
 /** Samples along one period; higher tile counts use a slightly coarser grid. */
