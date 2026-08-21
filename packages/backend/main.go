@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -133,31 +134,41 @@ func main() {
 	}))
 
 	// Icons: keep /chaos/icons for absolute URLs; /icons after Traefik strip_prefix=/chaos
-	app.Use("/chaos/icons", filesystem.New(filesystem.Config{
+	cacheIcons := func(c *fiber.Ctx) error {
+		c.Set("Cache-Control", "public, max-age=604800")
+		return c.Next()
+	}
+	iconFS := filesystem.New(filesystem.Config{
 		Root:   http.Dir(imagesDir),
 		Browse: false,
-	}))
-	app.Use("/icons", filesystem.New(filesystem.Config{
-		Root:   http.Dir(imagesDir),
-		Browse: false,
-	}))
+	})
+	app.Use("/chaos/icons", cacheIcons, iconFS)
+	app.Use("/icons", cacheIcons, iconFS)
 
-	app.Use("/static", filesystem.New(filesystem.Config{
+	app.Use("/static", func(c *fiber.Ctx) error {
+		c.Set("Cache-Control", "public, max-age=604800")
+		return c.Next()
+	}, filesystem.New(filesystem.Config{
 		Root:   http.Dir(distDir),
 		Browse: false,
 	}))
-	app.Use("/assets", filesystem.New(filesystem.Config{
+	// Vite hashed filenames — long cache safe
+	app.Use("/assets", func(c *fiber.Ctx) error {
+		c.Set("Cache-Control", "public, max-age=31536000, immutable")
+		return c.Next()
+	}, filesystem.New(filesystem.Config{
 		Root:   http.Dir(distDir + "/assets"),
 		Browse: false,
 	}))
-	app.Use("/favicon.ico", filesystem.New(filesystem.Config{
-		Root:   http.Dir(distDir),
-		Browse: false,
-	}))
-	app.Use("/manifest.json", filesystem.New(filesystem.Config{
-		Root:   http.Dir(distDir),
-		Browse: false,
-	}))
+	// filesystem mount on /favicon.ico served index.html (empty path). SendFile instead.
+	app.Get("/favicon.ico", func(c *fiber.Ctx) error {
+		c.Set("Cache-Control", "public, max-age=604800")
+		return c.SendFile(filepath.Join(distDir, "favicon.ico"))
+	})
+	app.Get("/manifest.json", func(c *fiber.Ctx) error {
+		c.Set("Cache-Control", "public, max-age=86400")
+		return c.SendFile(filepath.Join(distDir, "manifest.json"))
+	})
 
 	app.Get("/robots.txt", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "text/plain; charset=utf-8")
