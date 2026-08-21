@@ -11,6 +11,8 @@ type pageMeta struct {
 	Slug        string // empty on home / unknown
 	ImagePath   string // path under PUBLIC_BASE, e.g. /icons/lorenz_attractor.png
 	PagePath    string // path under PUBLIC_BASE, e.g. / or /lorenz_attractor
+	BodyHTML    string // optional crawler-visible article HTML (trusted, from our export)
+	AboutHTML   string // optional About / catalog blurb HTML
 }
 
 func publicBase() string {
@@ -52,6 +54,21 @@ func resolvePageMeta(requestPath string) pageMeta {
 		meta.Title = "Lab notebook — Classical Chaos"
 		meta.Description = "Notes on attractors, maps, and meshes in the Classical Chaos catalog."
 		meta.PagePath = "/blog"
+		var list strings.Builder
+		list.WriteString("<p>Notes in the Classical Chaos lab notebook:</p><ul>")
+		for _, p := range blogPostSlugs() {
+			post, ok := getBlogPost(p)
+			if !ok {
+				continue
+			}
+			list.WriteString(`<li><a href="`)
+			list.WriteString(html.EscapeString(absoluteURL(publicBase(), "/blog/"+post.Slug)))
+			list.WriteString(`">`)
+			list.WriteString(html.EscapeString(post.Title))
+			list.WriteString(`</a></li>`)
+		}
+		list.WriteString("</ul>")
+		meta.BodyHTML = list.String()
 		return meta
 	}
 
@@ -70,6 +87,7 @@ func resolvePageMeta(requestPath string) pageMeta {
 				meta.ImagePath = "/icons/" + post.ThumbSlug + ".png"
 			}
 			meta.Slug = "blog/" + post.Slug
+			meta.BodyHTML = post.BodyHTML
 		} else {
 			meta.Title = "Lab notebook — Classical Chaos"
 			meta.Description = "Notes on attractors, maps, and meshes in the Classical Chaos catalog."
@@ -92,6 +110,7 @@ func resolvePageMeta(requestPath string) pageMeta {
 	meta.Title = title + " — Classical Chaos"
 	if route.Description != "" {
 		meta.Description = route.Description
+		meta.AboutHTML = "<p>" + html.EscapeString(route.Description) + "</p>"
 	}
 	meta.ImagePath = "/icons/" + slug + ".png"
 	meta.PagePath = "/" + slug
@@ -153,7 +172,57 @@ func injectIndexMeta(indexHTML string, m pageMeta) string {
 	if i := strings.Index(out, "</head>"); i >= 0 {
 		out = out[:i] + "    " + tags + "\n  " + out[i:]
 	}
+	seo := seoContentHTML(m)
+	if seo != "" {
+		if i := strings.Index(out, `<div id="root"></div>`); i >= 0 {
+			out = out[:i] + seo + "\n    " + out[i:]
+		} else if i := strings.Index(out, "</body>"); i >= 0 {
+			out = out[:i] + seo + "\n  " + out[i:]
+		}
+	}
 	return out
+}
+
+// seoContentHTML is crawler-visible copy in the SPA shell (removed on React hydrate).
+func seoContentHTML(m pageMeta) string {
+	base := publicBase()
+	canonical := absoluteURL(base, m.PagePath)
+	image := absoluteURL(base, m.ImagePath)
+	t := html.EscapeString(m.Title)
+	d := html.EscapeString(m.Description)
+	img := html.EscapeString(image)
+	can := html.EscapeString(canonical)
+
+	var b strings.Builder
+	b.WriteString(`<div id="cw-seo" data-cw-seo="1">`)
+	b.WriteString(`<article>`)
+	b.WriteString(`<h1>`)
+	b.WriteString(t)
+	b.WriteString(`</h1>`)
+	if m.BodyHTML != "" {
+		b.WriteString(`<div class="cw-seo-body">`)
+		b.WriteString(m.BodyHTML)
+		b.WriteString(`</div>`)
+	} else if m.AboutHTML != "" {
+		b.WriteString(`<section aria-label="About">`)
+		b.WriteString(`<h2>About</h2>`)
+		b.WriteString(m.AboutHTML)
+		b.WriteString(`</section>`)
+	} else if d != "" {
+		b.WriteString(`<p>`)
+		b.WriteString(d)
+		b.WriteString(`</p>`)
+	}
+	b.WriteString(`<p><img src="`)
+	b.WriteString(img)
+	b.WriteString(`" alt="`)
+	b.WriteString(t)
+	b.WriteString(`" width="1200" height="630"></p>`)
+	b.WriteString(`<p><a href="`)
+	b.WriteString(can)
+	b.WriteString(`">Open Classical Chaos page</a></p>`)
+	b.WriteString(`</article></div>`)
+	return b.String()
 }
 
 func sitemapXML() string {

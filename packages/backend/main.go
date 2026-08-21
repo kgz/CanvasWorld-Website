@@ -76,8 +76,8 @@ func initDB() {
 }
 
 func isBot(userAgent string) bool {
-	// Social preview fetchers only — do not match bare "bot" (Googlebot would get SSR stub).
-	social := []string{
+	// Preview fetchers + major search crawlers (content SSR, not a loading stub).
+	bots := []string{
 		"discordbot",
 		"twitterbot",
 		"facebookexternalhit",
@@ -89,10 +89,16 @@ func isBot(userAgent string) bool {
 		"redditbot",
 		"embedly",
 		"pinterest",
+		"googlebot",
+		"bingbot",
+		"duckduckbot",
+		"slurp",
+		"applebot",
+		"yandexbot",
 	}
 
 	userAgent = strings.ToLower(userAgent)
-	for _, keyword := range social {
+	for _, keyword := range bots {
 		if strings.Contains(userAgent, keyword) {
 			return true
 		}

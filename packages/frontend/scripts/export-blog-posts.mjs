@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
- * Extract export const meta = {…} from MDX posts → packages/shared/blog-posts.json
+ * Extract export const meta = {…} + plain HTML body from MDX posts
+ * → packages/shared/blog-posts.json (Go SSR / Google-visible HTML)
+ *
  * Run from packages/frontend: pnpm run export-blog-posts
  */
 import fs from 'node:fs'
@@ -36,22 +38,93 @@ function extractMetaObject(src) {
 			depth--
 			if (depth === 0) {
 				const literal = src.slice(brace, i + 1)
-				return new Function(`return (${literal})`)()
+				return { meta: new Function(`return (${literal})`)(), end: i + 1 }
 			}
 		}
 	}
 	return null
 }
 
+function escapeHtml(s) {
+	return s
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+}
+
+/** Strip MDX/JSX chrome into simple semantic HTML for crawlers. */
+function mdxBodyToHtml(raw) {
+	let s = raw
+	// fenced code → pre
+	s = s.replace(/```[\w]*\n([\s\S]*?)```/g, (_, code) => `<pre><code>${escapeHtml(code.trimEnd())}</code></pre>`)
+	// self-closing / void-ish JSX components
+	s = s.replace(/<[A-Z][A-Za-z0-9]*\b[^>]*\/>/g, '')
+	// Callout / VizEmbedGrid blocks with children
+	s = s.replace(/<Callout\b[^>]*>[\s\S]*?<\/Callout>/g, '')
+	s = s.replace(/<VizEmbedGrid\b[^>]*>[\s\S]*?<\/VizEmbedGrid>/g, '')
+	s = s.replace(/<[A-Z][A-Za-z0-9]*\b[^>]*>[\s\S]*?<\/[A-Z][A-Za-z0-9]*>/g, '')
+	// InlineMath / leftover JSX tags
+	s = s.replace(/<\/?[A-Z][A-Za-z0-9]*\b[^>]*>/g, '')
+	// markdown links [text](url)
+	s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => {
+		const safeHref = href.startsWith('http') || href.startsWith('/') ? href : '#'
+		return `<a href="${escapeHtml(safeHref)}">${escapeHtml(text)}</a>`
+	})
+	// inline code
+	s = s.replace(/`([^`]+)`/g, (_, code) => `<code>${escapeHtml(code)}</code>`)
+	// bold/italic light
+	s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+	s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+
+	const lines = s.split(/\n/)
+	const out = []
+	let para = []
+	const flushPara = () => {
+		const t = para.join(' ').trim()
+		para = []
+		if (t) out.push(`<p>${t}</p>`)
+	}
+	for (const line of lines) {
+		const trimmed = line.trim()
+		if (!trimmed) {
+			flushPara()
+			continue
+		}
+		if (trimmed.startsWith('<pre>')) {
+			flushPara()
+			out.push(trimmed)
+			continue
+		}
+		const h2 = trimmed.match(/^##\s+(.+)$/)
+		if (h2) {
+			flushPara()
+			out.push(`<h2>${escapeHtml(h2[1])}</h2>`)
+			continue
+		}
+		const h3 = trimmed.match(/^###\s+(.+)$/)
+		if (h3) {
+			flushPara()
+			out.push(`<h3>${escapeHtml(h3[1])}</h3>`)
+			continue
+		}
+		para.push(trimmed)
+	}
+	flushPara()
+	return out.join('\n')
+}
+
 const files = fs.readdirSync(postsDir).filter((f) => f.endsWith('.mdx')).sort()
 const posts = []
 for (const file of files) {
 	const src = fs.readFileSync(path.join(postsDir, file), 'utf8')
-	const meta = extractMetaObject(src)
-	if (!meta || typeof meta.slug !== 'string' || typeof meta.title !== 'string') {
+	const extracted = extractMetaObject(src)
+	if (!extracted || typeof extracted.meta.slug !== 'string' || typeof extracted.meta.title !== 'string') {
 		console.error(`skip ${file}: missing meta.slug/title`)
 		continue
 	}
+	const meta = extracted.meta
+	const bodySrc = src.slice(extracted.end)
 	posts.push({
 		slug: meta.slug,
 		title: meta.title,
@@ -60,6 +133,7 @@ for (const file of files) {
 		thumbSlug: typeof meta.thumbSlug === 'string' ? meta.thumbSlug : '',
 		order: typeof meta.order === 'number' ? meta.order : 0,
 		featured: Boolean(meta.featured),
+		bodyHtml: mdxBodyToHtml(bodySrc),
 	})
 }
 

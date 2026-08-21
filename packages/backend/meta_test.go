@@ -33,8 +33,11 @@ func TestIsBotNarrow(t *testing.T) {
 	if !isBot("Mozilla/5.0 (compatible; Discordbot/2.0)") {
 		t.Fatal("discord should match")
 	}
-	if isBot("Mozilla/5.0 (compatible; Googlebot/2.1)") {
-		t.Fatal("googlebot must not match social SSR")
+	if !isBot("Mozilla/5.0 (compatible; Googlebot/2.1)") {
+		t.Fatal("googlebot should get content SSR")
+	}
+	if isBot("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0") {
+		t.Fatal("desktop chrome must not match")
 	}
 }
 
