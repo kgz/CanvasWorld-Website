@@ -12,7 +12,7 @@
     "slug": "bogdanov_map",
     "title": "Bogdanov Map",
     "category": "map",
-    "description": "The Bogdanov Map is a chaotic map defined by the following equations: x_{n+1} = y_n + 1 - a \\cdot x_n^2, y_{n+1} = b \\cdot x_n",
+    "description": "The Bogdanov Map (Rifkat Bogdanov) is the discrete map y' = y + a y + b x(x-1) + \\mu x y, x' = x + y' with defaults a=0.0025, b=1.44, \\mu=-0.1.",
     "thumbnail": "/chaos/icons/bogdanov_map.png",
     "renderMode": "webgl",
     "active": true

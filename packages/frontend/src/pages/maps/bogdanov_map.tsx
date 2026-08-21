@@ -2,27 +2,23 @@ import type { RootState } from '@react-three/fiber'
 import * as THREE from 'three'
 
 import { BlockMath } from 'react-katex'
-import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps, type TsetBodyJSX } from '../../@types/gui'
+import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps } from '../../@types/gui'
 import Base from '../_base'
-import type { ComponentProps } from 'react'
 import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
-import type { TRoutes } from '../../@types/routes'
 import { useAnimationState } from '../../hooks/useAnimationState'
 
-const { sin, cos } = Math
-
-// Core tick logic for Bogdanov Map
+/** Standard Bogdanov: y' = y + a y + b x(x−1) + μ x y; x' = x + y' */
 export const bogdanovMapTick = (
 	x: number,
 	y: number,
 	a: number,
-	b: number
+	b: number,
+	mu: number,
 ): { x: number; y: number } => {
-	const nx = x + y + a * y + b * x * (x - 1) - 0.1 * x * y
-	const ny = y + a * y + b * x * (x - 1) - 0.1 * x * y
-	
+	const ny = y + a * y + b * x * (x - 1) + mu * x * y
+	const nx = x + ny
 	return { x: nx, y: ny }
 }
 
@@ -47,6 +43,12 @@ const BogdanovMap = () => {
 						max: 2.5,
 						step: 0.01,
 					},
+					mu: {
+						initialValue: -0.1,
+						min: -0.5,
+						max: 0.5,
+						step: 0.01,
+					},
 				},
 				examples: [],
 			}) as TDatData,
@@ -65,15 +67,15 @@ const BogdanovMap = () => {
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,
 		colors: Float32Array,
-		state: RootState,
+		_state: RootState,
 		delta: number,
-		frame?: XRFrame | undefined,
+		_frame?: XRFrame | undefined,
 	) => {
-		const { a, b } = data
+		const { a, b, mu } = data
 
-		// Use fallback values if parameters are undefined
 		const safeA = a !== undefined ? a : datData.options.a.initialValue
 		const safeB = b !== undefined ? b : datData.options.b.initialValue
+		const safeMu = mu !== undefined ? mu : datData.options.mu.initialValue
 
 		const totalParticles = positions.length / EDimensions.TWO_D
 		const particlesToDraw = calculateParticlesToDraw(totalParticles, delta)
@@ -82,7 +84,7 @@ const BogdanovMap = () => {
 			y = 0
 		for (let i = 0; i < totalParticles; i++) {
 			if (i < particlesToDraw) {
-				const next = bogdanovMapTick(x, y, safeA, safeB)
+				const next = bogdanovMapTick(x, y, safeA, safeB, safeMu)
 				x = next.x
 				y = next.y
 
@@ -118,33 +120,23 @@ const BogdanovMap = () => {
 	)
 }
 
-// Add static description function to the component
 BogdanovMap.getDescription = () => (
 	<>
-		The Bogdanov map is a mathematical model that describes a discrete dynamical system. It is named after its
-		discoverer, Boris Bogdanov. The map is often used to study chaotic behavior in nonlinear systems.
+		The Bogdanov map is a discrete dynamical system introduced by Rifkat Bogdanov. Classical Chaos iterates the
+		standard form with parameters <em>a</em>, <em>b</em>, and <em>μ</em>.
 		<br />
 		<br />
-		Definitions:
-		<BlockMath math={'x_{n+1} = y_{n} + 1 - a \\cdot x_{n}^2'} />
-		<BlockMath math={'y_{n+1} = b \\cdot x_{n}'} />
+		Definition:
+		<BlockMath math={'y\\prime = y + a y + b x(x - 1) + \\mu\\, x y'} />
+		<BlockMath math={'x\\prime = x + y\\prime'} />
 		Limits:
 		<BlockMath math="a \\in [0, 0.01]" />
 		<BlockMath math="b \\in [0.5, 2.5]" />
+		<BlockMath math="\\mu \\in [-0.5, 0.5]" />
 		<br />
 		<br />
-		Here, {'x_{n}'} and {'y_{n}'} represent the state variables at time step n. The parameters a and b are constants that
-		determine the behavior of the system. The map exhibits interesting dynamics depending on the values of a and
-		b.
-		<br />
-		<br />
-		It can display periodic behavior, stable fixed points, or chaotic trajectories. The chaotic behavior arises
-		when the system is sensitive to initial conditions, meaning small changes in the initial state can lead to
-		significantly different outcomes.
-		<br />
-		<br />
-		The Bogdanov map has applications in various fields, including physics, biology, and economics. It provides
-		insights into complex systems and helps researchers understand the behavior of nonlinear dynamical systems.
+		Default seed is <code>(0.1, 0)</code> with <code>a = 0.0025</code>, <code>b = 1.44</code>,{' '}
+		<code>μ = −0.1</code>.
 	</>
 )
 
