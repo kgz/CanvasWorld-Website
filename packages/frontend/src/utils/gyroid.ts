@@ -2,6 +2,18 @@ import { polygoniseGrid } from './isosurface'
 
 const PERIOD = Math.PI * 2
 const EPS = 1e-15
+/** Fixed GPU budget so param scrubs don't remount buffers / reset `n`. */
+export const GYROID_MAX_POINTS = 80_000
+/** Interactive MC — baked like Barth GRID_RES 32. */
+const GRID_RES = 32
+const TARGET_R = 1.7
+
+export type GyroidCloud = {
+	positions: Float32Array
+	colors: Float32Array
+	/** Always GYROID_MAX_POINTS (padded). */
+	count: number
+}
 
 export function gyroidField(x: number, y: number, z: number): number {
 	return Math.sin(x) * Math.cos(y) + Math.sin(y) * Math.cos(z) + Math.sin(z) * Math.cos(x)
@@ -11,18 +23,8 @@ export function clampIso(t: number): number {
 	return Math.min(1.2, Math.max(-1.2, t))
 }
 
-export function clampRes(res: number): number {
-	return Math.min(56, Math.max(16, Math.round(res)))
-}
-
 export function clampTiles(tiles: number): number {
 	return Math.min(2, Math.max(1, Math.round(tiles)))
-}
-
-export type GyroidMesh = {
-	positions: Float32Array
-	indices: Uint32Array
-	colors: Float32Array
 }
 
 function centerAndScale(positions: Float32Array, targetRadius: number) {
@@ -64,10 +66,31 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 	}
 }
 
-export function buildGyroidMesh(iso: number, res: number, tiles: number): GyroidMesh {
+/** Coral → amber → teal by direction (reads on black). */
+function writeRibbon(colors: Float32Array, i: number, x: number, y: number, z: number) {
+	const r = Math.hypot(x, y, z) || 1
+	const u = 0.5 + 0.5 * (x / r)
+	const v = 0.5 + 0.5 * (y / r)
+	const w = 0.5 + 0.5 * (z / r)
+	const t = Math.min(1, Math.max(0, 0.45 * u + 0.25 * v + 0.3 * (1 - w)))
+	if (t < 0.5) {
+		const s = t / 0.5
+		colors[i] = 1
+		colors[i + 1] = 0.2 + 0.55 * s
+		colors[i + 2] = 0.28 + 0.08 * s
+		return
+	}
+	const s = (t - 0.5) / 0.5
+	colors[i] = 1 - 0.82 * s
+	colors[i + 1] = 0.75 + 0.22 * s
+	colors[i + 2] = 0.36 + 0.58 * s
+}
+
+/** Isosurface vertices as a particle cloud (no lit triangles). */
+export function sampleGyroidCloud(iso = 0, tiles = 1): GyroidCloud {
 	const t = clampIso(iso)
 	const nTiles = clampTiles(tiles)
-	const samplesPer = clampRes(res)
+	const samplesPer = GRID_RES
 	const nx = samplesPer * nTiles + 1
 	const extent = PERIOD * nTiles
 	const origin: readonly [number, number, number] = [0, 0, 0]
@@ -87,19 +110,34 @@ export function buildGyroidMesh(iso: number, res: number, tiles: number): Gyroid
 	}
 
 	const mesh = polygoniseGrid(values, nx, nx, nx, origin, cell)
-	const colors = new Float32Array(mesh.positions.length)
-	for (let i = 0; i < mesh.positions.length; i += 3) {
-		const x = mesh.positions[i]
-		const y = mesh.positions[i + 1]
-		const z = mesh.positions[i + 2]
-		const u = extent > 0 ? x / extent : 0
-		const v = extent > 0 ? y / extent : 0
-		const w = extent > 0 ? z / extent : 0
-		colors[i] = 0.18 + 0.62 * u
-		colors[i + 1] = 0.42 + 0.4 * v
-		colors[i + 2] = 0.55 + 0.4 * (1 - w)
-	}
+	centerAndScale(mesh.positions, TARGET_R)
 
-	centerAndScale(mesh.positions, 1.7)
-	return { positions: mesh.positions, indices: mesh.indices, colors }
+	const positions = new Float32Array(GYROID_MAX_POINTS * 3)
+	const colors = new Float32Array(GYROID_MAX_POINTS * 3)
+	const raw = Math.min(mesh.positions.length / 3, GYROID_MAX_POINTS)
+	for (let i = 0; i < raw; i++) {
+		const i3 = i * 3
+		positions[i3] = mesh.positions[i3]
+		positions[i3 + 1] = mesh.positions[i3 + 1]
+		positions[i3 + 2] = mesh.positions[i3 + 2]
+		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2])
+	}
+	if (raw > 0) {
+		const px = positions[0]
+		const py = positions[1]
+		const pz = positions[2]
+		const cr = colors[0]
+		const cg = colors[1]
+		const cb = colors[2]
+		for (let i = raw; i < GYROID_MAX_POINTS; i++) {
+			const i3 = i * 3
+			positions[i3] = px
+			positions[i3 + 1] = py
+			positions[i3 + 2] = pz
+			colors[i3] = cr
+			colors[i3 + 1] = cg
+			colors[i3 + 2] = cb
+		}
+	}
+	return { positions, colors, count: GYROID_MAX_POINTS }
 }
