@@ -8,16 +8,18 @@ import { useAnimation } from '../../context/AnimationContext'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import {
-	clampCurves,
+	clampBlend,
 	clampDetail,
 	clampHomotopy,
-	sampleBoyIsolines,
+	clampRays,
+	clampRings,
+	sampleBoyMorphIsolines,
 } from '../../utils/boySurface'
 
-/** Max isolines per family (u and v). Fixed GPU buffer so `n` stays stable. */
-const MAX_CURVES = 80
+const MAX_RINGS = 80
+const MAX_RAYS = 96
 const MAX_DETAIL = 280
-const MAX_POINTS = (MAX_CURVES + MAX_CURVES) * MAX_DETAIL
+const MAX_POINTS = (MAX_RINGS + MAX_RAYS) * MAX_DETAIL
 
 const BoyJuryIsolines = () => {
 	const dispatch = useAppDispatch()
@@ -33,17 +35,16 @@ const BoyJuryIsolines = () => {
 		(): TDatData => ({
 			options: {
 				k: { initialValue: 1, min: 0, max: 1, step: 0.01 },
-				/** How many separate u- and v-wires (sparse cage ↔ dense cage). */
-				curves: { initialValue: 40, min: 16, max: MAX_CURVES, step: 1 },
-				/** Points along each wire — crank this for tight lobe packing. */
+				bryant: { initialValue: 1, min: 0, max: 1, step: 0.01 },
+				rings: { initialValue: 40, min: 8, max: MAX_RINGS, step: 1 },
+				rays: { initialValue: 48, min: 12, max: MAX_RAYS, step: 1 },
 				detail: { initialValue: 200, min: 64, max: MAX_DETAIL, step: 4 },
 			},
 			examples: [
-				{ k: 1, curves: 28, detail: 120 },
-				{ k: 1, curves: 40, detail: 200 },
-				{ k: 1, curves: 36, detail: 280 },
-				{ k: 0.5, curves: 48, detail: 220 },
-				{ k: 0, curves: 40, detail: 200 },
+				{ k: 0, bryant: 0, rings: 40, rays: 48, detail: 200 },
+				{ k: 1, bryant: 0, rings: 40, rays: 48, detail: 200 },
+				{ k: 1, bryant: 0.5, rings: 40, rays: 48, detail: 200 },
+				{ k: 1, bryant: 1, rings: 48, rays: 64, detail: 240 },
 			],
 		}),
 		[],
@@ -63,9 +64,14 @@ const BoyJuryIsolines = () => {
 	}, [datData, dispatch])
 
 	const k = clampHomotopy(data.k ?? datData.options.k.initialValue)
-	const curves = clampCurves(data.curves ?? datData.options.curves.initialValue)
+	const bryant = clampBlend(data.bryant ?? datData.options.bryant.initialValue)
+	const rings = clampRings(data.rings ?? datData.options.rings.initialValue)
+	const rays = clampRays(data.rays ?? datData.options.rays.initialValue)
 	const detail = clampDetail(data.detail ?? datData.options.detail.initialValue)
-	const cloud = useMemo(() => sampleBoyIsolines(curves, curves, detail, k), [curves, detail, k])
+	const cloud = useMemo(
+		() => sampleBoyMorphIsolines(rings, rays, detail, k, bryant),
+		[rings, rays, detail, k, bryant],
+	)
 
 	useEffect(() => {
 		seeded.current = false
@@ -110,17 +116,18 @@ const BoyJuryIsolines = () => {
 
 BoyJuryIsolines.getDescription = () => (
 	<>
-		Morin–Apéry family: scrub <InlineMath math="k" /> from Roman (<InlineMath math="k=0" />) to Boy
-		(<InlineMath math="k=1" />
-		). Isoline wire (legacy points).
+		Two morph axes on a shared polar wire:
+		<br />
+		<code>k</code>: Roman (<InlineMath math="0" />) → Morin–Apéry Boy (<InlineMath math="1" />
+		).
+		<br />
+		<code>bryant</code>: Apéry petals → Bryant–Kusner three-balls (your reference).
 		<br />
 		<br />
-		<BlockMath math={'\\mathrm{denom}=2-k\\sqrt{2}\\,\\sin 3u\\,\\sin 2v'} />
+		<BlockMath math={'p=(1-b)\\,P_{\\mathrm{Ap\\acute{e}ry}}(k)+b\\,P_{\\mathrm{Bryant}}'} />
 		<br />
-		<code>curves</code> = how many separate wires.
-		<br />
-		<code>detail</code> = points packed along each wire — that is what tightens the three lobes into dense
-		balls (try the third example: medium curves, max detail).
+		<code>rings</code> / <code>rays</code> / <code>detail</code> = wire density. Examples: Roman, Apéry,
+		mid-blend, Bryant.
 		<br />
 		Transport <code>n</code> reveals points.
 	</>

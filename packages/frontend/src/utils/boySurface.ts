@@ -75,6 +75,29 @@ export function clampDetail(detail: number): number {
 	return Math.min(280, Math.max(64, Math.round(detail)))
 }
 
+export function clampBlend(t: number): number {
+	return Math.min(1, Math.max(0, t))
+}
+
+export function clampRings(rings: number): number {
+	return Math.min(80, Math.max(8, Math.round(rings)))
+}
+
+export function clampRays(rays: number): number {
+	return Math.min(96, Math.max(12, Math.round(rays)))
+}
+
+/** Shared polar domain: disk (r,θ) ↔ Apéry (u,v) and Bryant w. */
+function polarToDomains(r: number, th: number) {
+	const rr = Math.min(1, Math.max(0, r))
+	return {
+		u: 0.5 * th,
+		v: Math.PI * rr,
+		re: rr * Math.cos(th),
+		im: rr * Math.sin(th),
+	}
+}
+
 /** Bryant–Kusner on the unit disk (w = re + i im). */
 export function boyPointBryant(re: number, im: number): BoyPoint | null {
 	const w: Complex = { re, im }
@@ -256,7 +279,7 @@ export function sampleBoyScanline(nu = 200, nv = 140, k = 1): BoyCloud {
 	return { positions, colors, count }
 }
 
-/** Constant-u / constant-v curves as a dense point wire. */
+/** Constant-u / constant-v Apéry curves as a dense point wire. */
 export function sampleBoyIsolines(nu = 64, nv = 64, samples = 200, k = 1): BoyCloud {
 	const count = (nu + nv) * samples
 	const positions = new Float32Array(count * 3)
@@ -291,6 +314,71 @@ export function sampleBoyIsolines(nu = 64, nv = 64, samples = 200, k = 1): BoyCl
 		}
 	}
 	centerAndScale(positions, TARGET_R)
+	return { positions, colors, count }
+}
+
+/**
+ * Polar isolines morphing Apéry family ↔ Bryant–Kusner.
+ * k: Roman→Apéry Boy. bryant: Apéry→Bryant (three-ball) after each side is normalized.
+ */
+export function sampleBoyMorphIsolines(
+	nRings = 40,
+	nRays = 48,
+	samples = 200,
+	k = 1,
+	bryant = 0,
+): BoyCloud {
+	const kk = clampHomotopy(k)
+	const bt = clampBlend(bryant)
+	const count = (nRings + nRays) * samples
+	const apery = new Float32Array(count * 3)
+	const bryantPos = new Float32Array(count * 3)
+	const colors = new Float32Array(count * 3)
+	let i = 0
+
+	const push = (r: number, th: number) => {
+		const { u, v, re, im } = polarToDomains(r, th)
+		const a = boyPoint(u, v, kk)
+		const b = boyPointBryant(re, im)
+		const i3 = i * 3
+		apery[i3] = a.x
+		apery[i3 + 1] = a.y
+		apery[i3 + 2] = a.z
+		if (b) {
+			bryantPos[i3] = b.x
+			bryantPos[i3 + 1] = b.y
+			bryantPos[i3 + 2] = b.z
+		} else {
+			bryantPos[i3] = a.x
+			bryantPos[i3 + 1] = a.y
+			bryantPos[i3 + 2] = a.z
+		}
+		writeUvRibbon(colors, i3, th / (2 * Math.PI), r)
+		i += 1
+	}
+
+	for (let ir = 1; ir <= nRings; ir++) {
+		const r = ir / nRings
+		for (let s = 0; s < samples; s++) {
+			push(r, (2 * Math.PI * s) / samples)
+		}
+	}
+	for (let it = 0; it < nRays; it++) {
+		const th = (2 * Math.PI * it) / nRays
+		for (let s = 0; s < samples; s++) {
+			const r = samples <= 1 ? 0 : s / (samples - 1)
+			push(r, th)
+		}
+	}
+
+	centerAndScale(apery, TARGET_R)
+	centerAndScale(bryantPos, TARGET_R)
+
+	const positions = new Float32Array(count * 3)
+	const omt = 1 - bt
+	for (let j = 0; j < positions.length; j++) {
+		positions[j] = apery[j] * omt + bryantPos[j] * bt
+	}
 	return { positions, colors, count }
 }
 
