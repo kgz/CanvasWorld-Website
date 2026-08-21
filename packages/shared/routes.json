@@ -57,7 +57,7 @@
     "slug": "henon_map",
     "title": "Henon Map",
     "category": "map",
-    "description": "The Henon Map is a chaotic map defined by the following equations: x_{n+1} = 1 - a \\cdot x_n^2 + y_n, y_{n+1} = b \\cdot x_n",
+    "description": "Classic Hénon map (1976): x' = 1 - a x² + y, y' = b x. Defaults a=1.4, b=0.3.",
     "thumbnail": "/chaos/icons/henon_map.png",
     "renderMode": "webgl",
     "active": true
