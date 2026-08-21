@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -77,14 +76,23 @@ func initDB() {
 }
 
 func isBot(userAgent string) bool {
-	botKeywords := []string{
-		"discordbot", "twitterbot", "facebookexternalhit", "linkedinbot",
-		"slackbot", "telegrambot", "whatsapp", "skypeuripreview",
-		"bot", "crawler", "spider", "scraper",
+	// Social preview fetchers only — do not match bare "bot" (Googlebot would get SSR stub).
+	social := []string{
+		"discordbot",
+		"twitterbot",
+		"facebookexternalhit",
+		"linkedinbot",
+		"slackbot",
+		"telegrambot",
+		"whatsapp",
+		"skypeuripreview",
+		"redditbot",
+		"embedly",
+		"pinterest",
 	}
 
 	userAgent = strings.ToLower(userAgent)
-	for _, keyword := range botKeywords {
+	for _, keyword := range social {
 		if strings.Contains(userAgent, keyword) {
 			return true
 		}
@@ -144,10 +152,15 @@ func main() {
 		Root:   http.Dir(distDir),
 		Browse: false,
 	}))
-	app.Use("/robots.txt", filesystem.New(filesystem.Config{
-		Root:   http.Dir(distDir),
-		Browse: false,
-	}))
+
+	app.Get("/robots.txt", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "text/plain; charset=utf-8")
+		return c.SendString(robotsTxtBody())
+	})
+	app.Get("/sitemap.xml", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "application/xml; charset=utf-8")
+		return c.SendString(sitemapXML())
+	})
 
 	api := app.Group("/api")
 	api.Get("/version", func(c *fiber.Ctx) error {
@@ -178,41 +191,24 @@ func main() {
 	})
 
 	app.Get("*", func(c *fiber.Ctx) error {
-		path := c.Path()
-		routes := getRoutes()
-
-		var route Route
-		var exists bool
-		if path != "/" && path != "" {
-			routeKey := strings.TrimPrefix(path, "/")
-			route, exists = routes[routeKey]
-		}
-
-		title := "CanvasWorld - Mathematical Attractors"
-		description := "Explore beautiful mathematical attractors and chaotic systems through interactive visualizations."
-		image := "/chaos/icons/mandelbrot_set.png"
-
-		if exists {
-			routeKey := strings.TrimPrefix(path, "/")
-			if route.Title != "" {
-				title = fmt.Sprintf("%s - CanvasWorld", route.Title)
-			} else {
-				title = fmt.Sprintf("%s - CanvasWorld", strings.ReplaceAll(routeKey, "_", " "))
-			}
-			description = route.Description
-			image = fmt.Sprintf("/chaos/icons/%s.png", routeKey)
-		}
+		m := resolvePageMeta(c.Path())
 
 		if prod {
-			// Vite-built index (hashed /chaos/assets/…); Traefik strips /chaos → /assets
-			return c.SendFile(distDir + "/index.html")
+			raw, err := os.ReadFile(distDir + "/index.html")
+			if err != nil {
+				return c.Status(500).SendString("index.html missing")
+			}
+			c.Set("Content-Type", "text/html; charset=utf-8")
+			return c.SendString(injectIndexMeta(string(raw), m))
 		}
 
 		return c.Render("index", fiber.Map{
-			"Title":       title,
-			"Description": description,
-			"Image":       image,
-			"Path":        path,
+			"Title":       m.Title,
+			"Description": m.Description,
+			"Image":       absoluteURL(publicBase(), m.ImagePath),
+			"Path":        m.PagePath,
+			"Canonical":   absoluteURL(publicBase(), m.PagePath),
+			"PublicBase":  publicBase(),
 			"IsDev":       true,
 		})
 	})

@@ -1,0 +1,36 @@
+package main
+
+import "testing"
+
+func TestCatalogSlug(t *testing.T) {
+	cases := map[string]string{
+		"/":                        "",
+		"/clifford_attractor":      "clifford_attractor",
+		"/chaos/clifford_attractor": "clifford_attractor",
+		"/chaos":                   "",
+		"/blog":                    "blog",
+		"/blog/lorenz-never-closes": "blog/lorenz-never-closes",
+	}
+	for path, want := range cases {
+		if got := catalogSlug(path); got != want {
+			t.Fatalf("catalogSlug(%q)=%q want %q", path, got, want)
+		}
+	}
+}
+
+func TestPublicBaseDefault(t *testing.T) {
+	t.Setenv("PUBLIC_BASE", "")
+	t.Setenv("PROD_URL", "")
+	if got := publicBase(); got != "https://matf.dev/chaos" {
+		t.Fatalf("publicBase=%q", got)
+	}
+}
+
+func TestIsBotNarrow(t *testing.T) {
+	if !isBot("Mozilla/5.0 (compatible; Discordbot/2.0)") {
+		t.Fatal("discord should match")
+	}
+	if isBot("Mozilla/5.0 (compatible; Googlebot/2.1)") {
+		t.Fatal("googlebot must not match social SSR")
+	}
+}

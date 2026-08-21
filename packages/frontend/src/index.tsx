@@ -8,6 +8,11 @@ import Template from './pages/template';
 import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react'
 import './index.css'
 
+// Traefik + Vite base use /chaos/; RR Links with basename /chaos omit the slash.
+if (window.location.pathname === '/chaos') {
+	window.location.replace(`/chaos/${window.location.search}${window.location.hash}`)
+}
+
 // Suppress react-dat-gui UNSAFE_componentWillMount warning
 const originalConsoleWarn = console.warn;
 console.warn = (...args) => {
@@ -18,7 +23,11 @@ console.warn = (...args) => {
 	originalConsoleWarn.apply(console, args);
 };
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const rootEl = document.getElementById('root')
+if (!rootEl) {
+	throw new Error('root element missing')
+}
+const root = ReactDOM.createRoot(rootEl)
 
 // const instance = createInstance({
 // 	urlBase: 'http://localhost:9000',
