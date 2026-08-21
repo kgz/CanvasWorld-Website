@@ -5,6 +5,8 @@ const SQRT5 = Math.sqrt(5)
 const U_RES = 80
 const V_RES = 80
 const TARGET_R = 1.7
+/** Trails / wires fill the frame better than the mesh scale. */
+const TARGET_R_TRAIL = 2.55
 
 export type BoyPoint = {
 	x: number
@@ -218,7 +220,7 @@ export function sampleBoyCloud(nu = 96, nv = 96): BoyCloud {
  * Row-major UV scan as one polyline (legacy line trail).
  * Odd rows reverse so the strip snakes continuously.
  */
-export function sampleBoyScanline(nu = 240, nv = 160): BoyCloud {
+export function sampleBoyScanline(nu = 160, nv = 96): BoyCloud {
 	const count = nu * nv
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)
@@ -239,12 +241,15 @@ export function sampleBoyScanline(nu = 240, nv = 160): BoyCloud {
 			k += 3
 		}
 	}
-	centerAndScale(positions, TARGET_R)
-	return { positions, colors, count }
+	centerAndScale(positions, TARGET_R_TRAIL)
+	return thinNearOrigin(positions, colors, 0.18)
 }
 
-/** Constant-u and constant-v curves as a dense point wire. */
-export function sampleBoyIsolines(nu = 72, nv = 72, samples = 280): BoyCloud {
+/**
+ * Constant-u / constant-v curves as a point wire.
+ * Fewer curves than a dense grid — keeps the triple-point open instead of a white clump.
+ */
+export function sampleBoyIsolines(nu = 22, nv = 22, samples = 220): BoyCloud {
 	const count = (nu + nv) * samples
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)
@@ -277,8 +282,30 @@ export function sampleBoyIsolines(nu = 72, nv = 72, samples = 280): BoyCloud {
 			k += 3
 		}
 	}
-	centerAndScale(positions, TARGET_R)
-	return { positions, colors, count }
+	centerAndScale(positions, TARGET_R_TRAIL)
+	return thinNearOrigin(positions, colors, 0.22)
+}
+
+/** Drop verts inside a ball so the triple-point does not paint solid white. */
+function thinNearOrigin(positions: Float32Array, colors: Float32Array, minR: number): BoyCloud {
+	const kept: number[] = []
+	const keptC: number[] = []
+	const minR2 = minR * minR
+	for (let i = 0; i < positions.length; i += 3) {
+		const x = positions[i]
+		const y = positions[i + 1]
+		const z = positions[i + 2]
+		if (x * x + y * y + z * z < minR2) {
+			continue
+		}
+		kept.push(x, y, z)
+		keptC.push(colors[i], colors[i + 1], colors[i + 2])
+	}
+	return {
+		positions: new Float32Array(kept),
+		colors: new Float32Array(keptC),
+		count: kept.length / 3,
+	}
 }
 
 export function buildBryantBoyMesh(): BoyMesh {
