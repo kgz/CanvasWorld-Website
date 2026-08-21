@@ -1,5 +1,5 @@
 import { BlockMath, InlineMath } from 'react-katex'
-import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
@@ -12,6 +12,7 @@ const SchwarzP = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
 	const seeded = useRef(false)
+	const cloudRef = useRef<ReturnType<typeof sampleSchwarzPCloud> | null>(null)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
 		baseSpeed: 28000,
 	})
@@ -49,18 +50,17 @@ const SchwarzP = () => {
 
 	const iso = clampIso(data.t ?? datData.options.t.initialValue)
 	const tiles = clampTiles(data.tiles ?? datData.options.tiles.initialValue)
-	const dIso = useDeferredValue(iso)
-	/** Don't defer tiles — fit-to-frame + stale high-tile mesh read as the wrong cell count. */
-	const cloud = useMemo(() => sampleSchwarzPCloud(dIso, tiles), [dIso, tiles])
-
-	useEffect(() => {
+	const cloud = useMemo(() => sampleSchwarzPCloud(iso, tiles), [iso, tiles])
+	if (cloudRef.current !== cloud) {
+		cloudRef.current = cloud
 		seeded.current = false
-	}, [cloud])
+	}
 
 	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
-		if (!seeded.current) {
-			positions.set(cloud.positions)
-			colors.set(cloud.colors)
+		const next = cloudRef.current
+		if (next && !seeded.current) {
+			positions.set(next.positions)
+			colors.set(next.colors)
 			seeded.current = true
 		}
 		const toDraw = calculateParticlesToDraw(SCHWARZ_MAX_POINTS, delta)
