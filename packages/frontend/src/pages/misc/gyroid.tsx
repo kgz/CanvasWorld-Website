@@ -50,8 +50,8 @@ const Gyroid = () => {
 	const iso = clampIso(data.t ?? datData.options.t.initialValue)
 	const tiles = clampTiles(data.tiles ?? datData.options.tiles.initialValue)
 	const dIso = useDeferredValue(iso)
-	const dTiles = useDeferredValue(tiles)
-	const cloud = useMemo(() => sampleGyroidCloud(dIso, dTiles), [dIso, dTiles])
+	/** Don't defer tiles — fit-to-frame + stale high-tile mesh read as the wrong cell count. */
+	const cloud = useMemo(() => sampleGyroidCloud(dIso, tiles), [dIso, tiles])
 
 	useEffect(() => {
 		seeded.current = false

@@ -50,8 +50,8 @@ const SchwarzP = () => {
 	const iso = clampIso(data.t ?? datData.options.t.initialValue)
 	const tiles = clampTiles(data.tiles ?? datData.options.tiles.initialValue)
 	const dIso = useDeferredValue(iso)
-	const dTiles = useDeferredValue(tiles)
-	const cloud = useMemo(() => sampleSchwarzPCloud(dIso, dTiles), [dIso, dTiles])
+	/** Don't defer tiles — fit-to-frame + stale high-tile mesh read as the wrong cell count. */
+	const cloud = useMemo(() => sampleSchwarzPCloud(dIso, tiles), [dIso, tiles])
 
 	useEffect(() => {
 		seeded.current = false

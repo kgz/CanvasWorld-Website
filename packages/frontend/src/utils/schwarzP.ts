@@ -27,42 +27,25 @@ export type SchwarzPCloud = {
 	count: number
 }
 
-function centerAndScale(positions: Float32Array, targetRadius: number, count?: number) {
-	const vcount = count ?? positions.length / 3
-	if (vcount === 0) {
+function centerAndScaleTiles(
+	positions: Float32Array,
+	count: number,
+	nTiles: number,
+	targetRadius: number,
+) {
+	if (count === 0) {
 		return
 	}
-	let cx = 0
-	let cy = 0
-	let cz = 0
-	for (let i = 0; i < vcount; i++) {
-		cx += positions[i * 3]
-		cy += positions[i * 3 + 1]
-		cz += positions[i * 3 + 2]
-	}
-	cx /= vcount
-	cy /= vcount
-	cz /= vcount
-
-	let maxR = 0
-	for (let i = 0; i < vcount; i++) {
-		const x = positions[i * 3] - cx
-		const y = positions[i * 3 + 1] - cy
-		const z = positions[i * 3 + 2] - cz
-		positions[i * 3] = x
-		positions[i * 3 + 1] = y
-		positions[i * 3 + 2] = z
-		const r = Math.hypot(x, y, z)
-		if (r > maxR) {
-			maxR = r
-		}
-	}
-	if (maxR < EPS) {
-		return
-	}
-	const s = targetRadius / maxR
-	for (let i = 0; i < vcount * 3; i++) {
-		positions[i] *= s
+	/** Fixed scale from max tiles so one cell keeps a constant size (fit-to-frame made 2 look denser than 4). */
+	const maxTiles = 4
+	const extent = PERIOD * nTiles
+	const half = extent / 2
+	const s = targetRadius / (PERIOD * maxTiles)
+	for (let i = 0; i < count; i++) {
+		const i3 = i * 3
+		positions[i3] = (positions[i3] - half) * s
+		positions[i3 + 1] = (positions[i3 + 1] - half) * s
+		positions[i3 + 2] = (positions[i3 + 2] - half) * s
 	}
 }
 
@@ -123,7 +106,7 @@ export function sampleSchwarzPCloud(iso = 0, tiles = 2): SchwarzPCloud {
 		positions[i3 + 1] = mesh.positions[src + 1]
 		positions[i3 + 2] = mesh.positions[src + 2]
 	}
-	centerAndScale(positions, TARGET_R, keep)
+	centerAndScaleTiles(positions, keep, nTiles, TARGET_R)
 	for (let i = 0; i < keep; i++) {
 		const i3 = i * 3
 		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2])
