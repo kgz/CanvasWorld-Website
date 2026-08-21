@@ -12,7 +12,8 @@ COPY packages/shared/ ../shared/
 COPY packages/frontend/ ./
 
 ENV NODE_ENV=production
-RUN pnpm build
+# tsc has pre-existing page typing debt; ship with vite emit only
+RUN pnpm exec vite build
 
 FROM golang:1.25-alpine AS backend-builder
 

@@ -1,0 +1,15 @@
+.git
+**/node_modules
+**/dist
+**/tmp
+**/.env
+**/.env.*
+**/*.pem
+packages/frontend/certs
+**/.DS_Store
+openspec
+design
+.cursor
+agent-transcripts
+*.md
+!README.md
