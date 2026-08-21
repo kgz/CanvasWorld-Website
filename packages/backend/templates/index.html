@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
-    
-    <!-- External scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
-    <script>
-        function map(n, start1, stop1, start2, stop2){
-            return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
-        }
-    </script>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
 
     {{if .IsDev}}
     <!-- React Refresh Runtime for Development -->
