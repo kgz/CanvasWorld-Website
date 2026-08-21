@@ -153,15 +153,15 @@ function writeUvRibbon(colors: Float32Array, i: number, uN: number, vN: number) 
 	const t = Math.min(1, Math.max(0, 0.55 * uN + 0.45 * vN))
 	if (t < 0.5) {
 		const s = t / 0.5
-		colors[i] = 0.98 - 0.18 * s
-		colors[i + 1] = 0.32 + 0.5 * s
-		colors[i + 2] = 0.28 + 0.12 * s
+		colors[i] = 1
+		colors[i + 1] = 0.22 + 0.55 * s
+		colors[i + 2] = 0.32 + 0.05 * s
 		return
 	}
 	const s = (t - 0.5) / 0.5
-	colors[i] = 0.8 - 0.58 * s
-	colors[i + 1] = 0.82 + 0.12 * s
-	colors[i + 2] = 0.4 + 0.52 * s
+	colors[i] = 1 - 0.82 * s
+	colors[i + 1] = 0.77 + 0.2 * s
+	colors[i + 2] = 0.37 + 0.58 * s
 }
 
 export function buildBoyMesh(): BoyMesh {
@@ -218,7 +218,7 @@ export function sampleBoyCloud(nu = 96, nv = 96): BoyCloud {
  * Row-major UV scan as one polyline (legacy line trail).
  * Odd rows reverse so the strip snakes continuously.
  */
-export function sampleBoyScanline(nu = 200, nv = 140): BoyCloud {
+export function sampleBoyScanline(nu = 240, nv = 160): BoyCloud {
 	const count = nu * nv
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)
@@ -244,7 +244,7 @@ export function sampleBoyScanline(nu = 200, nv = 140): BoyCloud {
 }
 
 /** Constant-u and constant-v curves as a dense point wire. */
-export function sampleBoyIsolines(nu = 56, nv = 56, samples = 220): BoyCloud {
+export function sampleBoyIsolines(nu = 72, nv = 72, samples = 280): BoyCloud {
 	const count = (nu + nv) * samples
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)

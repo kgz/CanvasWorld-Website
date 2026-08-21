@@ -31,7 +31,7 @@ const BoyJuryLines = () => {
 		void dispatch(setData({}))
 	}, [datData, dispatch])
 
-	const cloud = useMemo(() => sampleBoyScanline(200, 140), [])
+	const cloud = useMemo(() => sampleBoyScanline(), [])
 
 	const tick: TParticleProps<TData>['tick'] = (
 		positions: Float32Array,

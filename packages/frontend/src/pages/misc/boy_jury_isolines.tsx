@@ -29,7 +29,7 @@ const BoyJuryIsolines = () => {
 		void dispatch(setData({}))
 	}, [datData, dispatch])
 
-	const cloud = useMemo(() => sampleBoyIsolines(56, 56, 220), [])
+	const cloud = useMemo(() => sampleBoyIsolines(), [])
 
 	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
 		if (!seeded.current) {
@@ -47,7 +47,7 @@ const BoyJuryIsolines = () => {
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
 			numParticles={cloud.count}
-			pointSize={1.55}
+			pointSize={1.8}
 			tick={tick}
 			cameraPosition={[0, 0, 4.2]}
 			autoRotate={!isScreenshotMode()}
