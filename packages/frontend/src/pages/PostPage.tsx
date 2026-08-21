@@ -1,5 +1,5 @@
 import { MDXProvider } from '@mdx-js/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { BlockMath, InlineMath } from 'react-katex'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
@@ -12,12 +12,20 @@ import styles from './post.module.css'
 const FONT_HREF =
 	'https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500;600&display=swap'
 
+function MdxAnchor({ href, children }: { href?: string; children?: ReactNode }) {
+	if (href && href.startsWith('/') && !href.startsWith('//')) {
+		return <Link to={href}>{children}</Link>
+	}
+	return <a href={href}>{children}</a>
+}
+
 const mdxComponents = {
 	VizEmbed,
 	VizEmbedGrid,
 	Callout,
 	BlockMath,
 	InlineMath,
+	a: MdxAnchor,
 }
 
 function PostPage() {

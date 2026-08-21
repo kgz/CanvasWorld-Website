@@ -1,25 +1,68 @@
 export const meta = {
 	slug: 'mandelbrot-escape',
-	title: 'Escape time: how the Mandelbrot boundary gets drawn',
+	title: 'Escape time: how the Mandelbrot boundary gets drawn on Classical Chaos',
 	tag: 'Fractals',
 	excerpt:
-		'Every pixel is a tiny experiment — iterate, check the bound, count the steps. The boundary is where the answer stops being obvious.',
-	dateLabel: 'Jun 2026',
+		'The Mandelbrot boundary keeps revealing more detail under zoom. Classical Chaos paints each pixel by how many steps the repeating z² + c run takes to blow past a fixed bound.',
+	dateLabel: 'Aug 2026',
 	readMinutes: 7,
 	thumbSlug: 'mandelbrot_set',
 	order: 40,
 }
 
 
-Every pixel is a tiny experiment — iterate, check the bound, count the steps. The boundary is where the answer stops being obvious.
+I kept staring at that black bulb with the grey lace around it and thinking: how does a picture know which pixels belong inside? Benoit Mandelbrot popularized this set around 1980. On Classical Chaos it is not a particle trail. It is a shader that runs a tiny experiment per pixel and colors the ones that run away.
 
 <VizEmbed slug="mandelbrot_set" label="Mandelbrot" />
 
-## Iterate, measure, colour
+## The experiment for one pixel
 
-For each complex seed we run `z ← z² + c` until `|z|` escapes a bailout or we hit the iteration cap. The step count becomes colour. Smooth colouring softens banding; the silhouette is still the escape-time set.
+Pick a complex number `c`. Start at `z = 0`. Then iterate
 
-<Callout>
-  <strong>Explore</strong>
-  Open the full Mandelbrot view to pan and zoom the boundary where iteration counts thrash.
+<BlockMath math={'z \\leftarrow z^{2} + c'} />
+
+over and over. In the pure math story, if `|z|` stays bounded forever, that `c` is in the Mandelbrot set. We cannot wait forever on a GPU, so Classical Chaos draws black for pixels that stay under the bailout for our whole iteration budget. Everything else escapes within that budget; we color by how many steps it took.
+
+This is the same quadratic map you meet with Julia sets. Mandelbrot is the map of which `c` keep the sequence of `z` values bounded when you always start at zero. Julia fixes one `c` and paints the plane of starting `z` instead.
+
+## Bailout, budget, grey
+
+We do not wait forever. On Classical Chaos the bailout is `|z|² > 4`, which is `|z| > 2`. Cross that and the orbit is headed out; count the step and stop.
+
+Default max iterations is 256. On the full canvas the Params range runs about 50–1000, so you can raise the budget when a zoom gets muddy. Pixels that never escape within the budget stay black.
+
+A plain loop for one `c` looks like this:
+
+```ts
+let zRe = 0
+let zIm = 0
+let n = 0
+while (n < maxIter) {
+  const zr2 = zRe * zRe
+  const zi2 = zIm * zIm
+  if (zr2 + zi2 > 4) break
+  const nextRe = zr2 - zi2 + cRe
+  const nextIm = 2 * zRe * zIm + cIm
+  zRe = nextRe
+  zIm = nextIm
+  n += 1
+}
+// n is escape time (or maxIter if still bounded)
+```
+
+That integer `n` is the raw escape count. Smooth coloring turns it into a soft grey instead of hard stripes. Banding softens; the silhouette is still the escape-time set: black inside the budget, grey shades outside.
+
+## What you are looking at
+
+Default framing sits near center `(-0.5, 0)` with zoom around `0.425`. Greyscale exterior, black set. Zoom in and the boundary does not settle into a simple curve; more lace keeps showing up. That is the famous fractal edge: escape time thrashing between neighboring pixels.
+
+I first expected “inside” to mean something soft. It is harsher than that. Either the sequence stayed under the bailout for the whole budget (black), or it left and we recorded when (grey). Raise iterations on the full stage and some greys near the edge flip black as the budget catches sequences that were slow to decide.
+
+## Full canvas
+
+On the [full Mandelbrot stage](/mandelbrot_set) you can raise iterations in Params, click a point to open Julia at that `c`, and dig into the lace with pan and zoom.
+
+<Callout to="/mandelbrot_set">
+	<strong>Goto full canvas</strong>
+	Pan and zoom the boundary, raise iterations in Params, click a point to open Julia at that `c`.
 </Callout>
