@@ -56,8 +56,13 @@ function escapeHtml(s) {
 /** Strip MDX/JSX chrome into simple semantic HTML for crawlers. */
 function mdxBodyToHtml(raw) {
 	let s = raw
-	// fenced code → pre
-	s = s.replace(/```[\w]*\n([\s\S]*?)```/g, (_, code) => `<pre><code>${escapeHtml(code.trimEnd())}</code></pre>`)
+	const codeBlocks = []
+	// Protect fenced code before other transforms
+	s = s.replace(/```[\w]*\n([\s\S]*?)```/g, (_, code) => {
+		const i = codeBlocks.length
+		codeBlocks.push(`<pre><code>${escapeHtml(code.trimEnd())}</code></pre>`)
+		return `\n%%CODEBLOCK${i}%%\n`
+	})
 	// self-closing / void-ish JSX components
 	s = s.replace(/<[A-Z][A-Za-z0-9]*\b[^>]*\/>/g, '')
 	// Callout / VizEmbedGrid blocks with children
@@ -66,10 +71,12 @@ function mdxBodyToHtml(raw) {
 	s = s.replace(/<[A-Z][A-Za-z0-9]*\b[^>]*>[\s\S]*?<\/[A-Z][A-Za-z0-9]*>/g, '')
 	// InlineMath / leftover JSX tags
 	s = s.replace(/<\/?[A-Z][A-Za-z0-9]*\b[^>]*>/g, '')
-	// markdown links [text](url)
-	s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => {
-		const safeHref = href.startsWith('http') || href.startsWith('/') ? href : '#'
-		return `<a href="${escapeHtml(safeHref)}">${escapeHtml(text)}</a>`
+	// markdown links (allow () inside URL path)
+	s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s]+?)\)(?=\s|$|[.!,;:?])/g, (_, text, href) => {
+		return `<a href="${escapeHtml(href)}">${escapeHtml(text)}</a>`
+	})
+	s = s.replace(/\[([^\]]+)\]\((\/[^)\s]*)\)/g, (_, text, href) => {
+		return `<a href="${escapeHtml(href)}">${escapeHtml(text)}</a>`
 	})
 	// inline code
 	s = s.replace(/`([^`]+)`/g, (_, code) => `<code>${escapeHtml(code)}</code>`)
@@ -91,9 +98,10 @@ function mdxBodyToHtml(raw) {
 			flushPara()
 			continue
 		}
-		if (trimmed.startsWith('<pre>')) {
+		const codeMark = trimmed.match(/^%%CODEBLOCK(\d+)%%$/)
+		if (codeMark) {
 			flushPara()
-			out.push(trimmed)
+			out.push(codeBlocks[Number(codeMark[1])])
 			continue
 		}
 		const h2 = trimmed.match(/^##\s+(.+)$/)
