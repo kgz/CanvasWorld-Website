@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { buildDiniMesh, clampRadius, clampTwist, diniPoint } from '../../utils/diniSurface'
+import {
+	clampRadius,
+	clampTwist,
+	diniPoint,
+	DINI_MAX_POINTS,
+	sampleDiniCloud,
+} from '../../utils/diniSurface'
 
 describe('diniPoint', () => {
 	it('matches the classic formula on a sample', () => {
@@ -29,14 +35,14 @@ describe('diniPoint', () => {
 	})
 })
 
-describe('buildDiniMesh', () => {
-	it('builds a finite indexed mesh', () => {
-		const mesh = buildDiniMesh(1, 0.2)
-		expect(mesh.indices.length).toBeGreaterThan(100)
-		expect(mesh.indices.length % 3).toBe(0)
-		expect(mesh.colors.length).toBe(mesh.positions.length)
-		for (let i = 0; i < mesh.positions.length; i++) {
-			expect(Number.isFinite(mesh.positions[i])).toBe(true)
+describe('sampleDiniCloud', () => {
+	it('builds a padded UV isoline cloud', () => {
+		const cloud = sampleDiniCloud(1, 0.2, 8, 12, 32)
+		expect(cloud.count).toBe(DINI_MAX_POINTS)
+		expect(cloud.positions.length).toBe(DINI_MAX_POINTS * 3)
+		expect(cloud.colors.length).toBe(cloud.positions.length)
+		for (let i = 0; i < cloud.positions.length; i++) {
+			expect(Number.isFinite(cloud.positions[i])).toBe(true)
 		}
 	})
 

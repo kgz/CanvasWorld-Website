@@ -192,7 +192,7 @@
     "slug": "dini_surface",
     "title": "Dini's Surface",
     "category": "misc",
-    "description": "Dini’s surface: a pseudospherical helicoid (twisted tractrix). Parametric mesh with radius a and twist b.",
+    "description": "Dini’s surface: a pseudospherical helicoid (twisted tractrix). UV isoline particle wire with radius a and twist b.",
     "thumbnail": "/chaos/icons/dini_surface.png",
     "renderMode": "webgl",
     "active": true

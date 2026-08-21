@@ -4,13 +4,22 @@ const TURNS = 3
 const U_MAX = Math.PI * 2 * TURNS
 const V_MIN = 0.15
 const V_MAX = 1
-const U_RES = 96
-const V_RES = 48
+const TARGET_R = 1.7
 
-export type DiniMesh = {
+/** Fixed GPU budget so param scrubs don't remount buffers / reset `n`. */
+export const DINI_MAX_POINTS = 55_000
+/** Constant-v spirals (helicoid turns). */
+const N_V_RINGS = 64
+/** Constant-u profiles (tractrix meridians). */
+const N_U_RAYS = 80
+/** Samples per isoline — dense enough to read the spiral. */
+const DETAIL = 320
+
+export type DiniCloud = {
 	positions: Float32Array
-	indices: Uint32Array
 	colors: Float32Array
+	/** Always DINI_MAX_POINTS (padded). */
+	count: number
 }
 
 export function clampRadius(a: number): number {
@@ -33,25 +42,24 @@ export function diniPoint(u: number, v: number, a: number, b: number): { x: numb
 	}
 }
 
-function centerAndScale(positions: Float32Array, targetRadius: number) {
-	const vcount = positions.length / 3
-	if (vcount === 0) {
+function centerAndScale(positions: Float32Array, count: number, targetRadius: number) {
+	if (count === 0) {
 		return
 	}
 	let cx = 0
 	let cy = 0
 	let cz = 0
-	for (let i = 0; i < vcount; i++) {
+	for (let i = 0; i < count; i++) {
 		cx += positions[i * 3]
 		cy += positions[i * 3 + 1]
 		cz += positions[i * 3 + 2]
 	}
-	cx /= vcount
-	cy /= vcount
-	cz /= vcount
+	cx /= count
+	cy /= count
+	cz /= count
 
 	let maxR = 0
-	for (let i = 0; i < vcount; i++) {
+	for (let i = 0; i < count; i++) {
 		const x = positions[i * 3] - cx
 		const y = positions[i * 3 + 1] - cy
 		const z = positions[i * 3 + 2] - cz
@@ -67,96 +75,102 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 		return
 	}
 	const s = targetRadius / maxR
-	for (let i = 0; i < positions.length; i++) {
+	const end = count * 3
+	for (let i = 0; i < end; i++) {
 		positions[i] *= s
 	}
 }
 
-function xyzColors(positions: Float32Array): Float32Array {
-	const colors = new Float32Array(positions.length)
-	let minX = Infinity
-	let minY = Infinity
-	let minZ = Infinity
-	let maxX = -Infinity
-	let maxY = -Infinity
-	let maxZ = -Infinity
-	for (let i = 0; i < positions.length; i += 3) {
-		const x = positions[i]
-		const y = positions[i + 1]
-		const z = positions[i + 2]
-		if (x < minX) {
-			minX = x
-		}
-		if (y < minY) {
-			minY = y
-		}
-		if (z < minZ) {
-			minZ = z
-		}
-		if (x > maxX) {
-			maxX = x
-		}
-		if (y > maxY) {
-			maxY = y
-		}
-		if (z > maxZ) {
-			maxZ = z
-		}
+/** Coral → amber → teal by UV (same ribbon as Boy). */
+function writeUvRibbon(colors: Float32Array, i: number, uN: number, vN: number) {
+	const t = Math.min(1, Math.max(0, 0.55 * uN + 0.45 * vN))
+	if (t < 0.5) {
+		const s = t / 0.5
+		colors[i] = 1
+		colors[i + 1] = 0.22 + 0.55 * s
+		colors[i + 2] = 0.32 + 0.05 * s
+		return
 	}
-	const dx = maxX - minX
-	const dy = maxY - minY
-	const dz = maxZ - minZ
-	for (let i = 0; i < positions.length; i += 3) {
-		const u = dx > EPS ? (positions[i] - minX) / dx : 0
-		const v = dy > EPS ? (positions[i + 1] - minY) / dy : 0
-		const w = dz > EPS ? (positions[i + 2] - minZ) / dz : 0
-		colors[i] = 0.72 + 0.22 * u
-		colors[i + 1] = 0.42 + 0.28 * v
-		colors[i + 2] = 0.18 + 0.55 * (1 - w)
-	}
-	return colors
+	const s = (t - 0.5) / 0.5
+	colors[i] = 1 - 0.82 * s
+	colors[i + 1] = 0.77 + 0.2 * s
+	colors[i + 2] = 0.37 + 0.58 * s
 }
 
-export function buildDiniMesh(a: number, b: number): DiniMesh {
+/**
+ * UV isoline particle wire: constant-v spirals + constant-u meridians.
+ * Pads to DINI_MAX_POINTS so a/b scrubbing keeps a stable buffer.
+ */
+export function sampleDiniCloud(
+	a = 1,
+	b = 0.2,
+	nVRings = N_V_RINGS,
+	nURays = N_U_RAYS,
+	detail = DETAIL,
+): DiniCloud {
 	const radius = clampRadius(a)
 	const twist = clampTwist(b)
-	const uCount = U_RES + 1
-	const vCount = V_RES + 1
-	const vertCount = uCount * vCount
-	const positions = new Float32Array(vertCount * 3)
+	const rings = Math.max(1, Math.floor(nVRings))
+	const rays = Math.max(1, Math.floor(nURays))
+	const samples = Math.max(2, Math.floor(detail))
+	const rawCount = Math.min((rings + rays) * samples, DINI_MAX_POINTS)
 
-	for (let iv = 0; iv < vCount; iv++) {
-		const v = V_MIN + ((V_MAX - V_MIN) * iv) / V_RES
-		for (let iu = 0; iu < uCount; iu++) {
-			const u = (U_MAX * iu) / U_RES
-			const p = diniPoint(u, v, radius, twist)
-			const vi = iv * uCount + iu
-			positions[vi * 3] = p.x
-			positions[vi * 3 + 1] = p.y
-			positions[vi * 3 + 2] = p.z
+	const positions = new Float32Array(DINI_MAX_POINTS * 3)
+	const colors = new Float32Array(DINI_MAX_POINTS * 3)
+	let i = 0
+
+	const push = (u: number, v: number) => {
+		if (i >= rawCount) {
+			return
+		}
+		const p = diniPoint(u, v, radius, twist)
+		const i3 = i * 3
+		positions[i3] = p.x
+		positions[i3 + 1] = p.y
+		positions[i3 + 2] = p.z
+		const uN = U_MAX > EPS ? u / U_MAX : 0
+		const vN = (v - V_MIN) / (V_MAX - V_MIN)
+		writeUvRibbon(colors, i3, uN, vN)
+		i += 1
+	}
+
+	const ringBudget = Math.min(rings * samples, rawCount)
+	for (let ir = 0; ir < rings && i < ringBudget; ir++) {
+		const v = V_MIN + ((V_MAX - V_MIN) * (ir + 0.5)) / rings
+		for (let s = 0; s < samples && i < ringBudget; s++) {
+			const u = samples <= 1 ? 0 : (U_MAX * s) / (samples - 1)
+			push(u, v)
 		}
 	}
 
-	const vertFinite = (vi: number) =>
-		Number.isFinite(positions[vi * 3]) &&
-		Number.isFinite(positions[vi * 3 + 1]) &&
-		Number.isFinite(positions[vi * 3 + 2])
-
-	const indexBuf: number[] = []
-	for (let iv = 0; iv < V_RES; iv++) {
-		for (let iu = 0; iu < U_RES; iu++) {
-			const i00 = iv * uCount + iu
-			const i10 = i00 + 1
-			const i01 = i00 + uCount
-			const i11 = i01 + 1
-			if (!vertFinite(i00) || !vertFinite(i10) || !vertFinite(i01) || !vertFinite(i11)) {
-				continue
-			}
-			indexBuf.push(i00, i01, i10, i10, i01, i11)
+	for (let iu = 0; iu < rays && i < rawCount; iu++) {
+		const u = (U_MAX * (iu + 0.5)) / rays
+		for (let s = 0; s < samples && i < rawCount; s++) {
+			const v = samples <= 1 ? V_MIN : V_MIN + ((V_MAX - V_MIN) * s) / (samples - 1)
+			push(u, v)
 		}
 	}
 
-	const indices = new Uint32Array(indexBuf)
-	centerAndScale(positions, 1.7)
-	return { positions, indices, colors: xyzColors(positions) }
+	const written = i
+	centerAndScale(positions, written, TARGET_R)
+
+	if (written > 0) {
+		const px = positions[0]
+		const py = positions[1]
+		const pz = positions[2]
+		const cr = colors[0]
+		const cg = colors[1]
+		const cb = colors[2]
+		for (let j = written; j < DINI_MAX_POINTS; j++) {
+			const j3 = j * 3
+			positions[j3] = px
+			positions[j3 + 1] = py
+			positions[j3 + 2] = pz
+			colors[j3] = cr
+			colors[j3 + 1] = cg
+			colors[j3 + 2] = cb
+		}
+	}
+
+	return { positions, colors, count: DINI_MAX_POINTS }
 }
