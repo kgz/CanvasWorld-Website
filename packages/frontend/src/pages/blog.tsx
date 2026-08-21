@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useDeferredValue, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posts } from '../blog/registry'
-import { formatPostMeta } from '../blog/types'
+import { formatPostMeta, type PostMeta } from '../blog/types'
 import styles from './blog.module.css'
 
 const FONT_HREF =
@@ -16,13 +16,23 @@ function iconUrl(slug: string): string {
 	return `/chaos/icons/${slug}.png?v=${ver}`
 }
 
+function matchesQuery(meta: PostMeta, q: string): boolean {
+	const hay = `${meta.title} ${meta.excerpt} ${meta.tag} ${meta.slug}`.toLowerCase()
+	return hay.includes(q)
+}
+
 function Blog() {
 	const navRef = useRef<HTMLElement>(null)
 	const [navScrolled, setNavScrolled] = useState(false)
 	const [thumbBroken, setThumbBroken] = useState(false)
+	const [query, setQuery] = useState('')
+	const deferredQuery = useDeferredValue(query)
+	const needle = deferredQuery.trim().toLowerCase()
+	const searching = needle.length > 0
 
 	const featured = posts.find((p) => p.meta.featured) ?? posts[0]
 	const rest = posts.filter((p) => p.slug !== featured?.slug)
+	const filtered = searching ? posts.filter((p) => matchesQuery(p.meta, needle)) : []
 
 	useEffect(() => {
 		const existing = document.querySelector(`link[data-cw-frontpage-fonts="1"]`)
@@ -72,46 +82,86 @@ function Blog() {
 						Notes on the mathematics, rendering techniques, and design decisions behind Classical
 						Chaos — written as the systems get built, not after.
 					</p>
+					<label className={styles.search}>
+						<span className={styles.searchLabel}>Search notes</span>
+						<input
+							className={styles.searchInput}
+							type="search"
+							value={query}
+							onChange={(e) => setQuery(e.target.value)}
+							placeholder="Title, tag, or topic…"
+							autoComplete="off"
+							spellCheck={false}
+						/>
+					</label>
 				</section>
 
-				{featured ? (
-					<section className={styles.featuredSection}>
-						<Link className={styles.featured} to={`/blog/${featured.slug}`}>
-							{featured.meta.thumbSlug && !thumbBroken ? (
-								<img
-									className={styles.featuredArt}
-									src={iconUrl(featured.meta.thumbSlug)}
-									alt=""
-									onError={() => setThumbBroken(true)}
-								/>
-							) : (
-								<span className={styles.featuredArtFallback} aria-hidden="true" />
-							)}
-							<span className={styles.featuredBody}>
-								<span className={styles.postTag}>{featured.meta.tag}</span>
-								<span className={styles.featuredTitle}>{featured.meta.title}</span>
-								<span className={styles.postExcerpt}>{featured.meta.excerpt}</span>
-								<span className={styles.postMeta}>{formatPostMeta(featured.meta)}</span>
-							</span>
-						</Link>
+				{searching ? (
+					<section className={styles.listSection}>
+						<h2 className={styles.groupTitle}>
+							{filtered.length === 0
+								? 'No matches'
+								: `${filtered.length} match${filtered.length === 1 ? '' : 'es'}`}
+						</h2>
+						{filtered.length > 0 ? (
+							<div className={styles.postGrid}>
+								{filtered.map((post) => (
+									<article key={post.slug} className={styles.postCard}>
+										<Link to={`/blog/${post.slug}`}>
+											<span className={styles.postTag}>{post.meta.tag}</span>
+											<span className={styles.postCardTitle}>{post.meta.title}</span>
+											<span className={styles.postExcerpt}>{post.meta.excerpt}</span>
+											<span className={styles.postMeta}>{formatPostMeta(post.meta)}</span>
+										</Link>
+									</article>
+								))}
+							</div>
+						) : (
+							<p className={styles.empty}>Nothing matched “{deferredQuery.trim()}”.</p>
+						)}
 					</section>
-				) : null}
-
-				<section className={styles.listSection}>
-					<h2 className={styles.groupTitle}>More notes</h2>
-					<div className={styles.postGrid}>
-						{rest.map((post) => (
-							<article key={post.slug} className={styles.postCard}>
-								<Link to={`/blog/${post.slug}`}>
-									<span className={styles.postTag}>{post.meta.tag}</span>
-									<span className={styles.postCardTitle}>{post.meta.title}</span>
-									<span className={styles.postExcerpt}>{post.meta.excerpt}</span>
-									<span className={styles.postMeta}>{formatPostMeta(post.meta)}</span>
+				) : (
+					<>
+						{featured ? (
+							<section className={styles.featuredSection}>
+								<Link className={styles.featured} to={`/blog/${featured.slug}`}>
+									{featured.meta.thumbSlug && !thumbBroken ? (
+										<img
+											className={styles.featuredArt}
+											src={iconUrl(featured.meta.thumbSlug)}
+											alt=""
+											onError={() => setThumbBroken(true)}
+										/>
+									) : (
+										<span className={styles.featuredArtFallback} aria-hidden="true" />
+									)}
+									<span className={styles.featuredBody}>
+										<span className={styles.postTag}>{featured.meta.tag}</span>
+										<span className={styles.featuredTitle}>{featured.meta.title}</span>
+										<span className={styles.postExcerpt}>{featured.meta.excerpt}</span>
+										<span className={styles.postMeta}>{formatPostMeta(featured.meta)}</span>
+									</span>
 								</Link>
-							</article>
-						))}
-					</div>
-				</section>
+							</section>
+						) : null}
+
+						<section className={styles.listSection}>
+							<h2 className={styles.groupTitle}>More notes</h2>
+							<div className={styles.postGrid}>
+								{rest.map((post) => (
+									<article key={post.slug} className={styles.postCard}>
+										<Link to={`/blog/${post.slug}`}>
+											<span className={styles.postTag}>{post.meta.tag}</span>
+											<span className={styles.postCardTitle}>{post.meta.title}</span>
+											<span className={styles.postExcerpt}>{post.meta.excerpt}</span>
+											<span className={styles.postMeta}>{formatPostMeta(post.meta)}</span>
+										</Link>
+									</article>
+								))}
+							</div>
+						</section>
+					</>
+				)}
 			</main>
 
 			<footer className={styles.siteFooter} id="about">
