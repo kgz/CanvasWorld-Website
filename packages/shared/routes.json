@@ -223,5 +223,14 @@
     "thumbnail": "/chaos/icons/boy_surface.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "boy_jury_bryant",
+    "title": "Boy Jury · Bryant",
+    "category": "misc",
+    "description": "Jury: Bryant–Kusner lit mesh of Boy’s surface. Contrast with Morin–Apéry on /boy_surface.",
+    "thumbnail": "/chaos/icons/boy_jury_bryant.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
