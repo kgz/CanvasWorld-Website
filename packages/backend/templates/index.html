@@ -27,23 +27,20 @@
     </script>
     {{end}}
     
-    <!-- Open Graph / Facebook -->
+    <meta name="description" content="{{.Description}}">
+    <link rel="canonical" href="{{.Canonical}}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://canvasworld.dev{{.Path}}">
+    <meta property="og:url" content="{{.Canonical}}">
     <meta property="og:title" content="{{.Title}}">
     <meta property="og:description" content="{{.Description}}">
-    <meta property="og:image" content="https://canvasworld.dev{{.Image}}">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://canvasworld.dev{{.Path}}">
-    <meta property="twitter:title" content="{{.Title}}">
-    <meta property="twitter:description" content="{{.Description}}">
-    <meta property="twitter:image" content="https://canvasworld.dev{{.Image}}">
-    
-    <!-- Discord -->
-    <meta property="og:site_name" content="CanvasWorld">
-    <meta name="theme-color" content="#000000">
+    <meta property="og:image" content="{{.Image}}">
+    <meta property="og:site_name" content="Classical Chaos">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{.Canonical}}">
+    <meta name="twitter:title" content="{{.Title}}">
+    <meta name="twitter:description" content="{{.Description}}">
+    <meta name="twitter:image" content="{{.Image}}">
+    <meta name="theme-color" content="#008f68">
 </head>
 <body>
     <div id="root"></div>

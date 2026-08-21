@@ -1,0 +1,152 @@
+package main
+
+import (
+	"html"
+	"strings"
+)
+
+type pageMeta struct {
+	Title       string
+	Description string
+	Slug        string // empty on home / unknown
+	ImagePath   string // path under PUBLIC_BASE, e.g. /icons/lorenz_attractor.png
+	PagePath    string // path under PUBLIC_BASE, e.g. / or /lorenz_attractor
+}
+
+func publicBase() string {
+	base := getEnv("PUBLIC_BASE", "")
+	if base == "" {
+		base = getEnv("PROD_URL", "https://matf.dev/chaos")
+	}
+	return strings.TrimRight(base, "/")
+}
+
+// catalogSlug maps a request path (with or without /chaos) to a routes.json key.
+func catalogSlug(requestPath string) string {
+	p := strings.Trim(requestPath, "/")
+	if p == "" {
+		return ""
+	}
+	if strings.HasPrefix(p, "chaos/") {
+		p = strings.TrimPrefix(p, "chaos/")
+	} else if p == "chaos" {
+		return ""
+	}
+	return p
+}
+
+func resolvePageMeta(requestPath string) pageMeta {
+	slug := catalogSlug(requestPath)
+	meta := pageMeta{
+		Title:       "Classical Chaos",
+		Description: "Interactive sketches of classical dynamical systems.",
+		ImagePath:   "/icons/mandelbrot_set.png",
+		PagePath:    "/",
+	}
+
+	if slug == "" || slug == "blog" || strings.HasPrefix(slug, "blog/") {
+		if slug == "blog" || strings.HasPrefix(slug, "blog/") {
+			meta.Title = "Lab notebook — Classical Chaos"
+			meta.Description = "Notes on attractors, maps, and meshes in the Classical Chaos catalog."
+			meta.PagePath = "/" + slug
+		}
+		return meta
+	}
+
+	routes := getRoutes()
+	route, ok := routes[slug]
+	if !ok || !route.Active {
+		meta.PagePath = "/" + slug
+		return meta
+	}
+
+	title := route.Title
+	if title == "" {
+		title = strings.ReplaceAll(slug, "_", " ")
+	}
+	meta.Slug = slug
+	meta.Title = title + " — Classical Chaos"
+	if route.Description != "" {
+		meta.Description = route.Description
+	}
+	meta.ImagePath = "/icons/" + slug + ".png"
+	meta.PagePath = "/" + slug
+	return meta
+}
+
+func absoluteURL(base, pathUnderBase string) string {
+	if pathUnderBase == "" || pathUnderBase == "/" {
+		return base + "/"
+	}
+	if !strings.HasPrefix(pathUnderBase, "/") {
+		pathUnderBase = "/" + pathUnderBase
+	}
+	return base + pathUnderBase
+}
+
+func metaTagsHTML(m pageMeta) string {
+	base := publicBase()
+	canonical := absoluteURL(base, m.PagePath)
+	image := absoluteURL(base, m.ImagePath)
+	t := html.EscapeString(m.Title)
+	d := html.EscapeString(m.Description)
+	c := html.EscapeString(canonical)
+	img := html.EscapeString(image)
+
+	return strings.Join([]string{
+		`<meta name="description" content="` + d + `">`,
+		`<link rel="canonical" href="` + c + `">`,
+		`<meta property="og:type" content="website">`,
+		`<meta property="og:site_name" content="Classical Chaos">`,
+		`<meta property="og:url" content="` + c + `">`,
+		`<meta property="og:title" content="` + t + `">`,
+		`<meta property="og:description" content="` + d + `">`,
+		`<meta property="og:image" content="` + img + `">`,
+		`<meta name="twitter:card" content="summary_large_image">`,
+		`<meta name="twitter:url" content="` + c + `">`,
+		`<meta name="twitter:title" content="` + t + `">`,
+		`<meta name="twitter:description" content="` + d + `">`,
+		`<meta name="twitter:image" content="` + img + `">`,
+		`<meta name="theme-color" content="#008f68">`,
+	}, "\n    ")
+}
+
+func injectIndexMeta(indexHTML string, m pageMeta) string {
+	out := indexHTML
+	escapedTitle := html.EscapeString(m.Title)
+	if strings.Contains(out, "<title>") {
+		start := strings.Index(out, "<title>")
+		end := strings.Index(out, "</title>")
+		if start >= 0 && end > start {
+			out = out[:start] + "<title>" + escapedTitle + "</title>" + out[end+len("</title>"):]
+		}
+	}
+	tags := metaTagsHTML(m)
+	if i := strings.Index(out, "</head>"); i >= 0 {
+		out = out[:i] + "    " + tags + "\n  " + out[i:]
+	}
+	return out
+}
+
+func sitemapXML() string {
+	base := publicBase()
+	var b strings.Builder
+	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
+	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` + "\n")
+	writeURL := func(path string) {
+		b.WriteString("  <url><loc>")
+		b.WriteString(html.EscapeString(absoluteURL(base, path)))
+		b.WriteString("</loc></url>\n")
+	}
+	writeURL("/")
+	writeURL("/blog")
+	for _, slug := range activeSlugs() {
+		writeURL("/" + slug)
+	}
+	b.WriteString("</urlset>\n")
+	return b.String()
+}
+
+func robotsTxtBody() string {
+	return "User-agent: *\nAllow: /\n\nSitemap: " + publicBase() + "/sitemap.xml\n"
+}

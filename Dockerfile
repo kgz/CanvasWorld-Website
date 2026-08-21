@@ -39,6 +39,7 @@ COPY --from=frontend-builder /app/frontend/dist ./dist
 
 ENV ENV=production
 ENV PORT=8080
+ENV PUBLIC_BASE=https://matf.dev/chaos
 
 EXPOSE 8080
 
