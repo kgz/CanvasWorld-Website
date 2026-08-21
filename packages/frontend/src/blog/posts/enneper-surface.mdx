@@ -1,0 +1,46 @@
+export const meta = {
+	slug: 'enneper-surface',
+	title: 'Enneper surface: a minimal sheet that crosses itself',
+	tag: 'Surfaces',
+	excerpt:
+		'Alfred Enneper’s 1864 minimal surface has mean curvature zero and a short polynomial map — and once the UV patch is large enough, the sheet crosses through itself. Classical Chaos draws that cage as a UV particle wire.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'enneper_surface',
+	featured: false,
+	order: 155,
+}
+
+
+Alfred Enneper’s surface (1864) is a complete immersed minimal surface: mean curvature zero everywhere, with a short polynomial map from the plane into 3-space. Classical Chaos draws it as a UV isoline particle wire, not a lit mesh, colored coral → amber → teal along the UV parameters.
+
+Once the UV patch is large enough, the sheet crosses through itself. At the default span (`1.8`) those crossings already read.
+
+<VizEmbed slug="enneper_surface" label="Enneper" animateN />
+
+## A polynomial you can type by hand
+
+Parameters `u` and `v` live in a square `[−span, span]`. The surface point is
+
+<BlockMath math={'x = u - \\frac{u^{3}}{3} + u v^{2}'} />
+<BlockMath math={'y = v - \\frac{v^{3}}{3} + v u^{2}'} />
+<BlockMath math={'z = u^{2} - v^{2}'} />
+
+No trig nest. Sample the formula on a grid and the classic Enneper surface is already sitting in three-space.
+
+Minimal does not mean simple-looking. Mean curvature zero is a local bending condition. Globally the sheet is still allowed to dive through itself.
+
+## Isolines and span
+
+The cage is UV isolines: curves of constant `u` crossed with curves of constant `v`. The grid crossings are how the wire reads.
+
+On the [full Enneper stage](/enneper_surface), higher span makes the self-intersections louder; toward `1.2` the cage calms. Presets jump to `1.6`, `1.8`, `2.0`, and `2.4`.
+
+## Growing the wire
+
+A reveal count `n` lights more of the sampled points over time, so the cage grows in instead of arriving fully formed. On the full stage twist span, hit a preset, scrub `n`, and drag to rotate (or leave auto-rotate on).
+
+<Callout to="/enneper_surface">
+	<strong>Goto full canvas</strong>
+	Twist span, try a preset, scrub `n`, and spin the wire while the crossings sharpen.
+</Callout>
