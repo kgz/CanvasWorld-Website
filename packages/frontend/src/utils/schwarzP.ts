@@ -3,9 +3,9 @@ import { polygoniseGrid } from './isosurface'
 const PERIOD = Math.PI * 2
 const EPS = 1e-15
 /** Fixed GPU budget so param scrubs don't remount buffers / reset `n`. */
-export const SCHWARZ_MAX_POINTS = 80_000
+export const SCHWARZ_MAX_POINTS = 120_000
 const TARGET_R = 1.7
-/** Interactive MC — 32³ cell; tiles=2 → 65³ samples. */
+/** Samples along one period; higher tile counts use a slightly coarser grid. */
 const GRID_RES = 32
 
 export function schwarzPField(x: number, y: number, z: number): number {
@@ -17,7 +17,7 @@ export function clampIso(t: number): number {
 }
 
 export function clampTiles(tiles: number): number {
-	return Math.min(2, Math.max(1, Math.round(tiles)))
+	return Math.min(4, Math.max(1, Math.round(tiles)))
 }
 
 export type SchwarzPCloud = {
@@ -27,8 +27,8 @@ export type SchwarzPCloud = {
 	count: number
 }
 
-function centerAndScale(positions: Float32Array, targetRadius: number) {
-	const vcount = positions.length / 3
+function centerAndScale(positions: Float32Array, targetRadius: number, count?: number) {
+	const vcount = count ?? positions.length / 3
 	if (vcount === 0) {
 		return
 	}
@@ -61,7 +61,7 @@ function centerAndScale(positions: Float32Array, targetRadius: number) {
 		return
 	}
 	const s = targetRadius / maxR
-	for (let i = 0; i < positions.length; i++) {
+	for (let i = 0; i < vcount * 3; i++) {
 		positions[i] *= s
 	}
 }
@@ -87,10 +87,11 @@ function writeRibbon(colors: Float32Array, i: number, x: number, y: number, z: n
 }
 
 /** Isosurface vertices as a particle cloud (no lit triangles). */
-export function sampleSchwarzPCloud(iso: number, tiles: number): SchwarzPCloud {
+export function sampleSchwarzPCloud(iso = 0, tiles = 2): SchwarzPCloud {
 	const t = clampIso(iso)
 	const nTiles = clampTiles(tiles)
-	const nx = GRID_RES * nTiles + 1
+	const samplesPer = nTiles >= 4 ? 20 : nTiles >= 3 ? 24 : GRID_RES
+	const nx = samplesPer * nTiles + 1
 	const extent = PERIOD * nTiles
 	const origin: readonly [number, number, number] = [0, 0, 0]
 	const cellSize = extent / (nx - 1)
@@ -109,26 +110,32 @@ export function sampleSchwarzPCloud(iso: number, tiles: number): SchwarzPCloud {
 	}
 
 	const mesh = polygoniseGrid(values, nx, nx, nx, origin, cell)
-	centerAndScale(mesh.positions, TARGET_R)
+	const total = mesh.positions.length / 3
+	const keep = Math.min(total, SCHWARZ_MAX_POINTS)
+	const stride = total > keep ? total / keep : 1
 
 	const positions = new Float32Array(SCHWARZ_MAX_POINTS * 3)
 	const colors = new Float32Array(SCHWARZ_MAX_POINTS * 3)
-	const raw = Math.min(mesh.positions.length / 3, SCHWARZ_MAX_POINTS)
-	for (let i = 0; i < raw; i++) {
+	for (let i = 0; i < keep; i++) {
+		const src = Math.min(total - 1, Math.floor(i * stride)) * 3
 		const i3 = i * 3
-		positions[i3] = mesh.positions[i3]
-		positions[i3 + 1] = mesh.positions[i3 + 1]
-		positions[i3 + 2] = mesh.positions[i3 + 2]
+		positions[i3] = mesh.positions[src]
+		positions[i3 + 1] = mesh.positions[src + 1]
+		positions[i3 + 2] = mesh.positions[src + 2]
+	}
+	centerAndScale(positions, TARGET_R, keep)
+	for (let i = 0; i < keep; i++) {
+		const i3 = i * 3
 		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2])
 	}
-	if (raw > 0) {
+	if (keep > 0) {
 		const px = positions[0]
 		const py = positions[1]
 		const pz = positions[2]
 		const cr = colors[0]
 		const cg = colors[1]
 		const cb = colors[2]
-		for (let i = raw; i < SCHWARZ_MAX_POINTS; i++) {
+		for (let i = keep; i < SCHWARZ_MAX_POINTS; i++) {
 			const i3 = i * 3
 			positions[i3] = px
 			positions[i3 + 1] = py
