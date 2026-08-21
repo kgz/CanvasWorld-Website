@@ -47,9 +47,9 @@ const BoyJuryIsolines = () => {
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
 			numParticles={cloud.count}
-			pointSize={0.055}
+			pointSize={0.07}
 			tick={tick}
-			cameraPosition={[0, 0, 2.45]}
+			cameraPosition={[0, 0.15, 2.05]}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.28}
 		/>

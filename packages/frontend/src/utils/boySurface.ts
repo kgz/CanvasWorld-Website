@@ -6,7 +6,7 @@ const U_RES = 80
 const V_RES = 80
 const TARGET_R = 1.7
 /** Trails / wires fill the frame better than the mesh scale. */
-const TARGET_R_TRAIL = 2.55
+const TARGET_R_TRAIL = 3.1
 
 export type BoyPoint = {
 	x: number
@@ -249,7 +249,7 @@ export function sampleBoyScanline(nu = 160, nv = 96): BoyCloud {
  * Constant-u / constant-v curves as a point wire.
  * Fewer curves than a dense grid — keeps the triple-point open instead of a white clump.
  */
-export function sampleBoyIsolines(nu = 16, nv = 16, samples = 240): BoyCloud {
+export function sampleBoyIsolines(nu = 18, nv = 18, samples = 96): BoyCloud {
 	const count = (nu + nv) * samples
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)
@@ -283,7 +283,7 @@ export function sampleBoyIsolines(nu = 16, nv = 16, samples = 240): BoyCloud {
 		}
 	}
 	centerAndScale(positions, TARGET_R_TRAIL)
-	return thinNearOrigin(positions, colors, 0.42)
+	return thinNearOrigin(positions, colors, 0.55)
 }
 
 /** Drop verts inside a ball so the triple-point does not paint solid white. */
