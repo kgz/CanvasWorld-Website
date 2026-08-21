@@ -242,14 +242,14 @@ export function sampleBoyScanline(nu = 160, nv = 96): BoyCloud {
 		}
 	}
 	centerAndScale(positions, TARGET_R_TRAIL)
-	return thinNearOrigin(positions, colors, 0.18)
+	return thinNearOrigin(positions, colors, 0.32)
 }
 
 /**
  * Constant-u / constant-v curves as a point wire.
  * Fewer curves than a dense grid — keeps the triple-point open instead of a white clump.
  */
-export function sampleBoyIsolines(nu = 22, nv = 22, samples = 220): BoyCloud {
+export function sampleBoyIsolines(nu = 16, nv = 16, samples = 240): BoyCloud {
 	const count = (nu + nv) * samples
 	const positions = new Float32Array(count * 3)
 	const colors = new Float32Array(count * 3)
@@ -283,7 +283,7 @@ export function sampleBoyIsolines(nu = 22, nv = 22, samples = 220): BoyCloud {
 		}
 	}
 	centerAndScale(positions, TARGET_R_TRAIL)
-	return thinNearOrigin(positions, colors, 0.22)
+	return thinNearOrigin(positions, colors, 0.42)
 }
 
 /** Drop verts inside a ball so the triple-point does not paint solid white. */

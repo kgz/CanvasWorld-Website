@@ -49,7 +49,7 @@ const BoyJuryIsolines = () => {
 			numParticles={cloud.count}
 			pointSize={0.055}
 			tick={tick}
-			cameraPosition={[0, 0, 2.85]}
+			cameraPosition={[0, 0, 2.45]}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.28}
 		/>
