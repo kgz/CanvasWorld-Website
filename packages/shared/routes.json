@@ -219,44 +219,8 @@
     "slug": "boy_surface",
     "title": "Boy's Surface",
     "category": "misc",
-    "description": "Morin–Apéry immersion of the real projective plane RP² in R³. A triple point and self-intersections; not an embedding.",
+    "description": "Immersion of RP² in R³ as a polar isoline wire. Morph k: Roman→Apéry Boy; bryant: Apéry→Bryant–Kusner three-balls.",
     "thumbnail": "/chaos/icons/boy_surface.png",
-    "renderMode": "webgl",
-    "active": true
-  },
-  {
-    "slug": "boy_jury_bryant",
-    "title": "Boy Jury · Bryant",
-    "category": "misc",
-    "description": "Jury: Bryant–Kusner lit mesh of Boy’s surface. Contrast with Morin–Apéry on /boy_surface.",
-    "thumbnail": "/chaos/icons/boy_jury_bryant.png",
-    "renderMode": "webgl",
-    "active": true
-  },
-  {
-    "slug": "boy_jury_points",
-    "title": "Boy Jury · Points",
-    "category": "misc",
-    "description": "Temporary jury: Morin–Apéry Boy surface as classic points/dots (not mesh).",
-    "thumbnail": "/chaos/icons/boy_jury_points.png",
-    "renderMode": "webgl",
-    "active": true
-  },
-  {
-    "slug": "boy_jury_lines",
-    "title": "Boy Jury · Lines",
-    "category": "misc",
-    "description": "Jury line-scan of Morin–Apéry Boy’s surface — legacy GPU line trail for render-mode comparison.",
-    "thumbnail": "/chaos/icons/boy_jury_lines.png",
-    "renderMode": "webgl",
-    "active": true
-  },
-  {
-    "slug": "boy_jury_isolines",
-    "title": "Boy Jury · Isolines",
-    "category": "misc",
-    "description": "Temporary jury: UV isoline wire of Morin–Apéry Boy surface.",
-    "thumbnail": "/chaos/icons/boy_jury_isolines.png",
     "renderMode": "webgl",
     "active": true
   }

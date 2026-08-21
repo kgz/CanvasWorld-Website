@@ -1,23 +1,38 @@
 import { BlockMath, InlineMath } from 'react-katex'
-import { useEffect, useMemo } from 'react'
-import { type TDatData, type TDataFromObject } from '../../@types/gui'
+import { useEffect, useMemo, useRef } from 'react'
+import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
-import { useAppDispatch } from '../../@store/store'
+import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import { buildBoyMesh } from '../../utils/boySurface'
+import { clampBlend, clampHomotopy, sampleBoyMorphIsolines } from '../../utils/boySurface'
+
+const RINGS = 48
+const RAYS = 64
+const DETAIL = 240
+const NUM_PARTICLES = (RINGS + RAYS) * DETAIL
 
 const BoySurface = () => {
 	const dispatch = useAppDispatch()
+	const { data } = useAppSelector((state) => state.WebSlice)
+	const seeded = useRef(false)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 14000,
+		baseSpeed: 32000,
 	})
 
 	const datData = useMemo(
 		(): TDatData => ({
-			options: {},
-			examples: [],
+			options: {
+				k: { initialValue: 1, min: 0, max: 1, step: 0.01 },
+				bryant: { initialValue: 1, min: 0, max: 1, step: 0.01 },
+			},
+			examples: [
+				{ k: 0, bryant: 0 },
+				{ k: 1, bryant: 0 },
+				{ k: 1, bryant: 0.5 },
+				{ k: 1, bryant: 1 },
+			],
 		}),
 		[],
 	)
@@ -26,55 +41,65 @@ const BoySurface = () => {
 
 	useEffect(() => {
 		void dispatch(setDatData(datData))
-		void dispatch(setData({}))
+		void dispatch(
+			setData(
+				Object.fromEntries(
+					Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]),
+				),
+			),
+		)
 	}, [datData, dispatch])
 
-	const mesh = useMemo(() => buildBoyMesh(), [])
+	const k = clampHomotopy(data.k ?? datData.options.k.initialValue)
+	const bryant = clampBlend(data.bryant ?? datData.options.bryant.initialValue)
+	const cloud = useMemo(() => sampleBoyMorphIsolines(RINGS, RAYS, DETAIL, k, bryant), [k, bryant])
 
-	const tick = (delta: number) => {
-		const total = mesh.indices.length
-		const toDraw = calculateParticlesToDraw(total, delta)
-		updateProgressUI(toDraw, total)
-		checkCompletion(toDraw, total)
+	useEffect(() => {
+		seeded.current = false
+	}, [cloud])
+
+	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
+		if (!seeded.current) {
+			positions.set(cloud.positions)
+			colors.set(cloud.colors)
+			seeded.current = true
+		}
+		const toDraw = Math.min(cloud.count, calculateParticlesToDraw(cloud.count, delta))
+		updateProgressUI(toDraw, cloud.count)
+		checkCompletion(toDraw, cloud.count)
 		return toDraw
 	}
 
 	return (
 		<Base<TData>
-			drawMode="mesh"
-			positions={mesh.positions}
-			indices={mesh.indices}
-			colors={mesh.colors}
-			progressTick={tick}
-			autoRotate={!isScreenshotMode()}
-			autoRotateSpeed={0.32}
+			dimension={EDimensions.THREE_D}
+			numParticles={NUM_PARTICLES}
+			pointSize={1.2}
+			tick={tick}
 			cameraPosition={[0, 0, 4.2]}
+			autoRotate={!isScreenshotMode()}
+			autoRotateSpeed={0.28}
 		/>
 	)
 }
 
 BoySurface.getDescription = () => (
 	<>
-		Boy’s surface (Werner Boy, 1901) is an immersion of the real projective plane{' '}
+		Boy’s surface (Werner Boy, 1901) immerses the real projective plane{' '}
 		<InlineMath math="\mathbb{RP}^2" /> in <InlineMath math="\mathbb{R}^3" />: a triple point and
-		self-intersection curves, so it is not an embedding. This page uses Apéry’s trigonometric
-		parametrization.
+		self-intersections (not an embedding). Polar isoline wire with two morphs:
 		<br />
 		<br />
-		<strong>Parametrization</strong> (Morin–Apéry) with <InlineMath math="u,v\in[0,\pi]" />:
-		<BlockMath
-			math={
-				'x = \\bigl(\\sqrt{2}\\,\\cos 2u\\,\\cos^2 v + \\cos u\\,\\sin 2v\\bigr)/\\bigl(2-\\sqrt{2}\\,\\sin 3u\\,\\sin 2v\\bigr)'
-			}
-		/>
-		<BlockMath
-			math={
-				'y = \\bigl(\\sqrt{2}\\,\\sin 2u\\,\\cos^2 v - \\sin u\\,\\sin 2v\\bigr)/\\bigl(2-\\sqrt{2}\\,\\sin 3u\\,\\sin 2v\\bigr)'
-			}
-		/>
-		<BlockMath math={'z = 3\\cos^2 v\\,/\\,\\bigl(2-\\sqrt{2}\\,\\sin 3u\\,\\sin 2v\\bigr)'} />
+		<code>k</code>: Roman surface (<InlineMath math="0" />) → Morin–Apéry Boy (
+		<InlineMath math="1" />
+		).
 		<br />
-		Transport <code>n</code> reveals triangles.
+		<code>bryant</code>: Apéry petals → Bryant–Kusner three-balls.
+		<br />
+		<br />
+		<BlockMath math={'p=(1-b)\\,P_{\\mathrm{Ap\\acute{e}ry}}(k)+b\\,P_{\\mathrm{Bryant}}'} />
+		<br />
+		Transport <code>n</code> reveals points.
 	</>
 )
 

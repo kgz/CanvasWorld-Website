@@ -25,10 +25,6 @@ import DiniSurface from '../pages/misc/dini_surface'
 import RomanSurface from '../pages/misc/roman_surface'
 import EnneperSurface from '../pages/misc/enneper_surface'
 import BoySurface from '../pages/misc/boy_surface'
-import BoyJuryBryant from '../pages/misc/boy_jury_bryant'
-import BoyJuryPoints from '../pages/misc/boy_jury_points'
-import BoyJuryLines from '../pages/misc/boy_jury_lines'
-import BoyJuryIsolines from '../pages/misc/boy_jury_isolines'
 
 export type CatalogEntry = {
 	slug: string
@@ -78,10 +74,6 @@ const components: Record<string, ComponentType> = {
 	roman_surface: RomanSurface,
 	enneper_surface: EnneperSurface,
 	boy_surface: BoySurface,
-	boy_jury_bryant: BoyJuryBryant,
-	boy_jury_points: BoyJuryPoints,
-	boy_jury_lines: BoyJuryLines,
-	boy_jury_isolines: BoyJuryIsolines,
 }
 
 const catalogEntries: CatalogEntry[] = catalog
