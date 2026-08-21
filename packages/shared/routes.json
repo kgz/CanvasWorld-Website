@@ -223,5 +223,14 @@
     "thumbnail": "/chaos/icons/boy_surface.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "boy_jury_isolines",
+    "title": "Boy Jury · Isolines",
+    "category": "misc",
+    "description": "Temporary jury: UV isoline wire of Morin–Apéry Boy surface.",
+    "thumbnail": "/chaos/icons/boy_jury_isolines.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
