@@ -1,0 +1,63 @@
+export const meta = {
+	slug: 'julia-set',
+	title: 'Julia sets: one fixed c, a whole plane of starting points',
+	tag: 'Fractals',
+	excerpt:
+		'Fix one complex c and ask which starting z stay bounded under z² + c. Classical Chaos paints each pixel by how fast that orbit escapes.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'julia_set',
+	featured: false,
+	order: 120,
+}
+
+
+Gaston Julia studied these iterations around 1918. Fix one complex constant `c`, then ask which starting points `z₀` stay bounded under the same quadratic map that draws Mandelbrot. Classical Chaos answers per pixel: the pixel *is* `z₀`, the greys mark escape speed, and black marks orbits that never clear the bailout inside the iteration budget.
+
+Default `c` sits at `(−0.4, 0.6)`: a connected black mass with greyscale lace outside.
+
+<VizEmbed slug="julia_set" label="Julia set" />
+
+## Same map, swapped roles
+
+The iteration is identical to Mandelbrot:
+
+<BlockMath math={'z_{n+1} = z_n^{2} + c'} />
+
+Mandelbrot always starts at `z₀ = 0` and hunts which `c` keep the sequence bounded. Julia locks one `c` and paints the plane of starting `z₀` instead, so every `c` owns a different picture. Connected blobs, dusty scrap, and filigree edges are all the same map with a different constant.
+
+This is a shader, not a particle trail. The greys are already there: escape time per pixel, fading by how fast each orbit blew past the bailout.
+
+## One pixel, fixed c
+
+The pixel is the starting `z`, not the constant. Add the same fixed `c` every step. Bail out when `|z|² > 4` (that is `|z| > 2`).
+
+```ts
+let zRe = pixelRe
+let zIm = pixelIm
+let n = 0
+while (n < maxIter) {
+  const zr2 = zRe * zRe
+  const zi2 = zIm * zIm
+  if (zr2 + zi2 > 4) break
+  const nextRe = zr2 - zi2 + cRe
+  const nextIm = 2 * zRe * zIm + cIm
+  zRe = nextRe
+  zIm = nextIm
+  n += 1
+}
+// n is escape time (or maxIter if still bounded)
+```
+
+Default max iterations is 256. On the full stage Params runs about 50–1000. Raise the budget when a zoom gets muddy near the edge.
+
+## What changes when you change c
+
+Default framing sits near center `(0, 0)`. Greyscale exterior, black set. On the [full Julia stage](/julia_set), `cReal` / `cImag` each run about `[-2, 2]`, and Params Examples jump classic values: `(−0.4, 0.6)`, `(−0.8, 0.156)`, `(0.285, 0.01)`, `(−0.70176, −0.3842)`. Pan and zoom dig into the lace; the HUD `c` barely moves while the edge densifies.
+
+Arrive with `?cx=` / `?cy=` and the page seeds `c` from a Mandelbrot click.
+
+<Callout to="/julia_set">
+	<strong>Goto full canvas</strong>
+	Retune `cReal` / `cImag`, raise iterations, try Params Examples, pan and zoom, hop to Mandelbrot from the HUD.
+</Callout>
