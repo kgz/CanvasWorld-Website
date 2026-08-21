@@ -21,4 +21,8 @@ packages/backend/tmp/
 *.backup
 
 # Editor / agent local state
-.cursor/
+.cursor/*
+!.cursor/skills/
+!.cursor/skills/**
+!.cursor/rules/
+!.cursor/rules/**

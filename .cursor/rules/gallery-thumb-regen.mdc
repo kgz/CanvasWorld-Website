@@ -1,0 +1,34 @@
+---
+description: Regenerate gallery thumbs after viz/visual changes
+alwaysApply: true
+---
+
+# Gallery thumbnail regen
+
+Whenever a change **visually affects** a visualization (look, framing, color, trail, shader, default params, or new active route), regenerate that slug’s gallery thumb before considering the work done.
+
+## Command
+
+```bash
+cd packages/frontend && FRONTEND_URL=http://127.0.0.1:5173/chaos pnpm thumbs -- --slug <slug>
+```
+
+- Requires Vite (`p dev`) on **5173** and air serving icons on **8080**.
+- Output: `packages/backend/static/images/<slug>.png`
+- Include the new PNG in the same commit/PR as the viz change.
+
+## Triggers (do regen)
+
+- Page under `packages/frontend/src/pages/{attractors,maps,fractals,misc}/`
+- Related util/shader that changes the drawn result
+- Default camera / scale / color / draw mode / `numParticles`
+- Activating or adding a catalog slug in `packages/shared/routes.json`
+
+## Skip
+
+- Copy-only About/docs with no visual change
+- Pure infra (proxy, board scripts, OpenSpec text) with no on-canvas difference
+
+## Multi-slug
+
+If several viz changed: regen each affected slug (or full `pnpm thumbs` if many).

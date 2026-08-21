@@ -1,0 +1,108 @@
+---
+description: CanvasWorld AI delivery loop — ticket → branch → spec → apply → PR → archive → done
+alwaysApply: true
+---
+
+# CanvasWorld AI workflow
+
+Follow this loop for every delivery. Do not skip steps unless the user explicitly says so.
+
+## 1. Ticket (GitHub) — **first step when starting work**
+
+- Work from a **GitHub issue** on [Project #6](https://github.com/users/kgz/projects/6/views/1).
+- **Immediately** move cards to **In progress**:
+
+```bash
+./bin/board-status.sh in-progress <issue-num>
+```
+
+- When closing: `./bin/board-status.sh done <issue-numbers...>`
+- Board lifecycle: **Ready** → **In progress** (start work) → **In review** (code complete on branch / PR open) → **Done** (merged + issue closed).
+- PR must reference them with `Closes #N`.
+
+## 2. New branch (from `master`)
+
+```bash
+git checkout master && git pull origin master
+git checkout -b feature/<issue>-<short-slug>
+```
+
+## 3. Spec (OpenSpec — on `master` first)
+
+- On **`master`**: `/opsx:propose` → `openspec/changes/<change-name>/`
+- Then checkout the delivery branch and commit spec artifacts there.
+
+## 4. Explore / apply (on delivery branch)
+
+- Optional: `/opsx:explore`
+- **`/opsx:apply`** on `feature/<n>-<slug>` only — implement `tasks.md`, check off `- [x]` as you go.
+
+## Open Design runs (must show in OD UI)
+
+Never start OD runs with raw `curl` and a `project` field — they will **not** appear in the project chat.
+
+Prototype lives in-repo at `design/canvasworld-prototype/` (imported folder).
+
+```bash
+./bin/od-import-project.sh   # once, or after resetting OD
+./bin/od-design-run.sh --issue <n> "Design prompt…"
+# or per-issue thread:
+./bin/od-design-run.sh --issue 12 --new-conversation "#12 Home" "Design …"
+```
+
+Requires OD daemon with `/mnt/CanvasWorld-Website` mounted (see `design/README.md`). Watch URL is printed after start.
+
+## 5. Test & quality
+
+- Backend: `cd packages/backend && go build -o /tmp/cw-backend .` (and targeted tests if present)
+- Frontend: `cd packages/frontend && pnpm run build` when UI/shader changes
+- Manual QA for affected attractor/map routes before PR
+
+## Git commits & PRs
+
+- Never add `Co-authored-by`, `Made-with: Cursor`, or any Cursor/agent attribution to commits or PR bodies.
+- Use plain `git commit -m` / heredoc only — no `--trailer`.
+- If attribution is appended by the environment, amend to remove it before pushing.
+
+## 6. Pull request + link ticket
+
+```bash
+git push -u origin HEAD
+gh pr create --base master --head feature/<n>-<slug> \
+  --title "..." --body "## Summary\n...\n\nCloses #<issue>"
+```
+
+## 7. Archive spec (before or right after merge)
+
+- `openspec archive <change-name> -y` (syncs specs and moves to archive)
+- Or manually sync `openspec/specs/` and move to `openspec/changes/archive/YYYY-MM-DD-<name>/`
+
+## 8. Merge
+
+- Merge PR after review (and CI if present).
+
+## 9. Ticket → Done
+
+- `./bin/board-status.sh done <issue-numbers...>`
+- `gh issue close <n> --repo kgz/CanvasWorld-Website`
+
+---
+
+## Board (Project #6)
+
+| Field | ID |
+|-------|-----|
+| Project | `PVT_kwHOAI9yDM4BgbHR` |
+| Status field | `PVTSSF_lAHOAI9yDM4BgbHRzhcdAm0` |
+| Backlog | `f75ad846` |
+| Ready | `61e4505c` |
+| In progress | `47fc9ee4` |
+| In review | `df73e18b` |
+| Done | `98236657` |
+
+## Current state
+
+| Area | Status |
+|------|--------|
+| OpenSpec | Initialized |
+| Project board | [CanvasWorld #6](https://github.com/users/kgz/projects/6/views/1) |

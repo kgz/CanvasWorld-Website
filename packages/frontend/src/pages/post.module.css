@@ -233,6 +233,16 @@
   font-size: inherit;
 }
 
+.md :global(.katex-display) {
+  margin: 0.85em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.md :global(.katex) {
+  font-size: 1.05em;
+}
+
 .md :global(.cw-callout) {
   margin: 1.6em 0;
   padding: 14px 16px;
@@ -254,6 +264,36 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--cw-muted);
+}
+
+.md :global(.cw-callout--link) {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.md :global(.cw-callout--link:hover) {
+  border-color: color-mix(in oklch, var(--cw-accent) 45%, var(--cw-border));
+  background: color-mix(in oklch, var(--cw-surface) 85%, var(--cw-accent) 8%);
+  color: var(--cw-fg);
+}
+
+.md :global(.cw-callout--link:hover) strong {
+  color: var(--cw-accent);
+}
+
+.md :global(.cw-callout__body) {
+  flex: 1;
+  min-width: 0;
+}
+
+.md :global(.cw-callout__arrow) {
+  flex-shrink: 0;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--cw-accent);
 }
 
 .footerNav {

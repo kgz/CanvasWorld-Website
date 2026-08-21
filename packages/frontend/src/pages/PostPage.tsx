@@ -1,6 +1,8 @@
 import { MDXProvider } from '@mdx-js/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { BlockMath, InlineMath } from 'react-katex'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import 'katex/dist/katex.min.css'
 import { Callout } from '../blog/Callout'
 import { formatPostMeta } from '../blog/types'
 import { getAdjacent, getPost } from '../blog/registry'
@@ -14,6 +16,8 @@ const mdxComponents = {
 	VizEmbed,
 	VizEmbedGrid,
 	Callout,
+	BlockMath,
+	InlineMath,
 }
 
 function PostPage() {
