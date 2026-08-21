@@ -1,23 +1,37 @@
 import { BlockMath, InlineMath } from 'react-katex'
-import { useEffect, useMemo } from 'react'
-import { type TDatData, type TDataFromObject } from '../../@types/gui'
+import { useEffect, useMemo, useRef } from 'react'
+import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
-import { useAppDispatch } from '../../@store/store'
+import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import { buildRomanSurfaceMesh } from '../../utils/romanSurface'
+import { clampSquash, sampleRomanIsolines } from '../../utils/romanSurface'
+
+const NU = 48
+const NV = 48
+const DETAIL = 240
+const NUM_PARTICLES = (NU + NV) * DETAIL
 
 const RomanSurface = () => {
 	const dispatch = useAppDispatch()
+	const { data } = useAppSelector((state) => state.WebSlice)
+	const seeded = useRef(false)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 14000,
+		baseSpeed: 32000,
 	})
 
 	const datData = useMemo(
 		(): TDatData => ({
-			options: {},
-			examples: [],
+			options: {
+				squash: { initialValue: 1, min: 0.25, max: 2.5, step: 0.01 },
+			},
+			examples: [
+				{ squash: 0.45 },
+				{ squash: 1 },
+				{ squash: 1.6 },
+				{ squash: 2.2 },
+			],
 		}),
 		[],
 	)
@@ -26,29 +40,43 @@ const RomanSurface = () => {
 
 	useEffect(() => {
 		void dispatch(setDatData(datData))
-		void dispatch(setData({}))
+		void dispatch(
+			setData(
+				Object.fromEntries(
+					Object.entries(datData.options).map(([key, value]) => [key, value.initialValue]),
+				),
+			),
+		)
 	}, [datData, dispatch])
 
-	const mesh = useMemo(() => buildRomanSurfaceMesh(), [])
+	const squash = clampSquash(data.squash ?? datData.options.squash.initialValue)
+	const cloud = useMemo(() => sampleRomanIsolines(NU, NV, DETAIL, squash), [squash])
 
-	const tick = (delta: number) => {
-		const total = mesh.indices.length
-		const toDraw = calculateParticlesToDraw(total, delta)
-		updateProgressUI(toDraw, total)
-		checkCompletion(toDraw, total)
+	useEffect(() => {
+		seeded.current = false
+	}, [cloud])
+
+	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
+		if (!seeded.current) {
+			positions.set(cloud.positions)
+			colors.set(cloud.colors)
+			seeded.current = true
+		}
+		const toDraw = Math.min(cloud.count, calculateParticlesToDraw(cloud.count, delta))
+		updateProgressUI(toDraw, cloud.count)
+		checkCompletion(toDraw, cloud.count)
 		return toDraw
 	}
 
 	return (
 		<Base<TData>
-			drawMode="mesh"
-			positions={mesh.positions}
-			indices={mesh.indices}
-			colors={mesh.colors}
-			progressTick={tick}
+			dimension={EDimensions.THREE_D}
+			numParticles={NUM_PARTICLES}
+			pointSize={1.2}
+			tick={tick}
+			cameraPosition={[0, 0, 3.7]}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.32}
-			cameraPosition={[0, 0, 3.7]}
 		/>
 	)
 }
@@ -56,8 +84,7 @@ const RomanSurface = () => {
 RomanSurface.getDescription = () => (
 	<>
 		Steiner’s Roman surface is a self-intersecting immersion of the real projective plane{' '}
-		<InlineMath math="\mathbb{RP}^2" />. This page uses the standard trigonometric parametrization
-		with <InlineMath math="a=1" />.
+		<InlineMath math="\mathbb{RP}^2" />. UV isoline particle wire — no lit mesh.
 		<br />
 		<br />
 		<strong>Parametrization</strong> for <InlineMath math="u,v\in[0,\pi]" />:
@@ -67,7 +94,10 @@ RomanSurface.getDescription = () => (
 			}
 		/>
 		<br />
-		Transport <code>n</code> reveals triangles.
+		<code>squash</code>: stretch <InlineMath math="z" /> before normalize — flatten or elongate the
+		classic tetrahedral silhouette (<InlineMath math="1" /> = Steiner proportions).
+		<br />
+		Transport <code>n</code> reveals points.
 	</>
 )
 
