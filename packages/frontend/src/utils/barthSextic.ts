@@ -1,14 +1,18 @@
 import { polygoniseGrid } from './isosurface'
 
 export const BARTH_PHI = (1 + Math.sqrt(5)) / 2
+/** Fixed GPU budget so param scrubs don't remount buffers / reset `n`. */
+export const BARTH_MAX_POINTS = 55_000
 const EPS = 1e-15
 const TARGET_R = 1.7
-const GRID_RES = 44
+/** Interactive MC — 32³ is ~0.4× the cost of 44³. */
+const GRID_RES = 32
 const SAMPLE_BOUND = 1.85
 
 export type BarthCloud = {
 	positions: Float32Array
 	colors: Float32Array
+	/** Always BARTH_MAX_POINTS (padded). */
 	count: number
 }
 
@@ -132,11 +136,34 @@ export function sampleBarthCloud(tau = BARTH_PHI, radius = 1, mix = 1): BarthClo
 	}
 
 	const mesh = polygoniseGrid(values, nx, nx, nx, origin, cell)
-	const count = mesh.positions.length / 3
-	const colors = new Float32Array(mesh.positions.length)
-	for (let i = 0; i < mesh.positions.length; i += 3) {
-		writeRibbon(colors, i, mesh.positions[i], mesh.positions[i + 1], mesh.positions[i + 2], b)
-	}
 	centerAndScale(mesh.positions, TARGET_R)
-	return { positions: mesh.positions, colors, count }
+
+	const positions = new Float32Array(BARTH_MAX_POINTS * 3)
+	const colors = new Float32Array(BARTH_MAX_POINTS * 3)
+	const raw = Math.min(mesh.positions.length / 3, BARTH_MAX_POINTS)
+	for (let i = 0; i < raw; i++) {
+		const i3 = i * 3
+		positions[i3] = mesh.positions[i3]
+		positions[i3 + 1] = mesh.positions[i3 + 1]
+		positions[i3 + 2] = mesh.positions[i3 + 2]
+		writeRibbon(colors, i3, positions[i3], positions[i3 + 1], positions[i3 + 2], TARGET_R)
+	}
+	if (raw > 0) {
+		const px = positions[0]
+		const py = positions[1]
+		const pz = positions[2]
+		const cr = colors[0]
+		const cg = colors[1]
+		const cb = colors[2]
+		for (let i = raw; i < BARTH_MAX_POINTS; i++) {
+			const i3 = i * 3
+			positions[i3] = px
+			positions[i3 + 1] = py
+			positions[i3 + 2] = pz
+			colors[i3] = cr
+			colors[i3 + 1] = cg
+			colors[i3 + 2] = cb
+		}
+	}
+	return { positions, colors, count: BARTH_MAX_POINTS }
 }

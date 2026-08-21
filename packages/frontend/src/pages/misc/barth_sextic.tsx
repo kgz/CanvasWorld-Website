@@ -1,13 +1,13 @@
 import { BlockMath, InlineMath } from 'react-katex'
-import { useEffect, useMemo, useRef } from 'react'
+import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
 import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
-import { useAnimation } from '../../context/AnimationContext'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import {
+	BARTH_MAX_POINTS,
 	BARTH_PHI,
 	clampMix,
 	clampRadius,
@@ -18,9 +18,7 @@ import {
 const BarthSextic = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
-	const { currentProgressRef, manualProgress, setManualProgress } = useAnimation()
 	const seeded = useRef(false)
-	const prevCount = useRef(0)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
 		baseSpeed: 28000,
 	})
@@ -58,20 +56,14 @@ const BarthSextic = () => {
 	const tau = clampTau(data.tau ?? datData.options.tau.initialValue)
 	const radius = clampRadius(data.radius ?? datData.options.radius.initialValue)
 	const mix = clampMix(data.mix ?? datData.options.mix.initialValue)
-	const cloud = useMemo(() => sampleBarthCloud(tau, radius, mix), [tau, radius, mix])
+	const dTau = useDeferredValue(tau)
+	const dRadius = useDeferredValue(radius)
+	const dMix = useDeferredValue(mix)
+	const cloud = useMemo(() => sampleBarthCloud(dTau, dRadius, dMix), [dTau, dRadius, dMix])
 
 	useEffect(() => {
 		seeded.current = false
-		const prev = prevCount.current
-		if (prev > 0 && cloud.count !== prev) {
-			const frac = Math.min(1, currentProgressRef.current / prev)
-			currentProgressRef.current = Math.max(100, frac * cloud.count)
-			if (manualProgress !== null) {
-				setManualProgress(Math.min(cloud.count, Math.max(100, Math.floor(frac * cloud.count))))
-			}
-		}
-		prevCount.current = cloud.count
-	}, [cloud, currentProgressRef, manualProgress, setManualProgress])
+	}, [cloud])
 
 	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
 		if (!seeded.current) {
@@ -79,16 +71,16 @@ const BarthSextic = () => {
 			colors.set(cloud.colors)
 			seeded.current = true
 		}
-		const toDraw = calculateParticlesToDraw(cloud.count, delta)
-		updateProgressUI(toDraw, cloud.count)
-		checkCompletion(toDraw, cloud.count)
+		const toDraw = calculateParticlesToDraw(BARTH_MAX_POINTS, delta)
+		updateProgressUI(toDraw, BARTH_MAX_POINTS)
+		checkCompletion(toDraw, BARTH_MAX_POINTS)
 		return toDraw
 	}
 
 	return (
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
-			numParticles={cloud.count}
+			numParticles={BARTH_MAX_POINTS}
 			pointSize={1.15}
 			tick={tick}
 			cameraPosition={[0, 0, 3.7]}

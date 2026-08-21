@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+	BARTH_MAX_POINTS,
 	BARTH_PHI,
 	barthField,
 	clampMix,
@@ -33,11 +34,12 @@ describe('barthField', () => {
 })
 
 describe('sampleBarthCloud', () => {
-	it('builds a finite particle cloud', () => {
+	it('builds a fixed-size particle cloud', () => {
 		const cloud = sampleBarthCloud()
-		expect(cloud.count).toBeGreaterThan(500)
+		expect(cloud.count).toBe(BARTH_MAX_POINTS)
+		expect(cloud.positions.length).toBe(BARTH_MAX_POINTS * 3)
 		expect(cloud.colors.length).toBe(cloud.positions.length)
-		for (let i = 0; i < Math.min(cloud.positions.length, 300); i++) {
+		for (let i = 0; i < 300; i++) {
 			expect(Number.isFinite(cloud.positions[i])).toBe(true)
 		}
 	})
