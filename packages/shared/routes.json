@@ -48,7 +48,7 @@
     "slug": "gumowski-mira_attractor",
     "title": "Gumowski-Mira Attractor",
     "category": "attractor",
-    "description": "The Gumowski-Mira Attractor is a chaotic attractor defined by the following equations: x_{n+1} = b \\cdot y_n + a \\cdot x_n + x_n \\cdot (x_n^2 + y_n^2), y_{n+1} = -b \\cdot x_n + a \\cdot y_n + y_n \\cdot (x_n^2 + y_n^2)",
+    "description": "Gumowski–Mira attractor: x' = y + a(1-b y²)y + G(x,μ), y' = -x + G(x',μ), with G(x,μ)=μx + 2(1-μ)x²/(1+x²).",
     "thumbnail": "/chaos/icons/gumowski-mira_attractor.png",
     "renderMode": "webgl",
     "active": true
