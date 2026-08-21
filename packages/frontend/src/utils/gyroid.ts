@@ -35,11 +35,11 @@ function centerAndScaleTiles(
 	if (count === 0) {
 		return
 	}
-	/** Fixed scale from max tiles so one cell keeps a constant size (fit-to-frame made 2 look denser than 4). */
-	const maxTiles = 4
+	/** Scale so default tiles=2 fills the frame; more tiles grow the object (constant cell size). */
+	const refTiles = 2
 	const extent = PERIOD * nTiles
 	const half = extent / 2
-	const s = targetRadius / (PERIOD * maxTiles)
+	const s = targetRadius / (PERIOD * refTiles)
 	for (let i = 0; i < count; i++) {
 		const i3 = i * 3
 		positions[i3] = (positions[i3] - half) * s

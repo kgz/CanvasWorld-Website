@@ -75,7 +75,7 @@ const Gyroid = () => {
 			numParticles={GYROID_MAX_POINTS}
 			pointSize={1.15}
 			tick={tick}
-			cameraPosition={[0, 0, 3.7]}
+			cameraPosition={[0, 0, 3.2]}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.28}
 		/>
