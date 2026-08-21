@@ -111,7 +111,7 @@
     "slug": "ikeda_map",
     "title": "Ikeda Map",
     "category": "map",
-    "description": "The Ikeda Map is a chaotic map defined by the following equations: x_{n+1} = 1 + c \\cdot (x_n \\cdot cos(t) - y_n \\cdot sin(t)), y_{n+1} = c \\cdot (x_n \\cdot sin(t) + y_n \\cdot cos(t))",
+    "description": "Ikeda map (param a): f = 0.4 - 6/(1+x²+y²), x' = 1 + a(x cos f − y sin f), y' = a(x sin f + y cos f).",
     "thumbnail": "/chaos/icons/ikeda_map.png",
     "renderMode": "webgl",
     "active": true
