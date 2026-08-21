@@ -88,7 +88,7 @@ function GalleryCard({
 				<img
 					className={styles.vizThumb}
 					src={iconUrl(slug)}
-					alt=""
+					alt={name}
 					loading="lazy"
 					onError={() => setBroken(true)}
 				/>

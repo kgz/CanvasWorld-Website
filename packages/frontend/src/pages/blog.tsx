@@ -1,4 +1,5 @@
 import { useDeferredValue, useEffect, useRef, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { posts } from '../blog/registry'
 import { formatPostMeta, type PostMeta } from '../blog/types'
@@ -56,6 +57,24 @@ function Blog() {
 
 	return (
 		<div className={styles.page}>
+			<Helmet>
+				<title>Lab notebook — Classical Chaos</title>
+				<meta
+					name="description"
+					content="Notes on attractors, maps, and meshes in the Classical Chaos catalog."
+				/>
+				<link rel="canonical" href="https://matf.dev/chaos/blog" />
+				<meta property="og:type" content="website" />
+				<meta property="og:site_name" content="Classical Chaos" />
+				<meta property="og:url" content="https://matf.dev/chaos/blog" />
+				<meta property="og:title" content="Lab notebook — Classical Chaos" />
+				<meta
+					property="og:description"
+					content="Notes on attractors, maps, and meshes in the Classical Chaos catalog."
+				/>
+				<meta property="og:image" content="https://matf.dev/chaos/icons/mandelbrot_set.png" />
+				<meta name="twitter:card" content="summary_large_image" />
+			</Helmet>
 			<header
 				ref={navRef}
 				className={[styles.siteNav, navScrolled ? styles.siteNavScrolled : ''].filter(Boolean).join(' ')}
@@ -129,7 +148,7 @@ function Blog() {
 										<img
 											className={styles.featuredArt}
 											src={iconUrl(featured.meta.thumbSlug)}
-											alt=""
+											alt={featured.meta.title}
 											onError={() => setThumbBroken(true)}
 										/>
 									) : (

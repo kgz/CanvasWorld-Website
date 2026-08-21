@@ -1,0 +1,17 @@
+---
+description: Refresh blog-posts.json when adding or editing notebook MDX meta
+globs: packages/frontend/src/blog/posts/**/*.mdx
+alwaysApply: false
+---
+
+# Blog catalog for SEO
+
+MDX `export const meta` is the source of truth for per-post title/excerpt/OG.
+
+After creating or changing post `meta` (slug, title, excerpt, thumbSlug):
+
+```bash
+cd packages/frontend && pnpm run export-blog-posts
+```
+
+That updates `packages/shared/blog-posts.json` (Go SSR, sitemap, Discord OG). Include the JSON in the same commit. Docker also re-runs the export during image build.
