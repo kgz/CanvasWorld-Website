@@ -1,10 +1,12 @@
 import { isEmbedFullReveal } from '../modules/embedMode'
+import { isEmbedTransportPaused } from '../modules/embedBridge'
 import { isScreenshotMode } from '../modules/screenshotMode'
 import { useAnimation } from '../context/AnimationContext'
 
 export const useAnimationState = (options?: { baseSpeed?: number }) => {
 	const {
 		isPaused,
+		isPausedRef,
 		manualProgress,
 		animationSpeed,
 		currentProgressRef,
@@ -14,26 +16,36 @@ export const useAnimationState = (options?: { baseSpeed?: number }) => {
 	const baseSpeed = options?.baseSpeed ?? 2000
 
 	const calculateParticlesToDraw = (totalParticles: number, delta: number) => {
-		if (isScreenshotMode() || isEmbedFullReveal()) {
+		if (isScreenshotMode()) {
 			return totalParticles
 		}
 
-		let particlesToDraw: number
+		const paused = isPaused || isPausedRef.current || isEmbedTransportPaused()
+
 		if (manualProgress !== null) {
-			particlesToDraw = Math.min(manualProgress, totalParticles)
+			const particlesToDraw = Math.min(manualProgress, totalParticles)
 			currentProgressRef.current = particlesToDraw
-		} else if (isPaused) {
-			particlesToDraw = currentProgressRef.current
-		} else {
-			const increment = delta * baseSpeed * animationSpeed
-			currentProgressRef.current = Math.min(
-				currentProgressRef.current + increment,
-				totalParticles,
-			)
-			particlesToDraw = Math.floor(currentProgressRef.current)
+			return Math.max(particlesToDraw, 100)
 		}
 
-		return Math.max(particlesToDraw, 100)
+		if (paused) {
+			if (isEmbedFullReveal() && currentProgressRef.current < totalParticles) {
+				currentProgressRef.current = totalParticles
+			}
+			return Math.max(Math.floor(currentProgressRef.current), 100)
+		}
+
+		if (isEmbedFullReveal()) {
+			currentProgressRef.current = totalParticles
+			return totalParticles
+		}
+
+		const increment = delta * baseSpeed * animationSpeed
+		currentProgressRef.current = Math.min(
+			currentProgressRef.current + increment,
+			totalParticles,
+		)
+		return Math.max(Math.floor(currentProgressRef.current), 100)
 	}
 
 	const updateProgressUI = (particlesToDraw: number, totalParticles: number) => {

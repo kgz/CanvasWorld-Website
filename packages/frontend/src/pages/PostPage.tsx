@@ -5,7 +5,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
 import { Callout } from '../blog/Callout'
 import { formatPostMeta } from '../blog/types'
-import { getAdjacent, getPost } from '../blog/registry'
+import { getAdjacent, getPost, resolvePostSlug } from '../blog/registry'
 import { VizEmbed, VizEmbedGrid } from '../blog/VizEmbed'
 import styles from './post.module.css'
 
@@ -54,6 +54,11 @@ function PostPage() {
 
 	if (!post) {
 		return <Navigate to="/blog" replace />
+	}
+
+	const canonical = resolvePostSlug(slug)
+	if (canonical !== slug) {
+		return <Navigate to={`/blog/${canonical}`} replace />
 	}
 
 	const Body = post.Component

@@ -13,6 +13,7 @@ import {
 	type ReactNode,
 } from 'react'
 import { Link } from 'react-router-dom'
+import { parseEmbedProgress, postEmbedControl } from '../modules/embedBridge'
 import { DEFAULT_EMBED_PARTICLES } from '../modules/embedMode'
 import styles from './VizEmbed.module.css'
 
@@ -59,8 +60,7 @@ function flattenElements(children: ReactNode): ReactElement[] {
 function embedSrc(slug: string, particles: number | 'full' | undefined, animateN: boolean): string {
 	const q = new URLSearchParams()
 	q.set('iframe', '1')
-	// Bust iframe document cache when embed framing changes.
-	q.set('v', 'fit5')
+	q.set('v', 'pause2')
 	if (animateN) {
 		q.set('n', 'animate')
 	}
@@ -86,14 +86,18 @@ export function VizEmbed({
 	const slotAllowed = stagger === null || index <= stagger.allowedIndex
 
 	const rootRef = useRef<HTMLElement>(null)
+	const iframeRef = useRef<HTMLIFrameElement>(null)
 	const [docVisible, setDocVisible] = useState(
 		typeof document === 'undefined' ? true : document.visibilityState === 'visible',
 	)
 	const [userPaused, setUserPaused] = useState(false)
 	const [iframeReady, setIframeReady] = useState(false)
-	const running = docVisible && !userPaused && slotAllowed
+	const [nComplete, setNComplete] = useState(false)
 	const title = label ?? slug.replace(/_/g, ' ')
 	const src = useMemo(() => embedSrc(slug, particles, animateN), [slug, particles, animateN])
+
+	const wantRunning = docVisible && !userPaused && slotAllowed
+	const showPlayIcon = userPaused || (animateN && nComplete) || !slotAllowed
 
 	useEffect(() => {
 		const onVis = () => {
@@ -104,10 +108,10 @@ export function VizEmbed({
 	}, [])
 
 	useEffect(() => {
-		if (!running) {
-			setIframeReady(false)
-		}
-	}, [running, src])
+		setIframeReady(false)
+		setNComplete(false)
+		setUserPaused(false)
+	}, [src])
 
 	useEffect(() => {
 		if (iframeReady && stagger) {
@@ -115,13 +119,60 @@ export function VizEmbed({
 		}
 	}, [iframeReady, stagger, index])
 
-	const showPlayIcon = userPaused || !running
+	useEffect(() => {
+		const onMessage = (event: MessageEvent) => {
+			if (event.origin !== window.location.origin) {
+				return
+			}
+			if (event.source !== iframeRef.current?.contentWindow) {
+				return
+			}
+			const progress = parseEmbedProgress(event.data)
+			if (!progress || !animateN) {
+				return
+			}
+			setNComplete(progress.complete)
+		}
+		window.addEventListener('message', onMessage)
+		return () => window.removeEventListener('message', onMessage)
+	}, [animateN])
+
+	useEffect(() => {
+		const win = iframeRef.current?.contentWindow
+		if (!win || !iframeReady || !slotAllowed) {
+			return
+		}
+		// Click handler posts immediately; this keeps tab-visibility / stagger in sync.
+		if (!wantRunning || (animateN && nComplete && !userPaused)) {
+			postEmbedControl(win, 'pause')
+		} else if (!userPaused) {
+			postEmbedControl(win, 'play')
+		}
+	}, [wantRunning, iframeReady, slotAllowed, nComplete, userPaused, animateN])
+
+	const onTransportClick = () => {
+		const win = iframeRef.current?.contentWindow
+		if (animateN && nComplete) {
+			setNComplete(false)
+			setUserPaused(false)
+			if (win) {
+				postEmbedControl(win, 'replay')
+			}
+			return
+		}
+		const nextPaused = !userPaused
+		setUserPaused(nextPaused)
+		if (win) {
+			postEmbedControl(win, nextPaused ? 'pause' : 'play')
+		}
+	}
 
 	return (
 		<figure className={styles.player} ref={rootRef} data-stagger-index={index} data-slot-allowed={slotAllowed ? '1' : '0'}>
 			<div className={styles.stage}>
-				{running ? (
+				{slotAllowed ? (
 					<iframe
+						ref={iframeRef}
 						className={styles.frame}
 						title={title}
 						src={src}
@@ -130,9 +181,7 @@ export function VizEmbed({
 						onLoad={() => setIframeReady(true)}
 					/>
 				) : (
-					<div className={styles.placeholder}>
-						{userPaused ? 'Paused' : slotAllowed ? 'Waiting…' : 'Queued…'}
-					</div>
+					<div className={styles.placeholder}>Queued…</div>
 				)}
 			</div>
 			<figcaption className={styles.bar}>
@@ -141,8 +190,9 @@ export function VizEmbed({
 					<button
 						type="button"
 						className={[styles.btn, showPlayIcon ? styles.btnPaused : ''].filter(Boolean).join(' ')}
-						aria-label={userPaused ? 'Play' : running ? 'Pause' : 'Waiting'}
-						onClick={() => setUserPaused((p) => !p)}
+						aria-label={nComplete ? 'Replay' : userPaused ? 'Play' : 'Pause'}
+						disabled={!slotAllowed}
+						onClick={onTransportClick}
 					>
 						{showPlayIcon ? (
 							<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -177,10 +227,12 @@ export function VizEmbedGrid({ children }: { children: ReactNode }) {
 		[allowedIndex],
 	)
 
-	const items = flattenElements(children).map((child, index) => {
-		const el = child as ReactElement<VizEmbedProps>
-		return cloneElement(el, { key: el.key ?? `embed-${index}`, staggerIndex: index })
-	})
+	const items = flattenElements(children).map((child, index) =>
+		cloneElement(child, {
+			key: child.key ?? `embed-${index}`,
+			staggerIndex: index,
+		}),
+	)
 
 	return (
 		<StaggerContext.Provider value={ctx}>

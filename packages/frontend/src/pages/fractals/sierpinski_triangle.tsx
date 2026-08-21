@@ -4,6 +4,7 @@ import { BlockMath } from 'react-katex'
 import Base from '../_base'
 import { ERenderMode } from '../../@types/gui'
 import { useAnimation } from '../../context/AnimationContext'
+import { isEmbedTransportPaused } from '../../modules/embedBridge'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
 import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
@@ -159,6 +160,7 @@ const SierpinskiTriangle = () => {
 	const [zoom, setZoom] = useState(DEFAULT_ZOOM)
 	const {
 		isPaused,
+		isPausedRef,
 		animationSpeed,
 		manualProgress,
 		reportProgress,
@@ -199,8 +201,9 @@ const SierpinskiTriangle = () => {
 		const loop = (now: number) => {
 			const dt = Math.min(0.05, (now - last) / 1000)
 			last = now
+			const paused = isPausedRef.current || isEmbedTransportPaused()
 
-			if (particlesDrawn === 0 && !isPaused) {
+			if (particlesDrawn === 0 && !paused) {
 				if (!wasReplayingRef.current) {
 					depthProgressRef.current = 0
 					wasReplayingRef.current = true
@@ -211,7 +214,7 @@ const SierpinskiTriangle = () => {
 
 			if (manualProgress !== null) {
 				depthProgressRef.current = Math.min(Math.max(manualProgress, 0), total)
-			} else if (!isPaused) {
+			} else if (!paused) {
 				depthProgressRef.current = Math.min(total, depthProgressRef.current + dt * 1.6 * animationSpeed)
 			}
 
@@ -226,12 +229,12 @@ const SierpinskiTriangle = () => {
 		frame = requestAnimationFrame(loop)
 		return () => cancelAnimationFrame(frame)
 	}, [
-		isPaused,
 		animationSpeed,
 		manualProgress,
 		particlesDrawn,
 		reportProgress,
 		currentProgressRef,
+		isPausedRef,
 		uniforms,
 	])
 
