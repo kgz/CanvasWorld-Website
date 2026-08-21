@@ -64,7 +64,7 @@ describe('sampleGyroidCloud', () => {
 		expect(clampIso(9)).toBe(1.2)
 		expect(clampIso(-9)).toBe(-1.2)
 		expect(clampTiles(0)).toBe(1)
-		expect(clampTiles(8)).toBe(2)
+		expect(clampTiles(8)).toBe(4)
 	})
 })
 

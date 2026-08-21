@@ -20,13 +20,15 @@ const Gyroid = () => {
 		(): TDatData => ({
 			options: {
 				t: { initialValue: 0, min: -1.2, max: 1.2, step: 0.01 },
-				tiles: { initialValue: 1, min: 1, max: 2, step: 1 },
+				tiles: { initialValue: 2, min: 1, max: 4, step: 1 },
 			},
 			examples: [
-				{ t: 0, tiles: 1 },
-				{ t: 0.45, tiles: 1 },
-				{ t: -0.35, tiles: 1 },
 				{ t: 0, tiles: 2 },
+				{ t: 0.45, tiles: 2 },
+				{ t: -0.35, tiles: 2 },
+				{ t: 0, tiles: 3 },
+				{ t: 0, tiles: 4 },
+				{ t: 0, tiles: 1 },
 			],
 		}),
 		[],

@@ -3,8 +3,8 @@ import { polygoniseGrid } from './isosurface'
 const PERIOD = Math.PI * 2
 const EPS = 1e-15
 /** Fixed GPU budget so param scrubs don't remount buffers / reset `n`. */
-export const GYROID_MAX_POINTS = 80_000
-/** Interactive MC — baked like Barth GRID_RES 32. */
+export const GYROID_MAX_POINTS = 120_000
+/** Samples along one period; higher tile counts use a slightly coarser grid. */
 const GRID_RES = 32
 const TARGET_R = 1.7
 
@@ -24,7 +24,7 @@ export function clampIso(t: number): number {
 }
 
 export function clampTiles(tiles: number): number {
-	return Math.min(2, Math.max(1, Math.round(tiles)))
+	return Math.min(4, Math.max(1, Math.round(tiles)))
 }
 
 function centerAndScale(positions: Float32Array, targetRadius: number) {
@@ -87,10 +87,11 @@ function writeRibbon(colors: Float32Array, i: number, x: number, y: number, z: n
 }
 
 /** Isosurface vertices as a particle cloud (no lit triangles). */
-export function sampleGyroidCloud(iso = 0, tiles = 1): GyroidCloud {
+export function sampleGyroidCloud(iso = 0, tiles = 2): GyroidCloud {
 	const t = clampIso(iso)
 	const nTiles = clampTiles(tiles)
-	const samplesPer = GRID_RES
+	/** Keep MC cost sane as the domain grows with tiles. */
+	const samplesPer = nTiles >= 4 ? 20 : nTiles >= 3 ? 24 : GRID_RES
 	const nx = samplesPer * nTiles + 1
 	const extent = PERIOD * nTiles
 	const origin: readonly [number, number, number] = [0, 0, 0]
