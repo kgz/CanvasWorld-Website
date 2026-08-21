@@ -1,0 +1,207 @@
+{
+	"redirects": {
+		"render-loop": "clifford",
+		"clifford-60fps": "clifford",
+		"l-systems": "sierpinski-gasket"
+	},
+	"posts": [
+		{
+			"slug": "lorenz-never-closes",
+			"title": "Why the Lorenz attractor never closes",
+			"excerpt": "Why the Lorenz butterfly never settles into a loop, and how Classical Chaos draws that trail with three ODEs and a simple Euler step.",
+			"tag": "Attractors",
+			"thumbSlug": "lorenz_attractor",
+			"order": 10,
+			"featured": true
+		},
+		{
+			"slug": "hopalong-family",
+			"title": "Four Hopalong variants, side by side",
+			"excerpt": "Barry Martin’s 1981 Hopalong map (the Skull attractor) in four live Classical Chaos variants — classic, positive, additive, sinusoidal — so you can see what changes when the rule changes.",
+			"tag": "Attractors",
+			"thumbSlug": "hopalong_attractor",
+			"order": 20,
+			"featured": false
+		},
+		{
+			"slug": "clifford",
+			"title": "Clifford’s sine–cosine cloud",
+			"excerpt": "Clifford Pickover’s 2D map: four knobs, sine and cosine of crossed terms, and a purple point cloud that reshapes when you nudge a, b, c, or d.",
+			"tag": "Attractors",
+			"thumbSlug": "clifford_attractor",
+			"order": 30,
+			"featured": false
+		},
+		{
+			"slug": "mandelbrot-escape",
+			"title": "Escape time: how the Mandelbrot boundary gets drawn on Classical Chaos",
+			"excerpt": "The Mandelbrot boundary keeps revealing more detail under zoom. Classical Chaos paints each pixel by how many steps the repeating z² + c run takes to blow past a fixed bound.",
+			"tag": "Fractals",
+			"thumbSlug": "mandelbrot_set",
+			"order": 40,
+			"featured": false
+		},
+		{
+			"slug": "sierpinski-gasket",
+			"title": "Watching holes open in the Sierpiński gasket",
+			"excerpt": "Sierpiński’s gasket: cut the middle out of a triangle, then out of every leftover corner. Classical Chaos grows that lace live as depth climbs.",
+			"tag": "Fractals",
+			"thumbSlug": "sierpinski_triangle",
+			"order": 60,
+			"featured": false
+		},
+		{
+			"slug": "bedhead",
+			"title": "Bedhead attractor: the mint map cloud",
+			"excerpt": "The Bedhead attractor is a 2D iterated map: seed, short formula, next (x, y), until a mint-green cloud piles up. Classical Chaos draws it from defaults near a ≈ 0.65, b ≈ 0.73.",
+			"tag": "Attractors",
+			"thumbSlug": "bedhead_attractor",
+			"order": 80,
+			"featured": false
+		},
+		{
+			"slug": "bogdanov",
+			"title": "Bogdanov Map: a cloud that reshapes with a, b, and μ",
+			"excerpt": "The Bogdanov Map is a discrete 2D chaotic map: a seed and a short rule pile into a colored cloud. Twist a, b, and μ on Classical Chaos and the same seed wears a different silhouette.",
+			"tag": "Maps",
+			"thumbSlug": "bogdanov_map",
+			"order": 85,
+			"featured": false
+		},
+		{
+			"slug": "brusselator",
+			"title": "Brusselator: a chemical oscillator as a phase-plane trail",
+			"excerpt": "The Brusselator is a theoretical chemical oscillator: two concentrations chase a closed cycle in the phase plane. Classical Chaos draws that orbit as a live trail.",
+			"tag": "Maps",
+			"thumbSlug": "brusselator",
+			"order": 90,
+			"featured": false
+		},
+		{
+			"slug": "fractal-dream",
+			"title": "Fractal Dream: four sines, one folded cloud",
+			"excerpt": "Fractal Dream is a 2D iterated map: four sines of crossed terms pile points into a folded cloud. Classical Chaos starts at (−2, −2) with a, b, c, d in [0, 3].",
+			"tag": "Attractors",
+			"thumbSlug": "fractal_dream_attractor",
+			"order": 95,
+			"featured": false
+		},
+		{
+			"slug": "gumowski-mira",
+			"title": "Gumowski–Mira: a soft bump named G",
+			"excerpt": "Gumowski–Mira is a discrete 2D map with a helper G that mixes linear and rational pieces. Classical Chaos defaults sit near a = 0.008, b = 0.05, μ = −0.9, seed (0, 0.5).",
+			"tag": "Attractors",
+			"thumbSlug": "gumowski-mira_attractor",
+			"order": 100,
+			"featured": false
+		},
+		{
+			"slug": "henon",
+			"title": "Hénon map: the classic 1976 crescent",
+			"excerpt": "Michel Hénon’s 1976 map packs a folded crescent into two updates. Classical Chaos iterates the classic form: x′ = 1 − a x² + y, y′ = b x, with a = 1.4, b = 0.3.",
+			"tag": "Maps",
+			"thumbSlug": "henon_map",
+			"order": 105,
+			"featured": false
+		},
+		{
+			"slug": "gingerbread-man",
+			"title": "Gingerbread Man: absolute value, cookie silhouette",
+			"excerpt": "Devaney’s Gingerbread Man is a fixed 2D map: absolute value folds the plane until a cookie silhouette piles up. Classical Chaos draws it from (−0.1, 0) with the classic formula locked.",
+			"tag": "Attractors",
+			"thumbSlug": "gingerbread_man",
+			"order": 110,
+			"featured": false
+		},
+		{
+			"slug": "ikeda",
+			"title": "Ikeda map: one knob named a",
+			"excerpt": "Kensuke Ikeda’s 1979 discrete map: rotate and scale a 2D point until a folded cloud piles up. Classical Chaos uses parameter a (default 1), with a chaos band around [0.6, 1].",
+			"tag": "Maps",
+			"thumbSlug": "ikeda_map",
+			"order": 115,
+			"featured": false
+		},
+		{
+			"slug": "julia-set",
+			"title": "Julia sets: one fixed c, a whole plane of starting points",
+			"excerpt": "Fix one complex c and ask which starting z stay bounded under z² + c. Classical Chaos paints each pixel by how fast that orbit escapes.",
+			"tag": "Fractals",
+			"thumbSlug": "julia_set",
+			"order": 120,
+			"featured": false
+		},
+		{
+			"slug": "calabi-yau",
+			"title": "Calabi–Yau: a Fermat slice as a coral wire",
+			"excerpt": "String-theory posters love the Calabi–Yau name. Classical Chaos draws a Hanson slice of a Fermat surface as a growing particle wire — coral to amber to teal — not the full six-real-dimensional 3-fold.",
+			"tag": "Surfaces",
+			"thumbSlug": "calabi_yau",
+			"order": 125,
+			"featured": false
+		},
+		{
+			"slug": "gyroid",
+			"title": "Schoen’s gyroid: a labyrinth that tiles space",
+			"excerpt": "Alan Schoen’s gyroid is a two-sided labyrinth that repeats on a cubic lattice. Classical Chaos draws a trigonometric level set as a coral-to-teal point cloud that grows in over time.",
+			"tag": "Surfaces",
+			"thumbSlug": "gyroid",
+			"order": 130,
+			"featured": false
+		},
+		{
+			"slug": "barth-sextic",
+			"title": "Barth’s sextic: where did those icosahedral spikes come from?",
+			"excerpt": "Wolf Barth’s 1996 sextic is a degree-6 algebraic surface with icosahedral symmetry and dozens of pinch points. Classical Chaos draws it as a coral-to-teal particle cloud on the isosurface.",
+			"tag": "Surfaces",
+			"thumbSlug": "barth_sextic",
+			"order": 135,
+			"featured": false
+		},
+		{
+			"slug": "schwarz-p",
+			"title": "Schwarz P: a labyrinth that tiles the cube",
+			"excerpt": "Schwarz’s primitive (P) surface is a two-sided labyrinth on a cubic lattice — a TPMS cousin of the gyroid. Classical Chaos grows a coral–amber–teal particle wire of a trig approximation.",
+			"tag": "Surfaces",
+			"thumbSlug": "schwarz_p",
+			"order": 140,
+			"featured": false
+		},
+		{
+			"slug": "dini-surface",
+			"title": "Dini surface: tractrix helicoid with constant negative curvature",
+			"excerpt": "Ulisse Dini’s 1866 surface is the helicoid of a tractrix: a pseudospherical band that climbs when twist turns on. Classical Chaos draws it as a coral-to-teal UV particle wire.",
+			"tag": "Surfaces",
+			"thumbSlug": "dini_surface",
+			"order": 145,
+			"featured": false
+		},
+		{
+			"slug": "roman-surface",
+			"title": "Roman surface: Steiner’s self-crossing RP²",
+			"excerpt": "Four lobes that slide through each other: Steiner’s Roman surface (real projective plane in 3D). Classical Chaos draws the UV wire; squash lives on the full canvas.",
+			"tag": "Surfaces",
+			"thumbSlug": "roman_surface",
+			"order": 150,
+			"featured": false
+		},
+		{
+			"slug": "enneper-surface",
+			"title": "Enneper surface: a minimal sheet that crosses itself",
+			"excerpt": "Alfred Enneper’s 1864 minimal surface has mean curvature zero and a short polynomial map — and once the UV patch is large enough, the sheet crosses through itself. Classical Chaos draws that cage as a UV particle wire.",
+			"tag": "Surfaces",
+			"thumbSlug": "enneper_surface",
+			"order": 155,
+			"featured": false
+		},
+		{
+			"slug": "boy-surface",
+			"title": "Boy surface: the immersion that has to cross",
+			"excerpt": "Boy surface crosses itself in 3D: Werner Boy’s 1901 immersion of the real projective plane, with a triple point and no clean outside. Classical Chaos draws it as a polar isoline wire that grows in.",
+			"tag": "Surfaces",
+			"thumbSlug": "boy_surface",
+			"order": 160,
+			"featured": false
+		}
+	]
+}

@@ -44,11 +44,35 @@ func resolvePageMeta(requestPath string) pageMeta {
 		PagePath:    "/",
 	}
 
-	if slug == "" || slug == "blog" || strings.HasPrefix(slug, "blog/") {
-		if slug == "blog" || strings.HasPrefix(slug, "blog/") {
+	if slug == "" {
+		return meta
+	}
+
+	if slug == "blog" {
+		meta.Title = "Lab notebook — Classical Chaos"
+		meta.Description = "Notes on attractors, maps, and meshes in the Classical Chaos catalog."
+		meta.PagePath = "/blog"
+		return meta
+	}
+
+	if strings.HasPrefix(slug, "blog/") {
+		postSlug := strings.TrimPrefix(slug, "blog/")
+		canonical := resolveBlogSlug(postSlug)
+		meta.PagePath = "/blog/" + canonical
+		if post, ok := getBlogPost(canonical); ok {
+			meta.Title = post.Title + " — Classical Chaos"
+			if post.Excerpt != "" {
+				meta.Description = post.Excerpt
+			} else {
+				meta.Description = "Lab notebook note on Classical Chaos."
+			}
+			if post.ThumbSlug != "" {
+				meta.ImagePath = "/icons/" + post.ThumbSlug + ".png"
+			}
+			meta.Slug = "blog/" + post.Slug
+		} else {
 			meta.Title = "Lab notebook — Classical Chaos"
 			meta.Description = "Notes on attractors, maps, and meshes in the Classical Chaos catalog."
-			meta.PagePath = "/" + slug
 		}
 		return meta
 	}
@@ -92,11 +116,15 @@ func metaTagsHTML(m pageMeta) string {
 	d := html.EscapeString(m.Description)
 	c := html.EscapeString(canonical)
 	img := html.EscapeString(image)
+	ogType := "website"
+	if strings.HasPrefix(m.PagePath, "/blog/") {
+		ogType = "article"
+	}
 
 	return strings.Join([]string{
 		`<meta name="description" content="` + d + `">`,
 		`<link rel="canonical" href="` + c + `">`,
-		`<meta property="og:type" content="website">`,
+		`<meta property="og:type" content="` + ogType + `">`,
 		`<meta property="og:site_name" content="Classical Chaos">`,
 		`<meta property="og:url" content="` + c + `">`,
 		`<meta property="og:title" content="` + t + `">`,
@@ -140,6 +168,9 @@ func sitemapXML() string {
 	}
 	writeURL("/")
 	writeURL("/blog")
+	for _, slug := range blogPostSlugs() {
+		writeURL("/blog/" + slug)
+	}
 	for _, slug := range activeSlugs() {
 		writeURL("/" + slug)
 	}

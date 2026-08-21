@@ -1,5 +1,6 @@
 import { MDXProvider } from '@mdx-js/react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Helmet } from 'react-helmet'
 import { BlockMath, InlineMath } from 'react-katex'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
@@ -56,15 +57,37 @@ function PostPage() {
 		return <Navigate to="/blog" replace />
 	}
 
-	const canonical = resolvePostSlug(slug)
-	if (canonical !== slug) {
-		return <Navigate to={`/blog/${canonical}`} replace />
+	const canonicalSlug = resolvePostSlug(slug)
+	if (canonicalSlug !== slug) {
+		return <Navigate to={`/blog/${canonicalSlug}`} replace />
 	}
 
 	const Body = post.Component
+	const pageTitle = `${post.meta.title} — Classical Chaos`
+	const description = post.meta.excerpt || 'Lab notebook note on Classical Chaos.'
+	const canonicalUrl = `https://matf.dev/chaos/blog/${post.slug}`
+	const ogImage = post.meta.thumbSlug
+		? `https://matf.dev/chaos/icons/${post.meta.thumbSlug}.png`
+		: 'https://matf.dev/chaos/icons/mandelbrot_set.png'
 
 	return (
 		<div className={styles.page}>
+			<Helmet>
+				<title>{pageTitle}</title>
+				<meta name="description" content={description} />
+				<link rel="canonical" href={canonicalUrl} />
+				<meta property="og:type" content="article" />
+				<meta property="og:site_name" content="Classical Chaos" />
+				<meta property="og:url" content={canonicalUrl} />
+				<meta property="og:title" content={pageTitle} />
+				<meta property="og:description" content={description} />
+				<meta property="og:image" content={ogImage} />
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:url" content={canonicalUrl} />
+				<meta name="twitter:title" content={pageTitle} />
+				<meta name="twitter:description" content={description} />
+				<meta name="twitter:image" content={ogImage} />
+			</Helmet>
 			<header
 				ref={navRef}
 				className={[styles.siteNav, navScrolled ? styles.siteNavScrolled : ''].filter(Boolean).join(' ')}

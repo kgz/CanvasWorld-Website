@@ -12,8 +12,8 @@ COPY packages/shared/ ../shared/
 COPY packages/frontend/ ./
 
 ENV NODE_ENV=production
-# tsc has pre-existing page typing debt; ship with vite emit only
-RUN pnpm exec vite build
+# Refresh shared blog catalog for Go SSR/sitemap, then Vite emit (tsc has page typing debt)
+RUN pnpm run export-blog-posts && pnpm exec vite build
 
 FROM golang:1.25-alpine AS backend-builder
 
@@ -33,6 +33,7 @@ WORKDIR /app
 
 COPY --from=backend-builder /app/main .
 COPY packages/shared/routes.json ./routes.json
+COPY --from=frontend-builder /app/shared/blog-posts.json ./blog-posts.json
 COPY packages/backend/static/images ./static/images
 COPY packages/backend/templates ./templates
 COPY --from=frontend-builder /app/frontend/dist ./dist
