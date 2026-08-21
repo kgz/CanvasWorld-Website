@@ -1,0 +1,40 @@
+export const meta = {
+	slug: 'dini-surface',
+	title: 'Dini surface: tractrix helicoid with constant negative curvature',
+	tag: 'Surfaces',
+	excerpt:
+		'Ulisse Dini’s 1866 surface is the helicoid of a tractrix: a pseudospherical band that climbs when twist turns on. Classical Chaos draws it as a coral-to-teal UV particle wire.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'dini_surface',
+	featured: false,
+	order: 145,
+}
+
+
+Ulisse Dini’s surface (1866) is the helicoid of a tractrix: constant negative curvature, the pseudospherical kind. Revolve a tractrix and you get a band of the pseudosphere; add a helical climb and that band corkscrews. The tractrix itself is the classic “dog leash” curve — one short nod to the picture, then leave it.
+
+On Classical Chaos the drawing is not a lit mesh. It is a UV isoline particle wire: constant-<InlineMath math={'u'} /> and constant-<InlineMath math={'v'} /> curves as points. Color walks coral → amber → teal along UV so the parameter directions stay readable while the cage grows in.
+
+<VizEmbed slug="dini_surface" label="Dini surface" animateN />
+
+## Radius, pitch, and the climb
+
+Two numbers shape the sheet: radius <InlineMath math={'a'} /> and helical pitch <InlineMath math={'b'} />. A classic parametrization is
+
+<BlockMath math={'x = a \\cos(u)\\,\\sin(v)'} />
+<BlockMath math={'y = a \\sin(u)\\,\\sin(v)'} />
+<BlockMath math={'z = a\\bigl(\\cos(v) + \\ln\\tan(v/2)\\bigr) + b u'} />
+
+The <InlineMath math={'\\ln\\tan(v/2)'} /> term is the tractrix height. The <InlineMath math={'b u'} /> term is the climb that makes the surface Dini instead of a plain revolution band.
+
+When <InlineMath math={'b = 0'} />, the wire is a band of the pseudosphere. When <InlineMath math={'b > 0'} />, meridians start the helical climb. Defaults sit near <InlineMath math={'a = 1'} />, <InlineMath math={'b = 0.2'} />: enough twist to read as a helicoid without collapsing into an unreadable spring.
+
+## Presets and the full stage
+
+On the [full Dini stage](/dini_surface), twist <InlineMath math={'a'} /> and <InlineMath math={'b'} />, try the presets <InlineMath math={'(1, 0.2)'} />, flat band <InlineMath math={'(1, 0)'} />, taller twist <InlineMath math={'(1.4, 0.35)'} />, quieter climb <InlineMath math={'(0.7, 0.12)'} />, scrub the reveal, and drag to rotate (or leave auto-rotate on).
+
+<Callout to="/dini_surface">
+	<strong>Goto full canvas</strong>
+	Retune <InlineMath math={'a'} /> and <InlineMath math={'b'} />, try a preset, scrub the reveal, and spin the wire.
+</Callout>
