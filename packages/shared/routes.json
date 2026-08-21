@@ -183,7 +183,7 @@
     "slug": "schwarz_p",
     "title": "Schwarz P",
     "category": "misc",
-    "description": "Schwarz primitive (P): triply periodic minimal surface meshed from cos x + cos y + cos z = t on a 2π cell.",
+    "description": "Schwarz primitive (P) as a particle wire. Morph iso-level t and tiles on the cos x + cos y + cos z = t labyrinth.",
     "thumbnail": "/chaos/icons/schwarz_p.png",
     "renderMode": "webgl",
     "active": true

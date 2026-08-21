@@ -1,18 +1,19 @@
 import { BlockMath, InlineMath } from 'react-katex'
-import { useEffect, useMemo } from 'react'
-import { type TDatData, type TDataFromObject } from '../../@types/gui'
+import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
+import { EDimensions, type TDatData, type TDataFromObject, type TParticleProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { isScreenshotMode } from '../../modules/screenshotMode'
-import { buildSchwarzPMesh, clampIso, clampTiles } from '../../utils/schwarzP'
+import { SCHWARZ_MAX_POINTS, clampIso, clampTiles, sampleSchwarzPCloud } from '../../utils/schwarzP'
 
 const SchwarzP = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
+	const seeded = useRef(false)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 12000,
+		baseSpeed: 28000,
 	})
 
 	const datData = useMemo(
@@ -46,27 +47,35 @@ const SchwarzP = () => {
 
 	const iso = clampIso(data.t ?? datData.options.t.initialValue)
 	const tiles = clampTiles(data.tiles ?? datData.options.tiles.initialValue)
+	const dIso = useDeferredValue(iso)
+	const dTiles = useDeferredValue(tiles)
+	const cloud = useMemo(() => sampleSchwarzPCloud(dIso, dTiles), [dIso, dTiles])
 
-	const mesh = useMemo(() => buildSchwarzPMesh(iso, tiles), [iso, tiles])
+	useEffect(() => {
+		seeded.current = false
+	}, [cloud])
 
-	const tick = (delta: number) => {
-		const total = mesh.indices.length
-		const toDraw = calculateParticlesToDraw(total, delta)
-		updateProgressUI(toDraw, total)
-		checkCompletion(toDraw, total)
+	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
+		if (!seeded.current) {
+			positions.set(cloud.positions)
+			colors.set(cloud.colors)
+			seeded.current = true
+		}
+		const toDraw = calculateParticlesToDraw(SCHWARZ_MAX_POINTS, delta)
+		updateProgressUI(toDraw, SCHWARZ_MAX_POINTS)
+		checkCompletion(toDraw, SCHWARZ_MAX_POINTS)
 		return toDraw
 	}
 
 	return (
 		<Base<TData>
-			drawMode="mesh"
-			positions={mesh.positions}
-			indices={mesh.indices}
-			colors={mesh.colors}
-			progressTick={tick}
+			dimension={EDimensions.THREE_D}
+			numParticles={SCHWARZ_MAX_POINTS}
+			pointSize={1.15}
+			tick={tick}
+			cameraPosition={[0, 0, 3.7]}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.28}
-			cameraPosition={[0, 0, 3.7]}
 		/>
 	)
 }
@@ -74,15 +83,15 @@ const SchwarzP = () => {
 SchwarzP.getDescription = () => (
 	<>
 		Schwarz’s primitive (P) surface is a triply periodic minimal surface: a two-sided labyrinth that
-		repeats on a cubic lattice. This page meshes the trigonometric implicit (a close approximation
-		to the true minimal surface).
+		repeats on a cubic lattice. Particle wire of the trigonometric implicit (a close approximation to
+		the true minimal surface) — no lit mesh.
 		<br />
 		<br />
 		<strong>Level set</strong> on <InlineMath math="[0, 2\pi\cdot\mathrm{tiles}]^3" />:
 		<BlockMath math={'\\cos x + \\cos y + \\cos z = t'} />
 		<br />
 		UI <InlineMath math="t" /> is the iso-level (0 = balanced P), <InlineMath math="tiles" /> repeats
-		the cell. Transport <code>n</code> reveals triangles.
+		the cell. Transport <code>n</code> reveals points.
 	</>
 )
 

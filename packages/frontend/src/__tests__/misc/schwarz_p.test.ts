@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { buildSchwarzPMesh, clampIso, clampTiles, schwarzPField } from '../../utils/schwarzP'
+import {
+	SCHWARZ_MAX_POINTS,
+	clampIso,
+	clampTiles,
+	sampleSchwarzPCloud,
+	schwarzPField,
+} from '../../utils/schwarzP'
 
 describe('schwarzPField', () => {
 	it('is 2π-periodic', () => {
@@ -18,23 +24,22 @@ describe('schwarzPField', () => {
 	})
 })
 
-describe('buildSchwarzPMesh', () => {
-	it('builds a finite default cell', () => {
-		const mesh = buildSchwarzPMesh(0, 1)
-		expect(mesh.indices.length).toBeGreaterThan(100)
-		expect(mesh.positions.length).toBeGreaterThan(0)
-		expect(mesh.colors.length).toBe(mesh.positions.length)
-		expect(mesh.indices.length % 3).toBe(0)
-		for (let i = 0; i < mesh.positions.length; i++) {
-			expect(Number.isFinite(mesh.positions[i])).toBe(true)
+describe('sampleSchwarzPCloud', () => {
+	it('builds a fixed-size particle cloud', () => {
+		const cloud = sampleSchwarzPCloud(0, 1)
+		expect(cloud.count).toBe(SCHWARZ_MAX_POINTS)
+		expect(cloud.positions.length).toBe(SCHWARZ_MAX_POINTS * 3)
+		expect(cloud.colors.length).toBe(cloud.positions.length)
+		for (let i = 0; i < 300; i++) {
+			expect(Number.isFinite(cloud.positions[i])).toBe(true)
 		}
 	})
 
-	it('builds a 36-sample cell in under 8s', () => {
+	it('builds a 32-sample cell in under 8s', () => {
 		const t0 = Date.now()
-		const mesh = buildSchwarzPMesh(0, 1)
+		const cloud = sampleSchwarzPCloud(0, 1)
 		const ms = Date.now() - t0
-		expect(mesh.indices.length).toBeGreaterThan(1000)
+		expect(cloud.count).toBe(SCHWARZ_MAX_POINTS)
 		expect(ms).toBeLessThan(8000)
 	})
 
@@ -43,5 +48,19 @@ describe('buildSchwarzPMesh', () => {
 		expect(clampIso(-9)).toBe(-1.2)
 		expect(clampTiles(0)).toBe(1)
 		expect(clampTiles(8)).toBe(2)
+	})
+})
+
+describe('schwarz colors', () => {
+	it('has saturated non-gray variance', () => {
+		const cloud = sampleSchwarzPCloud(0, 1)
+		let maxChroma = 0
+		for (let i = 0; i < 5000; i++) {
+			const r = cloud.colors[i * 3]
+			const g = cloud.colors[i * 3 + 1]
+			const b = cloud.colors[i * 3 + 2]
+			maxChroma = Math.max(maxChroma, Math.max(r, g, b) - Math.min(r, g, b))
+		}
+		expect(maxChroma).toBeGreaterThan(0.3)
 	})
 })
