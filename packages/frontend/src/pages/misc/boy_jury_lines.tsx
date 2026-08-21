@@ -13,7 +13,7 @@ const BoyJuryLines = () => {
 	const dispatch = useAppDispatch()
 	const seeded = useRef(false)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 14000,
+		baseSpeed: 28000,
 	})
 
 	const datData = useMemo(
@@ -31,7 +31,7 @@ const BoyJuryLines = () => {
 		void dispatch(setData({}))
 	}, [datData, dispatch])
 
-	const cloud = useMemo(() => sampleBoyScanline(120, 80), [])
+	const cloud = useMemo(() => sampleBoyScanline(200, 140), [])
 
 	const tick: TParticleProps<TData>['tick'] = (
 		positions: Float32Array,
@@ -56,7 +56,7 @@ const BoyJuryLines = () => {
 			numParticles={cloud.count}
 			tick={tick}
 			drawMode="line"
-			lineOpacity={0.85}
+			lineOpacity={0.92}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.32}
 			cameraPosition={[0, 0, 4.2]}

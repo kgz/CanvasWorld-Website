@@ -148,6 +148,22 @@ function xyzColors(positions: Float32Array): Float32Array {
 	return colors
 }
 
+/** Coral → amber → teal along UV (punchier than xyz for points/lines). */
+function writeUvRibbon(colors: Float32Array, i: number, uN: number, vN: number) {
+	const t = Math.min(1, Math.max(0, 0.55 * uN + 0.45 * vN))
+	if (t < 0.5) {
+		const s = t / 0.5
+		colors[i] = 0.98 - 0.18 * s
+		colors[i + 1] = 0.32 + 0.5 * s
+		colors[i + 2] = 0.28 + 0.12 * s
+		return
+	}
+	const s = (t - 0.5) / 0.5
+	colors[i] = 0.8 - 0.58 * s
+	colors[i + 1] = 0.82 + 0.12 * s
+	colors[i + 2] = 0.4 + 0.52 * s
+}
+
 export function buildBoyMesh(): BoyMesh {
 	const uCount = U_RES + 1
 	const vCount = V_RES + 1
@@ -202,53 +218,67 @@ export function sampleBoyCloud(nu = 96, nv = 96): BoyCloud {
  * Row-major UV scan as one polyline (legacy line trail).
  * Odd rows reverse so the strip snakes continuously.
  */
-export function sampleBoyScanline(nu = 120, nv = 80): BoyCloud {
+export function sampleBoyScanline(nu = 200, nv = 140): BoyCloud {
 	const count = nu * nv
 	const positions = new Float32Array(count * 3)
+	const colors = new Float32Array(count * 3)
 	let k = 0
 	for (let iv = 0; iv < nv; iv++) {
-		const v = (Math.PI * iv) / (nv - 1)
+		const vN = nv <= 1 ? 0 : iv / (nv - 1)
+		const v = Math.PI * vN
 		const reverse = iv % 2 === 1
 		for (let t = 0; t < nu; t++) {
 			const iu = reverse ? nu - 1 - t : t
-			const u = (Math.PI * iu) / (nu - 1)
+			const uN = nu <= 1 ? 0 : iu / (nu - 1)
+			const u = Math.PI * uN
 			const p = boyPoint(u, v)
-			positions[k++] = p.x
-			positions[k++] = p.y
-			positions[k++] = p.z
+			positions[k] = p.x
+			positions[k + 1] = p.y
+			positions[k + 2] = p.z
+			writeUvRibbon(colors, k, uN, vN)
+			k += 3
 		}
 	}
 	centerAndScale(positions, TARGET_R)
-	return { positions, colors: xyzColors(positions), count }
+	return { positions, colors, count }
 }
 
 /** Constant-u and constant-v curves as a dense point wire. */
-export function sampleBoyIsolines(nu = 36, nv = 36, samples = 128): BoyCloud {
+export function sampleBoyIsolines(nu = 56, nv = 56, samples = 220): BoyCloud {
 	const count = (nu + nv) * samples
 	const positions = new Float32Array(count * 3)
+	const colors = new Float32Array(count * 3)
 	let k = 0
 	for (let iu = 0; iu < nu; iu++) {
-		const u = (Math.PI * iu) / (nu - 1)
+		const uN = nu <= 1 ? 0 : iu / (nu - 1)
+		const u = Math.PI * uN
 		for (let s = 0; s < samples; s++) {
-			const v = (Math.PI * s) / (samples - 1)
+			const vN = samples <= 1 ? 0 : s / (samples - 1)
+			const v = Math.PI * vN
 			const p = boyPoint(u, v)
-			positions[k++] = p.x
-			positions[k++] = p.y
-			positions[k++] = p.z
+			positions[k] = p.x
+			positions[k + 1] = p.y
+			positions[k + 2] = p.z
+			writeUvRibbon(colors, k, uN, vN)
+			k += 3
 		}
 	}
 	for (let iv = 0; iv < nv; iv++) {
-		const v = (Math.PI * iv) / (nv - 1)
+		const vN = nv <= 1 ? 0 : iv / (nv - 1)
+		const v = Math.PI * vN
 		for (let s = 0; s < samples; s++) {
-			const u = (Math.PI * s) / (samples - 1)
+			const uN = samples <= 1 ? 0 : s / (samples - 1)
+			const u = Math.PI * uN
 			const p = boyPoint(u, v)
-			positions[k++] = p.x
-			positions[k++] = p.y
-			positions[k++] = p.z
+			positions[k] = p.x
+			positions[k + 1] = p.y
+			positions[k + 2] = p.z
+			writeUvRibbon(colors, k, uN, vN)
+			k += 3
 		}
 	}
 	centerAndScale(positions, TARGET_R)
-	return { positions, colors: xyzColors(positions), count }
+	return { positions, colors, count }
 }
 
 export function buildBryantBoyMesh(): BoyMesh {

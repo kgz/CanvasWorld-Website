@@ -10,7 +10,9 @@ import { sampleBoyIsolines } from '../../utils/boySurface'
 const BoyJuryIsolines = () => {
 	const dispatch = useAppDispatch()
 	const seeded = useRef(false)
-	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState()
+	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
+		baseSpeed: 32000,
+	})
 
 	const datData = useMemo(
 		(): TDatData => ({
@@ -27,7 +29,7 @@ const BoyJuryIsolines = () => {
 		void dispatch(setData({}))
 	}, [datData, dispatch])
 
-	const cloud = useMemo(() => sampleBoyIsolines(36, 36, 128), [])
+	const cloud = useMemo(() => sampleBoyIsolines(56, 56, 220), [])
 
 	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
 		if (!seeded.current) {
@@ -45,10 +47,11 @@ const BoyJuryIsolines = () => {
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
 			numParticles={cloud.count}
-			pointSize={1.2}
+			pointSize={1.55}
 			tick={tick}
 			cameraPosition={[0, 0, 4.2]}
 			autoRotate={!isScreenshotMode()}
+			autoRotateSpeed={0.28}
 		/>
 	)
 }
