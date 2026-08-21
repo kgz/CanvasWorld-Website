@@ -12,16 +12,16 @@
     "slug": "bogdanov_map",
     "title": "Bogdanov Map",
     "category": "map",
-    "description": "The Bogdanov Map is a chaotic map defined by the following equations: x_{n+1} = y_n + 1 - a \\cdot x_n^2, y_{n+1} = b \\cdot x_n",
+    "description": "The Bogdanov Map (Rifkat Bogdanov) is the discrete map y' = y + a y + b x(x-1) + \\mu x y, x' = x + y' with defaults a=0.0025, b=1.44, \\mu=-0.1.",
     "thumbnail": "/chaos/icons/bogdanov_map.png",
     "renderMode": "webgl",
     "active": true
   },
   {
     "slug": "brusselator",
-    "title": "Brusselator",
+    "title": "Brusselator (ODE)",
     "category": "map",
-    "description": "The Brusselator is an autocatalytic chemical oscillator. This visualization integrates dx/dt = a - (b+1)x + x^2 y, dy/dt = b x - x^2 y with an Euler step.",
+    "description": "Well-mixed Brusselator ODEs drawn as a phase-orbit trail (Euler step): dx/dt = a-(b+1)x+x^2 y, dy/dt = bx-x^2 y. Not a spatial reaction–diffusion field.",
     "thumbnail": "/chaos/icons/brusselator.png",
     "renderMode": "webgl",
     "active": true
@@ -48,7 +48,7 @@
     "slug": "gumowski-mira_attractor",
     "title": "Gumowski-Mira Attractor",
     "category": "attractor",
-    "description": "The Gumowski-Mira Attractor is a chaotic attractor defined by the following equations: x_{n+1} = b \\cdot y_n + a \\cdot x_n + x_n \\cdot (x_n^2 + y_n^2), y_{n+1} = -b \\cdot x_n + a \\cdot y_n + y_n \\cdot (x_n^2 + y_n^2)",
+    "description": "Gumowski–Mira attractor: x' = y + a(1-b y²)y + G(x,μ), y' = -x + G(x',μ), with G(x,μ)=μx + 2(1-μ)x²/(1+x²).",
     "thumbnail": "/chaos/icons/gumowski-mira_attractor.png",
     "renderMode": "webgl",
     "active": true
@@ -57,7 +57,7 @@
     "slug": "henon_map",
     "title": "Henon Map",
     "category": "map",
-    "description": "The Henon Map is a chaotic map defined by the following equations: x_{n+1} = 1 - a \\cdot x_n^2 + y_n, y_{n+1} = b \\cdot x_n",
+    "description": "Classic Hénon map (1976): x' = 1 - a x² + y, y' = b x. Defaults a=1.4, b=0.3.",
     "thumbnail": "/chaos/icons/henon_map.png",
     "renderMode": "webgl",
     "active": true
@@ -111,7 +111,7 @@
     "slug": "ikeda_map",
     "title": "Ikeda Map",
     "category": "map",
-    "description": "The Ikeda Map is a chaotic map defined by the following equations: x_{n+1} = 1 + c \\cdot (x_n \\cdot cos(t) - y_n \\cdot sin(t)), y_{n+1} = c \\cdot (x_n \\cdot sin(t) + y_n \\cdot cos(t))",
+    "description": "Ikeda map (param a): f = 0.4 - 6/(1+x²+y²), x' = 1 + a(x cos f − y sin f), y' = a(x sin f + y cos f).",
     "thumbnail": "/chaos/icons/ikeda_map.png",
     "renderMode": "webgl",
     "active": true

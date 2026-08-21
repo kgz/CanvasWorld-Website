@@ -1,0 +1,60 @@
+export const meta = {
+	slug: 'gyroid',
+	title: 'Schoen’s gyroid: a labyrinth that tiles space',
+	tag: 'Surfaces',
+	excerpt:
+		'Alan Schoen’s gyroid is a two-sided labyrinth that repeats on a cubic lattice. Classical Chaos draws a trigonometric level set as a coral-to-teal point cloud that grows in over time.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'gyroid',
+	featured: false,
+	order: 130,
+}
+
+
+Alan Schoen found the gyroid in 1970. It is a triply periodic minimal surface: a thin wall that divides space into two interlocking labyrinths and then repeats on a cubic lattice. Walk far enough in any lattice direction and the tunnels come back.
+
+Classical Chaos draws that labyrinth as a particle wire — coral into amber into teal by direction — that fills in as more vertices appear.
+
+<VizEmbed slug="gyroid" label="Gyroid" animateN />
+
+## Not the exact minimal surface
+
+The true gyroid has mean curvature zero everywhere. Solving that as an exact mesh is a different project. Here the canvas uses a trigonometric approximation that sits close to the classic look without claiming to be the exact curvature solution.
+
+The level set is
+
+<BlockMath math={'\\sin x\\,\\cos y + \\sin y\\,\\cos z + \\sin z\\,\\cos x = t'} />
+
+Sampling runs over a cube
+
+<BlockMath math={'[0,\\,2\\pi\\cdot\\mathrm{tiles}]^{3}'} />
+
+and keeps the places where the left-hand side crosses `t`. Change `t` or `tiles` and the cloud rebuilds from scratch.
+
+A single field eval looks like this:
+
+```ts
+const f =
+  Math.sin(x) * Math.cos(y) +
+  Math.sin(y) * Math.cos(z) +
+  Math.sin(z) * Math.cos(x)
+// keep vertices where f ≈ t
+```
+
+## What t and tiles do
+
+`t` is the iso-level. At `t = 0` the balanced gyroid appears: both labyrinths share the volume evenly. Push `t` toward about ±1.2 and one side fattens while the other pinches. One number tips which maze owns the cube.
+
+`tiles` is how many periods sit along each axis: an integer from 1 to 4. Default is 2 periods with `t = 0`. More tiles stack the tunnel motif denser inside the view; one tile shows a single clear cell.
+
+On the [full Gyroid stage](/gyroid), twist `t` and `tiles`, hit a preset (balanced default, a fattened `t`, denser `tiles`), scrub how much of the cloud is lit, and drag to spin while it auto-rotates.
+
+## Growing the cloud with n
+
+`n` is how many of those isosurface points are showing. The embed grows `n` for you so the labyrinth assembles instead of arriving fully formed. On the full stage you scrub it yourself.
+
+<Callout to="/gyroid">
+	<strong>Goto full canvas</strong>
+	Scrub how much of the cloud is lit, twist `t` and `tiles`, try the presets, and spin the camera on the [full Gyroid stage](/gyroid).
+</Callout>

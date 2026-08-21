@@ -131,7 +131,7 @@ FractalDreamAttractor.getDescription = () => (
 		<BlockMath math={'x_{n+1} = sin(b * y_n) + c * sin(b * x_n)'} />
 		<BlockMath math={'y_{n+1} = sin(a * x_n) + d * sin(a * y_n)'} />
 		<br />
-		Limits: <BlockMath math="a,b,c,d \\in [-3, 3]" />
+		Limits: <BlockMath math="a,b,c,d \\in [0, 3]" />
 	</>
 )
 

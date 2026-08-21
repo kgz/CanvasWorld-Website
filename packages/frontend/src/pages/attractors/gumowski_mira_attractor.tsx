@@ -179,7 +179,7 @@ GumowskiMiraAttractor.getDescription = () => (
 		Where:
 		<BlockMath math={'G(x, \\mu) = \\mu x + 2(1 - \\mu) \\frac{x^2}{1 + x^2}'} />
 		Limits:
-		<BlockMath math="a, b,\mu \\in [-1, 1]" />
+		<BlockMath math="a \\in [-2, 1],\\quad b \\in [-1, 1],\\quad \\mu \\in [-2, 1]" />
 	</>
 )
 

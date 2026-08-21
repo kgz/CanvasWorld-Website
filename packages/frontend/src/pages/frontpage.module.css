@@ -78,7 +78,8 @@
   transition: color 160ms ease;
 }
 
-.navLinks a:hover {
+.navLinks a:hover,
+.navLinks a[aria-current="page"] {
   color: var(--cw-fg);
 }
 

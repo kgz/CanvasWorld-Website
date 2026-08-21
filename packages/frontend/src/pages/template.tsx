@@ -1,14 +1,13 @@
-import { Link, Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import Index from './index-new'
-import { useAppDispatch, useAppSelector } from '../@store/store'
-import { SetMenuOpen } from '../@store/WebSlice'
+import Blog from './blog'
+import PostPage from './PostPage'
 import routes from '../@types/routes'
 import { useMatomo } from '@datapunt/matomo-tracker-react'
 import { useEffect, useMemo } from 'react'
 import ModernCanvasPage from './template-modern'
 
 const Template = () => {
-	const dispatch = useAppDispatch()
 	const { trackPageView } = useMatomo()
 
 	const loc = useLocation()
@@ -39,6 +38,8 @@ const Template = () => {
 					/>
 				)
 			})}
+			<Route path="/blog" element={<Blog />} />
+			<Route path="/blog/:slug" element={<PostPage />} />
 			<Route path="*" element={<Index />} />
 		</Routes>
 	)

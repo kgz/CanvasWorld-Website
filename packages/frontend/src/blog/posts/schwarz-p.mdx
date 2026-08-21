@@ -1,0 +1,44 @@
+export const meta = {
+	slug: 'schwarz-p',
+	title: 'Schwarz P: a labyrinth that tiles the cube',
+	tag: 'Surfaces',
+	excerpt:
+		'Schwarz’s primitive (P) surface is a two-sided labyrinth on a cubic lattice — a TPMS cousin of the gyroid. Classical Chaos grows a coral–amber–teal particle wire of a trig approximation.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'schwarz_p',
+	featured: false,
+	order: 140,
+}
+
+
+Schwarz’s primitive surface (usually just “P”) is a triply periodic minimal surface: a two-sided labyrinth on a cubic lattice. Same family energy as the gyroid, but the lattice reads squarer — more brick-cell than swirl.
+
+Classical Chaos samples a trigonometric approximation and grows a particle wire, coral → amber → teal by direction, so the tunnels fill in before thickness and tiling get twisted on the full stage.
+
+<VizEmbed slug="schwarz_p" label="Schwarz P" animateN />
+
+## The trig field behind Schwarz P
+
+The field is a sum of cosines on a cube of side length <InlineMath math={'2\\pi\\cdot\\mathrm{tiles}'} />:
+
+<BlockMath math={'\\cos x + \\cos y + \\cos z = t'} />
+
+`t` is the iso-level (thickness on the stage). Default `t = 0` is the balanced, classic P look; the knob runs about `[-1.2, 1.2]`. The field is <InlineMath math={'2\\pi'} />-periodic in each axis. At `t = 0` it vanishes at <InlineMath math={'(\\pi/2,\\,\\pi/2,\\,\\pi/2)'} /> — a handy check that the trig field matches.
+
+This is a trig approx for the classic look, not an exact minimal mesh.
+
+## Growing the wire
+
+`n` is how many of the sampled points are lit. Points come from sampling the isosurface, then showing a cloud. The embed grows `n` so the wire appears instead of arriving fully formed. Color runs coral → amber → teal by direction and reads on black once the view starts turning.
+
+## Morphing thickness and stacking cells
+
+Changing `t` morphs labyrinth thickness and openings: tunnels fatten or pinch. Changing `tiles` stacks more periods in the frame (integer 1…4; default 2).
+
+On the [full Schwarz P stage](/schwarz_p) scrub `n`, twist `t` and `tiles`, and try presets (start at `t = 0`, `tiles = 2`, then nudge `t` toward 0.45 or −0.35, or bump `tiles` to 3 or 4). Drag to rotate while auto-rotate stays on.
+
+<Callout to="/schwarz_p">
+	<strong>Goto full canvas</strong>
+	Scrub `n`, twist `t` and `tiles`, try the example presets, and spin the wire on the [full Schwarz P stage](/schwarz_p).
+</Callout>

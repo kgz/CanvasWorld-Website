@@ -1,0 +1,40 @@
+export const meta = {
+	slug: 'sierpinski-gasket',
+	title: 'Watching holes open in the Sierpiński gasket',
+	tag: 'Fractals',
+	excerpt:
+		'Sierpiński’s gasket: cut the middle out of a triangle, then out of every leftover corner. Classical Chaos grows that lace live as depth climbs.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'sierpinski_triangle',
+	featured: false,
+	order: 60,
+}
+
+
+I came looking for L-systems, those rewrite grammars that grow a string into a drawing. What Classical Chaos ships nearby is the Sierpiński gasket: same spirit of apply-the-rule-again, but the rule is cut the middle out.
+
+Wacław Sierpiński’s construction is blunt. Start with a filled triangle. Punch out the open middle triangle. Do the same cut on each of the three corner triangles that remain. Keep going. The leftover lace is the gasket.
+
+<VizEmbed slug="sierpinski_triangle" label="Sierpinski" animateN />
+
+I watched depth climb on the card: light grey fill first, then the middle hole, then finer holes in the corners that were still solid, chewing into near-black void.
+
+## How a pixel decides it is a hole
+
+Classical Chaos runs this on the GPU. Each sample’s place in the big triangle is three corner shares — call them `(α, β, γ)`. Outside that triangle is void.
+
+At each depth step: if every share is less than ½, you sit in the middle chunk, so remove it (hole). Otherwise fold into the corner whose share is at least ½. When `α ≥ ½` that corner remap is
+
+<BlockMath math={'(\\alpha,\\beta,\\gamma)\\mapsto(2\\alpha-1,\\,2\\beta,\\,2\\gamma)'} />
+
+and the same idea cycles for the other two corners. After a few depths I stopped chasing the algebra and just watched the lace thicken.
+
+## On the full stage
+
+On the [full Sierpiński stage](/sierpinski_triangle) you can scrub how deep the cuts go, zoom, and pan.
+
+<Callout to="/sierpinski_triangle">
+	<strong>Goto full canvas</strong>
+	Scrub depth, zoom and pan the gasket, Reset when you want the default framing back.
+</Callout>

@@ -1,12 +1,11 @@
 import { OrbitControls } from '@react-three/drei'
-import type { RenderCallback } from '@react-three/fiber'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react'
 import * as THREE from 'three'
 import style from '../@scss/template.module.scss'
 import { Helmet } from 'react-helmet'
 import { renderToString } from 'react-dom/server'
-import { isMeshProps, isParticleProps, isShaderProps, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
+import { isMeshProps, isParticleProps, isShaderProps, EDimensions, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
 import { isScreenshotMode, markScreenshotReady } from '../modules/screenshotMode'
 
 const tagVizCanvas = (canvas: HTMLCanvasElement) => {
@@ -19,6 +18,14 @@ const canvasGlProps = () =>
     ? { antialias: true as const, preserveDrawingBuffer: true as const }
     : { antialias: true as const }
 
+/** Pack 2D xy samples into xyz (z=0). Do not recenter — partial `n` must not shift the cloud. */
+function pack2D(xy: Float32Array, count: number, out: Float32Array) {
+  for (let i = 0; i < count; i++) {
+    out[i * 3] = xy[i * 2]
+    out[i * 3 + 1] = xy[i * 2 + 1]
+    out[i * 3 + 2] = 0
+  }
+}
 
 // ------------------------------------------------------------
 // Particle Points Renderer
@@ -34,43 +41,70 @@ const Points = <T,>({
   const points = useRef<THREE.Points>(null)
   const readySent = useRef(false)
   const drawnRef = useRef(0)
+  const posAttr = useRef<THREE.BufferAttribute | null>(null)
+  const colorAttr = useRef<THREE.BufferAttribute | null>(null)
 
   const positions = useMemo(() => new Float32Array(numParticles * dimension), [numParticles, dimension])
+  const positions3 = useMemo(() => new Float32Array(numParticles * 3), [numParticles])
   const colors = useMemo(() => new Float32Array(numParticles * (colorAlpha ? 4 : 3)), [numParticles, colorAlpha])
   const size = pointSize ?? 0.015
-  // Sizes >= 1 are treated as CSS pixels (gallery thumbs need a thick stroke).
   const pixelSized = size >= 1
 
-  const loop: RenderCallback = (state, delta) => {
-    const result = tick(positions, colors, state, delta)
+  useLayoutEffect(() => {
+    const geo = points.current?.geometry
+    if (!geo) {
+      return
+    }
+    const pos = new THREE.BufferAttribute(positions3, 3)
+    pos.setUsage(THREE.DynamicDrawUsage)
+    geo.setAttribute('position', pos)
+    posAttr.current = pos
+
+    if (!singleColor) {
+      const col = new THREE.BufferAttribute(colors, colorAlpha ? 4 : 3)
+      col.setUsage(THREE.DynamicDrawUsage)
+      geo.setAttribute('color', col)
+      colorAttr.current = col
+    }
+  }, [positions3, colors, singleColor, colorAlpha])
+
+  const tickRef = useRef(tick)
+  tickRef.current = tick
+
+  useFrame((_state, delta) => {
+    const result = tickRef.current(positions, colors, _state, delta)
     if (typeof result === 'number') {
       drawnRef.current = Math.max(0, Math.min(numParticles, Math.floor(result)))
+    }
+    const drawn = drawnRef.current
+
+    if (dimension === EDimensions.TWO_D) {
+      pack2D(positions, drawn > 0 ? drawn : numParticles, positions3)
+    } else {
+      positions3.set(positions)
+    }
+
+    if (posAttr.current) {
+      posAttr.current.needsUpdate = true
+    }
+    if (colorAttr.current) {
+      colorAttr.current.needsUpdate = true
     }
 
     const geo = points.current?.geometry
     if (geo) {
-      if (geo.attributes.position) geo.attributes.position.needsUpdate = true
-      if (geo.attributes.color) geo.attributes.color.needsUpdate = true
-      geo.setDrawRange(0, drawnRef.current > 0 ? drawnRef.current : numParticles)
+      geo.setDrawRange(0, drawn > 0 ? drawn : numParticles)
     }
 
-    if (!readySent.current && isScreenshotMode() && drawnRef.current >= numParticles) {
+    if (!readySent.current && isScreenshotMode() && drawn >= numParticles) {
       readySent.current = true
       requestAnimationFrame(() => markScreenshotReady())
     }
-  }
-
-  useFrame(loop)
+  })
 
   return (
     <points ref={points}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={positions.length / dimension} array={positions} itemSize={dimension} />
-        {!singleColor && (
-          <bufferAttribute attach="attributes-color" count={colors.length / (colorAlpha ? 4 : 3)} array={colors} itemSize={colorAlpha ? 4 : 3} />
-        )}
-      </bufferGeometry>
-      {/* drei PointMaterial's soft-circle shader drops vertex colours — use stock PointsMaterial */}
+      <bufferGeometry />
       <pointsMaterial
         size={size}
         sizeAttenuation={!pixelSized}
@@ -95,14 +129,16 @@ const LineTrail = <T,>({
   lineOpacity = 0.8,
 }: TParticleProps<T>) => {
   const line = useRef<THREE.Line>(null)
+  const tickRef = useRef(tick)
+  tickRef.current = tick
   const readySent = useRef(false)
   const drawnRef = useRef(0)
 
   const positions = useMemo(() => new Float32Array(numParticles * dimension), [numParticles, dimension])
   const colors = useMemo(() => new Float32Array(numParticles * (colorAlpha ? 4 : 3)), [numParticles, colorAlpha])
 
-  const loop: RenderCallback = (state, delta) => {
-    const result = tick(positions, colors, state, delta)
+  useFrame((state, delta) => {
+    const result = tickRef.current(positions, colors, state, delta)
     if (typeof result === 'number') {
       drawnRef.current = Math.max(0, Math.min(numParticles, Math.floor(result)))
     }
@@ -118,9 +154,7 @@ const LineTrail = <T,>({
       readySent.current = true
       requestAnimationFrame(() => markScreenshotReady())
     }
-  }
-
-  useFrame(loop)
+  })
 
   return (
     <line ref={line}>
@@ -503,10 +537,17 @@ const Base = <T,>(props: TPointsProps<T>) => {
   }
 
   // Original particle/points mode
-  const particleCamera =
-    'cameraPosition' in props && props.cameraPosition
-      ? { position: props.cameraPosition, fov: 75 }
-      : { position: [0, 0, 400] as [number, number, number], fov: 75 }
+  const is2D = props.dimension === EDimensions.TWO_D
+  const rawCam = props.cameraPosition
+  const rawZ = Array.isArray(rawCam)
+    ? rawCam[2]
+    : rawCam && typeof rawCam === 'object' && 'z' in rawCam
+      ? Reflect.get(rawCam, 'z')
+      : undefined
+  const camZ = Math.abs(typeof rawZ === 'number' ? rawZ : 220)
+  const particleCamera = rawCam
+    ? { position: rawCam, fov: 75 }
+    : { position: [0, 0, camZ] as [number, number, number], fov: 75 }
 
   return (
     <>
@@ -516,10 +557,15 @@ const Base = <T,>(props: TPointsProps<T>) => {
       </Helmet>
       <Canvas
         camera={particleCamera}
-        dpr={window.devicePixelRatio}
+        dpr={[1, 2]}
         gl={canvasGlProps()}
         style={{ width: '100%', height: '100%', background: '#000' }}
-        onCreated={({ gl }) => tagVizCanvas(gl.domElement)}
+        onCreated={({ gl }) => {
+          tagVizCanvas(gl.domElement)
+          gl.domElement.style.width = '100%'
+          gl.domElement.style.height = '100%'
+          gl.domElement.style.display = 'block'
+        }}
       >
         {props.drawMode === 'line' ? (
           <LineTrail
@@ -543,7 +589,8 @@ const Base = <T,>(props: TPointsProps<T>) => {
           <OrbitControls
             enableDamping
             dampingFactor={0.05}
-            autoRotate={props.autoRotate === true}
+            enableRotate={!is2D}
+            autoRotate={!is2D && props.autoRotate === true}
             autoRotateSpeed={props.autoRotateSpeed ?? 0.4}
           />
         )}

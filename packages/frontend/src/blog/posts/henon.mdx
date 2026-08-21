@@ -1,0 +1,46 @@
+export const meta = {
+	slug: 'henon',
+	title: 'Hénon map: the classic 1976 crescent',
+	tag: 'Maps',
+	excerpt:
+		'Michel Hénon’s 1976 map packs a folded crescent into two updates. Classical Chaos iterates the classic form: x′ = 1 − a x² + y, y′ = b x, with a = 1.4, b = 0.3.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'henon_map',
+	featured: false,
+	order: 105,
+}
+
+
+Michel Hénon wrote this down in 1976 while poking at Lorenz-like chaos. Discrete map: one new point from the last. No continuous ODE, no step size `dt`. He wanted something like a simplified Poincaré-section sketch of that kind of motion, and ended up with a strange attractor that looks like a folded crescent, a banana if you squint.
+
+Classical Chaos iterates the classic 1976 form. Defaults sit at `a = 1.4`, `b = 0.3`, seed `(0.03, 0.01)`.
+
+<VizEmbed slug="henon_map" label="Hénon" animateN />
+
+## The classic update
+
+Each tick is one iterate. Point in, point out. The silhouette that piles up is the attractor.
+
+<BlockMath math={'x_{n+1} = 1 - a x_n^{2} + y_n'} />
+<BlockMath math={'y_{n+1} = b x_n'} />
+
+```ts
+const nextX = 1 - a * x * x + y
+const nextY = b * x
+x = nextX
+y = nextY
+```
+
+Same seed, same two lines, over and over, until the crescent fills in. Knob ranges on the stage sit in about `[0, 2]` for both `a` and `b`.
+
+The Jacobian determinant is `−b`. With `|b| < 1` (here `0.3`) patches shrink under the map while stretching and folding still build the strange set. Not area-preserving unless `|b| = 1`.
+
+## Full canvas
+
+On the [full Hénon stage](/henon_map) twist `a` and `b` inside `[0, 2]` and watch the crescent rebuild from `(0.03, 0.01)`.
+
+<Callout to="/henon_map">
+	<strong>Goto full canvas</strong>
+	Nudge `a` and `b`, sit with the classic crescent at `a = 1.4`, `b = 0.3`.
+</Callout>

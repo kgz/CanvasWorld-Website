@@ -1,0 +1,52 @@
+export const meta = {
+	slug: 'bogdanov',
+	title: 'Bogdanov Map: a cloud that reshapes with a, b, and μ',
+	tag: 'Maps',
+	excerpt:
+		'The Bogdanov Map is a discrete 2D chaotic map: a seed and a short rule pile into a colored cloud. Twist a, b, and μ on Classical Chaos and the same seed wears a different silhouette.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'bogdanov_map',
+	featured: false,
+	order: 85,
+}
+
+
+The Bogdanov Map is a discrete 2D chaotic map (Rifkat Bogdanov). Start at a seed, apply a short rule, land on the next `(x, y)`, and keep going. The picture is the pile of those landings — not a continuous trail of rates, not an ODE flow. Classical Chaos draws that pile live, colored along the sequence, newest tip yellow.
+
+Defaults sit at seed `(0.1, 0)` with `a = 0.0025`, `b = 1.44`, and `μ = −0.1`.
+
+<VizEmbed slug="bogdanov_map" label="Bogdanov Map" />
+
+## Discrete map, not a flow
+
+Each step is one jump from the last point. No integrating along a curve. Iterate from the seed and the landings fill a flat 2D cloud; hue walks the pile so older and newer spots stay readable. The yellow tip marks where the newest points sit.
+
+Same seed, different `a`, `b`, or `μ`, and the silhouette reorganizes instead of just stretching a little.
+
+## What Classical Chaos iterates
+
+Each step updates `y` first, then sets `x` from the new `y`:
+
+<BlockMath math={'y\\prime = y + a y + b x(x - 1) + \\mu\\, x y'} />
+<BlockMath math={'x\\prime = x + y\\prime'} />
+
+```ts
+const nextY = y + a * y + b * x * (x - 1) + mu * x * y
+const nextX = x + nextY
+x = nextX
+y = nextY
+```
+
+`a` leans on the `y` term; `b` scales `x(x − 1)`; `μ` couples the coordinates through `x y`.
+
+## Twisting a, b, and μ
+
+On the [full Bogdanov stage](/bogdanov_map) the knobs cover roughly `a` from `0` to `0.01`, `b` from `0.5` to `2.5`, and `μ` from `−0.5` to `0.5`, plus a scrub for how many points are lit. Change a knob and the cloud rebuilds from `(0.1, 0)`.
+
+Nudge `b` and folds thicken or thin. Push `a` across its tiny range and the whole field can rearrange without looking like a smooth morph. Twist `μ` and the coupling between axes shifts the pile.
+
+<Callout to="/bogdanov_map">
+	<strong>Goto full canvas</strong>
+	Twist `a`, `b`, and `μ`, scrub how many points are lit, watch the cloud rebuild from `(0.1, 0)`.
+</Callout>

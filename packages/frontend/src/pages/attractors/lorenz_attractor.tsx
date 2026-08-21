@@ -6,6 +6,7 @@ import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
+import { resolveParticleCount } from '../../modules/embedMode'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import { lorenzTick } from '../../utils/lorenz'
 
@@ -166,7 +167,7 @@ const LorenzAttractor = () => {
 	return (
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
-			numParticles={15_000}
+			numParticles={resolveParticleCount(15_000)}
 			tick={tick}
 			drawMode="line"
 			lineOpacity={isScreenshotMode() ? 1 : 0.55}

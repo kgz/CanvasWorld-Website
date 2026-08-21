@@ -1,0 +1,54 @@
+export const meta = {
+	slug: 'roman-surface',
+	title: 'Roman surface: Steiner’s self-crossing RP²',
+	tag: 'Surfaces',
+	excerpt:
+		'Four lobes that slide through each other: Steiner’s Roman surface (real projective plane in 3D). Classical Chaos draws the UV wire; squash lives on the full canvas.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'roman_surface',
+	featured: false,
+	order: 150,
+}
+
+
+Four soft lobes meet in the middle, like a tetrahedron that forgot to stay sealed. Then the lobes slide through each other. That crossing is the story. Steiner called this the Roman surface (mid-1800s, after work he presented in Rome). RP² means the real projective plane: one way that plane shows up in ordinary 3-space is an immersion where the lobes have to cut through each other.
+
+Classical Chaos draws it as a UV isoline particle wire, coral → amber → teal along the parameters, growing in over time.
+
+<VizEmbed slug="roman_surface" label="Roman Surface" animateN />
+
+## Four lobes, and they cross
+
+Default proportions look Steiner-ish. Treat the silhouette like a sealed balloon and the picture fights you; accept the crossings and the immersion of RP² in R³ starts to read as the shape that fits on a screen.
+
+Boy’s surface does the same topology with a different silhouette.
+
+## The (u, v) map
+
+With parameters <InlineMath math={'u, v \\in [0, \\pi]'} /> and a scale <InlineMath math={'a'} />, Steiner’s map is
+
+<BlockMath math={'x = a^{2} \\cos u \\sin u \\sin v'} />
+<BlockMath math={'y = a^{2} \\cos u \\sin u \\cos v'} />
+<BlockMath math={'z = a^{2} \\cos^{2} u \\cos v \\sin v'} />
+
+```ts
+const x = a * a * Math.cos(u) * Math.sin(u) * Math.sin(v)
+const y = a * a * Math.cos(u) * Math.sin(u) * Math.cos(v)
+const z = a * a * Math.cos(u) ** 2 * Math.cos(v) * Math.sin(v)
+```
+
+On Classical Chaos `a` is fixed at 1, then a separate squash stretches `z` before the cloud is rescaled to fit the view. Warm hue near one end of the UV walk, cooler toward the other, and the grid stops reading as a random spray.
+
+## Wire and squash
+
+The cage is constant-<InlineMath math={'u'} /> and constant-<InlineMath math={'v'} /> curves sampled as points — isolines, not a shaded shell. How much of the wire is lit is reveal count `n`; the embed grows that in.
+
+Knob `squash` stretches <InlineMath math={'z'} />. Default is 1 (Steiner proportions); the range runs about `[0.25, 2.5]`. Push it flat or tall and the four-lobe silhouette changes character without changing the formulas above. Full-stage presets sit near 0.45, 1, 1.6, and 2.2.
+
+On the [full Roman stage](/roman_surface) twist squash, hit a preset, scrub `n`, and drag to rotate (or leave auto-rotate on).
+
+<Callout to="/roman_surface">
+	<strong>Goto full canvas</strong>
+	Twist squash, try a preset, scrub `n`, and spin the wire on the [full Roman stage](/roman_surface).
+</Callout>

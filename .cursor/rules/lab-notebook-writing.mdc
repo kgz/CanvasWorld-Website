@@ -1,0 +1,35 @@
+---
+description: Lab notebook voice; require copyright, AI-prose, and public-reader gates; end-to-end via blog-builder
+globs: packages/frontend/src/blog/**/*
+alwaysApply: false
+---
+
+# Lab notebook writing
+
+## Voice
+
+Curious and concrete — learning these systems live — but **the subject is the math and the canvas**, not the narrator.
+
+- Lead with the object, how it looks, who wrote it, how Classical Chaos draws it
+- Spare first person: no default “I expected…” openers; no stacks of “I kept / what hit me / I bounce”
+- Occasional “you” for stage affordances is fine; “one observes that…” is not
+- Uneven is OK; perfect parallel three-beat lists are not
+- Brand: Classical Chaos; keep math honest (equations, named constants)
+- See `.cursor/skills/blog-builder/voice-notes.md` for hard fails
+
+## Required passes before shipping a post
+
+1. **Copyright check** — skill `copyright-check` (facts vs expression; no close paraphrase; assets OK)
+2. **AI filter** — skill `ai-prose-filter` (ban-list + structure tells; rewrite flagged lines)
+3. **Public reader** — skill `public-reader-check` (fresh agent; must-fixes applied unless review-only)
+
+Do not mark a post done until 1–2 report clear (or fixes are applied) and the public-reader report has been shown.
+
+## Drafting basics
+
+- Prefer facts-only bullets → rewrite in a clean context (no source article pasted into rewrite)
+- Record embed vs full-canvas **affordances** before any UI claims
+- Cite discoverer/year when it helps; use our thumbs/`VizEmbed`, not others’ figures
+- **Never** name repo paths, filenames, or internal module APIs (`utils/…`, `createAttractorPage`, `foo.tsx`). Readers do not have the repo. Show algorithms as plain snippets; link the live canvas instead.
+- End-to-end build: skill `blog-builder`
+- Voice / craft only: skill `lab-notebook-writing`

@@ -1,0 +1,46 @@
+export const meta = {
+	slug: 'clifford',
+	title: 'Clifford’s sine–cosine cloud',
+	tag: 'Attractors',
+	excerpt:
+		'Clifford Pickover’s 2D map: four knobs, sine and cosine of crossed terms, and a purple point cloud that reshapes when you nudge a, b, c, or d.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'clifford_attractor',
+	featured: false,
+	order: 30,
+}
+
+
+Clifford A. Pickover’s attractor is a tiny discrete map. You start at a seed, run a short sine–cosine rule, get the next `(x, y)`, and pile those points until a cloud shows up. No continuous flow, no `dt`. Just iteration.
+
+I keep opening it expecting something Lorenz-shaped. What I get is flatter and more ornamental: ribbons, loops, almost-cellular swirls depending on the knobs. The default on Classical Chaos is purple body, yellow tip, seed `(−2, −2)`, knobs near `a = 1.7`, `b = 1.8`, `c = 1.9`, `d = 0.4`.
+
+<VizEmbed slug="clifford_attractor" label="Clifford" animateN />
+
+## The map
+
+Each step only looks at the last point and four constants:
+
+<BlockMath math={'x_{n+1} = \\sin(a y_n) + c\\,\\cos(a x_n)'} />
+<BlockMath math={'y_{n+1} = \\sin(b x_n) + d\\,\\cos(b y_n)'} />
+
+```ts
+x = Math.sin(a * y) + c * Math.cos(a * x)
+y = Math.sin(b * x) + d * Math.cos(b * y)
+```
+
+Crossed arguments are the whole trick: `a` mixes into both the sine of `y` and the cosine of `x`; `b` does the same with the roles flipped. `c` and `d` scale the cosine pieces. Nudge one constant and the silhouette can jump from a soft loop into a tangled ribbon.
+
+## What I watch for
+
+The tip stays bright so I can see where the map is “now” while the purple body holds the shape. Small moves on `a` / `b` / `c` / `d` (ranges about `[−3, 3]` on the full stage) rewrite the cloud from the seed. Generative-art people love this one for exactly that: tiny formula, huge shape space.
+
+## Full canvas
+
+On the [full Clifford stage](/clifford_attractor) you can twist those four knobs and watch the same seed rebuild.
+
+<Callout to="/clifford_attractor">
+	<strong>Goto full canvas</strong>
+	Nudge `a`, `b`, `c`, `d` and watch the purple cloud reorganize from `(−2, −2)`.
+</Callout>

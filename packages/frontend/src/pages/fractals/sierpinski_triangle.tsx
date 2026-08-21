@@ -4,6 +4,8 @@ import { BlockMath } from 'react-katex'
 import Base from '../_base'
 import { ERenderMode } from '../../@types/gui'
 import { useAnimation } from '../../context/AnimationContext'
+import { isEmbedTransportPaused } from '../../modules/embedBridge'
+import { isEmbedFullReveal } from '../../modules/embedMode'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
 import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
@@ -158,7 +160,7 @@ const SierpinskiTriangle = () => {
 	const [center, setCenter] = useState([0, 0])
 	const [zoom, setZoom] = useState(DEFAULT_ZOOM)
 	const {
-		isPaused,
+		isPausedRef,
 		animationSpeed,
 		manualProgress,
 		reportProgress,
@@ -166,13 +168,13 @@ const SierpinskiTriangle = () => {
 		particlesDrawn,
 	} = useAnimation()
 	const depthProgressRef = useRef(0)
-	const wasReplayingRef = useRef(false)
+	const prevDrawnRef = useRef(particlesDrawn)
 
 	const [uniforms] = useState({
 		u_center: { value: new Vector2(center[0], center[1]) },
 		u_zoom: { value: zoom },
 		u_maxDepth: { value: 0 },
-		u_resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
+		u_resolution: { value: new Vector2(1, 1) },
 	})
 
 	useEffect(() => {
@@ -184,8 +186,17 @@ const SierpinskiTriangle = () => {
 	}, [zoom, uniforms])
 
 	useEffect(() => {
-		if (isScreenshotMode()) {
+		if (particlesDrawn === 0 && prevDrawnRef.current > 0) {
+			depthProgressRef.current = 0
+		}
+		prevDrawnRef.current = particlesDrawn
+	}, [particlesDrawn])
+
+	useEffect(() => {
+		if (isScreenshotMode() || isEmbedFullReveal()) {
 			uniforms.u_maxDepth.value = MAX_DEPTH
+			depthProgressRef.current = MAX_DEPTH
+			currentProgressRef.current = MAX_DEPTH
 			reportProgress(MAX_DEPTH, MAX_DEPTH)
 			return
 		}
@@ -199,20 +210,15 @@ const SierpinskiTriangle = () => {
 		const loop = (now: number) => {
 			const dt = Math.min(0.05, (now - last) / 1000)
 			last = now
-
-			if (particlesDrawn === 0 && !isPaused) {
-				if (!wasReplayingRef.current) {
-					depthProgressRef.current = 0
-					wasReplayingRef.current = true
-				}
-			} else if (particlesDrawn > 0) {
-				wasReplayingRef.current = false
-			}
+			const paused = isPausedRef.current || isEmbedTransportPaused()
 
 			if (manualProgress !== null) {
 				depthProgressRef.current = Math.min(Math.max(manualProgress, 0), total)
-			} else if (!isPaused) {
-				depthProgressRef.current = Math.min(total, depthProgressRef.current + dt * 1.6 * animationSpeed)
+			} else if (!paused) {
+				depthProgressRef.current = Math.min(
+					total,
+					depthProgressRef.current + dt * 1.6 * animationSpeed,
+				)
 			}
 
 			currentProgressRef.current = depthProgressRef.current
@@ -226,12 +232,11 @@ const SierpinskiTriangle = () => {
 		frame = requestAnimationFrame(loop)
 		return () => cancelAnimationFrame(frame)
 	}, [
-		isPaused,
 		animationSpeed,
 		manualProgress,
-		particlesDrawn,
 		reportProgress,
 		currentProgressRef,
+		isPausedRef,
 		uniforms,
 	])
 

@@ -1,0 +1,99 @@
+export const meta = {
+	slug: 'lorenz-never-closes',
+	title: 'Why the Lorenz attractor never closes',
+	tag: 'Attractors',
+	excerpt:
+		'Why the Lorenz butterfly never settles into a loop, and how Classical Chaos draws that trail with three ODEs and a simple Euler step.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 7,
+	featured: true,
+	thumbSlug: 'lorenz_attractor',
+	order: 10,
+}
+
+
+Edward Lorenz wrote down a tiny convection model in 1963 and ended up with a picture of deterministic chaos. Three numbers keep updating each other with no dice in sight, and the path still won’t settle into a neat loop. That shape is the first strange attractor most people meet: the butterfly.
+
+On Classical Chaos the notebook embed below only grows the mint trail in. Scrubbing trail length, dragging to rotate the view, and retuning σ, ρ, or β live on the full stage (Goto full canvas at the end, or Open full on the embed).
+
+<VizEmbed slug="lorenz_attractor" label="Lorenz" animateN />
+
+## Where it sits in the world
+
+Lorenz was trying to understand atmospheric convection with a stripped-down ODE system. The surprise was not “random weather.” It was that a fully determined flow can stay bounded forever and still refuse a periodic orbit.
+
+It stays in a box, never repeats on a timer, and a tiny seed change throws the path onto the other wing, which is why courses lead with this butterfly. I can’t keep the exact point, but the two lobes on the canvas still tell me what kind of motion I’m in.
+
+## The equations we integrate
+
+On the full canvas, knobs `a`, `b`, `c` are the classical coefficients σ, ρ, β. Defaults: σ = 10, ρ = 28, β = 8/3, step dt = 0.005, seed (0.1, 0, 0).
+
+<BlockMath math={'\\dot{x} = \\sigma (y - x)'} />
+<BlockMath math={'\\dot{y} = x(\\rho - z) - y'} />
+<BlockMath math={'\\dot{z} = x y - \\beta z'} />
+
+We do not use a fancy integrator. One forward-Euler step runs once per sample along the trail:
+
+```ts
+const dx = sigma * (y - x)
+const dy = x * (rho - z) - y
+const dz = x * y - beta * z
+x = x + dx * dt
+y = y + dy * dt
+z = z + dz * dt
+```
+
+Crude, yes. With this `dt` and ~15k samples it still draws the two lobes cleanly enough to read on a laptop.
+
+## What “never closes” means on a screen
+
+A closed orbit would return to the exact same `(x, y, z)` after finite time. This trajectory comes near old states and peels off again. That is a property of the continuous flow.
+
+On a computer the story is messier. Finite floats and a fixed step will eventually cycle if you wait long enough. So the claim in the title is about the math object, not about promising an infinite non-repeating float stream. We still draw a finite trail. Here the embed lengthens it for you; on the full stage you scrub that length with `n`.
+
+## How we store the path
+
+`n` is just “how much of the saved trail is lit.” The ODEs are continuous. What we store is a discrete orbit
+
+<BlockMath math={'\\mathbf{r}_{k+1} = \\mathbf{r}_k + \\dot{\\mathbf{r}}(\\mathbf{r}_k)\\,dt'} />
+
+with **r** = `(x, y, z)` and **ṙ** the Lorenz vector field above. Growing `n` means more Euler steps from the last saved state; shrinking `n` means drawing a shorter prefix of the same buffer (no re-integration). Change σ, ρ, β, or `dt` and the discrete orbit is invalid, so we reset to the seed and integrate again.
+
+```ts
+if (paramsChanged) {
+  x = 0.1
+  y = 0
+  z = 0
+  computed = 0
+}
+
+while (computed < n) {
+  const dx = sigma * (y - x)
+  const dy = x * (rho - z) - y
+  const dz = x * y - beta * z
+  x += dx * dt
+  y += dy * dt
+  z += dz * dt
+  // store r_k, then…
+  computed += 1
+}
+```
+
+## Why the plot is not raw (x, y, z)
+
+Phase space is not camera space. We remap so the lobes sit left and right, with height along `z`:
+
+<BlockMath math={'\\begin{aligned} X &= \\frac{x+y}{\\sqrt{2}} \\\\ Y &= z - (\\rho - 1) \\\\ Z &= 0.22\\,\\frac{x-y}{\\sqrt{2}} \\end{aligned}'} />
+
+`X` and `Z` are a 45° turn in the xy-plane (the usual Lorenz front view). Subtracting `ρ − 1` from height recenters the cloud where the classic parameters live. The `0.22` on `Z` squashes depth so perspective does not turn the line into a thick scribble.
+
+Color is only a fade along the sample index (mint body, brighter tip). Notebook embeds grow `n` up from zero so you see the discrete orbit lengthen instead of appearing fully formed.
+
+## Twisting the knobs
+
+On the full stage, change ρ and the lobes fatten or die. Nudge `dt` and the trail gets silky or jagged. None of that needs a random number generator. Coupled rates, a fixed step, then that small remap: nothing else is hiding under the hood.
+
+<Callout to="/lorenz_attractor">
+  <strong>Goto full canvas</strong>
+  Scrub `n`, swap the example presets, drag to rotate, watch the trail rebuild from `(0.1, 0, 0)`.
+</Callout>

@@ -220,6 +220,7 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 	if (bareStage) {
 		return (
 			<div className={styles.stageOnly}>
+				<style>{`html,body,#root{margin:0;height:100%;width:100%;overflow:hidden;background:#000}`}</style>
 				<div className={styles.stageOnlyInner}>
 					<route.element />
 				</div>

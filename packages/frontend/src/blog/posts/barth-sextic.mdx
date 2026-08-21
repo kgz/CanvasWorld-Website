@@ -1,0 +1,56 @@
+export const meta = {
+	slug: 'barth-sextic',
+	title: 'Barth’s sextic: where did those icosahedral spikes come from?',
+	tag: 'Surfaces',
+	excerpt:
+		'Wolf Barth’s 1996 sextic is a degree-6 algebraic surface with icosahedral symmetry and dozens of pinch points. Classical Chaos draws it as a coral-to-teal particle cloud on the isosurface.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'barth_sextic',
+	featured: false,
+	order: 135,
+}
+
+
+Barth’s sextic is a spiked shell with twelve-corner symmetry: a degree-6 equation in ordinary <InlineMath math={'x,y,z'} />, written down by Wolf Barth in 1996. The shell is famous for nodes — pinch points where the surface crosses itself. The classic count is 65 in total, 50 of them real.
+
+Classical Chaos draws a particle cloud on the isosurface, not a lit triangle mesh. Color runs coral → amber → teal by direction, and the cloud grows in on the card below.
+
+<VizEmbed slug="barth_sextic" label="Barth sextic" animateN />
+
+## The equation (where it hits zero)
+
+The classic field sits at <InlineMath math={'\\tau = \\varphi'} />, the golden ratio, with sphere radius <InlineMath math={'R = 1'} /> and mix weight <InlineMath math={'m = 1'} />. Write
+
+<BlockMath math={'\\varphi = \\dfrac{1 + \\sqrt{5}}{2}'} />
+
+The surface is where this formula hits zero:
+
+<BlockMath math={'m \\cdot 4(\\tau^{2}x^{2} - y^{2})(\\tau^{2}y^{2} - z^{2})(\\tau^{2}z^{2} - x^{2}) - (1 + 2\\tau)(x^{2} + y^{2} + z^{2} - R^{2})^{2} = 0'} />
+
+That first product is the golden lattice. The second couples everything to a sphere of radius <InlineMath math={'R'} />. True Barth keeps <InlineMath math={'\\tau = \\varphi'} />; nudge τ and the spikes warp off the classic lattice.
+
+## How the points get there
+
+Evaluate the field on a 3D grid, keep the vertices that sit on the zero isosurface, then light more of those points over time so the shell fills in:
+
+```ts
+for each grid sample (x, y, z):
+  f = field(x, y, z; tau, radius, mix)
+  if f crosses zero near this cell:
+    keep a surface vertex
+// draw more of those vertices as the cloud grows
+```
+
+The spikes are in the equation, not just the framing. On the [full Barth stage](/barth_sextic), raising mix makes them bite; lowering it softens the shell.
+
+## Twisting the lattice
+
+On that stage, `tau` stretches the golden lattice (φ is classic Barth), `radius` is the sphere term <InlineMath math={'R'} />, and `mix` sharpens spikes or rounds the shell. Useful stacks: classic <InlineMath math={'(\\varphi, 1, 1)'} />, lattice nudge <InlineMath math={'(1.2, 1, 1)'} />, tighter/sharper <InlineMath math={'(\\varphi, 0.7, 1.4)'} />.
+
+Same family, very different how-spiky-vs-how-round feel.
+
+<Callout to="/barth_sextic">
+	<strong>Goto full canvas</strong>
+	Twist tau, radius, and mix on the [full Barth stage](/barth_sextic), try those stacks, scrub how much of the cloud is lit, and spin the view.
+</Callout>

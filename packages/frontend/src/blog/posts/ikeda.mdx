@@ -1,0 +1,46 @@
+export const meta = {
+	slug: 'ikeda',
+	title: 'Ikeda map: one knob named a',
+	tag: 'Maps',
+	excerpt:
+		'Kensuke Ikeda’s 1979 discrete map: rotate and scale a 2D point until a folded cloud piles up. Classical Chaos uses parameter a (default 1), with a chaos band around [0.6, 1].',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'ikeda_map',
+	featured: false,
+	order: 115,
+}
+
+
+The Ikeda map starts at `(0, 0)`. Each step spits out the next `(x, y)`. Discrete map, not a continuous trail like Lorenz. Kensuke Ikeda, 1979; ring-cavity optics in the paper background. On Classical Chaos the canvas is the map, not a full optics simulator.
+
+Site default is `a = 1` (range `[0, 1]`). An example preset sits near `a = 0.87719`. The band people usually poke for chaos is about `[0.6, 1]`.
+
+<VizEmbed slug="ikeda_map" label="Ikeda" animateN />
+
+## The update
+
+A state-dependent angle `f` turns the plane, then `a` scales the stretch:
+
+<BlockMath math={'f = 0.4 - \\frac{6}{1 + x^{2} + y^{2}}'} />
+<BlockMath math={"x\\prime = 1 + a\\,(x\\cos f - y\\sin f)"} />
+<BlockMath math={"y\\prime = a\\,(x\\sin f + y\\cos f)"} />
+
+```ts
+const f = 0.4 - 6 / (1 + x * x + y * y)
+const nextX = 1 + a * (x * Math.cos(f) - y * Math.sin(f))
+const nextY = a * (x * Math.sin(f) + y * Math.cos(f))
+x = nextX
+y = nextY
+```
+
+The knob is named `a` here (not `c`). Nudge it and the cloud rebuilds from `(0, 0)`. Near `0.87719` the folds often feel looser than at the default `a = 1`; shove much lower and the structure dulls.
+
+## Full canvas
+
+On the [full Ikeda stage](/ikeda_map) twist `a` in `[0, 1]`, try the example near `0.87719`, and watch the cloud rebuild from the origin.
+
+<Callout to="/ikeda_map">
+	<strong>Goto full canvas</strong>
+	Twist `a`, try the example near `0.87719`, watch the cloud rebuild from `(0, 0)`.
+</Callout>

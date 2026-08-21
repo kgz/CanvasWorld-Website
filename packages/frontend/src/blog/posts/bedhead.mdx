@@ -1,0 +1,44 @@
+export const meta = {
+	slug: 'bedhead',
+	title: 'Bedhead attractor: the mint map cloud',
+	tag: 'Attractors',
+	excerpt:
+		'The Bedhead attractor is a 2D iterated map: seed, short formula, next (x, y), until a mint-green cloud piles up. Classical Chaos draws it from defaults near a ≈ 0.65, b ≈ 0.73.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'bedhead_attractor',
+	featured: false,
+	order: 80,
+}
+
+
+The Bedhead attractor starts at a seed, applies a short formula, and lands on the next `(x, y)`. Do that again and again and the picture is just the pile. No continuous trail of rates: a discrete 2D map. Classical Chaos paints the body mint-green and the moving tip yellow.
+
+Defaults sit near seed `(0.1, 0)` with `a ≈ 0.65343` and `b ≈ 0.7345345`. The cloud below grows as more iterates land.
+
+<VizEmbed slug="bedhead_attractor" label="Bedhead" animateN />
+
+## The update rule
+
+Each new point comes only from the last one. No `dt`, no integrating rates along a curve. The step Classical Chaos runs:
+
+<BlockMath math={'x_{n+1} = \\sin(x_n y_n / b)\\, y_n + \\cos(a x_n - y_n)'} />
+<BlockMath math={'y_{n+1} = x_n + \\sin(y_n) / b'} />
+
+```ts
+const nextX = Math.sin((x * y) / b) * y + Math.cos(a * x - y)
+const nextY = x + Math.sin(y) / b
+x = nextX
+y = nextY
+```
+
+`b` sits in a denominator, so the step must not hit zero. On the full stage the `b` knob floors above zero; some `(a, b)` pairs still send samples flying, and the stage clamps extreme values so the view stays usable.
+
+## Twisting a and b
+
+Small moves on `a` and `b` can reshape the whole silhouette. On the [full Bedhead stage](/bedhead_attractor) those knobs sit next to example presets: the default pair, then jumps like `(−0.64, 0.76)` and `(0.06, 0.98)`. Change either constant and the cloud redraws from the seed.
+
+<Callout to="/bedhead_attractor">
+	<strong>Goto full canvas</strong>
+	Twist `a` and `b`, try the example presets, watch the mint cloud rebuild from `(0.1, 0)`.
+</Callout>

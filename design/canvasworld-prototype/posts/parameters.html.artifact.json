@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "posts/parameters.html",
+  "entry": "posts/parameters.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-08-21T07:53:47.280Z",
+  "updatedAt": "2026-08-21T07:53:47.280Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

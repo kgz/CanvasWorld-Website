@@ -1,0 +1,53 @@
+export const meta = {
+	slug: 'gumowski-mira',
+	title: 'Gumowski–Mira: a soft bump named G',
+	tag: 'Attractors',
+	excerpt:
+		'Gumowski–Mira is a discrete 2D map with a helper G that mixes linear and rational pieces. Classical Chaos defaults sit near a = 0.008, b = 0.05, μ = −0.9, seed (0, 0.5).',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'gumowski-mira_attractor',
+	featured: false,
+	order: 100,
+}
+
+
+Gumowski–Mira is a discrete 2D map: take a point, run a short formula with a helper `G`, land on the next point, pile those samples into a folded silhouette. Named after I. Gumowski and C. Mira (accelerator / beam-dynamics lineage is the usual citation). Classical Chaos defaults sit near `a = 0.008`, `b = 0.05`, `μ = −0.9`, seed `(0, 0.5)`.
+
+The cloud below thickens as more iterates land.
+
+<VizEmbed slug="gumowski-mira_attractor" label="Gumowski–Mira" animateN />
+
+## The update rule
+
+Each new point comes only from the last one. The canvas form Classical Chaos iterates:
+
+<BlockMath math={'x_{n+1} = y_n + a(1 - b y_n^{2})\\, y_n + G(x_n, \\mu)'} />
+<BlockMath math={'y_{n+1} = -x_n + G(x_{n+1}, \\mu)'} />
+
+That second `G` uses the brand-new `x_{n+1}`, not the old `x_n`.
+
+## Soft bump in G
+
+`G` mixes a linear piece with a rational term. This is the form the canvas runs:
+
+<BlockMath math={'G(x, \\mu) = \\mu x + \\frac{2(1 - \\mu)\\, x^{2}}{1 + x^{2}}'} />
+
+```ts
+const G = (v: number) => mu * v + (2 * (1 - mu) * v * v) / (1 + v * v)
+const nextX = y + a * (1 - b * y * y) * y + G(x)
+const nextY = -x + G(nextX)
+x = nextX
+y = nextY
+```
+
+That fraction is a soft nonlinear bump. `μ` slides how linear vs bump-like `G` feels. Parameters `a`, `b`, and `μ` shape the outer silhouette; the seed only picks where the orbit starts. Stage ranges sit near `a ∈ [−2, 1]`, `b ∈ [−1, 1]`, `μ ∈ [−2, 1]`.
+
+## Full canvas
+
+On the [full Gumowski–Mira stage](/gumowski-mira_attractor) twist `a`, `b`, `μ`, and the seed, or jump via the example presets. Same seed, different knobs, different folds.
+
+<Callout to="/gumowski-mira_attractor">
+	<strong>Goto full canvas</strong>
+	Twist `a`, `b`, `μ`, try the presets, watch the folded cloud rebuild from `(0, 0.5)`.
+</Callout>

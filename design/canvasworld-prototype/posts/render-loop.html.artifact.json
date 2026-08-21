@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "posts/render-loop.html",
+  "entry": "posts/render-loop.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-08-21T07:52:43.702Z",
+  "updatedAt": "2026-08-21T07:52:43.702Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

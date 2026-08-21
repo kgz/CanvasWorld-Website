@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "posts/mandelbrot-escape.html",
+  "entry": "posts/mandelbrot-escape.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-08-21T07:52:59.174Z",
+  "updatedAt": "2026-08-21T07:52:59.174Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

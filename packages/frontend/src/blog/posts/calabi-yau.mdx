@@ -1,0 +1,49 @@
+export const meta = {
+	slug: 'calabi-yau',
+	title: 'Calabi–Yau: a Fermat slice as a coral wire',
+	tag: 'Surfaces',
+	excerpt:
+		'String-theory posters love the Calabi–Yau name. Classical Chaos draws a Hanson slice of a Fermat surface as a growing particle wire — coral to amber to teal — not the full six-real-dimensional 3-fold.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'calabi_yau',
+	featured: false,
+	order: 125,
+}
+
+
+A Calabi–Yau 3-fold is six-real-dimensional. Posters borrow the name for a familiar coral silhouette. What Classical Chaos draws is thinner than that name: a 3D projection of a 2-real-dimensional slice of a Fermat surface (Hanson 1994), rendered as a particle wire, not a lit mesh, and not the full manifold.
+
+I first bumped into this picture — and how wild it is that people try to *hint* at higher-dimensional geometry on a flat screen — in [The Final Verdict On The Theory Of Everything](https://www.youtube.com/watch?v=nPLKfvr_y4E&t=7s) from History of the Universe. The video is excellent on its own; that is what pushed this coral wire onto Classical Chaos.
+
+<VizEmbed slug="calabi_yau" label="Calabi–Yau" animateN />
+
+## Fermat surface, then a cut
+
+The Fermat equation in two complex variables is
+
+<BlockMath math={'z_1^n + z_2^n = 1'} />
+
+in <InlineMath math={'\\mathbb{C}^2'} />. Hanson fills a real 2D slice with branches that tile into the coral shape — indices <InlineMath math={'k_1, k_2 \\in \\{0,\\ldots,n-1\\}'} /> over <InlineMath math={'x \\in [0, \\pi/2]'} />, <InlineMath math={'y \\in [-\\pi/2, \\pi/2]'} />:
+
+<BlockMath math={'z_1 = e^{2\\pi i k_1 / n}\\,(\\cos(x+iy))^{2/n}'} />
+<BlockMath math={'z_2 = e^{2\\pi i k_2 / n}\\,(\\sin(x+iy))^{2/n}'} />
+
+Mixing angle <InlineMath math={'a'} /> folds the leftover imaginary parts into a third screen axis:
+
+<BlockMath math={'(X,Y,Z) = (\\mathrm{Re}\\, z_1,\\, \\mathrm{Re}\\, z_2,\\, \\cos a\\cdot\\mathrm{Im}\\, z_1 + \\sin a\\cdot\\mathrm{Im}\\, z_2)'} />
+
+All <InlineMath math={'n \\times n'} /> branch patches get drawn. That patchwork is the coral wire that fills in.
+
+## What the wire looks like
+
+It is a particle wire of the projected slice. Color runs coral → amber → teal by direction on the cloud. Points grow in over time until the cage is complete. Default degree is <InlineMath math={'n = 5'} /> (the quintic poster case); mixing angle starts near <InlineMath math={'a \\approx 0.4'} />.
+
+## Full canvas
+
+On the [full Calabi–Yau stage](/calabi_yau) twist degree <InlineMath math={'n'} /> (2–8) and angle <InlineMath math={'a'} /> (0 to <InlineMath math={'\\pi'} />), try the presets, and drag to rotate while the wire grows in.
+
+<Callout to="/calabi_yau">
+	<strong>Goto full canvas</strong>
+	Twist <InlineMath math={'n'} /> and <InlineMath math={'a'} />, try the presets, drag to rotate the coral wire.
+</Callout>

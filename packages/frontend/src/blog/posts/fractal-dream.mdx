@@ -1,0 +1,46 @@
+export const meta = {
+	slug: 'fractal-dream',
+	title: 'Fractal Dream: four sines, one folded cloud',
+	tag: 'Attractors',
+	excerpt:
+		'Fractal Dream is a 2D iterated map: four sines of crossed terms pile points into a folded cloud. Classical Chaos starts at (−2, −2) with a, b, c, d in [0, 3].',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'fractal_dream_attractor',
+	featured: false,
+	order: 95,
+}
+
+
+Fractal Dream is a flat point cloud that folds as you watch it grow. Discrete map, not a continuous flow: take `(x, y)`, run a short sine rule, land on the next point, pile those samples until a silhouette shows up.
+
+Defaults sit at seed `(−2, −2)` with `a = 1.1`, `b ≈ 2.764`, `c = 1.07`, `d = 1.561`. The cloud below thickens as more iterates land.
+
+<VizEmbed slug="fractal_dream_attractor" label="Fractal Dream" animateN />
+
+## The update rule
+
+Each new point comes only from the last one. No `dt`. The step Classical Chaos runs:
+
+<BlockMath math={'x_{n+1} = \\sin(b y_n) + c\\,\\sin(b x_n)'} />
+<BlockMath math={'y_{n+1} = \\sin(a x_n) + d\\,\\sin(a y_n)'} />
+
+```ts
+const nextX = Math.sin(b * y) + c * Math.sin(b * x)
+const nextY = Math.sin(a * x) + d * Math.sin(a * y)
+x = nextX
+y = nextY
+```
+
+Four real knobs: `a`, `b`, `c`, `d`. Crossed arguments do the work: `b` mixes into both sine terms that build `x`, `a` into both that build `y`. `c` and `d` scale the second sine on each line. About on the stage lists the limits as `[0, 3]` for all four.
+
+Clifford-style maps sit nearby as cousins. Those usually mix sine and cosine. Fractal Dream here is all sine, which for some params reads a bit more symmetric. No single famous discoverer to pin on this spelling; the canvas just runs the map above.
+
+## Full canvas
+
+On the [full Fractal Dream stage](/fractal_dream_attractor) twist `a`, `b`, `c`, `d` inside `[0, 3]` and watch the same seed rebuild into a different fold.
+
+<Callout to="/fractal_dream_attractor">
+	<strong>Goto full canvas</strong>
+	Nudge `a`, `b`, `c`, `d` in `[0, 3]` and watch the cloud reorganize from `(−2, −2)`.
+</Callout>

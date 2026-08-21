@@ -258,6 +258,8 @@ export function createComplexQuadraticPage(config: PageConfig) {
 		const { data } = useAppSelector((state) => state.WebSlice)
 		const navigate = useNavigate()
 		const [searchParams] = useSearchParams()
+		const embedBare =
+			isScreenshotMode() || new URLSearchParams(window.location.search).has('iframe')
 
 		const initialC = useMemo(() => {
 			if (!isJulia) return DEFAULT_JULIA_C
@@ -385,7 +387,7 @@ export function createComplexQuadraticPage(config: PageConfig) {
 					iterations={iterations}
 					juliaC={juliaC}
 					onReset={handleResetAll}
-					onPickJuliaC={isJulia ? undefined : handlePickJuliaC}
+					onPickJuliaC={isJulia || embedBare ? undefined : handlePickJuliaC}
 					exportName={kind}
 				/>
 			</div>

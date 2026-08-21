@@ -1,0 +1,50 @@
+export const meta = {
+	slug: 'gingerbread-man',
+	title: 'Gingerbread Man: absolute value, cookie silhouette',
+	tag: 'Attractors',
+	excerpt:
+		'Devaney’s Gingerbread Man is a fixed 2D map: absolute value folds the plane until a cookie silhouette piles up. Classical Chaos draws it from (−0.1, 0) with the classic formula locked.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'gingerbread_man',
+	featured: false,
+	order: 110,
+}
+
+
+Devaney’s Gingerbread Man is a tiny 2D map that somehow reads like a cookie: head, arms, that awkward stance. Robert L. Devaney popularized it (Physica D, 1984). Piecewise linear: almost a linear recurrence, except one absolute value that folds the plane. Classical Chaos starts at `(−0.1, 0)`. The classic map is fixed; there are no `a`/`b` knobs to retune the formula.
+
+The cloud below grows from that seed. Hue steps in chunks along the sequence (hsl-chunk coloring), so the pile stays varied instead of going flat.
+
+<VizEmbed slug="gingerbread_man" label="Gingerbread Man" animateN />
+
+## The fold
+
+Two lines:
+
+<BlockMath math={'x_{n+1} = 1 - y_n + |x_n|'} />
+<BlockMath math={'y_{n+1} = x_n'} />
+
+```ts
+const nextX = 1 - y + Math.abs(x)
+const nextY = x
+x = nextX
+y = nextY
+```
+
+Without the absolute value this would feel almost linear. The `|x|` is the nonlinearity: it folds the plane so points that went one way bounce into another branch. That fold is what lets a bounded, filled region pile up into the silhouette.
+
+The orbit sits offset from the origin, so the stage recenters the camera with a scale-and-offset framing. The cookie lands in the middle of the view instead of drifting off to one side.
+
+## What shows up
+
+Inside that filled region the dynamics get interesting. Literature notes hexagonal patches of periodic orbits (a period-6 interior hexagon and friends). Cookie shape and “chaos everywhere” are not the same sentence: some neighborhoods settle into cycles; the silhouette as a whole still feels alive when the cloud grows.
+
+## Full canvas
+
+On the [full Gingerbread Man stage](/gingerbread_man) sit with the longer view of the same fixed map from `(−0.1, 0)`.
+
+<Callout to="/gingerbread_man">
+	<strong>Goto full canvas</strong>
+	Watch the cookie cloud from `(−0.1, 0)`. Same two lines, formula locked.
+</Callout>
