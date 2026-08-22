@@ -163,6 +163,10 @@ func main() {
 		c.Set("Content-Type", "text/plain; charset=utf-8")
 		return c.SendString(robotsTxtBody())
 	})
+	app.Get("/llms.txt", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "text/plain; charset=utf-8")
+		return c.SendString(llmsTxtBody())
+	})
 	app.Get("/sitemap.xml", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "application/xml; charset=utf-8")
 		return c.SendString(sitemapXML())

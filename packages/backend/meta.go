@@ -250,3 +250,14 @@ func sitemapXML() string {
 func robotsTxtBody() string {
 	return "User-agent: *\nAllow: /\n\nSitemap: " + publicBase() + "/sitemap.xml\n"
 }
+
+func llmsTxtBody() string {
+	base := publicBase()
+	return "# Classical Chaos\n\n" +
+		"> Interactive sketches of classical dynamical systems — mathematical attractors in the browser.\n\n" +
+		"## Site\n\n" +
+		"- Home: " + base + "/\n" +
+		"- Blog: " + base + "/blog\n" +
+		"- Parent site: https://matf.dev/\n" +
+		"- Sitemap: " + base + "/sitemap.xml\n"
+}
