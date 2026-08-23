@@ -1,0 +1,47 @@
+export const meta = {
+	slug: 'peter-de-jong-3d',
+	title: 'Peter de Jong in 3D: six knobs, one more axis',
+	tag: 'Attractors',
+	excerpt:
+		'The 3D Peter de Jong attractor is a discrete sine–cosine map with six parameters. Classical Chaos draws the orbit as a rose-to-gold trail, separate from the flat four-knob de Jong cloud.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'peter_de_jong_attractor_3d',
+	featured: false,
+	order: 19,
+}
+
+
+The planar Peter de Jong map needs four numbers. Add a third coordinate and two more knobs and you get a different object: a discrete orbit that fills a volume instead of a sheet.
+
+Classical Chaos ports the archive 3D workshop as a progressive GPU line trail (same scrub contract as Lorenz), not a wrap buffer of points. Watch it grow in below.
+
+<VizEmbed slug="peter_de_jong_attractor_3d" label="Peter de Jong 3D" animateN />
+
+## The update rule
+
+Each step replaces `(x, y, z)` together from the previous state. No continuous `dt`. The map:
+
+<BlockMath math={'x\\prime = \\sin(a z) - \\cos(b x)'} />
+<BlockMath math={'y\\prime = \\sin(c x) - \\cos(d y)'} />
+<BlockMath math={'z\\prime = \\sin(e y) - \\cos(f z)'} />
+
+Six real knobs on the Params panel: `a` through `f`. The planar de Jong cousin stops at four knobs and a flat cloud. Here a third sine–cosine pair feeds `z`, so the orbit fills a volume.
+
+## Archive defaults
+
+On Classical Chaos the defaults match the [archive 3D sketch](https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Peter%20Dejong%20attractor): `a = 2.695`, `b = 1.72`, `c = 1.178`, `d = 0.311`, `e = -1`, `f = -1`, seed `(0, 0, 0)`, positions scaled ×50. Presets swap in other `(a…f)` tuples in `[-5, 5]`.
+
+## Trail length, not a ring buffer
+
+The old workshop wrote into a fixed particle array and wrapped when full. Here `n` is how much of the saved orbit is lit. Grow, scrub, or hold. Change any of `a`…`f` and the trail resets from the seed.
+
+```ts
+const next = peterDeJong3dTick(x, y, z, a, b, c, d, e, f)
+// store (x, y, z) * 50
+```
+
+<Callout to="/peter_de_jong_attractor_3d">
+	<strong>Goto full canvas</strong>
+	Scrub `n`, try presets, retune `a`–`f`, drag to rotate. Embed stays grow-in only.
+</Callout>
