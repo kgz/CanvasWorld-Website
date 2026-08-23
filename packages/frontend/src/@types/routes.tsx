@@ -14,6 +14,10 @@ import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
 import LorenzAttractor from '../pages/attractors/lorenz_attractor'
 import AizawaAttractor from '../pages/attractors/aizawa_attractor'
+import PolynomialAbs from '../pages/attractors/polynomial_abs'
+import PolynomialTypeA from '../pages/attractors/polynomial_type_a'
+import PolynomialTypeB from '../pages/attractors/polynomial_type_b'
+import PolynomialTypeC from '../pages/attractors/polynomial_type_c'
 import MandelbrotSet from '../pages/maps/mandelbrot_set'
 import JuliaSet from '../pages/maps/julia_set'
 import Brusselator from '../pages/misc/brusselator'
@@ -65,6 +69,10 @@ const components: Record<string, ComponentType> = {
 	ikeda_map: IkedaMap,
 	lorenz_attractor: LorenzAttractor,
 	aizawa_attractor: AizawaAttractor,
+	polynomial_abs: PolynomialAbs,
+	polynomial_type_a: PolynomialTypeA,
+	polynomial_type_b: PolynomialTypeB,
+	polynomial_type_c: PolynomialTypeC,
 	mandelbrot_set: MandelbrotSet,
 	julia_set: JuliaSet,
 	sierpinski_triangle: SierpinskiTriangle,

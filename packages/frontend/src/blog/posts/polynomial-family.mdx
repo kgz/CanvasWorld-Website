@@ -1,0 +1,73 @@
+export const meta = {
+	slug: 'polynomial-family',
+	title: 'Four polynomial maps from the old workshop',
+	tag: 'Attractors',
+	excerpt:
+		'Polynomial ABS and Types A–C: four related 3D discrete maps from the CanvasWorld archive, now live as cool-to-warm trails on Classical Chaos — absolute-value affine, three-knob Type A, six-knob Type B, and per-axis Type C.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 6,
+	thumbSlug: 'polynomial_type_a',
+	featured: true,
+	order: 6,
+}
+
+
+The old CanvasWorld workshop kept a small family of 3D polynomial maps side by side: an absolute-value variant and three “Type” cousins that share the same cyclic idea. Classical Chaos ports all four as GPU line trails you can scrub with transport `n`.
+
+Four live stages below. Pause a card when you want quiet. Open full when you want that map’s knobs — this page is for comparing silhouettes.
+
+<VizEmbedGrid>
+  <VizEmbed slug="polynomial_abs" label="ABS" particles={16000} />
+  <VizEmbed slug="polynomial_type_a" label="Type A" particles={16000} />
+  <VizEmbed slug="polynomial_type_b" label="Type B" particles={16000} />
+  <VizEmbed slug="polynomial_type_c" label="Type C" particles={16000} />
+</VizEmbedGrid>
+
+## Map, not flow
+
+These are discrete maps. Each new point comes only from the last one — no Euler step, no `dt`. Start at the seed, iterate, and the pile of points is the attractor. Classical Chaos draws that orbit as a growing line trail (same transport contract as Lorenz and Aizawa).
+
+## Type A — three knobs
+
+The smallest of the set. Archive defaults `a=1.586`, `b=1.124`, `c=0.281`, seed `(0,0,0)`:
+
+<BlockMath math={'x_{n+1} = a + y_n - z_n y_n'} />
+<BlockMath math={'y_{n+1} = b + z_n - x_n z_n'} />
+<BlockMath math={'z_{n+1} = c + x_n - y_n x_n'} />
+
+```ts
+const next = polynomialTypeATick(x, y, z, a, b, c)
+```
+
+## Type B — six knobs
+
+Same cyclic coupling, but each product term gets its own scale. Archive `index.js` sits near `a=1.6691`, `b=1.0405`, `c=0.2818`, `d=0.2818`, `e=0`, `f=1.1055`. A second preset keeps the README decimals.
+
+<BlockMath math={'x_{n+1} = a + y_n - z_n (b y_n)'} />
+<BlockMath math={'y_{n+1} = c + z_n - x_n (d z_n)'} />
+<BlockMath math={'z_{n+1} = e + x_n - y_n (f x_n)'} />
+
+## ABS — absolute values
+
+Each new coordinate is a linear mix of `x,y,z` and `|x|,|y|,|z|`. Seven coefficients per axis (`xa`…`zg`). The default preset matches the archive’s main script; a second preset comes from the alternate workshop file.
+
+<BlockMath math={'x_{n+1} = a_x + b_x x + c_x y + d_x z + e_x |x| + f_x |y| + g_x |z|'} />
+
+(and the same shape for `y` and `z` with their own coeffs)
+
+## Type C — quadratic per axis
+
+Six coefficients per axis (`xa`…`zf`). Each update is a quadratic in the current and next cyclic partner:
+
+<BlockMath math={'x_{n+1} = a_x + x(b_x + c_x x + d_x y) + y(e_x + f_x y)'} />
+
+with the same pattern cycling through `y` and `z`.
+
+## Looking at the cards
+
+All four are 3D trails from iterating a map. Cool→warm color walks the trail so the newest segment reads warmer. You are not scrubbing length or dragging the camera from these cards — open full for that.
+
+<Callout to="/polynomial_type_a">
+	<strong>Goto full canvas</strong>
+	Start with Type A’s three knobs, then jump to ABS / B / C from the gallery when you want more coefficients.
+</Callout>
