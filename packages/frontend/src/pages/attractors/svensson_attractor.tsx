@@ -32,7 +32,7 @@ const SvenssonAttractor = createAttractorPage({
 			<BlockMath math="a, b, c, d \\in [-3, 3]" />
 			<br />
 			<br />
-			Default parameters on Classical Chaos follow the archive: <InlineMath math="a = -3" />, <InlineMath math="b = 3" />,{' '}
+			Default parameters on Classical Chaos sit at <InlineMath math="a = -3" />, <InlineMath math="b = 3" />,{' '}
 			<InlineMath math="c = 3" />, <InlineMath math="d = 3" />, seed <InlineMath math="(0, 0)" />.
 		</>
 	),
