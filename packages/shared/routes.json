@@ -232,5 +232,14 @@
     "thumbnail": "/chaos/icons/boy_surface.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "clebsch_cubic",
+    "title": "Clebsch Cubic",
+    "category": "misc",
+    "description": "Clebsch’s diagonal cubic as a lit triangle mesh: the smooth degree-3 surface where all 27 lines are real.",
+    "thumbnail": "/chaos/icons/clebsch_cubic.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]

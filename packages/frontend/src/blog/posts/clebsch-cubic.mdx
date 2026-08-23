@@ -1,0 +1,50 @@
+export const meta = {
+	slug: 'clebsch-cubic',
+	title: 'Clebsch cubic: why all 27 lines show up',
+	tag: 'Surfaces',
+	excerpt:
+		'Alfred Clebsch’s 1871 diagonal cubic is the smooth degree-3 surface where all 27 of the classic lines are real. Classical Chaos draws the Hunt affine chart as a lit triangle mesh.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'clebsch_cubic',
+	featured: false,
+	order: 165,
+}
+
+
+Smooth cubic surfaces over the complex numbers always carry 27 lines. On a random real cubic, most of those lines hide in complex space. Clebsch’s diagonal cubic (1871) is the famous exception: every one of the 27 is real, and ten points (Eckardt points) are where three lines meet at once.
+
+Classical Chaos marches the Hunt / Nordstrand affine equation to a lit triangle mesh. Color follows the sample box; the surface grows in as transport <code>n</code> reveals more triangles.
+
+<VizEmbed slug="clebsch_cubic" label="Clebsch cubic" animateN />
+
+## The affine field
+
+In ordinary <InlineMath math={'x,y,z'} /> the zero set is
+
+<BlockMath
+	math={
+		'81(x^{3}+y^{3}+z^{3})-189(x^{2}y+x^{2}z+xy^{2}+xz^{2}+y^{2}z+yz^{2})+54xyz+126(xy+xz+yz)-9(x^{2}+y^{2}+z^{2})-9(x+y+z)+1=0'
+	}
+/>
+
+That polynomial is symmetric under permuting <InlineMath math={'x,y,z'} />, which is why the mesh has a three-fold look even before you spin it.
+
+## Same surface, projective form
+
+Dropping to a hyperplane in <InlineMath math={'\\mathbb{P}^{4}'} /> recovers the cleaner pair
+
+<BlockMath math={'x_{0}+x_{1}+x_{2}+x_{3}+x_{4}=0'} />
+
+<BlockMath math={'x_{0}^{3}+x_{1}^{3}+x_{2}^{3}+x_{3}^{3}+x_{4}^{3}=0'} />
+
+The affine chart above is what the mesh actually samples. The 27 lines live on the projective surface; this page does not draw them as overlays. You get the cubic shell itself.
+
+## How the mesh gets there
+
+Sample the field on a regular 3D grid, keep the zero isosurface as triangles, then light more index range over time so the shell fills in. On the [full Clebsch stage](/clebsch_cubic) there are no extra knobs: scrub how much of the mesh is lit and drag to rotate.
+
+<Callout to="/clebsch_cubic">
+	<strong>Goto full canvas</strong>
+	Watch the cubic grow in on the [full Clebsch stage](/clebsch_cubic), scrub transport <code>n</code>, and spin the lit mesh.
+</Callout>
