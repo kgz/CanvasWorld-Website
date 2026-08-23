@@ -182,7 +182,7 @@ Lorenz86Attractor.getDescription = () => (
 		a compact 3D cloud rather than twin lobes.
 		<br />
 		<br />
-		UI knobs <InlineMath math="a,b,f,g" /> match the archive coefficients; <code>d</code> is the Euler
+		UI knobs <InlineMath math="a,b,f,g" /> set the atmosphere coefficients; <code>d</code> is the Euler
 		step.
 		<br />
 		<br />
@@ -191,10 +191,10 @@ Lorenz86Attractor.getDescription = () => (
 		<BlockMath math={'\\dot{y} = -y + x y - f x z + g'} />
 		<BlockMath math={'\\dot{z} = -z + f x y + x z'} />
 		<br />
-		Archive defaults: <InlineMath math="a=1.111,\ b=4.494,\ f=1.479,\ g=0.44" />,{' '}
+		Defaults: <InlineMath math="a=1.111,\ b=4.494,\ f=1.479,\ g=0.44" />,{' '}
 		<InlineMath math="d=0.13" />, seed <InlineMath math="(0,0,0)" />. Drawn as a point cloud with
-		archive-style HSL from <InlineMath math="\\sin(xy)" />. Transport <code>n</code> scrubs count.
-		Classic Lorenz stays at <code>/lorenz_attractor</code>.
+		HSL from <InlineMath math="\\sin(xy)" />. Transport <code>n</code> scrubs count.
+		The classic 1963 butterfly is a separate stage.
 	</>
 )
 
