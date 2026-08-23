@@ -58,7 +58,7 @@ const Lorenz86Attractor = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 400,
+		baseSpeed: 360,
 	})
 	const trailRef = useRef<TrailState>(seedTrail())
 
@@ -69,13 +69,12 @@ const Lorenz86Attractor = () => {
 				b: { initialValue: 4.494, min: 4, max: 5, step: 0.0001 },
 				f: { initialValue: 1.479, min: 0, max: 1.5, step: 0.0001 },
 				g: { initialValue: 0.44, min: 0, max: 2, step: 0.0001 },
-				// Archive used 0.13 (chunky); smaller default for a readable line trail.
-				d: { initialValue: 0.015, min: 0.002, max: 0.15, step: 0.00001 },
+				d: { initialValue: 0.13, min: 0.05, max: 0.15, step: 0.00001 },
 			},
 			examples: [
-				{ a: 1.111, b: 4.494, f: 1.479, g: 0.44, d: 0.015 },
 				{ a: 1.111, b: 4.494, f: 1.479, g: 0.44, d: 0.13 },
-				{ a: 0.95, b: 4.2, f: 1.2, g: 0.6, d: 0.02 },
+				{ a: 0.95, b: 4.2, f: 1.2, g: 0.6, d: 0.12 },
+				{ a: 1.25, b: 4.7, f: 1.1, g: 0.35, d: 0.14 },
 			],
 		}),
 		[],
@@ -137,11 +136,11 @@ const Lorenz86Attractor = () => {
 		}
 
 		let { x, y, z, computed } = trail
-		// State ~O(1); scale + center so the cloud fills the frame (not a corner speck).
-		const scale = 22
-		const ox = -7.2
-		const oy = 21.1
-		const oz = 4.2
+		// Archive scale was 50; ~16 + center fills the frame without sitting inside the cloud.
+		const scale = 16
+		const ox = -3.0
+		const oy = 12.5
+		const oz = 6.3
 
 		while (computed < particlesToDraw) {
 			const next = lorenz86Tick(x, y, z, a, b, f, g, d)
@@ -174,13 +173,13 @@ const Lorenz86Attractor = () => {
 	return (
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
-			numParticles={resolveParticleCount(40_000)}
+			numParticles={resolveParticleCount(25_000)}
 			tick={tick}
 			drawMode="line"
 			lineOpacity={isScreenshotMode() ? 1 : 0.55}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.25}
-			cameraPosition={[0, 0, 105]}
+			cameraPosition={[0, 0, 95]}
 		/>
 	)
 }
@@ -201,11 +200,10 @@ Lorenz86Attractor.getDescription = () => (
 		<BlockMath math={'\\dot{y} = -y + x y - f x z + g'} />
 		<BlockMath math={'\\dot{z} = -z + f x y + x z'} />
 		<br />
-		Archive coeffs: <InlineMath math="a=1.111,\ b=4.494,\ f=1.479,\ g=0.44" />, seed{' '}
-		<InlineMath math="(0,0,0)" />. Default Euler step <InlineMath math="d=0.015" /> (smooth trail);
-		preset <code>d=0.13</code> matches the archive’s chunkier step. Cool→warm GPU line trail;
-		transport <code>n</code> scrubs length. Classic Lorenz stays at{' '}
-		<code>/lorenz_attractor</code>.
+		Archive defaults: <InlineMath math="a=1.111,\ b=4.494,\ f=1.479,\ g=0.44" />,{' '}
+		<InlineMath math="d=0.13" />, seed <InlineMath math="(0,0,0)" />. Cool→warm GPU line trail
+		(archive drew points; the step size keeps the stroke angular). Transport <code>n</code> scrubs
+		length. Classic Lorenz stays at <code>/lorenz_attractor</code>.
 	</>
 )
 

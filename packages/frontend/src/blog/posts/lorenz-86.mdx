@@ -26,7 +26,7 @@ Four real coefficients plus step size. On the Params panel they are `a`, `b`, `f
 <BlockMath math={'\\dot{y} = -y + x y - f x z + g'} />
 <BlockMath math={'\\dot{z} = -z + f x y + x z'} />
 
-Defaults match the [archive workshop](https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Lorenz%2086) coeffs: `a=1.111`, `b=4.494`, `f=1.479`, `g=0.44`, seed `(0, 0, 0)`. Stage default step is `d=0.015` so the trail reads smooth; an examples preset restores the archive’s chunkier `d=0.13`. The constant drive terms (`a b` in \(x\), `g` in \(y\)) push the state off the origin immediately.
+Defaults match the [archive workshop](https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Lorenz%2086): `a=1.111`, `b=4.494`, `f=1.479`, `g=0.44`, `d=0.13`, seed `(0, 0, 0)`. The constant drive terms (`a b` in \(x\), `g` in \(y\)) push the state off the origin immediately. The Euler step is chunky on purpose — same as the archive — so the trail stays angular rather than silky.
 
 ## Why it is not the butterfly
 
