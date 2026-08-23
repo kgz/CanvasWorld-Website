@@ -126,6 +126,15 @@
     "active": true
   },
   {
+    "slug": "lorenz_86",
+    "title": "Lorenz 86 Attractor",
+    "category": "attractor",
+    "description": "3D Lorenz 86 ODE trail (cool→warm): mid-1980s low-order atmosphere model, distinct from classic 1963 Lorenz. Knobs a,b,f,g and step d; archive defaults a=1.111, b=4.494, f=1.479, g=0.44, d=0.13.",
+    "thumbnail": "/chaos/icons/lorenz_86.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "aizawa_attractor",
     "title": "Aizawa Attractor",
     "category": "attractor",

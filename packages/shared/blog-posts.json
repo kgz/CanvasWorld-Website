@@ -6,13 +6,23 @@
 	},
 	"posts": [
 		{
+			"slug": "lorenz-86",
+			"title": "Lorenz 86: the other Lorenz cloud",
+			"excerpt": "Lorenz 86 is a mid-1980s atmosphere ODE set on Classical Chaos: a folded 3D cloud, not the 1963 butterfly, with archive knobs a, b, f, g and step d.",
+			"tag": "Attractors",
+			"thumbSlug": "lorenz_86",
+			"order": 4,
+			"featured": true,
+			"bodyHtml": "<p>Edward Lorenz’s famous butterfly is the 1963 convection model. Lorenz 86 is a later low-order atmosphere system: five knobs, a compact folded cloud, and no twin lobes. Same name on the label, different ODEs.</p>\n<p>Classical Chaos draws it like the other 3D stages: Euler steps into a GPU line trail. The embed below only grows the trail in. Scrubbing length, drag-to-rotate, and the coefficients live on the full canvas. Classic Lorenz stays at <code>/lorenz_attractor</code>.</p>\n<h2>The ODEs</h2>\n<p>Four real coefficients plus step size. On the Params panel they are <code>a</code>, <code>b</code>, <code>f</code>, <code>g</code>, and <code>d</code> (the Euler step).</p>\n<p>Defaults match the <a href=\"https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Lorenz%2086\">archive workshop</a>: <code>a=1.111</code>, <code>b=4.494</code>, <code>f=1.479</code>, <code>g=0.44</code>, <code>d=0.13</code>, seed <code>(0, 0, 0)</code>. The constant drive terms (<code>a b</code> in \\(x\\), <code>g</code> in \\(y\\)) push the state off the origin immediately.</p>\n<h2>Why it is not the butterfly</h2>\n<p>The 1963 system stretches and folds into two lobes. Here the quadratic terms in \\(x\\) and the bilinear coupling through \\(f\\) keep a single tangled cloud. Nudge <code>f</code> and the twist changes. Nudge <code>a</code>/<code>b</code> and the overall scale of the drive shifts. Nothing is a mesh; it is only the orbit you integrate.</p>\n<h2>Trail, not a wrap buffer</h2>\n<p>The old workshop wrote points into a ring buffer and wrapped. Here <code>n</code> is trail length: grow, scrub, or hold, same contract as Lorenz and Aizawa. Change any of <code>a</code>, <code>b</code>, <code>f</code>, <code>g</code>, or <code>d</code> and the trail resets from the seed.</p>\n<pre><code>const next = lorenz86Tick(x, y, z, a, b, f, g, d)\n// archive rotated the cloud by π/2 about z</code></pre>"
+		},
+		{
 			"slug": "aizawa-funnel",
 			"title": "Aizawa’s round shell with a hole through it",
 			"excerpt": "The Aizawa attractor fills a ball-like shell with a funnel down the middle: six ODE knobs and a cool-to-warm trail on Classical Chaos, ported from the old CanvasWorld workshop.",
 			"tag": "Attractors",
 			"thumbSlug": "aizawa_attractor",
 			"order": 5,
-			"featured": true,
+			"featured": false,
 			"bodyHtml": "<p>Yoji Aizawa’s system is one of those 3D chaos demos that reads as a shape before it reads as equations: a round cloud with a clear tunnel through the axis. Lorenz gets the butterfly. Aizawa gets the punctured ball.</p>\n<p>Classical Chaos draws it the same way as the Lorenz stage: Euler steps into a GPU line trail. The embed below only grows the trail in. Scrubbing length, drag-to-rotate, and the six coefficients live on the full canvas.</p>\n<h2>The ODEs</h2>\n<p>Six real parameters. On the Params panel they are knobs <code>a</code> through <code>f</code>, plus step size <code>dt</code>.</p>\n<p>Defaults on Classical Chaos (close to the <a href=\"https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Aizawa%20Attractor)\">archive workshop</a>: <code>a=0.95</code>, <code>b=0.7</code>, <code>c=0.6</code>, <code>d=3.5</code>, <code>e=0.25</code>, <code>f=0.1</code>, <code>dt=0.01</code>, seed <code>(0.1, 0, 0)</code>. A second preset keeps the archive’s longer decimals.</p>\n<h2>Why it looks like a funnel</h2>\n<p>The \\(x\\) and \\(y\\) equations rotate and stretch in the horizontal plane as \\(z\\) changes. The \\(z\\) equation has a cubic restoring term and a radial factor \\((x^2+y^2)\\), so trajectories spend time on a thick shell and leave a quieter axis. That empty corridor is the “funnel” you see when the trail builds out.</p>\n<p>Change <code>d</code> and the swirl tightens or loosens. Nudge <code>a</code>/<code>c</code> and the vertical thickness shifts. Nothing here is a mesh; it is only the orbit you integrate.</p>\n<h2>Trail, not a wrap buffer</h2>\n<p>The old workshop wrote points into a ring buffer and wrapped. Here <code>n</code> is trail length: grow, scrub, or hold, same contract as Lorenz. Change any of <code>a</code>…<code>f</code> or <code>dt</code> and the trail resets from the seed.</p>\n<pre><code>const next = aizawaTick(x, y, z, a, b, c, d, e, f, dt)\n// store (x, z, y) scaled so the funnel stands upright</code></pre>"
 		},
 		{
