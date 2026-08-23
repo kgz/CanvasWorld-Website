@@ -277,5 +277,14 @@
     "thumbnail": "/chaos/icons/boy_surface.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "hopf_fibration",
+    "title": "Hopf Fibration",
+    "category": "misc",
+    "description": "Stereographic Hopf fibers: linked circles from the map S³ → S². Morph fiber count and stereo strength.",
+    "thumbnail": "/chaos/icons/hopf_fibration.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
