@@ -8,6 +8,7 @@ import { useMatomo } from '@datapunt/matomo-tracker-react'
 import Index from './index-new'
 import 'katex/dist/katex.min.css'
 import { AnimationProvider, useAnimation } from '../context/AnimationContext'
+import { postsForVizSlug } from '../blog/registry'
 import styles from './canvasChrome.module.css'
 
 const FONT_HREF =
@@ -216,6 +217,8 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 
 	const hasParams = Boolean(datData && Object.keys(datData.options).length > 0)
 	const hasExamples = Boolean(datData.examples && datData.examples.length > 0)
+	const relatedNotes = postsForVizSlug(route.slug)
+	const primaryNote = relatedNotes[0]
 
 	if (bareStage) {
 		return (
@@ -243,6 +246,29 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 				<div className={styles.topbarSpacer} />
 
 				<div className={styles.topbarActions}>
+					{primaryNote ? (
+						<Link
+							className={styles.chromeBtn}
+							to={`/blog/${primaryNote.slug}`}
+							aria-label={`Notebook: ${primaryNote.meta.title}`}
+						>
+							<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+								<path
+									d="M3.5 2.5h7.5A1.5 1.5 0 0 1 12.5 4v9.5H3.5v-11Z"
+									stroke="currentColor"
+									strokeWidth="1.3"
+								/>
+								<path d="M3.5 2.5A1.5 1.5 0 0 0 2 4v9.5" stroke="currentColor" strokeWidth="1.3" />
+								<path
+									d="M6 5.5h5M6 8h5M6 10.5h3.5"
+									stroke="currentColor"
+									strokeWidth="1.3"
+									strokeLinecap="round"
+								/>
+							</svg>
+							<span className={styles.chromeBtnLabel}>Note</span>
+						</Link>
+					) : null}
 					<button
 						type="button"
 						className={styles.chromeBtn}
@@ -370,6 +396,22 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 								</ul>
 							</section>
 						)}
+
+						{relatedNotes.length > 1 ? (
+							<section className={styles.panelSection}>
+								<h2 className={styles.panelSectionTitle}>Notebook</h2>
+								<ul className={styles.exploreList}>
+									{relatedNotes.map((post) => (
+										<li key={post.slug}>
+											<Link className={styles.exploreItem} to={`/blog/${post.slug}`}>
+												{post.meta.title}
+												<span className={styles.exploreItemKind}>{post.meta.tag}</span>
+											</Link>
+										</li>
+									))}
+								</ul>
+							</section>
+						) : null}
 
 						<section className={styles.panelSection}>
 							<h2 className={styles.panelSectionTitle}>About</h2>

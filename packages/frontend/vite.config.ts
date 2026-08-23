@@ -1,7 +1,41 @@
 import mdx from '@mdx-js/rollup'
-import react from '@vitejs/plugin-react'
+import fs from 'fs'
 import path from 'path'
+import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+
+const MDX_SOURCES_ID = 'virtual:mdx-post-sources'
+const MDX_SOURCES_RESOLVED = '\0' + MDX_SOURCES_ID
+
+function mdxPostSourcesPlugin() {
+	const postsDir = path.resolve(__dirname, 'src/blog/posts')
+
+	function loadSources() {
+		const files = fs.readdirSync(postsDir).filter((file) => file.endsWith('.mdx'))
+		const map: Record<string, string> = {}
+		for (const file of files) {
+			const slug = file.replace(/\.mdx$/, '')
+			map[slug] = fs.readFileSync(path.join(postsDir, file), 'utf8')
+		}
+		return `export default ${JSON.stringify(map)}`
+	}
+
+	return {
+		name: 'mdx-post-sources',
+		resolveId(id: string) {
+			if (id === MDX_SOURCES_ID) {
+				return MDX_SOURCES_RESOLVED
+			}
+			return undefined
+		},
+		load(id: string) {
+			if (id === MDX_SOURCES_RESOLVED) {
+				return loadSources()
+			}
+			return undefined
+		},
+	}
+}
 
 export default defineConfig({
 	// Production is mounted at https://matf.dev/chaos (Traefik PathPrefix + strip).
@@ -10,6 +44,7 @@ export default defineConfig({
 		postcss: './postcss.config.js',
 	},
 	plugins: [
+		mdxPostSourcesPlugin(),
 		{
 			enforce: 'pre',
 			...mdx({ providerImportSource: '@mdx-js/react' }),

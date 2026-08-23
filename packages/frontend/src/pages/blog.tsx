@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { posts } from '../blog/registry'
 import { formatPostMeta, type PostMeta } from '../blog/types'
+import { ParentSiteLink, SiteFooter } from '../chrome/ParentSiteLink'
 import styles from './blog.module.css'
 
 const FONT_HREF =
@@ -89,6 +90,7 @@ function Blog() {
 							Notebook
 						</Link>
 						<Link to="/#about">About</Link>
+						<ParentSiteLink />
 					</nav>
 				</div>
 			</header>
@@ -183,9 +185,7 @@ function Blog() {
 				)}
 			</main>
 
-			<footer className={styles.siteFooter} id="about">
-				<p>Interactive sketches of classical dynamical systems.</p>
-			</footer>
+			<SiteFooter className={styles.siteFooter} aboutId="about" />
 		</div>
 	)
 }
