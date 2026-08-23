@@ -367,5 +367,14 @@
     "thumbnail": "/chaos/icons/polynomial_type_c.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "perlin_noise",
+    "title": "Perlin Noise",
+    "category": "misc",
+    "description": "Ken Perlin’s improved 2D gradient noise as a GPU field. Morph scale, octaves (fBm), and drift speed; hue from the noise value.",
+    "thumbnail": "/chaos/icons/perlin_noise.png",
+    "renderMode": "shader",
+    "active": true
   }
 ]
