@@ -21,7 +21,7 @@
     "slug": "brusselator",
     "title": "Brusselator (ODE)",
     "category": "map",
-    "description": "Well-mixed Brusselator ODEs drawn as a phase-orbit trail (Euler step): dx/dt = a-(b+1)x+x^2 y, dy/dt = bx-x^2 y. Not a spatial reaction–diffusion field.",
+    "description": "Well-mixed Brusselator ODEs drawn as a phase-orbit trail (Euler step): dx/dt = a-(b+1)x+x^2 y, dy/dt = bx-x^2 y. Not a spatial reaction\u2013diffusion field.",
     "thumbnail": "/chaos/icons/brusselator.png",
     "renderMode": "webgl",
     "active": true
@@ -48,7 +48,7 @@
     "slug": "gumowski-mira_attractor",
     "title": "Gumowski-Mira Attractor",
     "category": "attractor",
-    "description": "Gumowski–Mira attractor: x' = y + a(1-b y²)y + G(x,μ), y' = -x + G(x',μ), with G(x,μ)=μx + 2(1-μ)x²/(1+x²).",
+    "description": "Gumowski\u2013Mira attractor: x' = y + a(1-b y\u00b2)y + G(x,\u03bc), y' = -x + G(x',\u03bc), with G(x,\u03bc)=\u03bcx + 2(1-\u03bc)x\u00b2/(1+x\u00b2).",
     "thumbnail": "/chaos/icons/gumowski-mira_attractor.png",
     "renderMode": "webgl",
     "active": true
@@ -57,7 +57,7 @@
     "slug": "henon_map",
     "title": "Henon Map",
     "category": "map",
-    "description": "Classic Hénon map (1976): x' = 1 - a x² + y, y' = b x. Defaults a=1.4, b=0.3.",
+    "description": "Classic H\u00e9non map (1976): x' = 1 - a x\u00b2 + y, y' = b x. Defaults a=1.4, b=0.3.",
     "thumbnail": "/chaos/icons/henon_map.png",
     "renderMode": "webgl",
     "active": true
@@ -111,7 +111,7 @@
     "slug": "ikeda_map",
     "title": "Ikeda Map",
     "category": "map",
-    "description": "Ikeda map (param a): f = 0.4 - 6/(1+x²+y²), x' = 1 + a(x cos f − y sin f), y' = a(x sin f + y cos f).",
+    "description": "Ikeda map (param a): f = 0.4 - 6/(1+x\u00b2+y\u00b2), x' = 1 + a(x cos f \u2212 y sin f), y' = a(x sin f + y cos f).",
     "thumbnail": "/chaos/icons/ikeda_map.png",
     "renderMode": "webgl",
     "active": true
@@ -120,8 +120,17 @@
     "slug": "lorenz_attractor",
     "title": "Lorenz Attractor",
     "category": "attractor",
-    "description": "Classic 3D Lorenz system rendered as a GPU line trail (green→white): dx/dt = σ(y-x), dy/dt = x(ρ-z)-y, dz/dt = xy-βz with σ=10, ρ=28, β=8/3.",
+    "description": "Classic 3D Lorenz system rendered as a GPU line trail (green\u2192white): dx/dt = \u03c3(y-x), dy/dt = x(\u03c1-z)-y, dz/dt = xy-\u03b2z with \u03c3=10, \u03c1=28, \u03b2=8/3.",
     "thumbnail": "/chaos/icons/lorenz_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "lorenz_86",
+    "title": "Lorenz 86 Attractor",
+    "category": "attractor",
+    "description": "3D Lorenz 86 point cloud: mid-1980s low-order atmosphere model, distinct from classic 1963 Lorenz. Knobs a, b, f, g and step d; defaults a=1.111, b=4.494, f=1.479, g=0.44, d=0.13.",
+    "thumbnail": "/chaos/icons/lorenz_86.png",
     "renderMode": "webgl",
     "active": true
   },
@@ -129,7 +138,7 @@
     "slug": "aizawa_attractor",
     "title": "Aizawa Attractor",
     "category": "attractor",
-    "description": "3D Aizawa ODE trail (cool→warm): round shell with a funnel through the axis. Knobs a–f and dt; archive-style defaults a=0.95, b=0.7, c=0.6, d=3.5, e=0.25, f=0.1, dt=0.01.",
+    "description": "3D Aizawa ODE trail (cool\u2192warm): round shell with a funnel through the axis. Knobs a\u2013f and dt; archive-style defaults a=0.95, b=0.7, c=0.6, d=3.5, e=0.25, f=0.1, dt=0.01.",
     "thumbnail": "/chaos/icons/aizawa_attractor.png",
     "renderMode": "webgl",
     "active": true
@@ -147,25 +156,25 @@
     "slug": "julia_set",
     "title": "Julia Set",
     "category": "fractal",
-    "description": "Julia sets fix a complex constant c and iterate z_{n+1} = z_n^2 + c over starting points z₀. Each c yields a different connected or dusty fractal.",
+    "description": "Julia sets fix a complex constant c and iterate z_{n+1} = z_n^2 + c over starting points z\u2080. Each c yields a different connected or dusty fractal.",
     "thumbnail": "/chaos/icons/julia_set.png",
     "renderMode": "shader",
     "active": true
   },
   {
     "slug": "sierpinski_triangle",
-    "title": "Sierpiński Triangle",
+    "title": "Sierpi\u0144ski Triangle",
     "category": "fractal",
-    "description": "GPU Sierpiński gasket with scroll-zoom and drag-pan. Each pixel tests barycentric membership through recursive corner remaps until a void or max depth. Depth is screen-capped to avoid sparkles.",
+    "description": "GPU Sierpi\u0144ski gasket with scroll-zoom and drag-pan. Each pixel tests barycentric membership through recursive corner remaps until a void or max depth. Depth is screen-capped to avoid sparkles.",
     "thumbnail": "/chaos/icons/sierpinski_triangle.png",
     "renderMode": "shader",
     "active": true
   },
   {
     "slug": "calabi_yau",
-    "title": "Calabi–Yau Manifold",
+    "title": "Calabi\u2013Yau Manifold",
     "category": "misc",
-    "description": "Hanson 3D projection of a 2-real slice of the Fermat quintic as a particle wire. Morph degree n and projection angle a; not the full 6-real Calabi–Yau 3-fold.",
+    "description": "Hanson 3D projection of a 2-real slice of the Fermat quintic as a particle wire. Morph degree n and projection angle a; not the full 6-real Calabi\u2013Yau 3-fold.",
     "thumbnail": "/chaos/icons/calabi_yau.png",
     "renderMode": "webgl",
     "active": true
@@ -174,7 +183,7 @@
     "slug": "gyroid",
     "title": "Gyroid",
     "category": "misc",
-    "description": "Schoen gyroid as a particle wire: triply periodic minimal surface from sin x cos y + sin y cos z + sin z cos x = t on a 2π cell.",
+    "description": "Schoen gyroid as a particle wire: triply periodic minimal surface from sin x cos y + sin y cos z + sin z cos x = t on a 2\u03c0 cell.",
     "thumbnail": "/chaos/icons/gyroid.png",
     "renderMode": "webgl",
     "active": true
@@ -183,7 +192,7 @@
     "slug": "barth_sextic",
     "title": "Barth Sextic",
     "category": "misc",
-    "description": "Barth’s degree-6 icosahedral surface as a particle wire. Morph tau (golden lattice), radius (sphere term), mix (spikes vs shell).",
+    "description": "Barth\u2019s degree-6 icosahedral surface as a particle wire. Morph tau (golden lattice), radius (sphere term), mix (spikes vs shell).",
     "thumbnail": "/chaos/icons/barth_sextic.png",
     "renderMode": "webgl",
     "active": true
@@ -201,7 +210,7 @@
     "slug": "dini_surface",
     "title": "Dini's Surface",
     "category": "misc",
-    "description": "Dini’s surface: a pseudospherical helicoid (twisted tractrix). UV isoline particle wire with radius a and twist b.",
+    "description": "Dini\u2019s surface: a pseudospherical helicoid (twisted tractrix). UV isoline particle wire with radius a and twist b.",
     "thumbnail": "/chaos/icons/dini_surface.png",
     "renderMode": "webgl",
     "active": true
@@ -210,7 +219,7 @@
     "slug": "roman_surface",
     "title": "Roman Surface",
     "category": "misc",
-    "description": "Steiner’s Roman surface: RP² immersion as a UV isoline particle wire. Morph squash stretches z before normalize.",
+    "description": "Steiner\u2019s Roman surface: RP\u00b2 immersion as a UV isoline particle wire. Morph squash stretches z before normalize.",
     "thumbnail": "/chaos/icons/roman_surface.png",
     "renderMode": "webgl",
     "active": true
@@ -219,7 +228,7 @@
     "slug": "enneper_surface",
     "title": "Enneper Surface",
     "category": "misc",
-    "description": "Enneper’s minimal surface as a UV isoline particle wire. Span sets |u|,|v| so the self-intersections read.",
+    "description": "Enneper\u2019s minimal surface as a UV isoline particle wire. Span sets |u|,|v| so the self-intersections read.",
     "thumbnail": "/chaos/icons/enneper_surface.png",
     "renderMode": "webgl",
     "active": true
@@ -228,7 +237,7 @@
     "slug": "boy_surface",
     "title": "Boy's Surface",
     "category": "misc",
-    "description": "Immersion of RP² in R³ as a polar isoline wire. Morph k: Roman→Apéry Boy; bryant: Apéry→Bryant–Kusner three-balls.",
+    "description": "Immersion of RP\u00b2 in R\u00b3 as a polar isoline wire. Morph k: Roman\u2192Ap\u00e9ry Boy; bryant: Ap\u00e9ry\u2192Bryant\u2013Kusner three-balls.",
     "thumbnail": "/chaos/icons/boy_surface.png",
     "renderMode": "webgl",
     "active": true

@@ -52,7 +52,10 @@ async function captureSlug(page, slug) {
 	// on 1px line strips is weak; gallery cards look blotchy without this.
 	// Optional solidify: crush AA fringes to a flat stroke color (soft translucent
 	// trails wash gray when downscaled).
-	const solidify = slug === 'lorenz_attractor' ? { r: 102, g: 255, b: 224 } : null
+	const solidify =
+		slug === 'lorenz_attractor'
+			? { r: 102, g: 255, b: 224 }
+			: null
 	const dataUrl = await page.evaluate((flat) => {
 		const src = document.querySelector('#cw-viz-canvas')
 		if (!(src instanceof HTMLCanvasElement)) {
