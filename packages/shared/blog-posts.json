@@ -6,13 +6,23 @@
 	},
 	"posts": [
 		{
+			"slug": "bedhead-3d",
+			"title": "Bedhead in 3D: the same map, plus depth",
+			"excerpt": "3D Bedhead keeps the 2D discrete map for x and y, then adds a z step so iterates fill a warm amber volume. Classical Chaos ports the archive workshop defaults a=0.13, b=0.37.",
+			"tag": "Attractors",
+			"thumbSlug": "bedhead_attractor_3d",
+			"order": 4,
+			"featured": true,
+			"bodyHtml": "<p>Bedhead on Classical Chaos already has a flat mint stage. The archive workshop kept the same <code>x</code> and <code>y</code> updates and invented a third coordinate so the pile has thickness. That 3D map is its own canvas now: warm amber points, not a continuous ODE trail.</p>\n<p>Defaults match the old workshop: <code>a=0.13</code>, <code>b=0.37</code>, seed <code>(0, 0, 0)</code>. The embed below only grows how many iterates are shown.</p>\n<h2>Three discrete steps</h2>\n<p>Still no <code>dt</code>. Each sample is the next point on the map:</p>\n<p>The first two lines are the 2D Bedhead rule. The third was added for depth: <code>z</code> leans on the current <code>y</code> and the product <code>yx</code>, still divided by <code>b</code>.</p>\n<pre><code>const next = bedheadAttractor3dTick(x, y, z, a, b)\n// store (x, y, z) scaled for the stage camera</code></pre>\n<p><code>b</code> is a denominator, so the stage floors it away from zero. Extreme samples get clamped so a bad pair does not blow the camera.</p>\n<h2>Point cloud, not a butterfly trail</h2>\n<p>Lorenz and Aizawa integrate rates into a line. Bedhead 3D drops each iterate as a point, like the flat Bedhead cloud, then lets transport <code>n</code> decide how far the pile has grown. Change <code>a</code> or <code>b</code> and the cloud rebuilds from the origin.</p>\n<p>The 2D notebook and stage stay put at <a href=\"/bedhead_attractor\">Bedhead</a>. This page is the volume upgrade with its own slug.</p>"
+		},
+		{
 			"slug": "aizawa-funnel",
 			"title": "Aizawa’s round shell with a hole through it",
 			"excerpt": "The Aizawa attractor fills a ball-like shell with a funnel down the middle: six ODE knobs and a cool-to-warm trail on Classical Chaos, ported from the old CanvasWorld workshop.",
 			"tag": "Attractors",
 			"thumbSlug": "aizawa_attractor",
 			"order": 5,
-			"featured": true,
+			"featured": false,
 			"bodyHtml": "<p>Yoji Aizawa’s system is one of those 3D chaos demos that reads as a shape before it reads as equations: a round cloud with a clear tunnel through the axis. Lorenz gets the butterfly. Aizawa gets the punctured ball.</p>\n<p>Classical Chaos draws it the same way as the Lorenz stage: Euler steps into a GPU line trail. The embed below only grows the trail in. Scrubbing length, drag-to-rotate, and the six coefficients live on the full canvas.</p>\n<h2>The ODEs</h2>\n<p>Six real parameters. On the Params panel they are knobs <code>a</code> through <code>f</code>, plus step size <code>dt</code>.</p>\n<p>Defaults on Classical Chaos (close to the <a href=\"https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Aizawa%20Attractor)\">archive workshop</a>: <code>a=0.95</code>, <code>b=0.7</code>, <code>c=0.6</code>, <code>d=3.5</code>, <code>e=0.25</code>, <code>f=0.1</code>, <code>dt=0.01</code>, seed <code>(0.1, 0, 0)</code>. A second preset keeps the archive’s longer decimals.</p>\n<h2>Why it looks like a funnel</h2>\n<p>The \\(x\\) and \\(y\\) equations rotate and stretch in the horizontal plane as \\(z\\) changes. The \\(z\\) equation has a cubic restoring term and a radial factor \\((x^2+y^2)\\), so trajectories spend time on a thick shell and leave a quieter axis. That empty corridor is the “funnel” you see when the trail builds out.</p>\n<p>Change <code>d</code> and the swirl tightens or loosens. Nudge <code>a</code>/<code>c</code> and the vertical thickness shifts. Nothing here is a mesh; it is only the orbit you integrate.</p>\n<h2>Trail, not a wrap buffer</h2>\n<p>The old workshop wrote points into a ring buffer and wrapped. Here <code>n</code> is trail length: grow, scrub, or hold, same contract as Lorenz. Change any of <code>a</code>…<code>f</code> or <code>dt</code> and the trail resets from the seed.</p>\n<pre><code>const next = aizawaTick(x, y, z, a, b, c, d, e, f, dt)\n// store (x, z, y) scaled so the funnel stands upright</code></pre>"
 		},
 		{

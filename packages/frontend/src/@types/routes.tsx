@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import catalog from '@cw/routes'
 import BedheadAttractor from '../pages/attractors/bedhead_attractor'
+import BedheadAttractor3d from '../pages/attractors/bedhead_attractor_3d'
 import BogdanovMap from '../pages/maps/bogdanov_map'
 import CliffordAttractor from '../pages/attractors/clifford_attractor'
 import FractalDreamAttractor from '../pages/attractors/fractal_dream_attractor'
@@ -51,6 +52,7 @@ export type TRoutes = TRoute[]
 
 const components: Record<string, ComponentType> = {
 	bedhead_attractor: BedheadAttractor,
+	bedhead_attractor_3d: BedheadAttractor3d,
 	bogdanov_map: BogdanovMap,
 	brusselator: Brusselator,
 	clifford_attractor: CliffordAttractor,

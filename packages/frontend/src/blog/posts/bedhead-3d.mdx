@@ -1,0 +1,47 @@
+export const meta = {
+	slug: 'bedhead-3d',
+	title: 'Bedhead in 3D: the same map, plus depth',
+	tag: 'Attractors',
+	excerpt:
+		'3D Bedhead keeps the 2D discrete map for x and y, then adds a z step so iterates fill a warm amber volume. Classical Chaos ports the archive workshop defaults a=0.13, b=0.37.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 4,
+	featured: true,
+	thumbSlug: 'bedhead_attractor_3d',
+	order: 4,
+}
+
+
+Bedhead on Classical Chaos already has a flat mint stage. The archive workshop kept the same `x` and `y` updates and invented a third coordinate so the pile has thickness. That 3D map is its own canvas now: warm amber points, not a continuous ODE trail.
+
+Defaults match the old workshop: `a=0.13`, `b=0.37`, seed `(0, 0, 0)`. The embed below only grows how many iterates are shown.
+
+<VizEmbed slug="bedhead_attractor_3d" label="Bedhead 3D" animateN />
+
+## Three discrete steps
+
+Still no `dt`. Each sample is the next point on the map:
+
+<BlockMath math={'x_{n+1} = \\sin(x y / b)\\, y + \\cos(a x - y)'} />
+<BlockMath math={'y_{n+1} = x + \\sin(y)/b'} />
+<BlockMath math={'z_{n+1} = y + \\cos(y x)/b'} />
+
+The first two lines are the 2D Bedhead rule. The third was added for depth: `z` leans on the current `y` and the product `yx`, still divided by `b`.
+
+```ts
+const next = bedheadAttractor3dTick(x, y, z, a, b)
+// store (x, y, z) scaled for the stage camera
+```
+
+`b` is a denominator, so the stage floors it away from zero. Extreme samples get clamped so a bad pair does not blow the camera.
+
+## Point cloud, not a butterfly trail
+
+Lorenz and Aizawa integrate rates into a line. Bedhead 3D drops each iterate as a point, like the flat Bedhead cloud, then lets transport `n` decide how far the pile has grown. Change `a` or `b` and the cloud rebuilds from the origin.
+
+The 2D notebook and stage stay put at [Bedhead](/bedhead_attractor). This page is the volume upgrade with its own slug.
+
+<Callout to="/bedhead_attractor_3d">
+	<strong>Goto full canvas</strong>
+	Retune `a` and `b`, scrub iterate count, try a preset, drag to rotate. Embed stays grow-in only.
+</Callout>
