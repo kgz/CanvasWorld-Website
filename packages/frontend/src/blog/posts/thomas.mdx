@@ -1,0 +1,48 @@
+export const meta = {
+	slug: 'thomas',
+	title: 'Thomas attractor: sine feedback and labyrinth chaos',
+	tag: 'Attractors',
+	excerpt:
+		'René Thomas’s 1999 labyrinth chaos: ẋ = sin(y) − bx with cyclic partners. Classical Chaos draws a cool-to-warm 3D trail from the cyclic ODEs.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	featured: false,
+	thumbSlug: 'thomas_attractor',
+	order: 16,
+}
+
+
+René Thomas’s 1999 system is continuous-time chaos with almost no clutter: each coordinate listens to the sine of the next, then damps itself by a single constant `b`. The algebra cycles cleanly under `(x, y, z) → (y, z, x)`. The trail on the canvas does not. That gap is the whole draw.
+
+Classical Chaos steps the ODEs with Euler and paints a cool-to-warm GPU line. Watch it grow in below.
+
+<VizEmbed slug="thomas_attractor" label="Thomas" animateN />
+
+## Where it came from
+
+Thomas wrote this while studying feedback circuits; the paper sits in *Int. J. Bifurc. Chaos* (1999) under the labyrinth-chaos label.
+
+## The cyclic ODEs
+
+Three equations, one shared damping:
+
+<BlockMath math={'\\dot{x} = \\sin(y) - b x'} />
+<BlockMath math={'\\dot{y} = \\sin(z) - b y'} />
+<BlockMath math={'\\dot{z} = \\sin(x) - b z'} />
+
+The sine terms push; `b` pulls back toward the origin. Chaos usually holds for `b` ≲ about `0.208`. Demos often sit near `0.19`.
+
+## Cyclic algebra, tangled trail
+
+Rotate the labels once and the rules look the same. That cyclic symmetry is why the equations feel almost too neat. The integrated path still folds through a thick, wandering cloud instead of a tidy loop. Watch the cool body fill while the warm tip keeps moving: same cyclic rule, never a closed path you can count.
+
+Toward the edge of the chaotic window the cloud thins or stiffens — that shows up when you retune `b` on the full stage.
+
+## Full canvas
+
+On the [full Thomas stage](/thomas_attractor) scrub trail length `n`, swap the `b` presets, drag to rotate, and retune `b` and `dt`. Defaults there are `b = 0.208`, `dt = 0.008`, seed `(0.1, 0, 0)` — axial view of the three-fold star; presets also sit near `0.19` and `0.1528`. The trail rebuilds from the seed when those change.
+
+<Callout to="/thomas_attractor">
+	<strong>Goto full canvas</strong>
+	Scrub `n`, try the `0.19` and `0.1528` presets, drag to rotate, retune `b` and `dt`.
+</Callout>
