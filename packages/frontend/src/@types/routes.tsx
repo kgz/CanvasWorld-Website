@@ -29,6 +29,7 @@ import DiniSurface from '../pages/misc/dini_surface'
 import RomanSurface from '../pages/misc/roman_surface'
 import EnneperSurface from '../pages/misc/enneper_surface'
 import BoySurface from '../pages/misc/boy_surface'
+import SvenssonAttractor from '../pages/attractors/svensson_attractor'
 
 export type CatalogEntry = {
 	slug: string
@@ -82,6 +83,7 @@ const components: Record<string, ComponentType> = {
 	roman_surface: RomanSurface,
 	enneper_surface: EnneperSurface,
 	boy_surface: BoySurface,
+	svensson_attractor: SvenssonAttractor,
 }
 
 const catalogEntries: CatalogEntry[] = catalog
