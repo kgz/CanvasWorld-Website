@@ -26,6 +26,7 @@ import DiniSurface from '../pages/misc/dini_surface'
 import RomanSurface from '../pages/misc/roman_surface'
 import EnneperSurface from '../pages/misc/enneper_surface'
 import BoySurface from '../pages/misc/boy_surface'
+import PerlinNoise from '../pages/misc/perlin_noise'
 
 export type CatalogEntry = {
 	slug: string
@@ -76,6 +77,7 @@ const components: Record<string, ComponentType> = {
 	roman_surface: RomanSurface,
 	enneper_surface: EnneperSurface,
 	boy_surface: BoySurface,
+	perlin_noise: PerlinNoise,
 }
 
 const catalogEntries: CatalogEntry[] = catalog
