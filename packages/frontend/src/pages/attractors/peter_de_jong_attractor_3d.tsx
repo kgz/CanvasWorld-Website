@@ -1,6 +1,7 @@
 import type { RootState } from '@react-three/fiber'
 import { BlockMath, InlineMath } from 'react-katex'
 import { useEffect, useMemo, useRef } from 'react'
+import * as THREE from 'three'
 import { EDimensions, type TDatData, type TDataFromObject, type TPointsProps } from '../../@types/gui'
 import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
@@ -10,12 +11,11 @@ import { resolveParticleCount } from '../../modules/embedMode'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import { peterDeJong3dTick } from '../../utils/peterDeJong3d'
 
-const COOL = { r: 0.78, g: 0.32, b: 0.48 }
-const WARM = { r: 0.95, g: 0.78, b: 0.42 }
-const SOLID = { r: 0.9, g: 0.55, b: 0.5 }
-
 const SEED = { x: 0, y: 0, z: 0 }
-const SCALE = 50
+/** Default-orbit centroid so the volume sits in frame (not bottom-left). */
+const CENTER = { x: -0.32, y: -1.19, z: -0.18 }
+const SCALE = 68
+const _hsl = new THREE.Color()
 
 type TrailState = {
 	x: number
@@ -43,27 +43,17 @@ const seedTrail = (): TrailState => ({
 	f: Number.NaN,
 })
 
+/** Smooth hue along age — magenta → cyan. */
 const writeColor = (colors: Float32Array, i: number, t: number) => {
-	if (isScreenshotMode()) {
-		colors.set([SOLID.r, SOLID.g, SOLID.b], i * 3)
-		return
-	}
-	const fade = t < 0.62 ? 0 : (t - 0.62) / 0.38
-	colors.set(
-		[
-			COOL.r + (WARM.r - COOL.r) * fade,
-			COOL.g + (WARM.g - COOL.g) * fade,
-			COOL.b + (WARM.b - COOL.b) * fade,
-		],
-		i * 3,
-	)
+	_hsl.setHSL(0.92 - 0.55 * t, 0.95, 0.55)
+	colors.set([_hsl.r, _hsl.g, _hsl.b], i * 3)
 }
 
 const PeterDeJongAttractor3d = () => {
 	const dispatch = useAppDispatch()
 	const { data } = useAppSelector((state) => state.WebSlice)
 	const { calculateParticlesToDraw, updateProgressUI, checkCompletion } = useAnimationState({
-		baseSpeed: 420,
+		baseSpeed: 520,
 	})
 	const trailRef = useRef<TrailState>(seedTrail())
 
@@ -155,12 +145,12 @@ const PeterDeJongAttractor3d = () => {
 			x = next.x
 			y = next.y
 			z = next.z
-			positions.set([x * SCALE, y * SCALE, z * SCALE], computed * EDimensions.THREE_D)
+			positions.set(
+				[(x - CENTER.x) * SCALE, (y - CENTER.y) * SCALE, (z - CENTER.z) * SCALE],
+				computed * EDimensions.THREE_D,
+			)
+			writeColor(colors, computed, computed / denom)
 			computed += 1
-		}
-
-		for (let i = 0; i < particlesToDraw; i++) {
-			writeColor(colors, i, i / denom)
 		}
 
 		trail.x = x
@@ -177,22 +167,22 @@ const PeterDeJongAttractor3d = () => {
 	return (
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
-			numParticles={resolveParticleCount(40_000)}
+			numParticles={resolveParticleCount(160_000)}
 			tick={tick}
-			drawMode="line"
-			lineOpacity={isScreenshotMode() ? 1 : 0.42}
+			drawMode="points"
+			pointSize={isScreenshotMode() ? 1.35 : 1.05}
 			autoRotate={!isScreenshotMode()}
-			autoRotateSpeed={0.28}
-			cameraPosition={[0, 0, 220]}
+			autoRotateSpeed={0.32}
+			cameraPosition={[0, 0, 210]}
 		/>
 	)
 }
 
 PeterDeJongAttractor3d.getDescription = () => (
 	<>
-		The 3D Peter de Jong attractor extends the familiar sine–cosine map into three coordinates: six
-		real knobs and a discrete step that updates <InlineMath math="x,y,z" /> together. Distinct from
-		the planar four-parameter de Jong map.
+		The 3D Peter de Jong attractor extends the sine–cosine map into three coordinates: six real knobs
+		and a discrete step that updates <InlineMath math="x,y,z" /> together. Distinct from the planar
+		four-parameter de Jong cloud.
 		<br />
 		<br />
 		<strong>Definition:</strong>
@@ -200,9 +190,9 @@ PeterDeJongAttractor3d.getDescription = () => (
 		<BlockMath math={'y_{n+1} = \\sin(c x_n) - \\cos(d y_n)'} />
 		<BlockMath math={'z_{n+1} = \\sin(e y_n) - \\cos(f z_n)'} />
 		<br />
-		Archive defaults: <InlineMath math="a=2.695,\ b=1.72,\ c=1.178,\ d=0.311,\ e=-1,\ f=-1" />, seed{' '}
-		<InlineMath math="(0,0,0)" />, positions ×50. Rose→gold GPU line trail; transport <code>n</code>{' '}
-		scrubs length.
+		Defaults: <InlineMath math="a=2.695,\ b=1.72,\ c=1.178,\ d=0.311,\ e=-1,\ f=-1" />, seed{' '}
+		<InlineMath math="(0,0,0)" />. Drawn as a coloured point volume; scrub how many points are lit on
+		the full stage.
 	</>
 )
 
