@@ -1,0 +1,37 @@
+export const meta = {
+	slug: 'peter-de-jong',
+	title: 'Peter de Jong attractor: sine–cosine with a minus',
+	tag: 'Attractors',
+	excerpt:
+		'The Peter de Jong attractor is a 2D iterated map: x′ = sin(a y) − cos(b x), y′ = sin(c x) − cos(d y). Classical Chaos piles points into a cloud from seed (0, 0).',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'peter_de_jong_attractor',
+	featured: false,
+	order: 18,
+}
+
+
+The Peter de Jong attractor is a flat point cloud built by iterating a short sine–cosine rule. Named for Peter de Jong. Same neighborhood as Clifford Pickover’s maps, but the pairing uses a minus instead of the Pickover-style add-and-scale mix. No continuous trail: each step lands a new `(x, y)`, and the silhouette is just the pile.
+
+The cloud below thickens as more iterates land.
+
+<VizEmbed slug="peter_de_jong_attractor" label="Peter de Jong" animateN />
+
+## The update rule
+
+Each new point comes only from the last one. No continuous step size. The map Classical Chaos runs:
+
+<BlockMath math={'x\\prime = \\sin(a y) - \\cos(b x)'} />
+<BlockMath math={'y\\prime = \\sin(c x) - \\cos(d y)'} />
+
+Four real knobs: `a`, `b`, `c`, `d`. Crossed arguments do the work: `a` and `b` shape the `x` update from `y` and `x`; `c` and `d` shape the `y` update from `x` and `y`. The minus between sine and cosine is the whole difference from the Pickover cousin sitting next door.
+
+## Full canvas
+
+Defaults on Classical Chaos sit at `a = 2.695`, `b = 1.72`, `c = 1.178`, `d = 0.311`, seed `(0, 0)`. On the [full Peter de Jong stage](/peter_de_jong_attractor) scrub how many points have landed, twist those four knobs, and jump presets, including `(−2, −2, −1.2, 2)` and `(−2.24, 0.43, −0.65, −2.43)`, while the same seed rebuilds the cloud.
+
+<Callout to="/peter_de_jong_attractor">
+	<strong>Goto full canvas</strong>
+	Scrub how many points have landed, try the presets, nudge `a`, `b`, `c`, `d` from the defaults at seed `(0, 0)`.
+</Callout>
