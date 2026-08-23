@@ -144,6 +144,15 @@
     "active": true
   },
   {
+    "slug": "peter_de_jong_attractor_3d",
+    "title": "Peter de Jong Attractor (3D)",
+    "category": "attractor",
+    "description": "3D Peter de Jong discrete map trail (rose→gold): x′=sin(a z)−cos(b x), y′=sin(c x)−cos(d y), z′=sin(e y)−cos(f z). Archive defaults a=2.695, b=1.72, c=1.178, d=0.311, e=−1, f=−1.",
+    "thumbnail": "/chaos/icons/peter_de_jong_attractor_3d.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "mandelbrot_set",
     "title": "Mandelbrot Set",
     "category": "fractal",

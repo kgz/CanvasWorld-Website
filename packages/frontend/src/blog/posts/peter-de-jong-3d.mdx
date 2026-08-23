@@ -1,0 +1,52 @@
+export const meta = {
+	slug: 'peter-de-jong-3d',
+	title: 'Peter de Jong in 3D: six knobs, one more axis',
+	tag: 'Attractors',
+	excerpt:
+		'Why take the Peter de Jong map into 3D? The flat four-knob cloud already looks sculpted; six knobs and a z-step fill a volume you can spin on Classical Chaos.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 6,
+	thumbSlug: 'peter_de_jong_attractor_3d',
+	featured: false,
+	order: 19,
+}
+
+
+Peter de Jong’s name sits on a small discrete map that showed up in A. K. Dewdney’s *Scientific American* “Computer Recreations” column in July 1987: four real knobs, sine and cosine crossed between `x` and `y`, start at the origin, pile the iterates. No continuous rates. The silhouette is just the cloud of landings. That planar form still lives here as the [flat Peter de Jong stage](/peter_de_jong_attractor).
+
+People often say the 2D cloud already “looks 3D” — folded sheets, hollows, ribbon edges — even though every point only ever has two coordinates. The stage below answers a different question: what if the same sine–cosine idea really moves in space?
+
+Classical Chaos draws that volume as a coloured point cloud.
+
+<VizEmbed slug="peter_de_jong_attractor_3d" label="Peter de Jong 3D" />
+
+## Where the planar map came from
+
+Dewdney attributed the four-parameter iterations to Peter de Jong of Leiden, alongside whimsical names for particular knob sets (“chicken legs,” “dot launcher,” and so on). The map sits in the same generative neighborhood as Clifford Pickover’s sine–cosine toys: cheap to iterate, bounded enough to plot, sensitive enough that a nudge of `a` or `b` rebuilds a different silhouette. It is not a model of weather or a circuit. It is a recipe for strange pictures that happen to be chaotic.
+
+## What the 3D step does
+
+Extend the idea with a third coordinate and two more knobs. Each step replaces `(x, y, z)` together from the previous state:
+
+<BlockMath math={'x\\prime = \\sin(a z) - \\cos(b x)'} />
+<BlockMath math={'y\\prime = \\sin(c x) - \\cos(d y)'} />
+<BlockMath math={'z\\prime = \\sin(e y) - \\cos(f z)'} />
+
+Still discrete: each new point comes only from the last one, with no continuous step size. The planar cousin stops at four knobs and feeds `x` from `y` (and vice versa). Here `z` enters the `x` update, `y` feeds `z`, and the orbit can leave the plane. On a flat density plot those folds can look like overlaps; in space they are layers.
+
+```ts
+x = Math.sin(a * z) - Math.cos(b * x)
+y = Math.sin(c * x) - Math.cos(d * y)
+z = Math.sin(e * y) - Math.cos(f * z)
+```
+
+## Why depth helps
+
+The 2D map already earns its slot: density, lace, named presets from Dewdney’s column. This page is the volume cousin — six knobs, real `z`, so strands can sit in front of each other instead of stacking on one plane.
+
+On the [full Peter de Jong 3D stage](/peter_de_jong_attractor_3d) drag to rotate, scrub how many points are lit, and retune `a`…`f` (including how `e` and `f` change the thickness). Defaults sit at `a = 2.695`, `b = 1.72`, `c = 1.178`, `d = 0.311`, `e = -1`, `f = -1`, seed `(0, 0, 0)`. Change any knob and the cloud rebuilds from the seed.
+
+<Callout to="/peter_de_jong_attractor_3d">
+	<strong>Goto full canvas</strong>
+	Scrub point count, try presets, retune `a`–`f`, drag to rotate.
+</Callout>
