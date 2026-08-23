@@ -10,9 +10,25 @@ import { resolveParticleCount } from '../../modules/embedMode'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import { lorenz86Tick } from '../../utils/lorenz86'
 
-const COOL = { r: 0.2, g: 0.45, b: 0.85 }
-const WARM = { r: 0.95, g: 0.55, b: 0.35 }
-const SOLID = { r: 0.45, g: 0.65, b: 0.95 }
+/** Archive: HSL hue from sin(x·y) in ~200–360°, sat/light 50%. */
+const writeArchiveColor = (colors: Float32Array, i: number, x: number, y: number) => {
+	const t = (Math.sin(x * y) + 1) * 0.5
+	const h = (200 + t * 160) / 360
+	const s = 0.5
+	const l = isScreenshotMode() ? 0.55 : 0.5
+	const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+	const p = 2 * l - q
+	const hue2rgb = (tt: number) => {
+		let u = tt
+		if (u < 0) u += 1
+		if (u > 1) u -= 1
+		if (u < 1 / 6) return p + (q - p) * 6 * u
+		if (u < 1 / 2) return q
+		if (u < 2 / 3) return p + (q - p) * (2 / 3 - u) * 6
+		return p
+	}
+	colors.set([hue2rgb(h + 1 / 3), hue2rgb(h), hue2rgb(h - 1 / 3)], i * 3)
+}
 
 type TrailState = {
 	x: number
@@ -37,22 +53,6 @@ const seedTrail = (): TrailState => ({
 	g: Number.NaN,
 	d: Number.NaN,
 })
-
-const writeColor = (colors: Float32Array, i: number, t: number) => {
-	if (isScreenshotMode()) {
-		colors.set([SOLID.r, SOLID.g, SOLID.b], i * 3)
-		return
-	}
-	const fade = t < 0.65 ? 0 : (t - 0.65) / 0.35
-	colors.set(
-		[
-			COOL.r + (WARM.r - COOL.r) * fade,
-			COOL.g + (WARM.g - COOL.g) * fade,
-			COOL.b + (WARM.b - COOL.b) * fade,
-		],
-		i * 3,
-	)
-}
 
 const Lorenz86Attractor = () => {
 	const dispatch = useAppDispatch()
@@ -124,12 +124,7 @@ const Lorenz86Attractor = () => {
 			trail.d = d
 		}
 
-		const denom = Math.max(particlesToDraw - 1, 1)
-
 		if (particlesToDraw <= trail.computed) {
-			for (let i = 0; i < particlesToDraw; i++) {
-				writeColor(colors, i, i / denom)
-			}
 			updateProgressUI(particlesToDraw, totalParticles)
 			checkCompletion(particlesToDraw, totalParticles)
 			return particlesToDraw
@@ -152,11 +147,8 @@ const Lorenz86Attractor = () => {
 				[-y * scale - ox, x * scale - oy, z * scale - oz],
 				computed * EDimensions.THREE_D,
 			)
+			writeArchiveColor(colors, computed, x, y)
 			computed += 1
-		}
-
-		for (let i = 0; i < particlesToDraw; i++) {
-			writeColor(colors, i, i / denom)
 		}
 
 		trail.x = x
@@ -173,10 +165,9 @@ const Lorenz86Attractor = () => {
 	return (
 		<Base<TData>
 			dimension={EDimensions.THREE_D}
-			numParticles={resolveParticleCount(25_000)}
+			numParticles={resolveParticleCount(30_000)}
 			tick={tick}
-			drawMode="line"
-			lineOpacity={isScreenshotMode() ? 1 : 0.55}
+			pointSize={1.75}
 			autoRotate={!isScreenshotMode()}
 			autoRotateSpeed={0.25}
 			cameraPosition={[0, 0, 95]}
@@ -201,9 +192,9 @@ Lorenz86Attractor.getDescription = () => (
 		<BlockMath math={'\\dot{z} = -z + f x y + x z'} />
 		<br />
 		Archive defaults: <InlineMath math="a=1.111,\ b=4.494,\ f=1.479,\ g=0.44" />,{' '}
-		<InlineMath math="d=0.13" />, seed <InlineMath math="(0,0,0)" />. Cool→warm GPU line trail
-		(archive drew points; the step size keeps the stroke angular). Transport <code>n</code> scrubs
-		length. Classic Lorenz stays at <code>/lorenz_attractor</code>.
+		<InlineMath math="d=0.13" />, seed <InlineMath math="(0,0,0)" />. Drawn as a point cloud with
+		archive-style HSL from <InlineMath math="\\sin(xy)" />. Transport <code>n</code> scrubs count.
+		Classic Lorenz stays at <code>/lorenz_attractor</code>.
 	</>
 )
 

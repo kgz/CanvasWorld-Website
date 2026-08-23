@@ -55,9 +55,7 @@ async function captureSlug(page, slug) {
 	const solidify =
 		slug === 'lorenz_attractor'
 			? { r: 102, g: 255, b: 224 }
-			: slug === 'lorenz_86'
-				? { r: 115, g: 166, b: 242 }
-				: null
+			: null
 	const dataUrl = await page.evaluate((flat) => {
 		const src = document.querySelector('#cw-viz-canvas')
 		if (!(src instanceof HTMLCanvasElement)) {

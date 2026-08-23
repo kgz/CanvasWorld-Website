@@ -14,7 +14,7 @@ export const meta = {
 
 Edward Lorenz’s famous butterfly is the 1963 convection model. Lorenz 86 is a later low-order atmosphere system: five knobs, a compact folded cloud, and no twin lobes. Same name on the label, different ODEs.
 
-Classical Chaos draws it like the other 3D stages: Euler steps into a GPU line trail. The embed below only grows the trail in. Scrubbing length, drag-to-rotate, and the coefficients live on the full canvas. Classic Lorenz stays at `/lorenz_attractor`.
+Classical Chaos draws it like the archive workshop: Euler steps into a coloured point cloud. The embed below only grows how many points are shown. Scrubbing count, drag-to-rotate, and the coefficients live on the full canvas. Classic Lorenz stays at `/lorenz_attractor`.
 
 <VizEmbed slug="lorenz_86" label="Lorenz 86" animateN />
 
@@ -26,7 +26,7 @@ Four real coefficients plus step size. On the Params panel they are `a`, `b`, `f
 <BlockMath math={'\\dot{y} = -y + x y - f x z + g'} />
 <BlockMath math={'\\dot{z} = -z + f x y + x z'} />
 
-Defaults match the [archive workshop](https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Lorenz%2086): `a=1.111`, `b=4.494`, `f=1.479`, `g=0.44`, `d=0.13`, seed `(0, 0, 0)`. The constant drive terms (`a b` in \(x\), `g` in \(y\)) push the state off the origin immediately. The Euler step is chunky on purpose — same as the archive — so the trail stays angular rather than silky.
+Defaults match the [archive workshop](https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Lorenz%2086): `a=1.111`, `b=4.494`, `f=1.479`, `g=0.44`, `d=0.13`, seed `(0, 0, 0)`. The constant drive terms (`a b` in \(x\), `g` in \(y\)) push the state off the origin immediately. Drawn as a point cloud with the archive’s HSL-from-\(\sin(xy)\) colouring — chunky Euler step and all.
 
 ## Why it is not the butterfly
 
@@ -34,7 +34,7 @@ The 1963 system stretches and folds into two lobes. Here the quadratic terms in 
 
 ## Trail, not a wrap buffer
 
-The old workshop wrote points into a ring buffer and wrapped. Here `n` is trail length: grow, scrub, or hold, same contract as Lorenz and Aizawa. Change any of `a`, `b`, `f`, `g`, or `d` and the trail resets from the seed.
+The old workshop wrote points into a ring buffer and wrapped. Here `n` is how many points are drawn: grow, scrub, or hold, same contract as Lorenz and Aizawa. Change any of `a`, `b`, `f`, `g`, or `d` and the cloud resets from the seed.
 
 ```ts
 const next = lorenz86Tick(x, y, z, a, b, f, g, d)
@@ -43,5 +43,5 @@ const next = lorenz86Tick(x, y, z, a, b, f, g, d)
 
 <Callout to="/lorenz_86">
 	<strong>Goto full canvas</strong>
-	Retune `a`, `b`, `f`, `g`, and `d`, scrub trail length, try a preset, drag to rotate. Embed stays grow-in only.
+	Retune `a`, `b`, `f`, `g`, and `d`, scrub point count, try a preset, drag to rotate. Embed stays grow-in only.
 </Callout>
