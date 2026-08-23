@@ -1,0 +1,42 @@
+export const meta = {
+	slug: 'costa-surface',
+	title: 'Costa surface: a genus-one minimal surface with three ends',
+	tag: 'Surfaces',
+	excerpt:
+		'Celso Costa’s 1984 surface broke the old “only plane, catenoid, helicoid” picture: a complete embedded minimal surface of genus one with three ends. Classical Chaos draws a truncated lit mesh of that chart.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'costa_surface',
+	featured: false,
+	order: 165,
+}
+
+
+Before Costa (1984), the known complete embedded minimal surfaces in three-space with finite topology were basically the plane, the catenoid, and the helicoid. Celso Costa wrote down a genus-one surface with three ends. Hoffman and Meeks later proved it does not cross itself — the Costa–Hoffman–Meeks surface.
+
+Classical Chaos draws a truncated piece as a lit triangle mesh: two catenoid-like ends and a flatter middle end, cut short so the infinite flutes stay off-screen.
+
+<VizEmbed slug="costa_surface" label="Costa surface" animateN />
+
+## Three punctures on a square torus
+
+The chart lives on a square torus: the unit square in the complex plane, identified on opposite sides, with three punctures at <InlineMath math={'0'} />, <InlineMath math={'1/2'} />, and <InlineMath math={'i/2'} />. Those punctures are where the surface runs off to infinity.
+
+Coordinates use Weierstrass <InlineMath math={'\\zeta'} /> and <InlineMath math={'\\wp'} /> on the square lattice <InlineMath math={'\\mathbb{Z}[i]'} />. One height formula that already shows the middle end is
+
+<BlockMath math={'x_3 = \\frac{\\sqrt{2\\pi}}{4}\\log\\left|\\frac{\\wp(z)-e_1}{\\wp(z)+e_1}\\right|,\\quad z = u+iv'} />
+
+with <InlineMath math={'e_1 = \\wp(1/2)'} />. The horizontal coordinates mix <InlineMath math={'\\zeta'} /> at <InlineMath math={'z'} />, <InlineMath math={'z-1/2'} />, and <InlineMath math={'z-i/2'} /> the same way Gray and later notes write them.
+
+Mean curvature stays zero. Globally you still get a torus with three ends, not a closed blob.
+
+## Truncation and the full stage
+
+The canvas never draws the infinite ends. A <InlineMath math={'\\mathrm{margin}'} /> pulls the UV square away from the punctures so the mesh stays finite. Smaller margin means longer flutes; larger margin cuts closer to the neck.
+
+On the [full Costa stage](/costa_surface), twist margin, try a preset, scrub how many triangles light up, and drag to rotate (or leave auto-rotate on).
+
+<Callout to="/costa_surface">
+	<strong>Goto full canvas</strong>
+	Nudge margin, try a preset, scrub the reveal, and spin the lit mesh while the three ends stay truncated.
+</Callout>

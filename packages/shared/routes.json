@@ -232,5 +232,14 @@
     "thumbnail": "/chaos/icons/boy_surface.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "costa_surface",
+    "title": "Costa Surface",
+    "category": "misc",
+    "description": "Costa–Hoffman–Meeks genus-1 complete minimal surface as a truncated lit mesh. Margin cuts the three ends on the square torus.",
+    "thumbnail": "/chaos/icons/costa_surface.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]
