@@ -8,6 +8,7 @@ import { Callout } from '../blog/Callout'
 import { formatPostMeta } from '../blog/types'
 import { getAdjacent, getPost, resolvePostSlug } from '../blog/registry'
 import { VizEmbed, VizEmbedGrid } from '../blog/VizEmbed'
+import { ParentSiteLink, SiteFooter } from '../chrome/ParentSiteLink'
 import styles from './post.module.css'
 
 const FONT_HREF =
@@ -102,6 +103,7 @@ function PostPage() {
 							Notebook
 						</Link>
 						<Link to="/#about">About</Link>
+						<ParentSiteLink />
 					</nav>
 				</div>
 			</header>
@@ -137,9 +139,7 @@ function PostPage() {
 				</nav>
 			</main>
 
-			<footer className={styles.siteFooter}>
-				<p>Interactive sketches of classical dynamical systems.</p>
-			</footer>
+			<SiteFooter className={styles.siteFooter} />
 		</div>
 	)
 }

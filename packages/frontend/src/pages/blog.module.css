@@ -313,12 +313,31 @@
 }
 
 .siteFooter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
   max-width: var(--cw-container-wide);
   margin: 0 auto;
   padding: var(--cw-gap-lg);
   border-top: 1px solid var(--cw-border);
   color: var(--cw-muted);
   font-size: var(--cw-fs-meta);
+}
+
+.siteFooter p {
+  margin: 0;
+}
+
+.siteFooter a {
+  color: inherit;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.siteFooter a:hover {
+  color: var(--cw-accent);
 }
 
 @media (prefers-reduced-motion: reduce) {

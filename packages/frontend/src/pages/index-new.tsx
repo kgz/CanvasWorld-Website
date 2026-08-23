@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import routes from '../@types/routes'
+import { homeNotebookPosts } from '../blog/registry'
+import { formatPostMeta } from '../blog/types'
+import { ParentSiteLink, SiteFooter } from '../chrome/ParentSiteLink'
 import { HeroInkCanvas } from './HeroInkCanvas'
 import styles from './frontpage.module.css'
 
@@ -164,6 +167,7 @@ function Index() {
 						<a href="#gallery">Gallery</a>
 						<Link to="/blog">Notebook</Link>
 						<a href="#about">About</a>
+						<ParentSiteLink />
 					</nav>
 				</div>
 			</header>
@@ -210,9 +214,28 @@ function Index() {
 				</div>
 			</section>
 
-			<footer className={styles.siteFooter} id="about">
-				<p>Interactive sketches of classical dynamical systems.</p>
-			</footer>
+			<section className={styles.notes} id="notebook">
+				<div className={styles.notesHead}>
+					<h2>Lab notebook</h2>
+					<Link className={styles.notesIndex} to="/blog">
+						All notes
+					</Link>
+				</div>
+				<div className={styles.noteGrid}>
+					{homeNotebookPosts().map((post) => (
+						<article key={post.slug} className={styles.noteCard}>
+							<Link to={`/blog/${post.slug}`}>
+								<span className={styles.noteTag}>{post.meta.tag}</span>
+								<span className={styles.noteTitle}>{post.meta.title}</span>
+								<span className={styles.noteExcerpt}>{post.meta.excerpt}</span>
+								<span className={styles.noteMeta}>{formatPostMeta(post.meta)}</span>
+							</Link>
+						</article>
+					))}
+				</div>
+			</section>
+
+			<SiteFooter className={styles.siteFooter} aboutId="about" />
 		</div>
 	)
 }

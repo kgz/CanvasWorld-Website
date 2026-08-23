@@ -1,4 +1,6 @@
+import mdxSources from 'virtual:mdx-post-sources'
 import type { PostMeta, PostModule } from './types'
+import { buildPostsByVizSlug, featuredHomePosts } from './vizSlugIndex'
 
 const modules = import.meta.glob('./posts/*.mdx', { eager: true }) as Record<string, PostModule>
 
@@ -30,6 +32,16 @@ export const posts: RegisteredPost[] = Object.entries(modules)
 		}
 	})
 	.sort((a, b) => a.meta.order - b.meta.order)
+
+const postsByVizSlug = buildPostsByVizSlug(posts, mdxSources)
+
+export function postsForVizSlug(vizSlug: string): RegisteredPost[] {
+	return postsByVizSlug.get(vizSlug) ?? []
+}
+
+export function homeNotebookPosts(): RegisteredPost[] {
+	return featuredHomePosts(posts)
+}
 
 export function resolvePostSlug(slug: string): string {
 	return POST_SLUG_REDIRECTS[slug] ?? slug
