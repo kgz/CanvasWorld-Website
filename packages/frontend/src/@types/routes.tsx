@@ -17,6 +17,7 @@ import LorenzAttractor from '../pages/attractors/lorenz_attractor'
 import Lorenz86Attractor from '../pages/attractors/lorenz_86'
 import AizawaAttractor from '../pages/attractors/aizawa_attractor'
 import PeterDeJongAttractor3d from '../pages/attractors/peter_de_jong_attractor_3d'
+import ThomasAttractor from '../pages/attractors/thomas_attractor'
 import MandelbrotSet from '../pages/maps/mandelbrot_set'
 import JuliaSet from '../pages/maps/julia_set'
 import Brusselator from '../pages/misc/brusselator'
@@ -72,6 +73,7 @@ const components: Record<string, ComponentType> = {
 	lorenz_86: Lorenz86Attractor,
 	aizawa_attractor: AizawaAttractor,
 	peter_de_jong_attractor_3d: PeterDeJongAttractor3d,
+	thomas_attractor: ThomasAttractor,
 	mandelbrot_set: MandelbrotSet,
 	julia_set: JuliaSet,
 	sierpinski_triangle: SierpinskiTriangle,

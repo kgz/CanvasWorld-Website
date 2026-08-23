@@ -162,6 +162,15 @@
     "active": true
   },
   {
+    "slug": "thomas_attractor",
+    "title": "Thomas Attractor",
+    "category": "attractor",
+    "description": "3D Thomas cyclically symmetric ODE trail: axial three-fold star, radius colour, knob b. Defaults b=0.208, dt=0.008, seed (0.1,0,0).",
+    "thumbnail": "/chaos/icons/thomas_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "mandelbrot_set",
     "title": "Mandelbrot Set",
     "category": "fractal",
