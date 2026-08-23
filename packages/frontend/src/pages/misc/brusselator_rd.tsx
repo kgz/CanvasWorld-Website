@@ -39,7 +39,8 @@ const BrusselatorRd = () => {
 	const fieldRef = useRef<BrusselatorRdField | null>(null)
 	const stepsRef = useRef(0)
 	const lastManualRef = useRef<number | null>(null)
-	const paramKeyRef = useRef('')
+	const simKeyRef = useRef('')
+	const gridKeyRef = useRef(0)
 	const laidOutRef = useRef(false)
 	const wasCompleteRef = useRef(false)
 
@@ -89,11 +90,11 @@ const BrusselatorRd = () => {
 		[a, b, du, dv, dt],
 	)
 
+	/** Reseed only on grid change / force — tweaking a/b/Du/Dv/dt keeps n and the field. */
 	const ensureField = (force = false): BrusselatorRdField => {
-		const key = `${grid}|${a}|${b}|${du}|${dv}|${dt}`
-		if (force || !fieldRef.current || paramKeyRef.current !== key) {
+		if (force || !fieldRef.current || gridKeyRef.current !== grid) {
 			fieldRef.current = seedBrusselatorRd(grid, a, b)
-			paramKeyRef.current = key
+			gridKeyRef.current = grid
 			stepsRef.current = 0
 			laidOutRef.current = false
 			lastManualRef.current = null
@@ -129,12 +130,14 @@ const BrusselatorRd = () => {
 
 		if (manualProgress !== null) {
 			const want = Math.max(0, Math.min(target, Math.floor(manualProgress)))
-			if (lastManualRef.current !== want) {
+			const simKey = `${a}|${b}|${du}|${dv}|${dt}`
+			if (lastManualRef.current !== want || simKeyRef.current !== simKey) {
 				fieldRef.current = seedBrusselatorRd(grid, a, b)
 				const fresh = fieldRef.current
 				runBrusselatorRdSteps(fresh, params, want)
 				stepsRef.current = want
 				lastManualRef.current = want
+				simKeyRef.current = simKey
 				laidOutRef.current = false
 				fillGridPositions(positions, fresh.size, 1)
 				laidOutRef.current = true
@@ -167,11 +170,15 @@ const BrusselatorRd = () => {
 		return numParticles
 	}
 
+	// World-space points sized to cell pitch (slight overlap) so the field reads solid, not a dotted grid.
+	const cellPitch = 2 / Math.max(grid - 1, 1)
+	const pointSize = cellPitch * 1.55
+
 	return (
 		<Base<TData>
 			dimension={EDimensions.TWO_D}
 			numParticles={numParticles}
-			pointSize={Math.max(2.2, 210 / grid)}
+			pointSize={pointSize}
 			tick={tick}
 			cameraPosition={[0, 0, 2.35]}
 		/>
@@ -193,7 +200,8 @@ BrusselatorRd.getDescription = () => (
 		Defaults: <code>a = 1</code>, <code>b = 3</code>, <code>Du = 1</code>, <code>Dv = 8</code>,{' '}
 		<code>dt = 0.01</code>, grid <code>96</code>. Seed is the steady state{' '}
 		<InlineMath math="(a,\,b/a)" /> plus noise. Transport <code>n</code> scrubs step count from a
-		fresh seed; play keeps the field evolving.
+		fresh seed; play keeps the field evolving. Changing kinetics knobs keeps the current field and{' '}
+		<code>n</code>; changing <code>grid</code> reseeds.
 	</>
 )
 
