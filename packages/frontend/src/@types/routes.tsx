@@ -18,6 +18,7 @@ import MandelbrotSet from '../pages/maps/mandelbrot_set'
 import JuliaSet from '../pages/maps/julia_set'
 import Brusselator from '../pages/misc/brusselator'
 import SierpinskiTriangle from '../pages/fractals/sierpinski_triangle'
+import HilbertCurve from '../pages/fractals/hilbert_curve'
 import CalabiYau from '../pages/misc/calabi_yau'
 import Gyroid from '../pages/misc/gyroid'
 import BarthSextic from '../pages/misc/barth_sextic'
@@ -68,6 +69,7 @@ const components: Record<string, ComponentType> = {
 	mandelbrot_set: MandelbrotSet,
 	julia_set: JuliaSet,
 	sierpinski_triangle: SierpinskiTriangle,
+	hilbert_curve: HilbertCurve,
 	calabi_yau: CalabiYau,
 	gyroid: Gyroid,
 	barth_sextic: BarthSextic,
