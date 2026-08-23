@@ -1,0 +1,44 @@
+export const meta = {
+	slug: 'hopf-fibration',
+	title: 'Hopf fibration: linked circles from S³',
+	tag: 'Surfaces',
+	excerpt:
+		'Heinz Hopf’s 1931 map S³ → S² sends every point of the 2-sphere to a whole circle of preimages. Stereographic projection turns those fibers into linked circles in ordinary 3-space. Classical Chaos draws the cage as a particle wire.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'hopf_fibration',
+	featured: false,
+	order: 170,
+}
+
+
+Heinz Hopf’s fibration (1931) is a continuous map from the 3-sphere onto the 2-sphere. Pick any point on S²: its preimage is a circle on S³. Any two of those circles are linked. Classical Chaos samples a grid of fibers, stereoprojects them into R³, and drops the samples as a particle wire colored coral to amber to teal by base point, not a lit mesh.
+
+The sculpture is linked rings, not a filled shell. Once enough fibers are lit, the linking is the whole show.
+
+<VizEmbed slug="hopf_fibration" label="Hopf fibration" animateN />
+
+## Fibers on S³
+
+Hopf coordinates put a point of S³ in R⁴ with latitude η ∈ [0, π/2] and two phases ξ₁, ξ₂:
+
+<BlockMath math={'( \\sin\\eta\\,\\cos\\xi_1,\\; \\sin\\eta\\,\\sin\\xi_1,\\; \\cos\\eta\\,\\cos\\xi_2,\\; \\cos\\eta\\,\\sin\\xi_2 )'} />
+
+A fiber over base (η, φ) holds η and the relative phase φ fixed while the absolute phase t runs around the circle: ξ₁ = t, ξ₂ = t + φ. The Hopf map sends that whole circle to one point of S².
+
+## Stereographic picture
+
+S³ lives in four dimensions. Stereographic projection from the w-pole folds it into ordinary 3-space:
+
+<BlockMath math={'\\frac{(x,y,z)}{1 - k\\,w}'} />
+
+Here `k` is the UI knob `stereo`. At `k = 1` you get classic stereo; lower values pull the cloud in. Fibers that would shoot toward infinity near the projection pole stay clipped by the sample band in η.
+
+## Fiber count and grow-in
+
+On the [full Hopf stage](/hopf_fibration) the `fibers` knob sets how many base circles to sample (default `48`). Presets jump sparse / dense / soft-stereo layouts. A reveal count `n` lights more of the sampled points over time, so the linked cage grows in.
+
+<Callout to="/hopf_fibration">
+	<strong>Goto full canvas</strong>
+	Twist fiber count and stereo, try a preset, scrub `n`, and spin the linked circles.
+</Callout>
