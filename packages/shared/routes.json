@@ -225,6 +225,15 @@
     "active": true
   },
   {
+    "slug": "svensson_attractor",
+    "title": "Svensson Attractor",
+    "category": "attractor",
+    "description": "The Svensson Attractor is a 2D chaotic map: x_{n+1} = d \\cdot sin(a \\cdot x_n) - sin(b \\cdot y_n), y_{n+1} = c \\cdot cos(a \\cdot x_n) + cos(b \\cdot y_n) with defaults a=-3, b=3, c=3, d=3, seed (0,0).",
+    "thumbnail": "/chaos/icons/svensson_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "dini_surface",
     "title": "Dini's Surface",
     "category": "misc",

@@ -1,0 +1,42 @@
+export const meta = {
+	slug: 'svensson',
+	title: 'Svensson’s sine–cosine map cloud',
+	tag: 'Attractors',
+	excerpt:
+		'Svensson’s 2D attractor: four knobs, sine and cosine of x and y, and a point cloud that reshapes when you nudge a, b, c, or d from seed (0, 0).',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'svensson_attractor',
+	featured: false,
+	order: 165,
+}
+
+
+The Svensson attractor is a discrete 2D map built from sine and cosine. Start at a seed, apply a short update, land on the next `(x, y)`, and pile those samples until a cloud appears. No continuous rates, no `dt`. Just iteration.
+
+Classical Chaos draws the body in chunked HSL hues with a yellow tip. Defaults sit at `a = -3`, `b = 3`, `c = 3`, `d = 3`, seed `(0, 0)`. The cloud below grows as more iterates land.
+
+<VizEmbed slug="svensson_attractor" label="Svensson" animateN />
+
+## The map
+
+Each step only looks at the last point and four constants:
+
+<BlockMath math={'x_{n+1} = d\\,\\sin(a x_n) - \\sin(b y_n)'} />
+<BlockMath math={'y_{n+1} = c\\,\\cos(a x_n) + \\cos(b y_n)'} />
+
+```ts
+x = d * Math.sin(a * x) - Math.sin(b * y)
+y = c * Math.cos(a * x) + Math.cos(b * y)
+```
+
+`a` scales the argument of both the sine-of-`x` and cosine-of-`x` terms. `b` does the same for the `y` pieces. `d` and `c` stretch those scaled trig pieces. Nudge one constant and the silhouette can jump from a tight knot into a wide ribbon.
+
+## What changes with the knobs
+
+On the [full Svensson stage](/svensson_attractor) the four knobs sit in about `[−3, 3]`. Small moves rebuild the cloud from `(0, 0)`. The tip stays bright so you can see where the map is “now” while the body holds the shape.
+
+<Callout to="/svensson_attractor">
+	<strong>Goto full canvas</strong>
+	Nudge `a`, `b`, `c`, `d` and watch the cloud reorganize from `(0, 0)`.
+</Callout>
