@@ -180,6 +180,15 @@
     "active": true
   },
   {
+    "slug": "halvorsen_attractor",
+    "title": "Halvorsen Attractor",
+    "category": "attractor",
+    "description": "3D Halvorsen ODE trail (cool→warm): cyclically symmetric chaos with single knob a. Defaults a=1.4, dt=0.005, seed (−5,0,0).",
+    "thumbnail": "/chaos/icons/halvorsen_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "peter_de_jong_attractor_3d",
     "title": "Peter de Jong Attractor (3D)",
     "category": "attractor",
