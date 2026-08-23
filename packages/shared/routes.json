@@ -36,6 +36,15 @@
     "active": true
   },
   {
+    "slug": "peter_de_jong_attractor",
+    "title": "Peter de Jong Attractor",
+    "category": "attractor",
+    "description": "2D Peter de Jong iterated map: x′=sin(a y)−cos(b x), y′=sin(c x)−cos(d y). Archive defaults a=2.695, b=1.72, c=1.178, d=0.311.",
+    "thumbnail": "/chaos/icons/peter_de_jong_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "fractal_dream_attractor",
     "title": "Fractal Dream Attractor",
     "category": "attractor",

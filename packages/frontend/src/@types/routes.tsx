@@ -3,6 +3,7 @@ import catalog from '@cw/routes'
 import BedheadAttractor from '../pages/attractors/bedhead_attractor'
 import BogdanovMap from '../pages/maps/bogdanov_map'
 import CliffordAttractor from '../pages/attractors/clifford_attractor'
+import PeterDeJongAttractor from '../pages/attractors/peter_de_jong_attractor'
 import FractalDreamAttractor from '../pages/attractors/fractal_dream_attractor'
 import GumowskiMiraAttractor from '../pages/attractors/gumowski_mira_attractor'
 import HenonMap from '../pages/maps/henon_map'
@@ -56,6 +57,7 @@ const components: Record<string, ComponentType> = {
 	bogdanov_map: BogdanovMap,
 	brusselator: Brusselator,
 	clifford_attractor: CliffordAttractor,
+	peter_de_jong_attractor: PeterDeJongAttractor,
 	fractal_dream_attractor: FractalDreamAttractor,
 	'gumowski-mira_attractor': GumowskiMiraAttractor,
 	henon_map: HenonMap,
