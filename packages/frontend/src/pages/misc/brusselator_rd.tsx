@@ -22,6 +22,8 @@ import {
 } from '../../utils/brusselatorRd'
 
 const STEPS_PER_SECOND = 48
+/** Cap work per frame so scrub/play can't lock the main thread (~96² laplacian). */
+const MAX_STEPS_PER_FRAME = 40
 
 const BrusselatorRd = () => {
 	const dispatch = useAppDispatch()
@@ -38,7 +40,7 @@ const BrusselatorRd = () => {
 
 	const fieldRef = useRef<BrusselatorRdField | null>(null)
 	const stepsRef = useRef(0)
-	const lastManualRef = useRef<number | null>(null)
+	const scrubTargetRef = useRef<number | null>(null)
 	const simKeyRef = useRef('')
 	const gridKeyRef = useRef(0)
 	const laidOutRef = useRef(false)
@@ -96,11 +98,29 @@ const BrusselatorRd = () => {
 			fieldRef.current = seedBrusselatorRd(grid, a, b)
 			gridKeyRef.current = grid
 			stepsRef.current = 0
+			scrubTargetRef.current = null
 			laidOutRef.current = false
-			lastManualRef.current = null
 			currentProgressRef.current = 0
 		}
 		return fieldRef.current
+	}
+
+	const seekToward = (want: number, simKey: string): BrusselatorRdField => {
+		let field = fieldRef.current
+		if (!field || simKeyRef.current !== simKey || want < stepsRef.current) {
+			field = seedBrusselatorRd(grid, a, b)
+			fieldRef.current = field
+			stepsRef.current = 0
+			simKeyRef.current = simKey
+			laidOutRef.current = false
+		}
+		const ahead = want - stepsRef.current
+		if (ahead > 0) {
+			const n = Math.min(ahead, MAX_STEPS_PER_FRAME)
+			runBrusselatorRdSteps(field, params, n)
+			stepsRef.current += n
+		}
+		return field
 	}
 
 	const tick: TParticleProps<TData>['tick'] = (positions, colors, _state, delta) => {
@@ -109,19 +129,20 @@ const BrusselatorRd = () => {
 		}
 		wasCompleteRef.current = isComplete
 
-		const field = ensureField()
+		ensureField()
 		const target = BRUSSELATOR_RD_TARGET_STEPS
 		const paused = isPaused || isPausedRef.current || isEmbedTransportPaused()
-
-		if (!laidOutRef.current || field.size * field.size !== numParticles) {
-			fillGridPositions(positions, field.size, 1)
-			laidOutRef.current = true
-		}
+		const simKey = `${a}|${b}|${du}|${dv}|${dt}`
 
 		if (isScreenshotMode() || isEmbedFullReveal()) {
+			const field = fieldRef.current ?? ensureField(true)
 			if (stepsRef.current < target) {
 				runBrusselatorRdSteps(field, params, target - stepsRef.current)
 				stepsRef.current = target
+			}
+			if (!laidOutRef.current) {
+				fillGridPositions(positions, field.size, 1)
+				laidOutRef.current = true
 			}
 			fillColorsFromU(colors, field, a)
 			reportProgress(target, target)
@@ -130,30 +151,44 @@ const BrusselatorRd = () => {
 
 		if (manualProgress !== null) {
 			const want = Math.max(0, Math.min(target, Math.floor(manualProgress)))
-			const simKey = `${a}|${b}|${du}|${dv}|${dt}`
-			if (lastManualRef.current !== want || simKeyRef.current !== simKey) {
-				fieldRef.current = seedBrusselatorRd(grid, a, b)
-				const fresh = fieldRef.current
-				runBrusselatorRdSteps(fresh, params, want)
-				stepsRef.current = want
-				lastManualRef.current = want
-				simKeyRef.current = simKey
-				laidOutRef.current = false
-				fillGridPositions(positions, fresh.size, 1)
+			scrubTargetRef.current = want
+			const field = seekToward(want, simKey)
+			if (!laidOutRef.current) {
+				fillGridPositions(positions, field.size, 1)
 				laidOutRef.current = true
-				fillColorsFromU(colors, fresh, a)
-			} else if (fieldRef.current) {
-				fillColorsFromU(colors, fieldRef.current, a)
 			}
+			fillColorsFromU(colors, field, a)
 			reportProgress(want, target)
 			currentProgressRef.current = want
 			return numParticles
 		}
 
-		lastManualRef.current = null
+		// Finish scrub catch-up after mouseup before free play.
+		if (scrubTargetRef.current !== null && stepsRef.current < scrubTargetRef.current) {
+			const field = seekToward(scrubTargetRef.current, simKey)
+			if (!laidOutRef.current) {
+				fillGridPositions(positions, field.size, 1)
+				laidOutRef.current = true
+			}
+			fillColorsFromU(colors, field, a)
+			reportProgress(Math.min(stepsRef.current, target), target)
+			currentProgressRef.current = Math.min(stepsRef.current, target)
+			if (stepsRef.current >= scrubTargetRef.current) {
+				scrubTargetRef.current = null
+			}
+			return numParticles
+		}
+		scrubTargetRef.current = null
+
+		const field = fieldRef.current ?? ensureField()
+		if (!laidOutRef.current || field.size * field.size !== numParticles) {
+			fillGridPositions(positions, field.size, 1)
+			laidOutRef.current = true
+		}
 
 		if (!paused) {
-			const budget = Math.max(1, Math.round(delta * STEPS_PER_SECOND * animationSpeed))
+			const raw = Math.max(1, Math.round(delta * STEPS_PER_SECOND * animationSpeed))
+			const budget = Math.min(raw, MAX_STEPS_PER_FRAME)
 			for (let i = 0; i < budget; i++) {
 				stepBrusselatorRd(field, params)
 			}
