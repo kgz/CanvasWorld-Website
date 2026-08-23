@@ -9,6 +9,15 @@
     "active": true
   },
   {
+    "slug": "bedhead_attractor_3d",
+    "title": "Bedhead Attractor 3D",
+    "category": "attractor",
+    "description": "3D Bedhead discrete map (warm amber points): same x/y as 2D plus z_{n+1}=y+cos(yx)/b. Archive defaults a=0.13, b=0.37; transport n scrubs iterate count. 2D stage remains at bedhead_attractor.",
+    "thumbnail": "/chaos/icons/bedhead_attractor_3d.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "bogdanov_map",
     "title": "Bogdanov Map",
     "category": "map",
@@ -27,11 +36,29 @@
     "active": true
   },
   {
+    "slug": "brusselator_rd",
+    "title": "Brusselator RD",
+    "category": "misc",
+    "description": "Spatial Brusselator reaction–diffusion on a grid (Neumann borders): spots/stripes from Du∇²u + a-(b+1)u+u²v and Dv∇²v + bu-u²v. Distinct from the ODE phase-orbit page.",
+    "thumbnail": "/chaos/icons/brusselator_rd.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "clifford_attractor",
     "title": "Clifford Attractor",
     "category": "attractor",
     "description": "The Clifford Attractor is a chaotic attractor defined by the following equations: x_{n+1} = sin(a \\cdot y_n) + c \\cdot cos(a \\cdot x_n), y_{n+1} = sin(b \\cdot x_n) + d \\cdot cos(b \\cdot y_n)",
     "thumbnail": "/chaos/icons/clifford_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "peter_de_jong_attractor",
+    "title": "Peter de Jong Attractor",
+    "category": "attractor",
+    "description": "2D Peter de Jong iterated map: x′=sin(a y)−cos(b x), y′=sin(c x)−cos(d y). Archive defaults a=2.695, b=1.72, c=1.178, d=0.311.",
+    "thumbnail": "/chaos/icons/peter_de_jong_attractor.png",
     "renderMode": "webgl",
     "active": true
   },
@@ -93,8 +120,17 @@
     "slug": "hopalong_attractor_sinusoidal",
     "title": "Hopalong Attractor Sinusoidal",
     "category": "attractor",
-    "description": "Martin sinusoidal Hopalong: x' = y + sin(b x - c), y' = a - x. Same a,b,c knobs as classic.",
+    "description": "Martin sinusoidal Hopalong: x' = y + sin(b x - c), y' = a - x. Defaults a=2.5, b=4, c=0.2 (chaotic fill; small b stays ring-like).",
     "thumbnail": "/chaos/icons/hopalong_attractor_sinusoidal.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "hopalong_attractor_1",
+    "title": "Hopalong Attractor 1",
+    "category": "attractor",
+    "description": "Archive Hopalong typo variant: classic-shaped map with sin(x−1) instead of sign(x−1), and |b x − 1 − c| under the square root.",
+    "thumbnail": "/chaos/icons/hopalong_attractor_1.png",
     "renderMode": "webgl",
     "active": true
   },
@@ -126,11 +162,29 @@
     "active": true
   },
   {
+    "slug": "lorenz_86",
+    "title": "Lorenz 86 Attractor",
+    "category": "attractor",
+    "description": "3D Lorenz 86 ODE trail (cool→warm): mid-1980s low-order atmosphere model, distinct from classic 1963 Lorenz. Knobs a,b,f,g and step d; archive defaults a=1.111, b=4.494, f=1.479, g=0.44, d=0.13.",
+    "thumbnail": "/chaos/icons/lorenz_86.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "aizawa_attractor",
     "title": "Aizawa Attractor",
     "category": "attractor",
     "description": "3D Aizawa ODE trail (cool→warm): round shell with a funnel through the axis. Knobs a–f and dt; archive-style defaults a=0.95, b=0.7, c=0.6, d=3.5, e=0.25, f=0.1, dt=0.01.",
     "thumbnail": "/chaos/icons/aizawa_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "halvorsen_attractor",
+    "title": "Halvorsen Attractor",
+    "category": "attractor",
+    "description": "3D Halvorsen ODE trail (cool→warm): cyclically symmetric chaos with single knob a. Defaults a=1.4, dt=0.01, seed (−5,0,0).",
+    "thumbnail": "/chaos/icons/halvorsen_attractor.png",
     "renderMode": "webgl",
     "active": true
   },
@@ -159,6 +213,15 @@
     "description": "GPU Sierpiński gasket with scroll-zoom and drag-pan. Each pixel tests barycentric membership through recursive corner remaps until a void or max depth. Depth is screen-capped to avoid sparkles.",
     "thumbnail": "/chaos/icons/sierpinski_triangle.png",
     "renderMode": "shader",
+    "active": true
+  },
+  {
+    "slug": "hilbert_curve",
+    "title": "Hilbert Curve",
+    "category": "fractal",
+    "description": "2D Hilbert space-filling curve: Hilbert index i maps to a cell on an N×N grid (N=2^order) via bit-twiddle hindex2xy; particles grow along the path. Default order 7 (N=128).",
+    "thumbnail": "/chaos/icons/hilbert_curve.png",
+    "renderMode": "webgl",
     "active": true
   },
   {
@@ -198,6 +261,15 @@
     "active": true
   },
   {
+    "slug": "svensson_attractor",
+    "title": "Svensson Attractor",
+    "category": "attractor",
+    "description": "The Svensson Attractor is a 2D chaotic map: x_{n+1} = d \\cdot sin(a \\cdot x_n) - sin(b \\cdot y_n), y_{n+1} = c \\cdot cos(a \\cdot x_n) + cos(b \\cdot y_n) with defaults a=-3, b=3, c=3, d=3, seed (0,0).",
+    "thumbnail": "/chaos/icons/svensson_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "dini_surface",
     "title": "Dini's Surface",
     "category": "misc",
@@ -230,6 +302,123 @@
     "category": "misc",
     "description": "Immersion of RP² in R³ as a polar isoline wire. Morph k: Roman→Apéry Boy; bryant: Apéry→Bryant–Kusner three-balls.",
     "thumbnail": "/chaos/icons/boy_surface.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "thomas_attractor",
+    "title": "Thomas Attractor",
+    "category": "attractor",
+    "description": "3D Thomas cyclically symmetric ODE trail (cool→warm): labyrinth chaos with knob b. Defaults b=0.19, dt=0.01, seed (0.1,0,0).",
+    "thumbnail": "/chaos/icons/thomas_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "clebsch_cubic",
+    "title": "Clebsch Cubic",
+    "category": "misc",
+    "description": "Clebsch’s diagonal cubic as a lit triangle mesh: the smooth degree-3 surface where all 27 lines are real.",
+    "thumbnail": "/chaos/icons/clebsch_cubic.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "svensson_attractor_3d",
+    "title": "Svensson Attractor (3D)",
+    "category": "attractor",
+    "description": "Modified 3D Svensson map trail: x'=d sin(a x)-sin(b y), y'=c cos(a x)+cos(b y), z'=e sin(a x)+sin(b y). Defaults a=-3, b=c=d=e=3.",
+    "thumbnail": "/chaos/icons/svensson_attractor_3d.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "perlin_noise",
+    "title": "Perlin Noise",
+    "category": "misc",
+    "description": "Ken Perlin’s improved 2D gradient noise as a GPU field. Morph scale, octaves (fBm), and drift speed; hue from the noise value.",
+    "thumbnail": "/chaos/icons/perlin_noise.png",
+    "renderMode": "shader",
+    "active": true
+  },
+  {
+    "slug": "hopf_fibration",
+    "title": "Hopf Fibration",
+    "category": "misc",
+    "description": "Stereographic Hopf fibers: linked circles from the map S³ → S². Morph fiber count and stereo strength.",
+    "thumbnail": "/chaos/icons/hopf_fibration.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "peter_de_jong_attractor_3d",
+    "title": "Peter de Jong Attractor (3D)",
+    "category": "attractor",
+    "description": "3D Peter de Jong discrete map trail (rose→gold): x′=sin(a z)−cos(b x), y′=sin(c x)−cos(d y), z′=sin(e y)−cos(f z). Archive defaults a=2.695, b=1.72, c=1.178, d=0.311, e=−1, f=−1.",
+    "thumbnail": "/chaos/icons/peter_de_jong_attractor_3d.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "costa_surface",
+    "title": "Costa Surface",
+    "category": "misc",
+    "description": "Costa–Hoffman–Meeks genus-1 complete minimal surface as a truncated lit mesh. Margin cuts the three ends on the square torus.",
+    "thumbnail": "/chaos/icons/costa_surface.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "figure_knots",
+    "title": "Figure Knots",
+    "category": "misc",
+    "description": "Torus-knot-style parametric curve as a particle wire. Morph tube radius a and frequencies b, c, d.",
+    "thumbnail": "/chaos/icons/figure_knots.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "modified_chua_attractor",
+    "title": "Modified Chua Attractor",
+    "category": "attractor",
+    "description": "3D Modified Chua multi-scroll ODE trail: h=-b sin(πx/(2a)+d), ẋ=α(y−h), ẏ=x−y+z, ż=−βy. Archive coeffs α=10.82, β=14.286, a=1.3, b=0.11, d=2.981; default dt=0.02 (archive point cloud used 0.1).",
+    "thumbnail": "/chaos/icons/modified_chua_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "polynomial_abs",
+    "title": "Polynomial ABS",
+    "category": "attractor",
+    "description": "3D absolute-value polynomial map trail: each axis mixes x,y,z and |x|,|y|,|z| with seven coeffs (xa…zg). Archive defaults; cool→warm line trail.",
+    "thumbnail": "/chaos/icons/polynomial_abs.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "polynomial_type_a",
+    "title": "Polynomial Type A",
+    "category": "attractor",
+    "description": "3D polynomial Type A map: x'=a+y−zy, y'=b+z−xz, z'=c+x−yx. Archive defaults a=1.586, b=1.124, c=0.281; cool→warm trail.",
+    "thumbnail": "/chaos/icons/polynomial_type_a.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "polynomial_type_b",
+    "title": "Polynomial Type B",
+    "category": "attractor",
+    "description": "3D polynomial Type B map with six scale knobs on cyclic product terms. Archive index.js defaults a=1.6691, b=1.0405, c=0.2818, d=0.2818, e=0, f=1.1055; cool→warm trail.",
+    "thumbnail": "/chaos/icons/polynomial_type_b.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "polynomial_type_c",
+    "title": "Polynomial Type C",
+    "category": "attractor",
+    "description": "3D per-axis quadratic polynomial map (six coeffs per axis, xa…zf). Archive defaults; cool→warm GPU line trail.",
+    "thumbnail": "/chaos/icons/polynomial_type_c.png",
     "renderMode": "webgl",
     "active": true
   }

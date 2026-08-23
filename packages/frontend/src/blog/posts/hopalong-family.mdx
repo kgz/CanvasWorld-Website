@@ -1,11 +1,11 @@
 export const meta = {
 	slug: 'hopalong-family',
-	title: 'Four Hopalong variants, side by side',
+	title: 'Five Hopalong variants, side by side',
 	tag: 'Attractors',
 	excerpt:
-		'Barry Martin’s 1981 Hopalong map (the Skull attractor) in four live Classical Chaos variants: classic, positive, additive, sinusoidal. See what changes when the rule changes.',
+		'Barry Martin’s 1981 Hopalong map (the Skull attractor) in five live Classical Chaos variants — classic, positive, additive, sinusoidal, and the archive sin-typo map — so you can see what changes when the rule changes.',
 	dateLabel: 'Aug 2026',
-	readMinutes: 7,
+	readMinutes: 8,
 	thumbSlug: 'hopalong_attractor',
 	featured: false,
 	order: 20,
@@ -14,22 +14,23 @@ export const meta = {
 
 Barry Martin found the Hopalong map in 1981. People also call it the Skull attractor. Unlike Lorenz, there is no smooth trail of rates. You take a point `(x, y)`, run a short formula, get the next point, and pile those points into a cloud.
 
-The rule is tiny and the cloud still surprises. Change one term and the whole field reorganizes. Below are the four Martin forms Classical Chaos ships, all live at once.
+I like it because the rule is tiny and the cloud still surprises me. Change one term and the whole field reorganizes. Below are the five versions Classical Chaos ships, all live at once so I stop relying on memory.
 
-Four live clouds, side by side. Pause any card if you want quiet. Open full on a card when you want that variant’s knobs. This page is for looking, not tuning.
+Five live clouds. Pause any card if you want quiet. Open full on a card when you want that variant’s knobs — this page is for looking, not tuning.
 
 <VizEmbedGrid>
   <VizEmbed slug="hopalong_attractor" label="Classic" particles={16000} />
   <VizEmbed slug="hopalong_attractor_positive" label="Positive" particles={16000} />
   <VizEmbed slug="hopalong_attractor_additive" label="Additive" particles={16000} />
   <VizEmbed slug="hopalong_attractor_sinusoidal" label="Sinusoidal" particles={16000} />
+  <VizEmbed slug="hopalong_attractor_1" label="Attractor 1" particles={16000} />
 </VizEmbedGrid>
 
 ## Map, not flow
 
 Each new point comes only from the last one. No integrating along a curve. Start near a seed, keep iterating, and the silhouette that piles up is the attractor.
 
-All four use knobs labeled `a`, `b`, `c`. Same outer pair of lines; only the middle term on the x-step changes.
+Classic Hopalong and Attractor 1 turn knobs labeled `a`, `b`, `c`. The positive / additive / sinusoidal trio use the same three knobs on a shared outer shape. Either way: many steps from a seed, then a colored cloud.
 
 ## Classic
 
@@ -48,6 +49,15 @@ y = nextY
 ```
 
 On the full classic stage you can shove those knobs around (including a wild preset near `a ≈ −11`) and the cloud rebuilds from the seed. Open full on the Classic card when you want that.
+
+## Attractor 1 (sin for sign)
+
+Same two-line skeleton as classic, but the archive kept a typing mistake: `sin` where `sign` was meant, and the absolute value uses `|b x − 1 − c|`. Soft multiplier, still a Hopalong-shaped map:
+
+<BlockMath math={'x\\prime = y - 1 - \\sin(x - 1)\\,\\sqrt{|b x - 1 - c|}'} />
+<BlockMath math={'y\\prime = a - x - 1'} />
+
+Defaults sit near `a ≈ 2.38`, `b = 5.2`, `c = 4.8`, seed `(0, 0)`. It is not the sinusoidal cousin below — that one swaps the whole outer recipe.
 
 ## Three cousins: one term changes
 
@@ -68,15 +78,15 @@ Positive, additive, and sinusoidal keep `y' = a − x` and only rewrite the x-st
 <BlockMath math={'x\\prime = y + \\sin(b x - c)'} />
 <BlockMath math={'y\\prime = a - x'} />
 
-Because sine stays between −1 and 1, that cloud stays calmer. Classic-style `b ≈ 5` values send it sprawling; the stage defaults sit nearer `a = 2`, `b = 1`, `c = 0.5` so the shape reads on screen.
+Because sine stays between −1 and 1, small `b` stays near-periodic (thin rings). The stage defaults sit nearer `a = 2.5`, `b = 4`, `c = 0.2` so the cloud fills; classic-style `b ≈ 5` also works.
 
-So classic subtracts a signed square root. Positive adds it. Additive adds an unsigned one. Sinusoidal adds a sine instead.
+So classic and Attractor 1 stand on the two-line Martin-style rule (sign vs sin). The other three only disagree about the middle x-step: signed sqrt, unsigned sqrt, or sine.
 
 ## Looking at the cards
 
-All four are point clouds from iterating a map. Tip points often read brighter. You are not scrubbing a trail or dragging a camera from these cards. Just comparing shapes.
+All five are point clouds from iterating a map. Tip points often read brighter. You are not scrubbing a trail or dragging a camera from these cards — just comparing shapes.
 
-Serial comparison fails here: the last silhouette sticks in memory and erases the difference. The grid keeps all four visible at once.
+Serial comparison fails here: the last silhouette sticks in memory and erases the difference. The grid keeps all five visible at once.
 
 <Callout to="/hopalong_attractor">
 	<strong>Goto full canvas</strong>
