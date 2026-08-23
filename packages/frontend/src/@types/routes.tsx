@@ -17,6 +17,7 @@ import AizawaAttractor from '../pages/attractors/aizawa_attractor'
 import MandelbrotSet from '../pages/maps/mandelbrot_set'
 import JuliaSet from '../pages/maps/julia_set'
 import Brusselator from '../pages/misc/brusselator'
+import BrusselatorRd from '../pages/misc/brusselator_rd'
 import SierpinskiTriangle from '../pages/fractals/sierpinski_triangle'
 import CalabiYau from '../pages/misc/calabi_yau'
 import Gyroid from '../pages/misc/gyroid'
@@ -53,6 +54,7 @@ const components: Record<string, ComponentType> = {
 	bedhead_attractor: BedheadAttractor,
 	bogdanov_map: BogdanovMap,
 	brusselator: Brusselator,
+	brusselator_rd: BrusselatorRd,
 	clifford_attractor: CliffordAttractor,
 	fractal_dream_attractor: FractalDreamAttractor,
 	'gumowski-mira_attractor': GumowskiMiraAttractor,

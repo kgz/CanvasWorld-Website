@@ -1,0 +1,45 @@
+export const meta = {
+	slug: 'brusselator-rd',
+	title: 'Brusselator reaction–diffusion: spots on a grid',
+	tag: 'Misc',
+	excerpt:
+		'The spatial Brusselator puts two concentrations on a grid with diffusion. Classical Chaos steps the field live so spots and stripes can form — not the ODE phase-orbit trail.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'brusselator_rd',
+	featured: false,
+	order: 95,
+}
+
+
+The Brusselator from Ilya Prigogine and the Brussels school is a theoretical autocatalytic oscillator. The well-mixed version on Classical Chaos is just two ODEs and a phase-plane trail. The spatial version adds diffusion: each cell talks to its neighbors, and the dish can break into spots or stripes.
+
+Classical Chaos keeps a rectangular grid of concentrations `(u, v)`, steps reaction plus diffusion with reflective borders, and paints `u` as color.
+
+<VizEmbed slug="brusselator_rd" label="Brusselator RD" animateN />
+
+## Equations
+
+Defaults sit at `a = 1`, `b = 3`, `Du = 1`, `Dv = 8`, `dt = 0.01`, grid `96`. The quiet well-mixed steady state is `(u, v) = (a, b/a)`; the seed adds a little noise so patterns can start.
+
+<BlockMath math={'\\partial_t u = D_u\\nabla^2 u + a - (b+1)u + u^2 v'} />
+<BlockMath math={'\\partial_t v = D_v\\nabla^2 v + b u - u^2 v'} />
+
+Edges use Neumann / reflective conditions: the laplacian mirrors neighbor samples instead of wrapping the domain.
+
+When `Dv` is clearly larger than `Du`, the activator–inhibitor timing that people associate with Turing-style mottling can show up. Push `b` or the diffusion ratio and the motif shifts toward stripes or softer waves.
+
+## What the field shows
+
+Color tracks `u`. Teal-ish regions sit nearer the baseline concentration; warmer patches are where `u` has piled up. The embed advances the step count so the pattern builds instead of dumping a finished frame.
+
+This page is not the [ODE Brusselator](/brusselator) trail. Same name family, different geometry: orbit in the plane versus a spatial dish.
+
+## Full canvas
+
+On the [full Brusselator RD stage](/brusselator_rd) twist `a` / `b` / `Du` / `Dv` / `dt` / grid size, try the presets, scrub how many steps have run from a fresh seed, and let play keep the dish evolving after the first pattern settles.
+
+<Callout to="/brusselator_rd">
+	<strong>Goto full canvas</strong>
+	Twist diffusion and rates, try presets, scrub step count, keep the field evolving on the [full Brusselator RD stage](/brusselator_rd).
+</Callout>

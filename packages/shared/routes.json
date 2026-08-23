@@ -27,6 +27,15 @@
     "active": true
   },
   {
+    "slug": "brusselator_rd",
+    "title": "Brusselator RD",
+    "category": "misc",
+    "description": "Spatial Brusselator reaction–diffusion on a grid (Neumann borders): spots/stripes from Du∇²u + a-(b+1)u+u²v and Dv∇²v + bu-u²v. Distinct from the ODE phase-orbit page.",
+    "thumbnail": "/chaos/icons/brusselator_rd.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "clifford_attractor",
     "title": "Clifford Attractor",
     "category": "attractor",
