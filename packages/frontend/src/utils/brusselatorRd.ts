@@ -18,6 +18,8 @@ export type BrusselatorRdField = {
 	size: number
 	u: Float32Array
 	v: Float32Array
+	nextU: Float32Array
+	nextV: Float32Array
 }
 
 export function clampGridSize(n: number): number {
@@ -70,16 +72,23 @@ export function seedBrusselatorRd(
 	seed = 0xb50d50,
 ): BrusselatorRdField {
 	const n = clampGridSize(size)
-	const u = new Float32Array(n * n)
-	const v = new Float32Array(n * n)
+	const cells = n * n
+	const u = new Float32Array(cells)
+	const v = new Float32Array(cells)
 	const u0 = a
 	const v0 = b / Math.max(a, 1e-6)
 	const rand = mulberry32(seed >>> 0)
-	for (let i = 0; i < n * n; i++) {
+	for (let i = 0; i < cells; i++) {
 		u[i] = u0 + (rand() * 2 - 1) * noise
 		v[i] = v0 + (rand() * 2 - 1) * noise
 	}
-	return { size: n, u, v }
+	return {
+		size: n,
+		u,
+		v,
+		nextU: new Float32Array(cells),
+		nextV: new Float32Array(cells),
+	}
 }
 
 /**
@@ -88,14 +97,12 @@ export function seedBrusselatorRd(
  *   ∂v/∂t = Dv ∇²v + bu − u²v
  */
 export function stepBrusselatorRd(field: BrusselatorRdField, params: BrusselatorRdParams): void {
-	const { size, u, v } = field
+	const { size, u, v, nextU, nextV } = field
 	const a = params.a
 	const b = params.b
 	const du = Math.max(params.du, 0)
 	const dv = Math.max(params.dv, 0)
 	const dt = clampDt(params.dt)
-	const nextU = new Float32Array(size * size)
-	const nextV = new Float32Array(size * size)
 
 	for (let y = 0; y < size; y++) {
 		for (let x = 0; x < size; x++) {
