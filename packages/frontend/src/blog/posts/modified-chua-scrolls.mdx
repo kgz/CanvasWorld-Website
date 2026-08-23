@@ -1,0 +1,50 @@
+export const meta = {
+	slug: 'modified-chua-scrolls',
+	title: 'Modified Chua’s multi-scroll lobes',
+	tag: 'Attractors',
+	excerpt:
+		'A sine-shaped Chua nonlinearity stacks several chaotic scrolls in 3D: archive α, β, a, b, d on Classical Chaos as a GPU line trail.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	featured: true,
+	thumbSlug: 'modified_chua_attractor',
+	order: 6,
+}
+
+
+Leon Chua’s circuit made the double-scroll famous. The modified form swaps the piecewise diode for a sine fold, so one orbit can visit several scrolls instead of two.
+
+Classical Chaos draws it the same way as Lorenz and Aizawa: Euler steps into a GPU line trail. The embed below only grows the trail in. Scrubbing length, drag-to-rotate, and the coefficients live on the full canvas.
+
+<VizEmbed slug="modified_chua_attractor" label="Modified Chua" animateN />
+
+## The ODEs
+
+Five real parameters plus step size. On the Params panel they are `alpha`, `beta`, `a`, `b`, `d`, and `dt`.
+
+<BlockMath math={'h = -b\\sin(\\pi x / (2a) + d)'} />
+<BlockMath math={'\\dot{x} = \\alpha(y - h)'} />
+<BlockMath math={'\\dot{y} = x - y + z'} />
+<BlockMath math={'\\dot{z} = -\\beta y'} />
+
+Defaults on Classical Chaos (from the [archive workshop](https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Modified%20Chua%20Chaotic%20attractor)): `α=10.82`, `β=14.286`, `a=1.3`, `b=0.11`, `d=2.981`, seed `(1, 1, 0)`. Step size defaults to `dt=0.02` so the GPU line trail fills in; a preset keeps the archive’s `dt=0.1`. Another preset sets `d=0` as in the archive README.
+
+## Why it scrolls
+
+The sine in \(h\) is periodic in \(x\). Each period adds another fold, so the trajectory can hop across multiple lobes along that axis. Change `a` and the period stretches; nudge `b` and the fold depth changes. `α` and `β` set how hard the linear part drives the orbit.
+
+Nothing here is a mesh; it is only the orbit you integrate.
+
+## Trail, not a wrap buffer
+
+The old workshop wrote points into a ring buffer and wrapped. Here `n` is trail length: grow, scrub, or hold, same contract as Lorenz. Change any knob or `dt` and the trail resets from the seed.
+
+```ts
+const next = modifiedChuaTick(x, y, z, alpha, beta, a, b, d, dt)
+// store (x, z, y) scaled to fit the stage
+```
+
+<Callout to="/modified_chua_attractor">
+	<strong>Goto full canvas</strong>
+	Retune α, β, a, b, d and dt, scrub trail length, try a preset, drag to rotate. Embed stays grow-in only.
+</Callout>

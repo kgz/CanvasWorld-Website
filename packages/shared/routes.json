@@ -135,6 +135,15 @@
     "active": true
   },
   {
+    "slug": "modified_chua_attractor",
+    "title": "Modified Chua Attractor",
+    "category": "attractor",
+    "description": "3D Modified Chua multi-scroll ODE trail: h=-b sin(πx/(2a)+d), ẋ=α(y−h), ẏ=x−y+z, ż=−βy. Archive coeffs α=10.82, β=14.286, a=1.3, b=0.11, d=2.981; default dt=0.02 (archive point cloud used 0.1).",
+    "thumbnail": "/chaos/icons/modified_chua_attractor.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "mandelbrot_set",
     "title": "Mandelbrot Set",
     "category": "fractal",
