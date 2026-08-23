@@ -14,4 +14,4 @@
 
 - [x] 3.1 Vitest + Vite build
 - [x] 3.2 Capture gallery thumb `brusselator_rd`
-- [ ] 3.3 PR Closes #50; board In review
+- [x] 3.3 PR Closes #50; board In review
