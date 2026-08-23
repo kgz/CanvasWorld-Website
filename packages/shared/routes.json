@@ -99,6 +99,15 @@
     "active": true
   },
   {
+    "slug": "hopalong_attractor_1",
+    "title": "Hopalong Attractor 1",
+    "category": "attractor",
+    "description": "Archive Hopalong typo variant: classic-shaped map with sin(x−1) instead of sign(x−1), and |b x − 1 − c| under the square root.",
+    "thumbnail": "/chaos/icons/hopalong_attractor_1.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "gingerbread_man",
     "title": "Gingerbread Man",
     "category": "attractor",

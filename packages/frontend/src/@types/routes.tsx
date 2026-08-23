@@ -10,6 +10,7 @@ import HopalongAttractor from '../pages/attractors/hopalong_attractor'
 import HopalongAttractorPositive from '../pages/attractors/hopalong_attractor_positive'
 import HopalongAttractorAdditive from '../pages/attractors/hopalong_attractor_add'
 import HopalongAttractorSinusoidal from '../pages/attractors/hopalong_attractor_sinusoidal'
+import HopalongAttractor1 from '../pages/attractors/hopalong_attractor_1'
 import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
 import LorenzAttractor from '../pages/attractors/lorenz_attractor'
@@ -61,6 +62,7 @@ const components: Record<string, ComponentType> = {
 	hopalong_attractor_positive: HopalongAttractorPositive,
 	hopalong_attractor_additive: HopalongAttractorAdditive,
 	hopalong_attractor_sinusoidal: HopalongAttractorSinusoidal,
+	hopalong_attractor_1: HopalongAttractor1,
 	gingerbread_man: GingerbreadMan,
 	ikeda_map: IkedaMap,
 	lorenz_attractor: LorenzAttractor,
