@@ -1,5 +1,5 @@
 import { MDXProvider } from '@mdx-js/react'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, type ReactNode } from 'react'
 import { Helmet } from 'react-helmet'
 import { BlockMath, InlineMath } from 'react-katex'
 import { Link, Navigate, useParams } from 'react-router-dom'
@@ -8,7 +8,8 @@ import { Callout } from '../blog/Callout'
 import { formatPostMeta } from '../blog/types'
 import { getAdjacent, getPost, resolvePostSlug } from '../blog/registry'
 import { VizEmbed, VizEmbedGrid } from '../blog/VizEmbed'
-import { ParentSiteLink, SiteFooter } from '../chrome/ParentSiteLink'
+import { SiteFooter } from '../chrome/ParentSiteLink'
+import { SiteNav } from '../chrome/SiteNav'
 import styles from './post.module.css'
 
 const FONT_HREF =
@@ -34,8 +35,6 @@ function PostPage() {
 	const { slug = '' } = useParams()
 	const post = getPost(slug)
 	const adjacent = useMemo(() => getAdjacent(slug), [slug])
-	const navRef = useRef<HTMLElement>(null)
-	const [navScrolled, setNavScrolled] = useState(false)
 
 	useEffect(() => {
 		const existing = document.querySelector(`link[data-cw-frontpage-fonts="1"]`)
@@ -45,13 +44,6 @@ function PostPage() {
 		link.href = FONT_HREF
 		link.dataset.cwFrontpageFonts = '1'
 		document.head.appendChild(link)
-	}, [])
-
-	useEffect(() => {
-		const onScroll = () => setNavScrolled(window.scrollY > 8)
-		window.addEventListener('scroll', onScroll, { passive: true })
-		onScroll()
-		return () => window.removeEventListener('scroll', onScroll)
 	}, [])
 
 	if (!post) {
@@ -89,24 +81,7 @@ function PostPage() {
 				<meta name="twitter:description" content={description} />
 				<meta name="twitter:image" content={ogImage} />
 			</Helmet>
-			<header
-				ref={navRef}
-				className={[styles.siteNav, navScrolled ? styles.siteNavScrolled : ''].filter(Boolean).join(' ')}
-			>
-				<div className={styles.siteNavInner}>
-					<Link className={styles.wordmark} to="/">
-						Classical Chaos
-					</Link>
-					<nav className={styles.navLinks}>
-						<Link to="/#gallery">Gallery</Link>
-						<Link to="/blog" aria-current="page">
-							Notebook
-						</Link>
-						<Link to="/#about">About</Link>
-						<ParentSiteLink />
-					</nav>
-				</div>
-			</header>
+			<SiteNav current="notebook" />
 
 			<main className={styles.docShell}>
 				<Link className={styles.docBack} to="/blog">

@@ -27,62 +27,6 @@
   background: var(--cw-bg);
 }
 
-.siteNav {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 22px var(--cw-gap-lg);
-  background: color-mix(in oklch, var(--cw-void) 62%, transparent);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border-bottom: 1px solid transparent;
-  transition: background 220ms ease, border-color 220ms ease;
-}
-
-.siteNavInner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: var(--cw-container-wide);
-  margin: 0 auto;
-}
-
-.siteNavScrolled {
-  background: color-mix(in oklch, var(--cw-bg) 86%, transparent);
-  border-bottom-color: var(--cw-border);
-}
-
-.wordmark {
-  font-family: var(--cw-font-display);
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--cw-fg);
-  text-decoration: none;
-}
-
-.navLinks {
-  display: flex;
-  gap: var(--cw-gap-lg);
-}
-
-.navLinks a {
-  font-size: var(--cw-fs-meta);
-  color: var(--cw-muted);
-  text-decoration: none;
-  letter-spacing: 0.01em;
-  transition: color 160ms ease;
-}
-
-.navLinks a:hover,
-.navLinks a[aria-current="page"] {
-  color: var(--cw-fg);
-}
-
 .docShell {
   max-width: 720px;
   margin: 0 auto;
@@ -350,11 +294,7 @@
 }
 
 @media (max-width: 720px) {
-  .siteNav {
-    padding: 18px var(--cw-gap-md);
-  }
-
   .docShell {
-    padding: 36px var(--cw-gap-md) 72px;
+    padding: max(36px, env(safe-area-inset-top, 0px)) var(--cw-gap-md) calc(72px + env(safe-area-inset-bottom, 0px));
   }
 }

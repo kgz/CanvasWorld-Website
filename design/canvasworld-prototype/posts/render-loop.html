@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Rendering nine thousand points at sixty frames — CanvasWorld</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,7 +13,11 @@
   <header class="site-nav" data-od-id="site-nav">
     <div class="site-nav-inner">
       <a class="wordmark" href="../index.html" data-od-id="nav-wordmark">CanvasWorld</a>
-      <nav data-od-id="nav-links">
+      <button type="button" class="nav-toggle" data-od-id="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
+        <svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="sr-only">Menu</span>
+      </button>
+      <nav id="nav-menu" data-od-id="nav-links">
         <a href="../home.html#gallery" data-od-id="nav-link-gallery">Gallery</a>
         <a href="../blog.html" data-od-id="nav-link-blog">Blog</a>
         <a href="../home.html#about" data-od-id="nav-link-about">About</a>
@@ -97,5 +101,6 @@
     <p>CanvasWorld — a visualization laboratory for dynamical systems. <a href="../blog.html">Lab notebook</a></p>
   </footer>
   <script src="../js/mini-players.js"></script>
+  <script src="../js/site-nav.js"></script>
 </body>
 </html>

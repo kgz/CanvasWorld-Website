@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Lorenz — CanvasWorld</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,6 +12,9 @@
 <body>
   <div class="canvas-app panel-open" data-od-id="canvas-app">
     <header class="canvas-topbar" data-od-id="canvas-topbar">
+      <a class="canvas-home-link" href="home.html" data-od-id="canvas-nav-home" aria-label="Home">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 6.2 8 2l5.5 4.2V13a1 1 0 0 1-1 1h-3.5v-4H7v4H3.5a1 1 0 0 1-1-1V6.2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </a>
       <a class="wordmark" href="home.html" data-od-id="canvas-nav-wordmark">CanvasWorld</a>
 
       <div class="canvas-topbar-title">
@@ -22,14 +25,16 @@
       <div class="canvas-topbar-spacer"></div>
 
       <div class="canvas-topbar-actions" data-od-id="canvas-topbar-actions">
-        <button type="button" class="chrome-btn" data-od-id="panel-toggle" aria-expanded="true" aria-controls="side-panel">
+        <button type="button" class="chrome-btn" data-od-id="panel-toggle" aria-expanded="true" aria-controls="side-panel" aria-label="Parameters">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="6" y1="2.5" x2="6" y2="13.5" stroke="currentColor" stroke-width="1.3"/></svg>
           <span>Params</span>
         </button>
-        <a class="chrome-btn" href="home.html#gallery" data-od-id="canvas-nav-gallery">
+        <a class="chrome-btn" href="home.html#gallery" data-od-id="canvas-nav-gallery" aria-label="Gallery">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
           <span>Gallery</span>
         </a>
-        <a class="chrome-btn" href="blog.html" data-od-id="canvas-nav-blog">
+        <a class="chrome-btn" href="blog.html" data-od-id="canvas-nav-blog" aria-label="Blog">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 2.5h8a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H4a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 4 2.5Z" stroke="currentColor" stroke-width="1.2"/><path d="M5 6h6M5 8.5h6M5 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
           <span>Blog</span>
         </a>
       </div>
@@ -50,6 +55,12 @@
 
       <aside class="side-panel" id="side-panel" data-od-id="side-panel">
         <div class="side-panel-inner">
+          <div class="side-panel-header" data-od-id="panel-header">
+            <h2>Parameters</h2>
+            <button type="button" class="panel-close" data-od-id="panel-close" aria-label="Close parameters">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </button>
+          </div>
           <section class="panel-section" data-od-id="panel-section-params">
             <h2 class="panel-section-title">Parameters</h2>
             <p class="panel-lede">Tune the constants that govern the system. Changes re-trace the trajectory from its seed.</p>
@@ -357,23 +368,41 @@ dz/dt = xy − βz</pre>
     (function () {
       var app = document.querySelector('[data-od-id="canvas-app"]');
       var toggle = document.querySelector('[data-od-id="panel-toggle"]');
+      var closeBtn = document.querySelector('[data-od-id="panel-close"]');
       var scrim = document.querySelector('[data-od-id="stage-scrim"]');
       if (!app || !toggle) return;
+
+      var isNarrow = window.matchMedia('(max-width: 900px)').matches;
 
       function setOpen(open) {
         app.classList.toggle('panel-open', open);
         toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Close parameters' : 'Open parameters');
+      }
+
+      if (isNarrow) {
+        setOpen(false);
       }
 
       toggle.addEventListener('click', function () {
         setOpen(!app.classList.contains('panel-open'));
       });
 
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+          setOpen(false);
+        });
+      }
+
       if (scrim) {
         scrim.addEventListener('click', function () {
           setOpen(false);
         });
       }
+
+      window.matchMedia('(max-width: 900px)').addEventListener('change', function (e) {
+        if (e.matches) setOpen(false);
+      });
     })();
   </script>
 </body>
