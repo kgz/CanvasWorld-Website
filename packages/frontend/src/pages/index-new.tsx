@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import routes from '../@types/routes'
 import { homeNotebookPosts } from '../blog/registry'
 import { formatPostMeta } from '../blog/types'
-import { ParentSiteLink, SiteFooter } from '../chrome/ParentSiteLink'
+import { SiteFooter } from '../chrome/ParentSiteLink'
+import { SiteNav } from '../chrome/SiteNav'
 import { HeroInkCanvas } from './HeroInkCanvas'
 import styles from './frontpage.module.css'
 
@@ -105,8 +106,7 @@ function GalleryCard({
 }
 
 function Index() {
-	const navRef = useRef<HTMLElement>(null)
-	const [navScrolled, setNavScrolled] = useState(false)
+	const navRef = useRef<HTMLElement | null>(null)
 	const lastRandomRef = useRef(-1)
 
 	useEffect(() => {
@@ -118,15 +118,6 @@ function Index() {
 		link.href = FONT_HREF
 		link.dataset.cwFrontpageFonts = '1'
 		document.head.appendChild(link)
-	}, [])
-
-	useEffect(() => {
-		const onScroll = () => {
-			setNavScrolled(window.scrollY > 8)
-		}
-		window.addEventListener('scroll', onScroll, { passive: true })
-		onScroll()
-		return () => window.removeEventListener('scroll', onScroll)
 	}, [])
 
 	const pickRandom = () => {
@@ -155,22 +146,7 @@ function Index() {
 
 	return (
 		<div className={styles.page}>
-			<header
-				ref={navRef}
-				className={[styles.siteNav, navScrolled ? styles.siteNavScrolled : ''].filter(Boolean).join(' ')}
-			>
-				<div className={styles.siteNavInner}>
-					<Link className={styles.wordmark} to="/">
-						Classical Chaos
-					</Link>
-					<nav className={styles.navLinks}>
-						<a href="#gallery">Gallery</a>
-						<Link to="/blog">Notebook</Link>
-						<a href="#about">About</a>
-						<ParentSiteLink />
-					</nav>
-				</div>
-			</header>
+			<SiteNav current="home" headerRef={navRef} />
 
 			<section className={styles.hero}>
 				<HeroInkCanvas />

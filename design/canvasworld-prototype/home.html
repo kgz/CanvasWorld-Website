@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>CanvasWorld — A visualization laboratory</title>
   <link rel="stylesheet" href="css/shared.css" />
 </head>
@@ -10,7 +10,11 @@
   <header class="site-nav" data-od-id="site-nav">
     <div class="site-nav-inner">
       <a class="wordmark" href="index.html" data-od-id="nav-wordmark">CanvasWorld</a>
-      <nav data-od-id="nav-links">
+      <button type="button" class="nav-toggle" data-od-id="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
+        <svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="sr-only">Menu</span>
+      </button>
+      <nav id="nav-menu" data-od-id="nav-links">
         <a href="#gallery" data-od-id="nav-link-gallery">Gallery</a>
         <a href="blog.html" data-od-id="nav-link-blog">Blog</a>
         <a href="#about" data-od-id="nav-link-about">About</a>
@@ -293,5 +297,6 @@
       });
     })();
   </script>
+  <script src="js/site-nav.js"></script>
 </body>
 </html>

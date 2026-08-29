@@ -1,9 +1,10 @@
-import { useDeferredValue, useEffect, useRef, useState } from 'react'
+import { useDeferredValue, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { posts } from '../blog/registry'
 import { formatPostMeta, type PostMeta } from '../blog/types'
-import { ParentSiteLink, SiteFooter } from '../chrome/ParentSiteLink'
+import { SiteFooter } from '../chrome/ParentSiteLink'
+import { SiteNav } from '../chrome/SiteNav'
 import styles from './blog.module.css'
 
 const FONT_HREF =
@@ -24,8 +25,6 @@ function matchesQuery(meta: PostMeta, q: string): boolean {
 }
 
 function Blog() {
-	const navRef = useRef<HTMLElement>(null)
-	const [navScrolled, setNavScrolled] = useState(false)
 	const [thumbBroken, setThumbBroken] = useState(false)
 	const [query, setQuery] = useState('')
 	const deferredQuery = useDeferredValue(query)
@@ -45,15 +44,6 @@ function Blog() {
 		link.href = FONT_HREF
 		link.dataset.cwFrontpageFonts = '1'
 		document.head.appendChild(link)
-	}, [])
-
-	useEffect(() => {
-		const onScroll = () => {
-			setNavScrolled(window.scrollY > 8)
-		}
-		window.addEventListener('scroll', onScroll, { passive: true })
-		onScroll()
-		return () => window.removeEventListener('scroll', onScroll)
 	}, [])
 
 	return (
@@ -76,24 +66,7 @@ function Blog() {
 				<meta property="og:image" content="https://matf.dev/chaos/icons/mandelbrot_set.png" />
 				<meta name="twitter:card" content="summary_large_image" />
 			</Helmet>
-			<header
-				ref={navRef}
-				className={[styles.siteNav, navScrolled ? styles.siteNavScrolled : ''].filter(Boolean).join(' ')}
-			>
-				<div className={styles.siteNavInner}>
-					<Link className={styles.wordmark} to="/">
-						Classical Chaos
-					</Link>
-					<nav className={styles.navLinks}>
-						<Link to="/#gallery">Gallery</Link>
-						<Link to="/blog" aria-current="page">
-							Notebook
-						</Link>
-						<Link to="/#about">About</Link>
-						<ParentSiteLink />
-					</nav>
-				</div>
-			</header>
+			<SiteNav current="notebook" />
 
 			<main>
 				<section className={styles.blogHero}>
