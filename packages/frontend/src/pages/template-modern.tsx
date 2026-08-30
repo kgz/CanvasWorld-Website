@@ -88,6 +88,7 @@ function AnimationTransportBar({
 		isComplete,
 		particlesDrawn,
 		totalParticles,
+		manualProgress,
 		setManualProgress,
 		replay,
 	} = useAnimation()
@@ -96,6 +97,8 @@ function AnimationTransportBar({
 		return null
 	}
 
+	// While dragging, bind to manualProgress so a slow viz tick can't yank the thumb back.
+	const scrubValue = manualProgress ?? particlesDrawn
 	const isPlaying = !isPaused
 
 	return (
@@ -153,7 +156,7 @@ function AnimationTransportBar({
 					type="range"
 					min={0}
 					max={Math.max(totalParticles, 1)}
-					value={Math.min(particlesDrawn, totalParticles)}
+					value={Math.min(scrubValue, totalParticles)}
 					aria-label="Trajectory progress"
 					onChange={(e) => {
 						setManualProgress(parseInt(e.target.value, 10))
@@ -166,7 +169,7 @@ function AnimationTransportBar({
 					}}
 				/>
 				<span className={styles.transportCount}>
-					{progressLabel} = {particlesDrawn.toLocaleString()} / {totalParticles.toLocaleString()}
+					{progressLabel} = {scrubValue.toLocaleString()} / {totalParticles.toLocaleString()}
 				</span>
 			</div>
 
