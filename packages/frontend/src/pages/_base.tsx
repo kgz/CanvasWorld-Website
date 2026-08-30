@@ -3,7 +3,6 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react'
 import * as THREE from 'three'
 import style from '../@scss/template.module.scss'
-import { Helmet } from 'react-helmet'
 import { renderToString } from 'react-dom/server'
 import { isMeshProps, isParticleProps, isShaderProps, EDimensions, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
 import { isScreenshotMode, markScreenshotReady } from '../modules/screenshotMode'
@@ -431,17 +430,9 @@ const Base = <T,>(props: TPointsProps<T>) => {
     return () => {}
   }, [props])
 
-  const page = window.location.pathname.split('/').pop() || ''
-  const title = page.split(/(?=[A-Z])/).join(' ')
-  const description = `Interactive visualization of ${title}`
-
   if (isShaderProps(props)) {
     return (
       <>
-        <Helmet>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-        </Helmet>
         <Canvas
           camera={('cameraPosition' in props && props.cameraPosition) ? { position: props.cameraPosition } : { position: [0, 0, 1], fov: 75 }}
           dpr={window.devicePixelRatio}
@@ -491,10 +482,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
 
     return (
       <>
-        <Helmet>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-        </Helmet>
         <Canvas
           camera={{ position: [0, 0, 1], fov: 75 }}
           dpr={window.devicePixelRatio}
@@ -521,10 +508,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
 
     return (
       <>
-        <Helmet>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-        </Helmet>
         <Canvas
           camera={meshCamera}
           dpr={window.devicePixelRatio}
@@ -573,10 +556,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-      </Helmet>
       <Canvas
         camera={particleCamera}
         dpr={[1, 2]}

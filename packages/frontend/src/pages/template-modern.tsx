@@ -7,8 +7,10 @@ import { isScreenshotMode, resetScreenshotReady } from '../modules/screenshotMod
 import { useMatomo } from '@datapunt/matomo-tracker-react'
 import Index from './index-new'
 import 'katex/dist/katex.min.css'
+import { Helmet } from 'react-helmet'
 import { AnimationProvider, useAnimation } from '../context/AnimationContext'
 import { postsForVizSlug } from '../blog/registry'
+import { categorySearchHeading, publicIconUrl, publicPageUrl, thumbAlt } from '../modules/seo'
 import styles from './canvasChrome.module.css'
 
 const FONT_HREF =
@@ -234,6 +236,11 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 	const hasExamples = Boolean(datData.examples && datData.examples.length > 0)
 	const relatedNotes = postsForVizSlug(route.slug)
 	const primaryNote = relatedNotes[0]
+	const pageTitle = `${route.name} — Classical Chaos`
+	const canonicalUrl = publicPageUrl(`/${route.slug}`)
+	const ogImage = publicIconUrl(route.slug)
+	const imgAlt = thumbAlt(route.name, route.description)
+	const searchH2 = categorySearchHeading(route.category)
 
 	if (bareStage) {
 		return (
@@ -248,6 +255,22 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 
 	return (
 		<div className={`${styles.app}${panelOpen ? ` ${styles.panelOpen}` : ''}`}>
+			<Helmet>
+				<title>{pageTitle}</title>
+				<meta name="description" content={route.description} />
+				<link rel="canonical" href={canonicalUrl} />
+				<meta property="og:type" content="website" />
+				<meta property="og:site_name" content="Classical Chaos" />
+				<meta property="og:url" content={canonicalUrl} />
+				<meta property="og:title" content={pageTitle} />
+				<meta property="og:description" content={route.description} />
+				<meta property="og:image" content={ogImage} />
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:url" content={canonicalUrl} />
+				<meta name="twitter:title" content={pageTitle} />
+				<meta name="twitter:description" content={route.description} />
+				<meta name="twitter:image" content={ogImage} />
+			</Helmet>
 			<header className={styles.topbar}>
 				<Link className={styles.homeLink} to="/" aria-label="Home">
 					<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -335,6 +358,18 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 					<div className={styles.stageHost}>
 						<route.element />
 					</div>
+					<div className={styles.seoFallback}>
+						<h2>{searchH2}</h2>
+						<p>{route.description}</p>
+						<img src={ogImage} alt={imgAlt} width={1200} height={630} />
+					</div>
+					<noscript>
+						<div className={styles.seoFallback}>
+							<h2>{searchH2}</h2>
+							<p>{route.description}</p>
+							<img src={ogImage} alt={imgAlt} width={1200} height={630} />
+						</div>
+					</noscript>
 					<div className={styles.vignette} aria-hidden="true" />
 					<FpsCounter />
 				</section>

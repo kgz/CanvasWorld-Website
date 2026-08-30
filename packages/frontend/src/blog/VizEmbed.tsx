@@ -15,6 +15,8 @@ import {
 import { Link } from 'react-router-dom'
 import { parseEmbedProgress, postEmbedControl } from '../modules/embedBridge'
 import { DEFAULT_EMBED_PARTICLES } from '../modules/embedMode'
+import { publicIconUrl, publicPageUrl, thumbAlt } from '../modules/seo'
+import routes from '../@types/routes'
 import styles from './VizEmbed.module.css'
 
 type VizEmbedProps = {
@@ -94,6 +96,10 @@ export function VizEmbed({
 	const [iframeReady, setIframeReady] = useState(false)
 	const [nComplete, setNComplete] = useState(false)
 	const title = label ?? slug.replace(/_/g, ' ')
+	const catalog = routes.find((entry) => entry.slug === slug)
+	const posterAlt = thumbAlt(catalog?.name ?? title, catalog?.description ?? '')
+	const posterSrc = publicIconUrl(slug)
+	const fullHref = publicPageUrl(`/${slug}`)
 	const src = useMemo(() => embedSrc(slug, particles, animateN), [slug, particles, animateN])
 
 	const wantRunning = docVisible && !userPaused && slotAllowed
@@ -170,6 +176,7 @@ export function VizEmbed({
 	return (
 		<figure className={styles.player} ref={rootRef} data-stagger-index={index} data-slot-allowed={slotAllowed ? '1' : '0'}>
 			<div className={styles.stage}>
+				<img className={styles.poster} src={posterSrc} alt={posterAlt} width={640} height={400} />
 				{slotAllowed ? (
 					<iframe
 						ref={iframeRef}
@@ -183,6 +190,11 @@ export function VizEmbed({
 				) : (
 					<div className={styles.placeholder}>Queued…</div>
 				)}
+				<noscript>
+					<p className={styles.noscript}>
+						<a href={fullHref}>{title} — open full visualisation</a>
+					</p>
+				</noscript>
 			</div>
 			<figcaption className={styles.bar}>
 				<span className={styles.label}>{title} · live</span>
