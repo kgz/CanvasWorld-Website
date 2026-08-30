@@ -17,8 +17,8 @@ const HopalongAttractor = createAttractorPage({
 	color: 'hsl-chunk',
 	cameraPosition: [0, 0, -220],
 	iterate: (x, y, p) => {
-		const xn = y - 1 - Math.sqrt(Math.abs(p.b * x - p.c)) * Math.sign(x - 1)
-		const yn = p.a - x - 1
+		const xn = y - Math.sign(x) * Math.sqrt(Math.abs(p.b * x - p.c))
+		const yn = p.a - x
 		return { x: xn, y: yn }
 	},
 	description: () => (
@@ -30,10 +30,10 @@ const HopalongAttractor = createAttractorPage({
 			<br />
 			<br />
 			Definition:
-			<BlockMath math="x_{n+1} = y_n - sign(x_n) \\sqrt{|b x_n - c|}" />
-			<BlockMath math="y_{n+1} = a - x_n - 1" />
+			<BlockMath math={'x_{n+1} = y_n - \\mathrm{sgn}(x_n)\\sqrt{|b x_n - c|}'} />
+			<BlockMath math={'y_{n+1} = a - x_n'} />
 			Limits:
-			<BlockMath math="a, b, c \\in [-20, 20]" />
+			<BlockMath math={'a, b, c \\in [-20, 20]'} />
 		</>
 	),
 })

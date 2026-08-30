@@ -3,9 +3,9 @@ export const meta = {
 	title: 'Four Hopalong variants, side by side',
 	tag: 'Attractors',
 	excerpt:
-		'Barry Martin’s 1981 Hopalong map (the Skull attractor) in four live Classical Chaos variants — classic, positive, additive, sinusoidal — so you can see what changes when the rule changes.',
+		'Barry Martin’s 1981 Hopalong map (the Skull attractor) in four live Classical Chaos variants: classic, positive, additive, and sinusoidal, so you can see what changes when the rule changes.',
 	dateLabel: 'Aug 2026',
-	readMinutes: 7,
+	readMinutes: 8,
 	thumbSlug: 'hopalong_attractor',
 	featured: false,
 	order: 20,
@@ -14,9 +14,7 @@ export const meta = {
 
 Barry Martin found the Hopalong map in 1981. People also call it the Skull attractor. Unlike Lorenz, there is no smooth trail of rates. You take a point `(x, y)`, run a short formula, get the next point, and pile those points into a cloud.
 
-I like it because the rule is tiny and the cloud still surprises me. Change one term and the whole field reorganizes. Below are the four versions Classical Chaos ships, all live at once so I stop relying on memory.
-
-Four live clouds, side by side. Pause any card if you want quiet. Open full on a card when you want that variant’s knobs — this page is for looking, not tuning.
+The rule is tiny and the cloud still rearranges when one term changes. Below are the four versions Classical Chaos ships, all live at once so the silhouettes stay comparable.
 
 <VizEmbedGrid>
   <VizEmbed slug="hopalong_attractor" label="Classic" particles={16000} />
@@ -29,56 +27,55 @@ Four live clouds, side by side. Pause any card if you want quiet. Open full on a
 
 Each new point comes only from the last one. No integrating along a curve. Start near a seed, keep iterating, and the silhouette that piles up is the attractor.
 
-Classic Hopalong turns knobs labeled `a`, `b`, `c`. The other three use `a`, `b`, and `μ` (mu) on a shared outer shape. Either way: many steps from a seed, then a colored cloud.
+Classic Hopalong uses knobs `a`, `b`, `c`. The positive / additive / sinusoidal trio keep the same outer shape and only rewrite the middle of the x-step. Either way: many steps from a seed, then a colored cloud.
 
 ## Classic
 
 Defaults on the classic stage sit near `a = 1.4`, `b ≈ 5.16`, `c ≈ 2.74`, seed `(0.03, 0.01)`. Color walks through hue as the points accumulate so the cloud doesn’t go flat.
 
-Some writeups use `sign(x)` and skip the extra `−1` on the x-step. Classical Chaos draws this version:
+Martin’s classic form:
 
-<BlockMath math={'x\\prime = y - 1 - \\mathrm{sign}(x - 1)\\,\\sqrt{|b x - c|}'} />
-<BlockMath math={'y\\prime = a - x - 1'} />
+<BlockMath math={'x\\prime = y - \\mathrm{sgn}(x)\\,\\sqrt{|b x - c|}'} />
+<BlockMath math={'y\\prime = a - x'} />
 
 ```ts
-const nextX = y - 1 - Math.sign(x - 1) * Math.sqrt(Math.abs(b * x - c))
-const nextY = a - x - 1
+const nextX = y - Math.sign(x) * Math.sqrt(Math.abs(b * x - c))
+const nextY = a - x
 x = nextX
 y = nextY
 ```
 
-On the full classic stage you can shove those knobs around (including a wild preset near `a ≈ −11`) and the cloud rebuilds from the seed. Open full on the Classic card when you want that.
+On the [full classic stage](/hopalong_attractor) you can shove those knobs around (including a wild preset near `a ≈ −11`) and the cloud rebuilds from the seed.
 
-## Three cousins: only G changes
 
-Positive, additive, and sinusoidal share one outer recipe and a seed near `(0.723, −0.328)`. Think of a little helper `G` that twists the update. Same outer shape; different twist:
+## Three cousins: one term changes
 
-<BlockMath math={"x\\prime = y + a(1 - b y^{2})\\,y + G(x)"} />
-<BlockMath math={"y\\prime = -x + G(x\\prime)"} />
+Positive, additive, and sinusoidal keep `y' = a − x` and only rewrite the x-step’s middle piece.
 
-That second `G` uses the brand-new `x'`, not the old `x`. The `a(1 − b y²)y` piece is feedback in `y`; with `a = 0` it drops out and `G` does more of the work.
+**Positive** flips the radical to addition, still signed:
 
-**Positive** keeps a signed square root — the flip that still feels related to classic:
+<BlockMath math={'x\\prime = y + \\mathrm{sgn}(x)\\,\\sqrt{|b x - c|}'} />
+<BlockMath math={'y\\prime = a - x'} />
 
-<BlockMath math={'G(x) = \\mathrm{sign}(x)\\,\\sqrt{|b x - \\mu|}'} />
+**Additive** drops the sign: always add the square root.
 
-**Additive** drops the sign: `G(x) = √{|b x − μ|}`. First time I flipped between those two cards I thought “same family,” then the missing sign erased a whole class of folds.
+<BlockMath math={'x\\prime = y + \\sqrt{|b x - c|}'} />
+<BlockMath math={'y\\prime = a - x'} />
 
 **Sinusoidal** swaps the radical for a sine:
 
-<BlockMath math={'G(x) = \\sin(b x - \\mu)'} />
+<BlockMath math={'x\\prime = y + \\sin(b x - c)'} />
+<BlockMath math={'y\\prime = a - x'} />
 
-Because sine stays between −1 and 1, that cloud feels calmer until the feedback term wakes up.
+Because sine stays between −1 and 1, small `b` stays near-periodic (thin rings). The stage defaults sit nearer `a = 2.5`, `b = 4`, `c = 0.2` so the cloud fills; classic-style `b ≈ 5` also works.
 
-So classic stands alone with its two-line rule. The other three only disagree about `G`: signed sqrt, unsigned sqrt, or sine.
+Classic keeps the two-line Martin rule with `sign`. The other three only disagree about the middle x-step: signed sqrt, unsigned sqrt, or sine.
 
 ## Looking at the cards
 
-All four are point clouds from iterating a map. Tip points often read brighter. You are not scrubbing a trail or dragging a camera from these cards — just comparing shapes.
-
-I keep coming back to the grid because serial comparison fails me here. I remember the last silhouette instead of the difference.
+All four are point clouds from iterating a map. Tip points often read brighter. Serial comparison fails here: the last silhouette sticks in memory and erases the difference. The grid keeps all four visible at once.
 
 <Callout to="/hopalong_attractor">
 	<strong>Goto full canvas</strong>
-	Classic stage first: twist `a`, `b`, `c`, try the presets. Or Open full on any card above for that variant’s own knobs.
+	Classic stage first: twist `a`, `b`, `c`, try the presets. Or open full on any card above for that variant’s own knobs.
 </Callout>
