@@ -1,0 +1,40 @@
+export const meta = {
+	slug: 'svensson-3d',
+	title: 'Svensson lifted into three dimensions',
+	tag: 'Attractors',
+	excerpt:
+		'The modified 3D Svensson map adds a z leg and a fifth knob to the sine–cosine iterate — a coral–amber–teal point cloud on Classical Chaos, separate from flat 2D Svensson.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 4,
+	thumbSlug: 'svensson_attractor_3d',
+	featured: false,
+	order: 48,
+}
+
+
+Flat Svensson is a 2D sine–cosine map: four knobs, seed `(0, 0)`, and a coloured point cloud. The 3D cousin keeps the same `x` and `y` legs, adds a `z` update built from the same trig pieces, and introduces a fifth parameter `e`. No flow field, no time step. Each point comes only from the last triple.
+
+Classical Chaos draws the lifted map as a centred point cloud. Colour runs coral → amber → teal by direction, the same site ramp as [Schwarz P](/schwarz_p).
+
+<VizEmbed slug="svensson_attractor_3d" label="Svensson 3D" animateN />
+
+## The map
+
+Five real parameters, knobs `a` through `e`:
+
+<BlockMath math={'x_{n+1} = d \\sin(a x_n) - \\sin(b y_n)'} />
+<BlockMath math={'y_{n+1} = c \\cos(a x_n) + \\cos(b y_n)'} />
+<BlockMath math={'z_{n+1} = e \\sin(a x_n) + \\sin(b y_n)'} />
+
+Defaults sit at `a = -3`, `b = c = d = e = 3`, seed `(0, 0, 0)`. The `z` leg reads `x` and `y` from the previous step, not the old `z`.
+
+## Not the flat Svensson page
+
+The [2D Svensson stage](/svensson_attractor) is a different catalog entry: same trig family, no `z`, no `e`. Default cloud there is a sheet in the plane. Here the volume fills out when `e` opens the vertical leg.
+
+Raising `e` spreads the cloud along `z`. Pushing `a` toward the edges of `[-3, 3]` folds the ribbons tighter. On the [full 3D Svensson stage](/svensson_attractor_3d) twist all five knobs, step through how many points are lit, or try presets (default, soft folds, braided mix).
+
+<Callout to="/svensson_attractor_3d">
+	<strong>Goto full canvas</strong>
+	Retune `a`–`e`, scrub how many points are lit, try a preset, and spin the cloud.
+</Callout>

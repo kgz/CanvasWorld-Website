@@ -270,6 +270,15 @@
     "active": true
   },
   {
+    "slug": "svensson_attractor_3d",
+    "title": "Svensson Attractor (3D)",
+    "category": "attractor",
+    "description": "Modified 3D Svensson map: x'=d sin(a x)−sin(b y), y'=c cos(a x)+cos(b y), z'=e sin(a x)+sin(b y). Defaults a=−3, b=c=d=e=3; coral→teal point cloud.",
+    "thumbnail": "/chaos/icons/svensson_attractor_3d.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "dini_surface",
     "title": "Dini's Surface",
     "category": "misc",
