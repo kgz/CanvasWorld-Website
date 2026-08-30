@@ -313,5 +313,41 @@
     "thumbnail": "/chaos/icons/hopf_fibration.png",
     "renderMode": "webgl",
     "active": true
+  },
+  {
+    "slug": "polynomial_abs",
+    "title": "Polynomial ABS",
+    "category": "attractor",
+    "description": "3D absolute-value polynomial map: each axis mixes x,y,z and |x|,|y|,|z| with seven coeffs (xa…zg). Coral→teal point cloud; transport n reveals volume.",
+    "thumbnail": "/chaos/icons/polynomial_abs.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "polynomial_type_a",
+    "title": "Polynomial Type A",
+    "category": "attractor",
+    "description": "3D polynomial Type A map: x'=a+y−zy, y'=b+z−xz, z'=c+x−yx. Defaults a=1.586, b=1.124, c=0.281; coral→teal point cloud.",
+    "thumbnail": "/chaos/icons/polynomial_type_a.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "polynomial_type_b",
+    "title": "Polynomial Type B",
+    "category": "attractor",
+    "description": "3D polynomial Type B map with six scale knobs on cyclic product terms. Defaults a=1.6691, b=1.0405, c=0.2818, d=0.2818, e=0, f=1.1055; coral→teal point cloud.",
+    "thumbnail": "/chaos/icons/polynomial_type_b.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
+    "slug": "polynomial_type_c",
+    "title": "Polynomial Type C",
+    "category": "attractor",
+    "description": "3D per-axis quadratic polynomial map (six coeffs per axis, xa…zf). Coral→teal point cloud; transport n reveals volume.",
+    "thumbnail": "/chaos/icons/polynomial_type_c.png",
+    "renderMode": "webgl",
+    "active": true
   }
 ]

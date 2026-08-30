@@ -1,0 +1,75 @@
+export const meta = {
+	slug: 'polynomial-family',
+	title: 'Four 3D polynomial maps side by side',
+	tag: 'Attractors',
+	excerpt:
+		'Four related 3D discrete polynomial maps — Type A, B, C, and ABS — iterated from (0,0,0) into coral–amber–teal point clouds on Classical Chaos.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 6,
+	thumbSlug: 'polynomial_type_a',
+	featured: true,
+	order: 6,
+}
+
+
+Classical Chaos ships four related 3D discrete polynomial maps as a set. Each one reads the last point and writes the next. No smooth flow field, no time step: just iterate from seed `(0,0,0)` until a coloured point cloud appears. Colour runs coral → amber → teal by direction, the same site ramp as [Schwarz P](/schwarz_p).
+
+Type A folds into a compact tangled shell. Type B opens the same coupling with extra scale factors and reads lacier. Type C stacks quadratic folds per axis. ABS is the lumpy, block-filled outlier. Four live stages below keep those silhouettes side by side.
+
+<VizEmbedGrid>
+  <VizEmbed slug="polynomial_type_a" label="Type A" particles={16000} />
+  <VizEmbed slug="polynomial_type_b" label="Type B" particles={16000} />
+  <VizEmbed slug="polynomial_type_c" label="Type C" particles={16000} />
+  <VizEmbed slug="polynomial_abs" label="ABS" particles={16000} />
+</VizEmbedGrid>
+
+## Map, not flow
+
+Discrete maps only: each new coordinate comes from the previous triple, not from integrating a vector field. The orbit is the picture. Many steps from the seed, then a coloured cloud in 3D.
+
+## Type A
+
+The smallest member: three knobs `a`, `b`, `c` in a cyclic quadratic loop. Defaults `a=1.586`, `b=1.124`, `c=0.281`:
+
+<BlockMath math={'x_{n+1} = a + y_n - z_n y_n'} />
+<BlockMath math={'y_{n+1} = b + z_n - x_n z_n'} />
+<BlockMath math={'z_{n+1} = c + x_n - y_n x_n'} />
+
+On the [full Type A stage](/polynomial_type_a): twist the three knobs, scrub how many points are lit, or try presets (default, denser shell, twin-lobed fold).
+
+## Type B adds scale factors
+
+Same cyclic pattern as Type A, but each product term gets its own scale. Six knobs `a`…`f`; defaults sit near `a=1.6691`, `b=1.0405`, `c=0.2818`, `d=0.2818`, `e=0`, `f=1.1055`:
+
+<BlockMath math={'x_{n+1} = a + y_n - z_n (b y_n)'} />
+<BlockMath math={'y_{n+1} = c + z_n - x_n (d z_n)'} />
+<BlockMath math={'z_{n+1} = e + x_n - y_n (f x_n)'} />
+
+The [full Type B stage](/polynomial_type_b) adds presets for lace and an open woven volume.
+
+## Type C: quadratic per axis
+
+Eighteen knobs (`xa`…`zf`): six coefficients per axis. Each update is a quadratic in the current coordinate and the next cyclic partner:
+
+<BlockMath math={'x_{n+1} = a_x + x(b_x + c_x x + d_x y) + y(e_x + f_x y)'} />
+
+The same pattern cycles through `y` and `z`. On the [full Type C stage](/polynomial_type_c), presets shell, drift, and default give three starting shapes in that denser fold space.
+
+## Polynomial ABS
+
+Seven coefficients per axis (`xa`…`zg`): an absolute-value affine map, piecewise linear. The card fills like a rough block rather than a thin shell.
+
+<BlockMath math={'x_{n+1} = a_x + b_x x + c_x y + d_x z + e_x |x| + f_x |y| + g_x |z|'} />
+
+(and the same shape for `y` and `z` with their own coeffs)
+
+The [full ABS stage](/polynomial_abs) exposes all twenty-one knobs when that wider coefficient space is worth exploring.
+
+## Four silhouettes at once
+
+All four share the discrete orbit idea and the coral → amber → teal ribbon. Flipping pages one at a time blurs the differences; the grid keeps every shape visible together.
+
+<Callout to="/polynomial_type_a">
+	<strong>Start with Type A</strong>
+	Simplest map in the family. Open full to twist knobs, step through how many points are lit, or try the presets, then hop to B, C, or ABS from the gallery.
+</Callout>

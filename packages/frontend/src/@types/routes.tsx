@@ -20,6 +20,10 @@ import ModifiedChuaAttractor from '../pages/attractors/modified_chua_attractor'
 import AizawaAttractor from '../pages/attractors/aizawa_attractor'
 import PeterDeJongAttractor3d from '../pages/attractors/peter_de_jong_attractor_3d'
 import ThomasAttractor from '../pages/attractors/thomas_attractor'
+import PolynomialAbs from '../pages/attractors/polynomial_abs'
+import PolynomialTypeA from '../pages/attractors/polynomial_type_a'
+import PolynomialTypeB from '../pages/attractors/polynomial_type_b'
+import PolynomialTypeC from '../pages/attractors/polynomial_type_c'
 import MandelbrotSet from '../pages/maps/mandelbrot_set'
 import JuliaSet from '../pages/maps/julia_set'
 import Brusselator from '../pages/misc/brusselator'
@@ -80,6 +84,10 @@ const components: Record<string, ComponentType> = {
 	aizawa_attractor: AizawaAttractor,
 	peter_de_jong_attractor_3d: PeterDeJongAttractor3d,
 	thomas_attractor: ThomasAttractor,
+	polynomial_abs: PolynomialAbs,
+	polynomial_type_a: PolynomialTypeA,
+	polynomial_type_b: PolynomialTypeB,
+	polynomial_type_c: PolynomialTypeC,
 	mandelbrot_set: MandelbrotSet,
 	julia_set: JuliaSet,
 	sierpinski_triangle: SierpinskiTriangle,
