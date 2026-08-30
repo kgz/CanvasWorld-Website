@@ -56,7 +56,10 @@ async function captureSlug(page, slug) {
 		slug === 'lorenz_attractor'
 			? { r: 102, g: 255, b: 224 }
 			: null
-	const dataUrl = await page.evaluate((flat) => {
+	const boostLines = false
+	const crispDownscale = slug === 'hilbert_curve'
+	const dataUrl = await page.evaluate(
+		({ flat, boost, crisp }) => {
 		const src = document.querySelector('#cw-viz-canvas')
 		if (!(src instanceof HTMLCanvasElement)) {
 			return null
@@ -68,31 +71,38 @@ async function captureSlug(page, slug) {
 		if (!ctx) {
 			return null
 		}
-		ctx.imageSmoothingEnabled = true
+		ctx.imageSmoothingEnabled = !boost && !crisp
 		ctx.imageSmoothingQuality = 'high'
 		ctx.fillStyle = '#000'
 		ctx.fillRect(0, 0, out.width, out.height)
 		ctx.drawImage(src, 0, 0, out.width, out.height)
-		if (flat) {
+		if (flat || boost) {
 			const img = ctx.getImageData(0, 0, out.width, out.height)
 			const d = img.data
 			for (let i = 0; i < d.length; i += 4) {
-				if (d[i] + d[i + 1] + d[i + 2] > 20) {
+				if (flat && d[i] + d[i + 1] + d[i + 2] > 20) {
 					d[i] = flat.r
 					d[i + 1] = flat.g
 					d[i + 2] = flat.b
 					d[i + 3] = 255
-				} else {
+				} else if (flat) {
 					d[i] = 0
 					d[i + 1] = 0
 					d[i + 2] = 0
+					d[i + 3] = 255
+				} else if (boost && d[i] + d[i + 1] + d[i + 2] > 20) {
+					d[i] = Math.min(255, Math.round(d[i] * 1.35))
+					d[i + 1] = Math.min(255, Math.round(d[i + 1] * 1.35))
+					d[i + 2] = Math.min(255, Math.round(d[i + 2] * 1.35))
 					d[i + 3] = 255
 				}
 			}
 			ctx.putImageData(img, 0, 0)
 		}
 		return out.toDataURL('image/png')
-	}, solidify)
+	},
+		{ flat: solidify, boost: boostLines, crisp: crispDownscale },
+	)
 
 	if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/png;base64,')) {
 		throw new Error('downsample capture failed')

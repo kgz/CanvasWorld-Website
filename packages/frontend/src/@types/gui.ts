@@ -3,6 +3,7 @@
 import type { RootState, Vector3 } from "@react-three/fiber"
 import type { _XRFrame } from "@react-three/fiber/dist/declarations/src/core/utils"
 import type { RefObject } from 'react'
+import type * as THREE from 'three'
 
 /**
  * Enumeration for dimensions.
@@ -70,6 +71,8 @@ export type TParticleProps<T> = {
 	numParticles: number
 	dimension: EDimensions
 	pointSize?: number
+	/** Square/circle sprite for points (e.g. solid grid cells). */
+	pointMap?: THREE.Texture
 	singleColor?: THREE.Color
 	cameraPosition?: Vector3
 	colorAlpha?: boolean
