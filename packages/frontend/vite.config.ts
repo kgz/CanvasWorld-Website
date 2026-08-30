@@ -52,7 +52,15 @@ export default defineConfig({
 		{
 			name: 'watch-shared-catalog',
 			configureServer(server) {
-				server.watcher.add(path.resolve(__dirname, '../shared/routes.json'))
+				const catalog = path.resolve(__dirname, '../shared/routes.json')
+				server.watcher.add(catalog)
+				// JSON HMR alone can leave routes.tsx with a stale catalog array →
+				// new slugs fall through to Index (home) inside VizEmbed iframes.
+				server.watcher.on('change', (file) => {
+					if (path.resolve(file) === catalog) {
+						server.ws.send({ type: 'full-reload', path: '*' })
+					}
+				})
 			},
 		},
 		react({
