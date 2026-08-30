@@ -1,0 +1,34 @@
+export const meta = {
+	slug: 'perlin-noise',
+	title: 'A cyan-magenta sheet of Perlin noise',
+	tag: 'Noise',
+	excerpt:
+		'Ken Perlin gradient noise as a drifting GPU field: scale, octaves, and speed turn soft hills into finer texture.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 4,
+	thumbSlug: 'perlin_noise',
+	featured: false,
+	order: 165,
+}
+
+
+Perlin noise is the soft random people reach for when they want clouds, terrain, or a shimmer that is not pure white noise. Ken Perlin built it so nearby points agree: gradients on a lattice, blended with a fade curve that kills hard seams.
+
+Classical Chaos draws that as a fullscreen field. The value at each pixel comes from a few stacked octaves (fBm). Low values lean cyan; high values swing toward magenta. Change scale and the hills get wider or tighter. Add octaves and fine ripples ride the big ones. Speed slides the sampling window so the sheet drifts.
+
+<VizEmbed slug="perlin_noise" label="Perlin Noise" />
+
+The fade that smooths cell corners is the familiar cubic
+
+<BlockMath math={'t^{3}(t(6t-15)+10)'} />
+
+so the field stays C1 across lattice edges instead of showing squares.
+
+## On the full stage
+
+On the [full Perlin stage](/perlin_noise) you can scrub scale, octaves, and drift speed in Params.
+
+<Callout to="/perlin_noise">
+	<strong>Goto full canvas</strong>
+	Tune scale, octaves, and speed; pause when you want the sheet still.
+</Callout>

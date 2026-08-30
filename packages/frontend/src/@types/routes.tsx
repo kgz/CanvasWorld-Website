@@ -41,6 +41,7 @@ import FigureKnots from '../pages/misc/figure_knots'
 import SvenssonAttractor from '../pages/attractors/svensson_attractor'
 import SvenssonAttractor3d from '../pages/attractors/svensson_attractor_3d'
 import HopfFibration from '../pages/misc/hopf_fibration'
+import PerlinNoise from '../pages/misc/perlin_noise'
 
 export type CatalogEntry = {
 	slug: string
@@ -106,6 +107,7 @@ const components: Record<string, ComponentType> = {
 	svensson_attractor: SvenssonAttractor,
 	svensson_attractor_3d: SvenssonAttractor3d,
 	hopf_fibration: HopfFibration,
+	perlin_noise: PerlinNoise,
 }
 
 const catalogEntries: CatalogEntry[] = catalog
