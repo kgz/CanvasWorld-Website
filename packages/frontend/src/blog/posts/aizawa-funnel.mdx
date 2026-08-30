@@ -3,7 +3,7 @@ export const meta = {
 	title: 'Aizawa’s round shell with a hole through it',
 	tag: 'Attractors',
 	excerpt:
-		'The Aizawa attractor fills a ball-like shell with a funnel down the middle: six ODE knobs and a cool-to-warm trail on Classical Chaos, ported from the old CanvasWorld workshop.',
+		'The Aizawa attractor fills a ball-like shell with a funnel down the middle: six ODE knobs and a cool-to-warm trail on Classical Chaos.',
 	dateLabel: 'Aug 2026',
 	readMinutes: 5,
 	featured: false,
@@ -14,19 +14,19 @@ export const meta = {
 
 Yoji Aizawa’s system is one of those 3D chaos demos that reads as a shape before it reads as equations: a round cloud with a clear tunnel through the axis. Lorenz gets the butterfly. Aizawa gets the punctured ball.
 
-Classical Chaos draws it the same way as the Lorenz stage: Euler steps into a GPU line trail. The embed below only grows the trail in. Scrubbing length, drag-to-rotate, and the six coefficients live on the full canvas.
+Classical Chaos draws it the same way as the Lorenz stage: Euler steps into a GPU line trail.
 
 <VizEmbed slug="aizawa_attractor" label="Aizawa" animateN />
 
 ## The ODEs
 
-Six real parameters. On the Params panel they are knobs `a` through `f`, plus step size `dt`.
+Six real parameters: knobs `a` through `f`, plus step size `dt`.
 
 <BlockMath math={'\\dot{x} = (z - b)x - d y'} />
 <BlockMath math={'\\dot{y} = d x + (z - b)y'} />
 <BlockMath math={'\\dot{z} = c + a z - z^3/3 - (x^2 + y^2)(1 + e z) + f z x^3'} />
 
-Defaults on Classical Chaos (close to the [archive workshop](https://github.com/kgz/CanvasWorld_archive/tree/master/%283d%29%20Aizawa%20Attractor)): `a=0.95`, `b=0.7`, `c=0.6`, `d=3.5`, `e=0.25`, `f=0.1`, `dt=0.01`, seed `(0.1, 0, 0)`. A second preset keeps the archive’s longer decimals.
+Defaults on Classical Chaos: `a=0.95`, `b=0.7`, `c=0.6`, `d=3.5`, `e=0.25`, `f=0.1`, `dt=0.01`, seed `(0.1, 0, 0)`. A second preset keeps longer decimal knobs.
 
 ## Why it looks like a funnel
 
@@ -34,16 +34,17 @@ The \(x\) and \(y\) equations rotate and stretch in the horizontal plane as \(z\
 
 Change `d` and the swirl tightens or loosens. Nudge `a`/`c` and the vertical thickness shifts. Nothing here is a mesh; it is only the orbit you integrate.
 
-## Trail, not a wrap buffer
+## On the full stage
 
-The old workshop wrote points into a ring buffer and wrapped. Here `n` is trail length: grow, scrub, or hold, same contract as Lorenz. Change any of `a`…`f` or `dt` and the trail resets from the seed.
+Trail length grows, scrubs, or holds like Lorenz. Change any of `a`…`f` or `dt` and the trail resets from the seed.
 
 ```ts
-const next = aizawaTick(x, y, z, a, b, c, d, e, f, dt)
-// store (x, z, y) scaled so the funnel stands upright
+const nextX = (z - b) * x - d * y
+const nextY = d * x + (z - b) * y
+const nextZ = c + a * z - (z * z * z) / 3 - (x * x + y * y) * (1 + e * z) + f * z * x * x * x
 ```
 
 <Callout to="/aizawa_attractor">
 	<strong>Goto full canvas</strong>
-	Retune `a`–`f` and `dt`, scrub trail length, try a preset, drag to rotate. Embed stays grow-in only.
+	Retune `a`–`f` and `dt`, scrub trail length, try a preset, drag to rotate.
 </Callout>
