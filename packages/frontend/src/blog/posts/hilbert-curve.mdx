@@ -1,0 +1,36 @@
+export const meta = {
+	slug: 'hilbert-curve',
+	title: 'Hilbert’s curve: one path that fills the square',
+	tag: 'Fractals',
+	excerpt:
+		'David Hilbert’s space-filling curve visits every cell of a square grid without lifting the pen. Classical Chaos draws it by mapping Hilbert index i onto an N×N board.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'hilbert_curve',
+	featured: false,
+	order: 65,
+}
+
+
+David Hilbert described a continuous curve that, in the limit, passes through every point of the unit square (1891). On a finite grid the idea is blunt: walk every cell of an `N×N` board in one unbroken path, where `N = 2^k` and order `k` sets how fine the board is.
+
+Classical Chaos does not grow an L-system string here. It maps Hilbert index `i` to a cell with the usual bit-twiddle, then lays those cells down as particles in index order. Hue walks the path so you can see the snake progress; the newest tip is yellow.
+
+<VizEmbed slug="hilbert_curve" label="Hilbert curve" animateN />
+
+Watch the path thicken. Early on it is a coarse U-turns-and-folds sketch. As more of the path lights, the same rule packs the square tighter until the line reads like a filled square from a distance.
+
+## Index to cell
+
+Order `k` means grid size `N = 2^k` and `N²` cells. Index `0` starts in one corner; each next index lands on a neighbor. The bit rule folds and flips quadrants so the path stays continuous while covering every cell once.
+
+Default on Classical Chaos is order `7` (`N = 128`, 16384 points). Turn `order` up and the board subdivides; the path still never jumps.
+
+## Full canvas
+
+On the [full Hilbert stage](/hilbert_curve) scrub how far along the path the draw has gone and change order. Push further along the path and the square packs tighter; raise order for a finer grid.
+
+<Callout to="/hilbert_curve">
+	<strong>Goto full canvas</strong>
+	Scrub along the path, change order for a finer grid, try the order presets.
+</Callout>
