@@ -93,7 +93,7 @@
     "slug": "hopalong_attractor",
     "title": "Hopalong Attractor",
     "category": "attractor",
-    "description": "The Hopalong Attractor is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
+    "description": "Barry Martin's classic Hopalong (1981): x' = y - sgn(x)√|b x - c|, y' = a - x. Defaults a=1.4, b≈5.16, c≈2.74.",
     "thumbnail": "/chaos/icons/hopalong_attractor.png",
     "renderMode": "webgl",
     "active": true
@@ -102,7 +102,7 @@
     "slug": "hopalong_attractor_positive",
     "title": "Hopalong Attractor Positive",
     "category": "attractor",
-    "description": "The Hopalong Attractor Positive is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
+    "description": "Martin positive Hopalong: x' = y + sgn(x)√|b x - c|, y' = a - x. Same a,b,c knobs as classic.",
     "thumbnail": "/chaos/icons/hopalong_attractor_positive.png",
     "renderMode": "webgl",
     "active": true
@@ -111,7 +111,7 @@
     "slug": "hopalong_attractor_additive",
     "title": "Hopalong Attractor Additive",
     "category": "attractor",
-    "description": "The Hopalong Attractor Additive is a chaotic attractor defined by the following equations: x_{n+1} = y_n - sign(x_n) \\cdot \\sqrt{|b \\cdot x_n - c|}, y_{n+1} = a - x_n",
+    "description": "Martin additive Hopalong: x' = y + √|b x - c|, y' = a - x (no sign flip). Same a,b,c knobs as classic.",
     "thumbnail": "/chaos/icons/hopalong_attractor_additive.png",
     "renderMode": "webgl",
     "active": true
@@ -120,7 +120,7 @@
     "slug": "hopalong_attractor_sinusoidal",
     "title": "Hopalong Attractor Sinusoidal",
     "category": "attractor",
-    "description": "The Hopalong Attractor (Sinusoidal) is a chaotic attractor that replaces the square-root term with a sine, blending periodic motion with fractal structure.",
+    "description": "Martin sinusoidal Hopalong: x' = y + sin(b x - c), y' = a - x. Defaults a=2.5, b=4, c=0.2 (chaotic fill; small b stays ring-like).",
     "thumbnail": "/chaos/icons/hopalong_attractor_sinusoidal.png",
     "renderMode": "webgl",
     "active": true
