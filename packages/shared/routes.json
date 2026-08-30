@@ -315,6 +315,15 @@
     "active": true
   },
   {
+    "slug": "figure_knots",
+    "title": "Figure Knots",
+    "category": "misc",
+    "description": "Torus-knot-style parametric curve as a particle wire. Morph tube radius a and frequencies b, c, d.",
+    "thumbnail": "/chaos/icons/figure_knots.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "hopf_fibration",
     "title": "Hopf Fibration",
     "category": "misc",
