@@ -387,6 +387,15 @@
     "active": true
   },
   {
+    "slug": "costa_surface",
+    "title": "Costa Surface",
+    "category": "misc",
+    "description": "Costa–Hoffman–Meeks genus-1 complete minimal surface (three ends). Margin truncates the chart away from torus punctures.",
+    "thumbnail": "/chaos/icons/costa_surface.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "perlin_noise",
     "title": "Perlin Noise",
     "category": "misc",

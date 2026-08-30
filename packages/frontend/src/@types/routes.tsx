@@ -42,6 +42,7 @@ import FigureKnots from '../pages/misc/figure_knots'
 import SvenssonAttractor from '../pages/attractors/svensson_attractor'
 import SvenssonAttractor3d from '../pages/attractors/svensson_attractor_3d'
 import ClebschCubic from '../pages/misc/clebsch_cubic'
+import CostaSurface from '../pages/misc/costa_surface'
 import HopfFibration from '../pages/misc/hopf_fibration'
 import PerlinNoise from '../pages/misc/perlin_noise'
 
@@ -110,6 +111,7 @@ const components: Record<string, ComponentType> = {
 	svensson_attractor: SvenssonAttractor,
 	svensson_attractor_3d: SvenssonAttractor3d,
 	clebsch_cubic: ClebschCubic,
+	costa_surface: CostaSurface,
 	hopf_fibration: HopfFibration,
 	perlin_noise: PerlinNoise,
 }
