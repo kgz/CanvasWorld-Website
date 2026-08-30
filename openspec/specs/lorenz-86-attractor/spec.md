@@ -1,0 +1,32 @@
+# lorenz-86-attractor Specification
+
+## Purpose
+TBD - created by archiving change lorenz-86-attractor. Update Purpose after archive.
+## Requirements
+### Requirement: Lorenz 86 ODE trail
+
+The product SHALL expose an active catalog slug `lorenz_86` that integrates the Lorenz 86 system with archive default coefficients and renders a 3D trail scrubbable by transport `n`. Classic `lorenz_attractor` SHALL remain unchanged.
+
+#### Scenario: Default shape
+
+- **WHEN** a visitor opens `/lorenz_86` with defaults
+- **THEN** a bounded 3D trail forms (archive-like folded cloud silhouette)
+
+### Requirement: Catalog SEO
+
+`routes.json` SHALL include title, description, thumbnail path, and `active: true` for `lorenz_86` so server OG/sitemap pick it up.
+
+#### Scenario: Active catalog entry
+
+- **WHEN** the shared catalog is loaded
+- **THEN** `lorenz_86` is active with title, description, and thumbnail
+
+### Requirement: Featured notebook
+
+A lab notebook MDX post SHALL embed the viz, use accurate excerpt/title for SEO, set `featured: true`, and be included in `blog-posts.json` after export.
+
+#### Scenario: Exported notebook
+
+- **WHEN** blog posts are exported
+- **THEN** the Lorenz 86 notebook appears in `blog-posts.json` with a viz embed slug
+
