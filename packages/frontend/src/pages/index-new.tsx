@@ -5,6 +5,7 @@ import { homeNotebookPosts } from '../blog/registry'
 import { formatPostMeta } from '../blog/types'
 import { SiteFooter } from '../chrome/ParentSiteLink'
 import { SiteNav } from '../chrome/SiteNav'
+import { thumbAlt } from '../modules/seo'
 import { HeroInkCanvas } from './HeroInkCanvas'
 import styles from './frontpage.module.css'
 
@@ -30,11 +31,13 @@ function GalleryCard({
 	name,
 	slug,
 	category,
+	description,
 	index,
 }: {
 	name: string
 	slug: string
 	category: string
+	description: string
 	index: number
 }) {
 	const ref = useRef<HTMLAnchorElement>(null)
@@ -92,7 +95,7 @@ function GalleryCard({
 				<img
 					className={styles.vizThumb}
 					src={iconUrl(slug)}
-					alt={name}
+					alt={thumbAlt(name, description)}
 					loading="lazy"
 					onError={() => setBroken(true)}
 				/>
@@ -184,6 +187,7 @@ function Index() {
 							name={route.name}
 							slug={route.slug}
 							category={route.category}
+							description={route.description}
 							index={index}
 						/>
 					))}

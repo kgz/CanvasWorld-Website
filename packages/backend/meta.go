@@ -117,6 +117,29 @@ func resolvePageMeta(requestPath string) pageMeta {
 	return meta
 }
 
+func imageAlt(m pageMeta) string {
+	title := strings.TrimSuffix(m.Title, " — Classical Chaos")
+	if title == "" {
+		title = m.Title
+	}
+	d := strings.TrimSpace(m.Description)
+	if d == "" {
+		return title
+	}
+	clause := d
+	for _, sep := range []string{". ", "! ", "? "} {
+		if i := strings.Index(d, sep); i > 0 {
+			clause = strings.TrimSpace(d[:i])
+			break
+		}
+	}
+	combined := title + ": " + clause
+	if len(combined) <= 160 {
+		return combined
+	}
+	return combined[:159] + "…"
+}
+
 func absoluteURL(base, pathUnderBase string) string {
 	if pathUnderBase == "" || pathUnderBase == "/" {
 		return base + "/"
@@ -216,7 +239,7 @@ func seoContentHTML(m pageMeta) string {
 	b.WriteString(`<p><img src="`)
 	b.WriteString(img)
 	b.WriteString(`" alt="`)
-	b.WriteString(t)
+	b.WriteString(html.EscapeString(imageAlt(m)))
 	b.WriteString(`" width="1200" height="630"></p>`)
 	b.WriteString(`<p><a href="`)
 	b.WriteString(can)

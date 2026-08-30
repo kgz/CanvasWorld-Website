@@ -41,6 +41,25 @@ func TestIsBotNarrow(t *testing.T) {
 	}
 }
 
+func TestVizSeoImageAlt(t *testing.T) {
+	t.Setenv("PUBLIC_BASE", "https://matf.dev/chaos")
+	m := resolvePageMeta("/lorenz_attractor")
+	html := seoContentHTML(m)
+	if !strings.Contains(html, "/icons/lorenz_attractor.png") {
+		t.Fatalf("expected lorenz thumb in seo html")
+	}
+	alt := imageAlt(m)
+	if !strings.Contains(alt, "Lorenz") {
+		t.Fatalf("alt=%q", alt)
+	}
+	if strings.HasSuffix(alt, ".png") {
+		t.Fatalf("alt should not be a filename: %q", alt)
+	}
+	if !strings.Contains(html, alt) {
+		t.Fatalf("seo html missing alt %q", alt)
+	}
+}
+
 func TestBlogPageMeta(t *testing.T) {
 	t.Setenv("CW_BLOG_CATALOG", "../shared/blog-posts.json")
 	t.Setenv("PUBLIC_BASE", "https://matf.dev/chaos")
