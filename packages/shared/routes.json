@@ -378,6 +378,15 @@
     "active": true
   },
   {
+    "slug": "clebsch_cubic",
+    "title": "Clebsch Cubic",
+    "category": "misc",
+    "description": "Clebsch’s diagonal cubic: the smooth degree-3 surface where all 27 lines are real (Hunt / Nordstrand affine chart).",
+    "thumbnail": "/chaos/icons/clebsch_cubic.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "perlin_noise",
     "title": "Perlin Noise",
     "category": "misc",
