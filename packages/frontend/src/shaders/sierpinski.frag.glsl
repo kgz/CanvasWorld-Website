@@ -73,7 +73,8 @@ void main() {
 	if (depth > int(useful)) {
 		depth = int(useful);
 	}
-	if (depth < 1) {
+	// Zoom-out cap can hit 0; keep one void unless the transport bar is at 0 (filled triangle).
+	if (u_maxDepth >= 1 && depth < 1) {
 		depth = 1;
 	}
 

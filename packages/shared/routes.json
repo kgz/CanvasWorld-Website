@@ -138,7 +138,7 @@
     "slug": "ikeda_map",
     "title": "Ikeda Map",
     "category": "map",
-    "description": "Ikeda map (param a): f = 0.4 - 6/(1+x\u00b2+y\u00b2), x' = 1 + a(x cos f \u2212 y sin f), y' = a(x sin f + y cos f).",
+    "description": "Ikeda map (param a \u2208 [0, 1], default 1): f = 0.4 - 6/(1+x\u00b2+y\u00b2), x' = 1 + a(x cos f \u2212 y sin f), y' = a(x sin f + y cos f).",
     "thumbnail": "/chaos/icons/ikeda_map.png",
     "renderMode": "webgl",
     "active": true
