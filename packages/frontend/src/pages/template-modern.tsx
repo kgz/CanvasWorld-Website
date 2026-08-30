@@ -398,7 +398,7 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 													min={option.min}
 													max={option.max}
 													step={option.step || 0.001}
-													value={data[key] || option.initialValue}
+													value={data[key] ?? option.initialValue}
 													onChange={(e) => {
 														dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }))
 													}}
@@ -410,7 +410,7 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 													min={option.min}
 													max={option.max}
 													step={option.step || 0.001}
-													value={data[key] || option.initialValue}
+													value={data[key] ?? option.initialValue}
 													onChange={(e) => {
 														dispatch(setData({ ...data, [key]: parseFloat(e.target.value) }))
 													}}

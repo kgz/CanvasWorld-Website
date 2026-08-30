@@ -35,6 +35,7 @@ const Points = <T,>({
   numParticles,
   dimension,
   pointSize,
+  pointMap,
   singleColor,
   colorAlpha = false
 }: TParticleProps<T>) => {
@@ -108,11 +109,13 @@ const Points = <T,>({
       <pointsMaterial
         size={size}
         sizeAttenuation={!pixelSized}
+        map={pointMap}
         color={singleColor ?? '#ffffff'}
         vertexColors={!singleColor}
         toneMapped={false}
-        transparent={false}
-        depthWrite={false}
+        transparent={pointMap !== undefined}
+        alphaTest={pointMap !== undefined ? 0.5 : undefined}
+        depthWrite={pointMap === undefined ? false : true}
       />
     </points>
   )
@@ -133,24 +136,55 @@ const LineTrail = <T,>({
   tickRef.current = tick
   const readySent = useRef(false)
   const drawnRef = useRef(0)
+  const posAttr = useRef<THREE.BufferAttribute | null>(null)
+  const colorAttr = useRef<THREE.BufferAttribute | null>(null)
 
   const positions = useMemo(() => new Float32Array(numParticles * dimension), [numParticles, dimension])
+  const positions3 = useMemo(() => new Float32Array(numParticles * 3), [numParticles])
   const colors = useMemo(() => new Float32Array(numParticles * (colorAlpha ? 4 : 3)), [numParticles, colorAlpha])
+
+  useLayoutEffect(() => {
+    const geo = line.current?.geometry
+    if (!geo) {
+      return
+    }
+    const pos = new THREE.BufferAttribute(positions3, 3)
+    pos.setUsage(THREE.DynamicDrawUsage)
+    geo.setAttribute('position', pos)
+    posAttr.current = pos
+
+    const col = new THREE.BufferAttribute(colors, colorAlpha ? 4 : 3)
+    col.setUsage(THREE.DynamicDrawUsage)
+    geo.setAttribute('color', col)
+    colorAttr.current = col
+  }, [positions3, colors, colorAlpha])
 
   useFrame((state, delta) => {
     const result = tickRef.current(positions, colors, state, delta)
     if (typeof result === 'number') {
       drawnRef.current = Math.max(0, Math.min(numParticles, Math.floor(result)))
     }
+    const drawn = drawnRef.current
+
+    if (dimension === EDimensions.TWO_D) {
+      pack2D(positions, drawn > 0 ? drawn : numParticles, positions3)
+    } else {
+      positions3.set(positions)
+    }
+
+    if (posAttr.current) {
+      posAttr.current.needsUpdate = true
+    }
+    if (colorAttr.current) {
+      colorAttr.current.needsUpdate = true
+    }
 
     const geo = line.current?.geometry
     if (geo) {
-      if (geo.attributes.position) geo.attributes.position.needsUpdate = true
-      if (geo.attributes.color) geo.attributes.color.needsUpdate = true
-      geo.setDrawRange(0, drawnRef.current)
+      geo.setDrawRange(0, drawn > 0 ? drawn : numParticles)
     }
 
-    if (!readySent.current && isScreenshotMode() && drawnRef.current >= numParticles) {
+    if (!readySent.current && isScreenshotMode() && drawn >= numParticles) {
       readySent.current = true
       requestAnimationFrame(() => markScreenshotReady())
     }
@@ -158,25 +192,13 @@ const LineTrail = <T,>({
 
   return (
     <line ref={line}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={positions.length / dimension}
-          array={positions}
-          itemSize={dimension}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          count={colors.length / (colorAlpha ? 4 : 3)}
-          array={colors}
-          itemSize={colorAlpha ? 4 : 3}
-        />
-      </bufferGeometry>
+      <bufferGeometry />
       <lineBasicMaterial
         vertexColors
+        toneMapped={false}
         transparent={lineOpacity < 1}
         opacity={lineOpacity}
-        depthWrite={false}
+        depthWrite={lineOpacity >= 1}
       />
     </line>
   )
@@ -581,6 +603,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
             numParticles={props.numParticles}
             dimension={props.dimension}
             pointSize={props.pointSize}
+            pointMap={props.pointMap}
             singleColor={props.singleColor}
             colorAlpha={props.colorAlpha}
           />

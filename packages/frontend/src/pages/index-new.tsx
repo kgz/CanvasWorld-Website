@@ -14,7 +14,7 @@ const FONT_HREF =
 function iconUrl(slug: string): string {
 	const backend = import.meta.env.VITE_BACKEND_URL
 	// Bump when thumbs change so gallery doesn't keep a stale browser cache.
-	const ver = '20260816212744'
+	const ver = '20260830121800'
 	if (typeof backend === 'string' && backend.length > 0) {
 		return `${backend.replace(/\/$/, '')}/chaos/icons/${slug}.png?v=${ver}`
 	}

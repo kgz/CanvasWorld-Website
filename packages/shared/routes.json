@@ -207,6 +207,15 @@
     "active": true
   },
   {
+    "slug": "hilbert_curve",
+    "title": "Hilbert Curve",
+    "category": "fractal",
+    "description": "2D Hilbert space-filling curve: Hilbert index i maps to a cell on an N×N grid (N=2^order) via bit-twiddle hindex2xy; path 0 fills cells, path 1 draws a coloured line strip. Default order 7 (N=128).",
+    "thumbnail": "/chaos/icons/hilbert_curve.png",
+    "renderMode": "webgl",
+    "active": true
+  },
+  {
     "slug": "calabi_yau",
     "title": "Calabi\u2013Yau Manifold",
     "category": "misc",
