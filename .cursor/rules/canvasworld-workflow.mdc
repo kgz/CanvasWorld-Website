@@ -86,14 +86,15 @@ gh pr create --base master --head feature/<n>-<slug> \
 - `./bin/board-status.sh done <issue-numbers...>`
 - `gh issue close <n> --repo kgz/CanvasWorld-Website`
 
-## Temp branch (`temp/all-viz-ports-review`)
+## Temp branch (optional batch QA)
 
-Optional batch-QA branch only — **not** a second mainline.
+Only create when you need to click through several feature branches together:
 
-- Merge feature PRs to **`master`** one ticket at a time; do not leave shipped work only on temp.
-- After a ship wave: `git checkout temp/all-viz-ports-review && git reset --hard master && git push --force-with-lease origin temp/all-viz-ports-review`
-- Close superseded open PRs when a newer PR merged the same work.
-- See `openspec/changes/HANDOFF-all-viz-ports-review.md`.
+```bash
+git checkout -b temp/all-viz-ports-review   # from updated master
+```
+
+Ship via **`master`** + feature PRs. Delete the temp branch when the wave is done (`git push origin --delete temp/all-viz-ports-review`). See `openspec/changes/HANDOFF-all-viz-ports-review.md`.
 
 ---
 

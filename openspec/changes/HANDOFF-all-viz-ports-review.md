@@ -1,33 +1,28 @@
-# Handoff: `temp/all-viz-ports-review`
+# Handoff: batch viz QA (optional)
 
-**Updated 2026-08-30** — branch reset to `master`. Viz port wave shipped individually; temp is for batch QA only.
+**Updated 2026-08-30** — epic #30 closed. No standing `temp` branch; work from `master` + `feature/<issue>-<slug>` PRs.
 
-## Hygiene (do this after each ship wave)
+## Batch QA (only when needed)
 
 ```bash
 git checkout master && git pull origin master
-git checkout temp/all-viz-ports-review
-git reset --hard master
-git push --force-with-lease origin temp/all-viz-ports-review
-```
-
-- Ship each slug via **`feature/<issue>-<slug>` → PR → merge** (never accumulate on temp long-term).
-- After merge: **`openspec archive <change-name> -y`**, close superseded PRs, **`board-status done`**.
-- Temp holds **at most** in-flight QA — reset when the wave is done.
-
-## Resume (batch QA only)
-
-```bash
-git checkout temp/all-viz-ports-review
-git pull
+git checkout -b temp/all-viz-ports-review
+# merge or cherry-pick in-flight feature branches for local click-through
 cd packages/frontend && pnpm dev   # :5173
-# icons proxy :8080 if regen thumbs
 ```
 
-## Branch state
+When the wave ships: delete the temp branch (`git push origin --delete temp/all-viz-ports-review`).
 
-- **46 active catalog slugs** — matches `master` (no temp-only viz).
-- **Epic #30:** archive ports done; **#49** (2d→3d image experiment) still open.
+## Hygiene (after each ship wave)
+
+- Ship each slug via **`feature/<issue>-<slug>` → PR → merge** on `master`.
+- **`openspec archive <change-name> -y`**, close superseded PRs, **`board-status done`**.
+- Delete or reset any batch QA branch — do not accumulate merge commits on temp.
+
+## State
+
+- **46 active catalog slugs** on `master`.
+- **#49** (2d→3d image experiment) open, outside epic scope.
 - **Skill:** `.cursor/skills/viz-visual-qa/`
 
 ## Do not ship
