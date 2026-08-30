@@ -1,0 +1,55 @@
+export const meta = {
+	slug: 'modified-chua-scrolls',
+	title: 'Modified Chua’s multi-scroll lobes',
+	tag: 'Attractors',
+	excerpt:
+		'Modified Chua circuit attractor: a sine fold replaces the classic diode so several chaotic scroll lobes stack along x in 3D; Classical Chaos draws the path as a warm-hued point cloud.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	featured: true,
+	thumbSlug: 'modified_chua_attractor',
+	order: 6,
+}
+
+
+Leon Chua’s original circuit is the double-scroll poster child: a diode kink folds the path twice. Swap that kink for a sine and one orbit can hop through several lobes stacked along x.
+
+Classical Chaos integrates the ODE with Euler steps and paints what you see as a 3D point cloud. Hue walks warm along the orbit as points accumulate.
+
+<VizEmbed slug="modified_chua_attractor" label="Modified Chua" animateN />
+
+## The ODEs
+
+Five real parameters plus step size: `alpha`, `beta`, `a`, `b`, `d`, and `dt`.
+
+<BlockMath math={'h = -b\\sin(\\pi x / (2a) + d)'} />
+<BlockMath math={'\\dot{x} = \\alpha(y - h)'} />
+<BlockMath math={'\\dot{y} = x - y + z'} />
+<BlockMath math={'\\dot{z} = -\\beta y'} />
+
+Defaults on Classical Chaos: `α=10.82`, `β=14.286`, `a=1.3`, `b=0.11`, `d=2.981`, seed `(1, 1, 0)`. Step size defaults to `dt=0.02`; example presets include a coarser `dt=0.1` and `d=0`.
+
+## Why the sine fold makes extra scrolls
+
+The sine in \(h\) is periodic in \(x\). Each period adds another fold, so the trajectory can visit multiple scrolls instead of stopping at two. Parameter `a` sets the sine period along x; `b` sets how deep the fold bites. `α` and `β` drive the linear part of the system.
+
+The canvas burns in 2500 Euler steps before plotting, then fills the cloud point by point. It is the integrated orbit, not a mesh.
+
+## On the full stage
+
+On the [full Modified Chua stage](/modified_chua_attractor) retune all six knobs, scrub `n` to reveal more or fewer plotted points in the cloud, try the example presets, pause, and drag to rotate the view. Change any knob or `dt` and the cloud rebuilds from the seed.
+
+```ts
+const h = -b * Math.sin((Math.PI * x) / (2 * a) + d)
+const dx = alpha * (y - h)
+const dy = x - y + z
+const dz = -beta * y
+x = x + dt * dx
+y = y + dt * dy
+z = z + dt * dz
+```
+
+<Callout to="/modified_chua_attractor">
+	<strong>Go to full canvas</strong>
+	Retune α, β, a, b, d and dt, scrub how many points are lit, try a preset, drag to rotate.
+</Callout>

@@ -16,6 +16,7 @@ import GingerbreadMan from '../pages/attractors/gingerbread_man'
 import IkedaMap from '../pages/maps/ikeda Map'
 import LorenzAttractor from '../pages/attractors/lorenz_attractor'
 import Lorenz86Attractor from '../pages/attractors/lorenz_86'
+import ModifiedChuaAttractor from '../pages/attractors/modified_chua_attractor'
 import AizawaAttractor from '../pages/attractors/aizawa_attractor'
 import PeterDeJongAttractor3d from '../pages/attractors/peter_de_jong_attractor_3d'
 import ThomasAttractor from '../pages/attractors/thomas_attractor'
@@ -75,6 +76,7 @@ const components: Record<string, ComponentType> = {
 	ikeda_map: IkedaMap,
 	lorenz_attractor: LorenzAttractor,
 	lorenz_86: Lorenz86Attractor,
+	modified_chua_attractor: ModifiedChuaAttractor,
 	aizawa_attractor: AizawaAttractor,
 	peter_de_jong_attractor_3d: PeterDeJongAttractor3d,
 	thomas_attractor: ThomasAttractor,
