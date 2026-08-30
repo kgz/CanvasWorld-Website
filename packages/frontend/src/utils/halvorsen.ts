@@ -1,4 +1,4 @@
-/** Halvorsen ODE Euler step (classic cyclic form; demos use dt≈0.01). */
+/** Halvorsen ODE Euler step (Sprott cyclic form; dt≈0.005 for a≈1.4 at ~18k samples). */
 export function halvorsenTick(
 	x: number,
 	y: number,

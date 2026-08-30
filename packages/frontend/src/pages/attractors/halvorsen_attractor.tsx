@@ -16,6 +16,10 @@ const SOLID = { r: 0.5, g: 0.88, b: 0.82 }
 
 const SEED = { x: -5, y: 0, z: 0 }
 const SCALE = 2.6
+/** Default-orbit bbox midpoint so auto-rotate pivots on the knot, not a corner. */
+const CENTER = { x: -4.04, y: -3.99, z: -4.09 }
+/** Forward Euler with dt=0.01 diverges before a full trail when a ≤ ~1.5 (Sprott a=1.4 needs a smaller step). */
+const DEFAULT_DT = 0.005
 
 type TrailState = {
 	x: number
@@ -63,11 +67,11 @@ const HalvorsenAttractor = () => {
 		(): TDatData => ({
 			options: {
 				a: { initialValue: 1.4, min: 0.5, max: 2.5, step: 0.0001 },
-				dt: { initialValue: 0.01, min: 0.001, max: 0.03, step: 0.0001 },
+				dt: { initialValue: DEFAULT_DT, min: 0.001, max: 0.03, step: 0.0001 },
 			},
 			examples: [
-				{ a: 1.4, dt: 0.01 },
-				{ a: 1.3, dt: 0.01 },
+				{ a: 1.4, dt: DEFAULT_DT },
+				{ a: 1.45, dt: DEFAULT_DT },
 				{ a: 1.6, dt: 0.01 },
 			],
 		}),
@@ -129,7 +133,10 @@ const HalvorsenAttractor = () => {
 			x = next.x
 			y = next.y
 			z = next.z
-			positions.set([x * SCALE, y * SCALE, z * SCALE], computed * EDimensions.THREE_D)
+			positions.set(
+				[(x - CENTER.x) * SCALE, (y - CENTER.y) * SCALE, (z - CENTER.z) * SCALE],
+				computed * EDimensions.THREE_D,
+			)
 			computed += 1
 		}
 
@@ -177,9 +184,9 @@ HalvorsenAttractor.getDescription = () => (
 		<BlockMath math={'\\dot{y} = -a y - 4 z - 4 x - z^2'} />
 		<BlockMath math={'\\dot{z} = -a z - 4 x - 4 y - x^2'} />
 		<br />
-		Defaults: <InlineMath math="a=1.4" />, <InlineMath math="dt=0.01" />, seed{' '}
+		Defaults: <InlineMath math="a=1.4" />, <InlineMath math="\mathrm{dt}=0.005" />, seed{' '}
 		<InlineMath math="(-5,0,0)" />. Proposed by Arne Dehli Halvorsen; documented by J. C. Sprott.
-		Cool→warm GPU line trail; transport <code>n</code> scrubs length.
+		Cool→warm line trail; transport <code>n</code> scrubs length.
 	</>
 )
 

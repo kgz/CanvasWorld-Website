@@ -1,50 +1,48 @@
 export const meta = {
 	slug: 'halvorsen',
-	title: 'Halvorsen attractor: cyclic equations, uneven silhouette',
+	title: 'Halvorsen attractor: cyclic ODEs, skewed knot',
 	tag: 'Attractors',
 	excerpt:
-		'The Halvorsen attractor is a cyclically symmetric 3D chaotic ODE. Classical Chaos draws it with Euler steps into a cool-to-warm GPU trail.',
+		'The Halvorsen attractor is a 3D chaotic flow with cyclic ODE symmetry and a skewed-knot silhouette. Classical Chaos draws it as a cool-to-warm line trail.',
 	dateLabel: 'Aug 2026',
 	readMinutes: 5,
-	featured: false,
 	thumbSlug: 'halvorsen_attractor',
+	featured: false,
 	order: 15,
 }
 
 
-The Halvorsen attractor is a continuous-time 3D chaotic flow whose equations cycle under \((x,y,z)\to(y,z,x)\). Swap the axes that way and the rules look the same. The cloud on the stage does not: one lobe sits heavier than the rest, and the trail reads as a skewed knot rather than a three-fold snowflake.
-
-Classical Chaos integrates it the same way as Lorenz or Aizawa: Euler steps into a cool-to-warm line trail. Watch it grow in below.
+The Halvorsen attractor permutes its three rate laws under <InlineMath math={'(x,y,z) \\to (y,z,x)'} />: swap the letters and the block of equations repeats. The path on screen breaks that symmetry. One lobe carries more weight, and the outline reads as a skewed knot rather than a three-fold star.
 
 <VizEmbed slug="halvorsen_attractor" label="Halvorsen" animateN />
 
 ## Where it came from
 
-Arne Dehli Halvorsen floated the system on sci.fractals (unpublished). J. C. Sprott later wrote it up in *Chaos and Time-Series Analysis* (2003) and again in *Elegant Chaos* (2010), which is how most demos found it.
+Arne Dehli Halvorsen posted the system on sci.fractals; it stayed unpublished. J. C. Sprott wrote it up in *Chaos and Time-Series Analysis* (2003) and again in *Elegant Chaos* (2010), which is how most applets picked up these lines.
 
-## Halvorsen’s cyclic ODEs
+## The cyclic ODEs
 
-One free parameter `a`. The linear coupling is fixed at 4.
+One free parameter <InlineMath math={'a'} />. Linear coupling stays fixed at 4.
 
 <BlockMath math={'\\dot{x} = -a x - 4 y - 4 z - y^{2}'} />
 <BlockMath math={'\\dot{y} = -a y - 4 z - 4 x - z^{2}'} />
 <BlockMath math={'\\dot{z} = -a z - 4 x - 4 y - x^{2}'} />
 
-Read the first line, then rotate every letter one slot: \(x\to y\), \(y\to z\), \(z\to x\). You get the second line. Rotate again and you get the third. That cyclic lock is the whole design.
+Read the first line, then rotate every letter one slot: <InlineMath math={'x \\to y'} />, <InlineMath math={'y \\to z'} />, <InlineMath math={'z \\to x'} />. You get the second line. Rotate again and you get the third.
 
-Chaos often shows up near \(a \approx 1.27\); demos commonly stick with \(a = 1.4\) so the trail fills without dying or blowing up.
+Chaos often shows up near <InlineMath math={'a \\approx 1.27'} /> (Sprott’s bifurcation diagram, as <InlineMath math={'a'} /> decreases). The growing embed above uses <InlineMath math={'a = 1.4'} />, <InlineMath math={'\\mathrm{dt} = 0.005'} />, seed <InlineMath math={'(-5, 0, 0)'} /> — a smaller step keeps forward Euler stable for a long trail at that <InlineMath math={'a'} />.
 
-## Symmetry in the algebra, not the picture
+## Why the trail looks lopsided
 
-The equations treat the three axes as equals. The path does not. From seed `(-5, 0, 0)` the trail settles into a bounded chaotic set that looks lopsided from most viewing angles: a bright arm, a quieter fold, no obvious \(120^\circ\) repeat in the silhouette.
+The rules treat the three axes the same. The path from that seed does not. From most viewing angles you see a bright arm and a quieter fold, not a clean <InlineMath math={'120^\\circ'} /> repeat in the outline.
 
-That gap is worth sitting with. Cyclic symmetry says the rules are indifferent to which axis is which. The state you happen to be in, and how long you integrate, still pick a particular tangle. Change `a` a little and the tangle fattens or thins, but the three-fold rule stays written into every step.
+Cool color marks older samples along the line; warm marks the leading edge. Cyclic symmetry in the field does not force a symmetric silhouette once you pick a starting point and integrate.
 
-## Full canvas
+## On the full stage
 
-On the [full Halvorsen stage](/halvorsen_attractor) scrub trail length `n`, swap the `a` presets, drag to rotate, and retune `a` and `dt`. Defaults there are `a = 1.4`, `dt = 0.01`, seed `(-5, 0, 0)`; presets also sit at `a = 1.3` and `a = 1.6`. The trail rebuilds from the seed when those change.
+On the [full Halvorsen stage](/halvorsen_attractor) scrub trail length <InlineMath math={'n'} />, twist <InlineMath math={'a'} /> and <InlineMath math={'\\mathrm{dt}'} /> (the path rebuilds from the seed), and drag to rotate. Presets include <InlineMath math={'a = 1.4'} /> and <InlineMath math={'1.45'} /> at <InlineMath math={'\\mathrm{dt} = 0.005'} />, plus <InlineMath math={'a = 1.6'} /> at <InlineMath math={'\\mathrm{dt} = 0.01'} /> — compare them and the knot fattens or thins fast.
 
 <Callout to="/halvorsen_attractor">
-	<strong>Goto full canvas</strong>
-	Scrub `n`, try the `a` presets, drag to rotate, twist `a` and `dt`.
+	<strong>Go to full canvas</strong>
+	Try the <InlineMath math={'a'} /> presets and see how quickly the silhouette shifts.
 </Callout>
