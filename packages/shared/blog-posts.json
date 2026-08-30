@@ -6,6 +6,16 @@
 	},
 	"posts": [
 		{
+			"slug": "bedhead-3d",
+			"title": "Bedhead in 3D: the same map, plus depth",
+			"excerpt": "Bedhead is a 2D sine–cosine map with a third z step that lifts iterates into a copper-to-gold point cloud — discrete samples, not an ODE trail.",
+			"tag": "Attractors",
+			"thumbSlug": "bedhead_attractor_3d",
+			"order": 4,
+			"featured": true,
+			"bodyHtml": "<p>Bedhead is Ivan Emrich’s discrete map: sine and cosine mixed through <code>x</code> and <code>y</code>, two real knobs, no integrating rates. The familiar <a href=\"/bedhead_attractor\">flat Bedhead cloud</a> lives in the plane; here a third update pulls the same iterates into depth.</p>\n<p>Classical Chaos draws that volume as copper-to-gold points — one sample per iterate, not a Lorenz-style continuous trail.</p>\n<h2>Three discrete steps</h2>\n<p>Still no <code>dt</code>. Each sample is the next point on the map:</p>\n<p>The first two lines are the 2D Bedhead rule. The third was added for depth: <code>z</code> leans on the current <code>y</code> and the product <code>xy</code>, still divided by <code>b</code>.</p>\n<pre><code>x = Math.sin((x * y) / b) * y + Math.cos(a * x - y)\ny = x + Math.sin(y) / b\nz = y + Math.cos(y * x) / b</code></pre>\n<p><code>b</code> is a denominator, so the stage floors it away from zero. Extreme samples get clamped so a bad pair does not blow the camera.</p>\n<h2>Point cloud, not a butterfly trail</h2>\n<p>Lorenz and Aizawa integrate rates into a line. Bedhead 3D drops each iterate as a point, like the flat Bedhead cloud, then how many points are lit decides how far the pile has grown. The planar map gets a longer walk-through in the <a href=\"/blog/bedhead\">Bedhead notebook</a>.</p>"
+		},
+		{
 			"slug": "lorenz-86",
 			"title": "Lorenz 86: the other Lorenz cloud",
 			"excerpt": "Lorenz 86 is a mid-1980s atmosphere ODE set: a folded 3D cloud on Classical Chaos, not the 1963 butterfly.",
