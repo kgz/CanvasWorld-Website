@@ -1,0 +1,48 @@
+export const meta = {
+	slug: 'halvorsen',
+	title: 'Halvorsen attractor: cyclic ODEs, skewed knot',
+	tag: 'Attractors',
+	excerpt:
+		'The Halvorsen attractor is a 3D chaotic flow with cyclic ODE symmetry and a skewed-knot silhouette. Classical Chaos draws it as a cool-to-warm line trail.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 5,
+	thumbSlug: 'halvorsen_attractor',
+	featured: false,
+	order: 15,
+}
+
+
+The Halvorsen attractor permutes its three rate laws under <InlineMath math={'(x,y,z) \\to (y,z,x)'} />: swap the letters and the block of equations repeats. The path on screen breaks that symmetry. One lobe carries more weight, and the outline reads as a skewed knot rather than a three-fold star.
+
+<VizEmbed slug="halvorsen_attractor" label="Halvorsen" animateN />
+
+## Where it came from
+
+Arne Dehli Halvorsen posted the system on sci.fractals; it stayed unpublished. J. C. Sprott wrote it up in *Chaos and Time-Series Analysis* (2003) and again in *Elegant Chaos* (2010), which is how most applets picked up these lines.
+
+## The cyclic ODEs
+
+One free parameter <InlineMath math={'a'} />. Linear coupling stays fixed at 4.
+
+<BlockMath math={'\\dot{x} = -a x - 4 y - 4 z - y^{2}'} />
+<BlockMath math={'\\dot{y} = -a y - 4 z - 4 x - z^{2}'} />
+<BlockMath math={'\\dot{z} = -a z - 4 x - 4 y - x^{2}'} />
+
+Read the first line, then rotate every letter one slot: <InlineMath math={'x \\to y'} />, <InlineMath math={'y \\to z'} />, <InlineMath math={'z \\to x'} />. You get the second line. Rotate again and you get the third.
+
+Chaos often shows up near <InlineMath math={'a \\approx 1.27'} /> (Sprott’s bifurcation diagram, as <InlineMath math={'a'} /> decreases). The growing embed above uses <InlineMath math={'a = 1.4'} />, <InlineMath math={'\\mathrm{dt} = 0.005'} />, seed <InlineMath math={'(-5, 0, 0)'} /> — a smaller step keeps forward Euler stable for a long trail at that <InlineMath math={'a'} />.
+
+## Why the trail looks lopsided
+
+The rules treat the three axes the same. The path from that seed does not. From most viewing angles you see a bright arm and a quieter fold, not a clean <InlineMath math={'120^\\circ'} /> repeat in the outline.
+
+Cool color marks older samples along the line; warm marks the leading edge. Cyclic symmetry in the field does not force a symmetric silhouette once you pick a starting point and integrate.
+
+## On the full stage
+
+On the [full Halvorsen stage](/halvorsen_attractor) scrub trail length <InlineMath math={'n'} />, twist <InlineMath math={'a'} /> and <InlineMath math={'\\mathrm{dt}'} /> (the path rebuilds from the seed), and drag to rotate. Presets include <InlineMath math={'a = 1.4'} /> and <InlineMath math={'1.45'} /> at <InlineMath math={'\\mathrm{dt} = 0.005'} />, plus <InlineMath math={'a = 1.6'} /> at <InlineMath math={'\\mathrm{dt} = 0.01'} /> — compare them and the knot fattens or thins fast.
+
+<Callout to="/halvorsen_attractor">
+	<strong>Go to full canvas</strong>
+	Try the <InlineMath math={'a'} /> presets and see how quickly the silhouette shifts.
+</Callout>

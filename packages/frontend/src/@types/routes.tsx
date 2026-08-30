@@ -18,6 +18,7 @@ import LorenzAttractor from '../pages/attractors/lorenz_attractor'
 import Lorenz86Attractor from '../pages/attractors/lorenz_86'
 import ModifiedChuaAttractor from '../pages/attractors/modified_chua_attractor'
 import AizawaAttractor from '../pages/attractors/aizawa_attractor'
+import HalvorsenAttractor from '../pages/attractors/halvorsen_attractor'
 import PeterDeJongAttractor3d from '../pages/attractors/peter_de_jong_attractor_3d'
 import ThomasAttractor from '../pages/attractors/thomas_attractor'
 import PolynomialAbs from '../pages/attractors/polynomial_abs'
@@ -89,6 +90,7 @@ const components: Record<string, ComponentType> = {
 	lorenz_86: Lorenz86Attractor,
 	modified_chua_attractor: ModifiedChuaAttractor,
 	aizawa_attractor: AizawaAttractor,
+	halvorsen_attractor: HalvorsenAttractor,
 	peter_de_jong_attractor_3d: PeterDeJongAttractor3d,
 	thomas_attractor: ThomasAttractor,
 	polynomial_abs: PolynomialAbs,
