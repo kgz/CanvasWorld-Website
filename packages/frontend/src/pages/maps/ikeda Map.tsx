@@ -141,8 +141,7 @@ IkedaMap.getDescription = () => (
 		where the rotation angle <InlineMath math={'f'} /> depends on the current state:
 		<BlockMath math={'f(x_n, y_n) = 0.4 - \\frac{6}{1 + x_n^2 + y_n^2}'} />
 		<br /><br />
-		The parameter <InlineMath math={'a'} /> controls the system's scaling and stretching, influencing the degree of chaos.
-		Typical values for <InlineMath math={'a'} /> lie in <InlineMath math={'[0.6, 1]'} /> to ensure the attractor exhibits a richly structured, bounded trajectory. 
+		Parameter <InlineMath math={'a'} /> runs in <InlineMath math={'[0, 1]'} /> (default 1). 
 		<br /><br />
 		When visualized, the Ikeda Map produces intricate, folded structures reminiscent of optical resonators in nonlinear physics, making it a popular example of chaotic behavior in simple iterative maps.
 		<br /><br />
