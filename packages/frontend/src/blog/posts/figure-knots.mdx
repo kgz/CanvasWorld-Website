@@ -1,0 +1,47 @@
+export const meta = {
+	slug: 'figure-knots',
+	title: 'Figure knots: a tube wound by three frequencies',
+	tag: 'Curves',
+	excerpt:
+		'Torus-knot-style parametric curve with tube radius a and frequencies b, c, d. Classical Chaos draws it as a growing particle wire.',
+	dateLabel: 'Aug 2026',
+	readMinutes: 4,
+	thumbSlug: 'figure_knots',
+	featured: false,
+	order: 165,
+}
+
+
+A closed braid of points wraps a torus like yarn on a doughnut. That family is the torus knot. Classical Chaos’s figure-knots stage is the same idea with four free knobs: tube radius `a`, and frequencies `b`, `c`, `d` that wind the path.
+
+<VizEmbed slug="figure_knots" label="Figure Knots" animateN />
+
+## The curve
+
+For each parameter <InlineMath math={'t'} />:
+
+<BlockMath math={'x = (a + \\cos(b t))\\cos(c t)'} />
+<BlockMath math={'y = (a + \\cos(b t))\\sin(c t)'} />
+<BlockMath math={'z = \\sin(d t)'} />
+
+```ts
+const tube = a + Math.cos(b * t)
+const x = tube * Math.cos(c * t)
+const y = tube * Math.sin(c * t)
+const z = Math.sin(d * t)
+```
+
+Think of <InlineMath math={'a + \\cos(b t)'} /> as the tube radius pulsing as you travel, then spin that radius around the big circle with <InlineMath math={'c'} />, and lift with <InlineMath math={'d'} />. When `b`, `c`, and `d` are integers the path often closes after a few turns. Non-integer values (defaults use `c = 9.1`) never quite meet themselves; the dense winding still reads as a knot.
+
+## Defaults and knobs
+
+Defaults on Classical Chaos: `a = 7.4`, `b = 8`, `c = 9.1`, `d = 8`. Presets include quieter ratios like `(2, 2, 3, 4)` and `(3, 3, 5, 7)`.
+
+This is not an ODE trail. Points are samples along the formula above, framed to fit the camera, coral → amber → teal along `t`. How many samples are lit decides how much of the wire you see.
+
+On the [full figure-knots stage](/figure_knots) retune `a`–`d`, try a preset, scrub length, and drag to rotate (or leave auto-rotate on).
+
+<Callout to="/figure_knots">
+	<strong>Goto full canvas</strong>
+	Twist `a`–`d`, try a preset, scrub length, and spin the wire.
+</Callout>

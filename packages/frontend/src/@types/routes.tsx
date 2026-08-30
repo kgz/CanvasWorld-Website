@@ -37,6 +37,7 @@ import DiniSurface from '../pages/misc/dini_surface'
 import RomanSurface from '../pages/misc/roman_surface'
 import EnneperSurface from '../pages/misc/enneper_surface'
 import BoySurface from '../pages/misc/boy_surface'
+import FigureKnots from '../pages/misc/figure_knots'
 import SvenssonAttractor from '../pages/attractors/svensson_attractor'
 import SvenssonAttractor3d from '../pages/attractors/svensson_attractor_3d'
 import HopfFibration from '../pages/misc/hopf_fibration'
@@ -101,6 +102,7 @@ const components: Record<string, ComponentType> = {
 	roman_surface: RomanSurface,
 	enneper_surface: EnneperSurface,
 	boy_surface: BoySurface,
+	figure_knots: FigureKnots,
 	svensson_attractor: SvenssonAttractor,
 	svensson_attractor_3d: SvenssonAttractor3d,
 	hopf_fibration: HopfFibration,
