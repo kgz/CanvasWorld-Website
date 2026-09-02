@@ -8,6 +8,7 @@ import { Callout } from '../blog/Callout'
 import { formatPostMeta } from '../blog/types'
 import { getAdjacent, getPost, resolvePostSlug } from '../blog/registry'
 import { VizEmbed, VizEmbedGrid } from '../blog/VizEmbed'
+import { GlossaryTerm } from '../glossary'
 import { SiteFooter } from '../chrome/ParentSiteLink'
 import { SiteNav } from '../chrome/SiteNav'
 import styles from './post.module.css'
@@ -26,6 +27,7 @@ const mdxComponents = {
 	VizEmbed,
 	VizEmbedGrid,
 	Callout,
+	GlossaryTerm,
 	BlockMath,
 	InlineMath,
 	a: MdxAnchor,

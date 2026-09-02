@@ -91,6 +91,8 @@
 }
 
 .md {
+  --cw-glossary-accent: var(--cw-accent);
+
   font-size: 16px;
   line-height: 1.7;
   color: color-mix(in oklch, var(--cw-fg) 92%, transparent);

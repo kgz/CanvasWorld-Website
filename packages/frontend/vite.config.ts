@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type ServerOptions } from 'vite'
+import { remarkGlossaryTerms } from './src/glossary/remarkGlossaryTerms'
 
 const rootDir = import.meta.dirname
 
@@ -61,7 +62,10 @@ export default defineConfig({
 		mdxPostSourcesPlugin(),
 		{
 			enforce: 'pre',
-			...mdx({ providerImportSource: '@mdx-js/react' }),
+			...mdx({
+				providerImportSource: '@mdx-js/react',
+				remarkPlugins: [remarkGlossaryTerms],
+			}),
 		},
 		{
 			name: 'watch-shared-catalog',
