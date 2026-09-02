@@ -3,11 +3,11 @@
  * Capture gallery thumbs into packages/backend/static/images/{slug}.png
  *
  * Prerequisites:
- *   - Frontend running (default http://localhost:3002)
+ *   - Frontend running (default http://localhost:5173/chaos)
  *   - pnpm exec playwright install chromium  (once)
  *
  * Usage:
- *   FRONTEND_URL=http://localhost:3002 pnpm thumbs
+ *   FRONTEND_URL=http://localhost:5173/chaos pnpm thumbs
  *   pnpm thumbs -- --slug clifford_attractor
  */
 import { chromium } from 'playwright'
@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const OUT_DIR = path.resolve(__dirname, '../../backend/static/images')
 const CATALOG_PATH = path.resolve(__dirname, '../../shared/routes.json')
-const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3002').replace(/\/$/, '')
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173/chaos').replace(/\/$/, '')
 
 async function loadActiveSlugs() {
 	const raw = await readFile(CATALOG_PATH, 'utf8')

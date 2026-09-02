@@ -49,19 +49,30 @@ A monorepo containing the CanvasWorld mathematical attractors visualization plat
 
 4. **Or run locally**:
 
-   **Backend**:
+   **Backend** (listens on `8080`):
    ```bash
    cd packages/backend
    go mod download
    air
    ```
 
-   **Frontend**:
+   **Frontend** (Vite on `5173`, routes under `/chaos/`):
    ```bash
    cd packages/frontend
    pnpm install
    pnpm dev
    ```
+
+## Ports
+
+| Service | Local / compose | Production |
+|---------|-----------------|------------|
+| Backend API | `8080` | `8080` |
+| Frontend (Vite dev) | `5173` | — (static files from backend) |
+| MySQL | `3306` | — |
+| Public site | — | `https://matf.dev/chaos` |
+
+Screenshot and thumb scripts expect `FRONTEND_URL=http://localhost:5173/chaos` in local dev. See `env.example`.
 
 ## Thumbnails / OG images
 
@@ -72,9 +83,9 @@ Generate (or refresh) them with Playwright while the frontend is running:
 ```bash
 cd packages/frontend
 pnpm exec playwright install chromium   # once
-FRONTEND_URL=http://localhost:3002 pnpm thumbs
+FRONTEND_URL=http://localhost:5173/chaos pnpm thumbs
 # single slug:
-FRONTEND_URL=http://localhost:3002 pnpm thumbs -- --slug clifford_attractor
+FRONTEND_URL=http://localhost:5173/chaos pnpm thumbs -- --slug clifford_attractor
 ```
 
 Pages opened with `?screenshot=true` hide chrome and set `window.__CW_READY__` when the canvas is capture-ready. Prefer this offline script over Discord-first generation — bot SSR only references existing files.
