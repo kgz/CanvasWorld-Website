@@ -17,7 +17,8 @@
     "thumbs": "node scripts/capture-thumbs.mjs",
     "export-blog-posts": "node scripts/export-blog-posts.mjs",
     "validate-blog-embeds": "node scripts/validate-blog-embeds.mjs",
-    "smoke:brusselator": "node scripts/smoke-brusselator.mjs"
+    "smoke:brusselator": "node scripts/smoke-brusselator.mjs",
+    "benchmark:home": "node scripts/benchmark-home.mjs --build"
   },
   "author": "Mat Frayne",
   "license": "ISC",

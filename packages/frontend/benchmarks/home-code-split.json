@@ -1,0 +1,34 @@
+{
+  "description": "Home route JS payload before/after viz page code-splitting (issue #17)",
+  "method": "Production vite build + playwright networkidle on /chaos/",
+  "before": {
+    "label": "before-eager",
+    "timestamp": "2026-09-02T10:12:12.127Z",
+    "build": {
+      "totalJsBytes": 1757853,
+      "chunkCount": 1,
+      "mainChunk": "index-CHteAhq6.js"
+    },
+    "network": {
+      "totalScriptBytes": 1757853,
+      "scriptCount": 1
+    }
+  },
+  "after": {
+    "label": "after-lazy-v2",
+    "timestamp": "2026-09-02T10:13:52.709Z",
+    "build": {
+      "totalJsBytes": 1781602,
+      "chunkCount": 59,
+      "mainChunk": "index-BnGN_lvs.js"
+    },
+    "network": {
+      "totalScriptBytes": 807567,
+      "scriptCount": 3
+    }
+  },
+  "delta": {
+    "homeScriptBytesSaved": 950286,
+    "homeScriptReductionPercent": 54.1
+  }
+}
