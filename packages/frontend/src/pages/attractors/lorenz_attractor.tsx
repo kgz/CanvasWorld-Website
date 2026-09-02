@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
 import { resolveParticleCount } from '../../modules/embedMode'
 import { isScreenshotMode } from '../../modules/screenshotMode'
+import { GlossaryTerm } from '../../glossary'
 import { lorenzTick } from '../../utils/lorenz'
 
 /** Soft darker mint → pale tip (archive-like opacity on the stroke). */
@@ -180,16 +181,17 @@ const LorenzAttractor = () => {
 
 LorenzAttractor.getDescription = () => (
 	<>
-		The Lorenz attractor is a continuous-time chaotic system introduced by Edward Lorenz (1963) as a
-		simplified model of atmospheric convection. Trajectories fold into the familiar butterfly of two
-		lobes in 3D space.
+		The Lorenz <GlossaryTerm term="attractor" /> is a continuous-time chaotic system introduced by
+		Edward Lorenz (1963) as a simplified model of atmospheric convection.{' '}
+		<GlossaryTerm term="trajectory">Trajectories</GlossaryTerm> fold into the familiar butterfly of
+		two lobes in 3D space — a <GlossaryTerm term="strange-attractor" /> in practice.
 		<br />
 		<br />
 		UI params <InlineMath math="a,b,c" /> are the classic coefficients{' '}
 		<InlineMath math="\sigma,\rho,\beta" />.
 		<br />
 		<br />
-		<strong>Definition:</strong>
+		<strong>Definition</strong> (an <GlossaryTerm term="ode" /> system):
 		<BlockMath math={'\\dot{x} = \\sigma (y - x)'} />
 		<BlockMath math={'\\dot{y} = x(\\rho - z) - y'} />
 		<BlockMath math={'\\dot{z} = x y - \\beta z'} />

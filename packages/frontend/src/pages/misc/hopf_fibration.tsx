@@ -5,6 +5,7 @@ import Base from '../_base'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
+import { GlossaryTerm } from '../../glossary'
 import { isScreenshotMode } from '../../modules/screenshotMode'
 import {
 	clampFibers,
@@ -88,9 +89,11 @@ const HopfFibration = () => {
 HopfFibration.getDescription = () => (
 	<>
 		The Hopf fibration (Heinz Hopf, 1931) is a map{' '}
-		<InlineMath math="S^3 \to S^2" /> whose fibers are circles. Every point of the 2-sphere has a
-		circle of preimages on the 3-sphere; those circles are pairwise linked. Classical Chaos draws
-		stereographic images of a grid of fibers as a particle wire — no lit mesh.
+		<InlineMath math="S^3 \to S^2" /> whose fibers are circles on a{' '}
+		<GlossaryTerm term="manifold">3-sphere manifold</GlossaryTerm>. Every point of the 2-sphere has
+		a circle of preimages on the 3-sphere; those circles are pairwise linked. Classical Chaos draws{' '}
+		<GlossaryTerm term="stereographic-projection">stereographic</GlossaryTerm> images of a grid of
+		fibers as a particle wire — no lit mesh.
 		<br />
 		<br />
 		<strong>Hopf coordinates</strong> on <InlineMath math="S^3" /> with{' '}

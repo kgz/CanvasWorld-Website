@@ -430,6 +430,8 @@
 }
 
 .aboutBody {
+  --cw-glossary-accent: var(--accent);
+
   margin: 0;
   font-size: 13px;
   line-height: 1.55;
