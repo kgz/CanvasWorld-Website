@@ -63,16 +63,7 @@ export default defineConfig({
 				})
 			},
 		},
-		react({
-			// Enable React Refresh for hot reloading
-			fastRefresh: true,
-			babel: {
-				plugins: [
-					['@babel/plugin-proposal-decorators', { legacy: true }],
-					['@babel/plugin-proposal-class-properties', { loose: true }],
-				],
-			},
-		}),
+		react(),
 	],
 	optimizeDeps: {
 		esbuildOptions: {
