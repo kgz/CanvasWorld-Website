@@ -18,4 +18,4 @@
 
 - [x] 4.1 `pnpm run build` in frontend
 - [x] 4.2 Browser: home + one viz page still load
-- [ ] 4.3 PR Closes #5
+- [x] 4.3 PR Closes #5
