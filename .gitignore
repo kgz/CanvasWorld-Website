@@ -26,3 +26,5 @@ packages/backend/tmp/
 !.cursor/skills/**
 !.cursor/rules/
 !.cursor/rules/**
+
+!.cursor/mcp.json
