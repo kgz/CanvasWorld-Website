@@ -1,5 +1,6 @@
 import { BlockMath } from 'react-katex'
 import { createAttractorPage } from '../_attractorPage'
+import { hopalongAttractorTick } from '../../utils/hopalongAttractor'
 
 const HopalongAttractor = createAttractorPage({
 	params: {
@@ -16,11 +17,7 @@ const HopalongAttractor = createAttractorPage({
 	scale: 5,
 	color: 'hsl-chunk',
 	cameraPosition: [0, 0, -220],
-	iterate: (x, y, p) => {
-		const xn = y - Math.sign(x) * Math.sqrt(Math.abs(p.b * x - p.c))
-		const yn = p.a - x
-		return { x: xn, y: yn }
-	},
+	iterate: hopalongAttractorTick,
 	description: () => (
 		<>
 			The Hopalong Attractor is a fractal also known as the "Skull Attractor" or "Martin's Attractor".

@@ -10,8 +10,7 @@ import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 import { useAnimationState } from '../../hooks/useAnimationState'
-
-const { sin, cos } = Math
+import { fractalDreamAttractorTick } from '../../utils/fractalDreamAttractor'
 
 const FractalDreamAttractor = () => {
 	const dispatch = useAppDispatch()
@@ -81,13 +80,12 @@ const FractalDreamAttractor = () => {
 
 		let x = -2,
 			y = -2
+		const params = { a: safeA, b: safeB, c: safeC, d: safeD }
 		for (let i = 0; i < totalParticles; i++) {
 			if (i < particlesToDraw) {
-				const nx = Math.sin(safeB * y) + safeC * Math.sin(safeB * x)
-				const ny = Math.sin(safeA * x) + safeD * Math.sin(safeA * y)
-
-				x = nx
-				y = ny
+				const next = fractalDreamAttractorTick(x, y, params)
+				x = next.x
+				y = next.y
 
 				positions.set([x * 100, y * 100], i * 2)
 

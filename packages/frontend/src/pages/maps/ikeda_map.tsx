@@ -10,8 +10,7 @@ import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 import { useAnimationState } from '../../hooks/useAnimationState'
-
-const { sin, sqrt } = Math
+import { ikedaMapTick } from '../../utils/ikedaMap'
 
 const IkedaMap = () => {
 	const dispatch = useAppDispatch()
@@ -66,12 +65,9 @@ const IkedaMap = () => {
 			y = 0.0
 		for (let i = 0; i < totalParticles; i++) {
 			if (i < particlesToDraw) {
-				const G = 0.4 - 6 / (1 + Math.pow(x, 2) + Math.pow(y, 2))
-
-				const xn = 1 + safeA * (x * Math.cos(G) - y * Math.sin(G))
-				const yn = safeA * (x * Math.sin(G) + y * Math.cos(G))
-				y = yn
-				x = xn
+				const next = ikedaMapTick(x, y, safeA)
+				x = next.x
+				y = next.y
 				positions.set([x * 50 - 20, y * 50 - 200], i * EDimensions.TWO_D)
 				
 				if (i >= particlesToDraw - 100) {

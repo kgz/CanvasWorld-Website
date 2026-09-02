@@ -8,19 +8,7 @@ import { useEffect, useMemo } from 'react'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { useAnimationState } from '../../hooks/useAnimationState'
-
-/** Standard Bogdanov: y' = y + a y + b x(x−1) + μ x y; x' = x + y' */
-export const bogdanovMapTick = (
-	x: number,
-	y: number,
-	a: number,
-	b: number,
-	mu: number,
-): { x: number; y: number } => {
-	const ny = y + a * y + b * x * (x - 1) + mu * x * y
-	const nx = x + ny
-	return { x: nx, y: ny }
-}
+import { bogdanovMapTick } from '../../utils/bogdanovMap'
 
 const BogdanovMap = () => {
 	const dispatch = useAppDispatch()

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { bogdanovMapTick } from '../../pages/maps/bogdanov_map'
+import { bogdanovMapTick } from '../../utils/bogdanovMap'
 
 const defaultMu = -0.1
 

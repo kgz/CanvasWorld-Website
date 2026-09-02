@@ -1,5 +1,6 @@
 import { BlockMath } from 'react-katex'
 import { createAttractorPage } from '../_attractorPage'
+import { hopalongPositiveAttractorTick } from '../../utils/hopalongAttractor'
 
 const HopalongAttractorPositive = createAttractorPage({
 	params: {
@@ -16,11 +17,7 @@ const HopalongAttractorPositive = createAttractorPage({
 	scale: 5,
 	color: 'hsl-chunk',
 	cameraPosition: [0, 0, -220],
-	iterate: (x, y, p) => {
-		const xn = y + Math.sign(x) * Math.sqrt(Math.abs(p.b * x - p.c))
-		const yn = p.a - x
-		return { x: xn, y: yn }
-	},
+	iterate: hopalongPositiveAttractorTick,
 	description: () => (
 		<>
 			Positive Hopalong is Barry Martin's signed-square-root variant of the classic map: the radical term is added instead of subtracted.
