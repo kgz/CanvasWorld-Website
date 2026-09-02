@@ -12,3 +12,8 @@ Backend `PORT` SHALL default to `8080` in code and all example env files. Fronte
 ### Requirement: Screenshot and thumb URLs use the live dev basename
 
 `FRONTEND_URL` examples and script defaults SHALL include `/chaos` so capture URLs resolve to `/{basename}/{slug}?screenshot=true`.
+
+#### Scenario: Thumb capture default
+
+- **WHEN** `pnpm thumbs` runs without `FRONTEND_URL` set
+- **THEN** Playwright opens `http://localhost:5173/chaos/{slug}?screenshot=true`
