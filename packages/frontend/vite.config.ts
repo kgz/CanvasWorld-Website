@@ -2,13 +2,27 @@ import mdx from '@mdx-js/rollup'
 import fs from 'fs'
 import path from 'path'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, type ServerOptions } from 'vite'
+
+const rootDir = import.meta.dirname
+
+function loadDevHttps(): ServerOptions['https'] {
+	const keyPath = process.env.VITE_HTTPS_KEY
+	const certPath = process.env.VITE_HTTPS_CERT
+	if (!keyPath || !certPath) {
+		return undefined
+	}
+	return {
+		key: fs.readFileSync(path.resolve(rootDir, keyPath)),
+		cert: fs.readFileSync(path.resolve(rootDir, certPath)),
+	}
+}
 
 const MDX_SOURCES_ID = 'virtual:mdx-post-sources'
 const MDX_SOURCES_RESOLVED = '\0' + MDX_SOURCES_ID
 
 function mdxPostSourcesPlugin() {
-	const postsDir = path.resolve(__dirname, 'src/blog/posts')
+	const postsDir = path.resolve(rootDir, 'src/blog/posts')
 
 	function loadSources() {
 		const files = fs.readdirSync(postsDir).filter((file) => file.endsWith('.mdx'))
@@ -52,7 +66,7 @@ export default defineConfig({
 		{
 			name: 'watch-shared-catalog',
 			configureServer(server) {
-				const catalog = path.resolve(__dirname, '../shared/routes.json')
+				const catalog = path.resolve(rootDir, '../shared/routes.json')
 				server.watcher.add(catalog)
 				// JSON HMR alone can leave routes.tsx with a stale catalog array →
 				// new slugs fall through to Index (home) inside VizEmbed iframes.
@@ -66,13 +80,11 @@ export default defineConfig({
 		react(),
 	],
 	optimizeDeps: {
-		esbuildOptions: {
-			target: 'esnext',
-			define: {
-				global: 'globalThis',
-			},
-			supported: {
-				bigint: true,
+		rolldownOptions: {
+			transform: {
+				define: {
+					global: 'globalThis',
+				},
 			},
 		},
 	},
@@ -85,6 +97,7 @@ export default defineConfig({
 	server: {
 		host: 'localhost',
 		port: Number(process.env.VITE_PORT) || 5173,
+		https: loadDevHttps(),
 		// Enable HMR (Hot Module Replacement)
 		hmr: {
 			port: Number(process.env.VITE_PORT) || 5173,
@@ -107,10 +120,10 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: [
-			{ find: '@s', replacement: path.resolve(__dirname, 'src/@styles') },
-			{ find: '@t', replacement: path.resolve(__dirname, 'src/@types') },
-			{ find: '@a', replacement: path.resolve(__dirname, 'src/@assets') },
-			{ find: '@cw/routes', replacement: path.resolve(__dirname, '../shared/routes.json') },
+			{ find: '@s', replacement: path.resolve(rootDir, 'src/@styles') },
+			{ find: '@t', replacement: path.resolve(rootDir, 'src/@types') },
+			{ find: '@a', replacement: path.resolve(rootDir, 'src/@assets') },
+			{ find: '@cw/routes', replacement: path.resolve(rootDir, '../shared/routes.json') },
 		],
 	},
 })
