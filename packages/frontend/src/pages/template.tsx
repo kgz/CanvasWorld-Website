@@ -1,11 +1,12 @@
+import { lazy, Suspense, useEffect, useMemo } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Index from './index-new'
 import Blog from './blog'
 import PostPage from './PostPage'
 import routes from '../@types/routes'
 import { useMatomo } from '@datapunt/matomo-tracker-react'
-import { useEffect, useMemo } from 'react'
-import ModernCanvasPage from './template-modern'
+
+const ModernCanvasPage = lazy(() => import('./template-modern'))
 
 const Template = () => {
 	const { trackPageView } = useMatomo()
@@ -30,9 +31,11 @@ const Template = () => {
 				return (
 					<Route
 						key={index}
-						path={"/" + route.slug}
+						path={'/' + route.slug}
 						element={
-							<ModernCanvasPage route={route} isIframe={isIframe} />
+							<Suspense fallback={null}>
+								<ModernCanvasPage route={route} isIframe={isIframe} />
+							</Suspense>
 						}
 					/>
 				)

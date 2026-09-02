@@ -12,6 +12,8 @@ import { AnimationProvider, useAnimation } from '../context/AnimationContext'
 import { postsForVizSlug } from '../blog/registry'
 import { categorySearchHeading, publicIconUrl, publicPageUrl, thumbAlt } from '../modules/seo'
 import { routeProgressLabel, routeShowsTransportBar } from '../modules/vizCatalog'
+import { loadVizPageDescription } from '../modules/vizPageDescription'
+import { VizPageStage } from '../components/VizPageStage'
 import styles from './canvasChrome.module.css'
 
 const FONT_HREF =
@@ -219,13 +221,20 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 		resetScreenshotReady()
 	}, [route.name])
 
-	const description = useMemo(() => {
-		const getDescription = Reflect.get(route.element, 'getDescription')
-		if (typeof getDescription === 'function') {
-			return getDescription.call(route.element)
+	const [description, setDescription] = useState<React.ReactNode>(() => <p>{route.description}</p>)
+
+	useEffect(() => {
+		let cancelled = false
+		setDescription(<p>{route.description}</p>)
+		loadVizPageDescription(route.slug).then((rich) => {
+			if (!cancelled && rich !== null) {
+				setDescription(rich)
+			}
+		})
+		return () => {
+			cancelled = true
 		}
-		return <div>Loading description...</div>
-	}, [route])
+	}, [route.slug, route.description])
 
 	const transportEnabled = routeShowsTransportBar(route)
 	const progressLabel = routeProgressLabel(route)
@@ -245,7 +254,7 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 			<div className={styles.stageOnly}>
 				<style>{`html,body,#root{margin:0;height:100%;width:100%;overflow:hidden;background:#000}`}</style>
 				<div className={styles.stageOnlyInner}>
-					<route.element />
+					<VizPageStage Page={route.element} />
 				</div>
 			</div>
 		)
@@ -354,7 +363,7 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 			<div className={styles.body}>
 				<section className={styles.stage}>
 					<div className={styles.stageHost}>
-						<route.element />
+						<VizPageStage Page={route.element} />
 					</div>
 					<div className={styles.seoFallback}>
 						<h2>{searchH2}</h2>
