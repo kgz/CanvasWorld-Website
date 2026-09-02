@@ -13,7 +13,7 @@ import HopalongAttractorPositive from '../pages/attractors/hopalong_attractor_po
 import HopalongAttractorAdditive from '../pages/attractors/hopalong_attractor_add'
 import HopalongAttractorSinusoidal from '../pages/attractors/hopalong_attractor_sinusoidal'
 import GingerbreadMan from '../pages/attractors/gingerbread_man'
-import IkedaMap from '../pages/maps/ikeda Map'
+import IkedaMap from '../pages/maps/ikeda_map'
 import LorenzAttractor from '../pages/attractors/lorenz_attractor'
 import Lorenz86Attractor from '../pages/attractors/lorenz_86'
 import ModifiedChuaAttractor from '../pages/attractors/modified_chua_attractor'
@@ -137,10 +137,5 @@ const routes: TRoutes = catalogEntries
 			element,
 		}
 	})
-
-export const routesV1 = []
-
-export const BaseRoute = null
-
 
 export default routes

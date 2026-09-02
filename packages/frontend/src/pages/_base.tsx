@@ -1,6 +1,6 @@
 import { OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { renderToString } from 'react-dom/server'
 import { isMeshProps, isParticleProps, isShaderProps, EDimensions, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
@@ -308,114 +308,6 @@ const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: Pick<TShaderPro
 }
 
 // ------------------------------------------------------------
-// SIMPLE TEST: Two squares, one moves on scroll
-// ------------------------------------------------------------
-const TestShaderPlane = ({ uniforms, onScroll }: { uniforms: { u_offset: { value: THREE.Vector2 }, u_resolution: { value: THREE.Vector2 } }, onScroll: (delta: number) => void }) => {
-  const materialRef = useRef<THREE.ShaderMaterial | null>(null)
-  const { gl, size } = useThree()
-
-  // Update resolution uniform
-  useEffect(() => {
-    if (uniforms.u_resolution) {
-      const w = size.width * gl.getPixelRatio()
-      const h = size.height * gl.getPixelRatio()
-      uniforms.u_resolution.value.set(w, h)
-      console.log('📐 Resolution set to:', w, h)
-    }
-  }, [size.width, size.height, gl, uniforms])
-
-  // Force uniforms update every frame
-  useFrame(() => {
-    const mat = materialRef.current
-    if (mat) {
-      mat.uniformsNeedUpdate = true
-      
-      // Debug: log uniform value occasionally AND check if it matches material's uniform
-      if (mat.userData.debugFrame === undefined) mat.userData.debugFrame = 0
-      mat.userData.debugFrame++
-      if (mat.userData.debugFrame % 60 === 0) {
-        const jsUniform = uniforms.u_offset?.value
-        const matUniform = mat.uniforms?.u_offset?.value
-        console.log('📊 Test shader uniform check:', {
-          jsValue: jsUniform ? `${jsUniform.x.toFixed(4)}, ${jsUniform.y.toFixed(4)}` : 'null',
-          matValue: matUniform ? `${matUniform.x.toFixed(4)}, ${matUniform.y.toFixed(4)}` : 'null',
-          sameObject: jsUniform === matUniform,
-          uniformsNeedUpdate: mat.uniformsNeedUpdate
-        })
-      }
-    }
-  })
-
-  // Listen for scroll events - use window instead of canvas
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault()
-      const delta = e.deltaY
-      console.log('🖱️ WHEEL EVENT caught in TestShaderPlane, delta:', delta)
-      onScroll(delta)
-    }
-
-    // Listen on window to catch all scroll events
-    window.addEventListener('wheel', handleWheel, { passive: false })
-    console.log('✅ TestShaderPlane: Wheel listener attached')
-    return () => {
-      window.removeEventListener('wheel', handleWheel)
-      console.log('❌ TestShaderPlane: Wheel listener removed')
-    }
-  }, [onScroll])
-
-  return (
-    <mesh>
-      <planeGeometry args={[2, 2]} />
-      <rawShaderMaterial
-        ref={materialRef}
-        vertexShader={`
-          attribute vec3 position;
-          varying vec2 vUv;
-          void main() {
-            vUv = position.xy * 0.5 + 0.5;
-            gl_Position = vec4(position, 1.0);
-          }
-        `}
-        fragmentShader={`
-          precision mediump float;
-          uniform vec2 u_offset;
-          uniform vec2 u_resolution;
-          varying vec2 vUv;
-          
-          void main() {
-            vec2 uv = vUv;
-            
-            // First square: fixed position (red, bottom-left)
-            vec2 square1 = step(vec2(0.1), uv) * step(uv, vec2(0.3));
-            float sq1 = square1.x * square1.y;
-            
-            // Second square: moves with u_offset (green, center)
-            // Make it more visible and show offset value
-            vec2 square2Pos = vec2(0.5, 0.5) + u_offset * 2.0;
-            vec2 square2 = step(square2Pos - vec2(0.15), uv) * step(uv, square2Pos + vec2(0.15));
-            float sq2 = square2.x * square2.y;
-            
-            // Show offset as background gradient for debugging
-            vec3 bgColor = vec3(0.1 + u_offset.x * 0.5, 0.1, 0.1);
-            
-            vec3 color = bgColor;
-            if (sq1 > 0.5) {
-              color = vec3(1.0, 0.0, 0.0); // Red square (fixed)
-            } else if (sq2 > 0.5) {
-              color = vec3(0.0, 1.0, 0.0); // Green square (moves)
-            }
-            
-            gl_FragColor = vec4(color, 1.0);
-          }
-        `}
-        uniforms={uniforms}
-      />
-    </mesh>
-  )
-}
-
-// ------------------------------------------------------------
 // Base wrapper
 // ------------------------------------------------------------
 const Base = <T,>(props: TPointsProps<T>) => {
@@ -444,56 +336,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
             fragmentShader={props.fragmentShader}
             uniforms={props.uniforms}
           />
-        </Canvas>
-      </>
-    )
-  }
-
-  // TEST MODE: Simple two squares (for debugging uniform updates)
-  if (isShaderProps(props)) {
-    const [offset, setOffset] = useState([0, 0])
-    
-    const testUniforms = useRef({
-      u_offset: { value: new THREE.Vector2(0, 0) },
-      u_resolution: { value: new THREE.Vector2(0, 0) }
-    }).current
-
-    const handleScroll = useCallback((delta: number) => {
-      const speed = 0.001
-      setOffset(prev => {
-        const newOffset = [prev[0] + delta * speed, prev[1]]
-        // CRITICAL: Update the uniform value directly
-        testUniforms.u_offset.value.set(newOffset[0], newOffset[1])
-        console.log('🖱️ Base handleScroll:', {
-          delta,
-          newOffset,
-          uniformX: testUniforms.u_offset.value.x,
-          uniformY: testUniforms.u_offset.value.y
-        })
-        return newOffset
-      })
-    }, [testUniforms])
-
-    // Update uniform when offset changes (redundant but ensures sync)
-    useEffect(() => {
-      testUniforms.u_offset.value.set(offset[0], offset[1])
-    }, [offset, testUniforms])
-
-    return (
-      <>
-        <Canvas
-          camera={{ position: [0, 0, 1], fov: 75 }}
-          dpr={window.devicePixelRatio}
-          gl={canvasGlProps()}
-          style={{ width: '100%', height: '100%', background: '#000' }}
-          onCreated={({ gl }) => {
-            tagVizCanvas(gl.domElement)
-            if (isScreenshotMode()) {
-              requestAnimationFrame(() => markScreenshotReady())
-            }
-          }}
-        >
-          <TestShaderPlane uniforms={testUniforms} onScroll={handleScroll} />
         </Canvas>
       </>
     )

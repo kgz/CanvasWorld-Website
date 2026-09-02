@@ -1,32 +1,21 @@
 /// <reference types="vite/client" />
 
-
-declare module '@t/*';
-declare module '@p/*';
-declare module '@s/*';
-
-declare const unserialize: any
-declare const _: any
-declare const exportInvoices: (button?: HTMLElement, actionType?: 'revert'|'export', software?: string) => void
-
-// add png support
-declare module "*.png" {
-	const value: any;
-	export default value;
+declare module '*.png' {
+	const value: string
+	export default value
 }
 
-// add GLSL shader support
-declare module "*.glsl" {
-	const value: string;
-	export default value;
+declare module '*.glsl' {
+	const value: string
+	export default value
 }
 
-declare module "*.vert.glsl" {
-	const value: string;
-	export default value;
+declare module '*.vert.glsl' {
+	const value: string
+	export default value
 }
 
-declare module "*.frag.glsl" {
-	const value: string;
-	export default value;
+declare module '*.frag.glsl' {
+	const value: string
+	export default value
 }
