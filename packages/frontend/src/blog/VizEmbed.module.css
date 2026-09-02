@@ -94,6 +94,12 @@
   color: #3dd6c6;
 }
 
+.btn:focus-visible,
+.link:focus-visible {
+  outline: 2px solid var(--cw-accent, #3dd6c6);
+  outline-offset: 2px;
+}
+
 .btn svg {
   width: 14px;
   height: 14px;

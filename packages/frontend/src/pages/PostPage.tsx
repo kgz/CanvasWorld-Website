@@ -81,9 +81,9 @@ function PostPage() {
 				<meta name="twitter:description" content={description} />
 				<meta name="twitter:image" content={ogImage} />
 			</Helmet>
-			<SiteNav current="notebook" />
+			<SiteNav current="post" />
 
-			<main className={styles.docShell}>
+			<main className={styles.docShell} id="main" tabIndex={-1}>
 				<Link className={styles.docBack} to="/blog">
 					← Lab notebook
 				</Link>
@@ -100,7 +100,7 @@ function PostPage() {
 					</MDXProvider>
 				</article>
 
-				<nav className={styles.footerNav}>
+				<nav className={styles.footerNav} aria-label="Previous and next notes">
 					{adjacent.prev ? (
 						<Link to={`/blog/${adjacent.prev.slug}`}>← {adjacent.prev.meta.title}</Link>
 					) : (

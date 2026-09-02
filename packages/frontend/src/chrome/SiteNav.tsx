@@ -4,7 +4,7 @@ import { ParentSiteLink } from './ParentSiteLink'
 import styles from './siteNav.module.css'
 
 type SiteNavProps = {
-	current: 'home' | 'notebook'
+	current: 'home' | 'notebook' | 'post'
 	headerRef?: { current: HTMLElement | null }
 }
 
@@ -48,8 +48,16 @@ export function SiteNav({ current, headerRef }: SiteNavProps) {
 				.filter(Boolean)
 				.join(' ')}
 		>
+			<a className={styles.skipLink} href="#main">
+				Skip to content
+			</a>
 			<div className={styles.inner}>
-				<Link className={styles.wordmark} to="/" onClick={closeMenu}>
+				<Link
+					className={styles.wordmark}
+					to="/"
+					onClick={closeMenu}
+					aria-current={current === 'home' ? 'page' : undefined}
+				>
 					Classical Chaos
 				</Link>
 				<button
@@ -75,6 +83,7 @@ export function SiteNav({ current, headerRef }: SiteNavProps) {
 				<nav
 					id={menuId}
 					className={styles.links}
+					aria-label="Site"
 					onClick={(event) => {
 						const target = event.target
 						if (target instanceof HTMLAnchorElement) closeMenu()

@@ -5,7 +5,6 @@ import { homeNotebookPosts } from '../blog/registry'
 import { formatPostMeta } from '../blog/types'
 import { SiteFooter } from '../chrome/ParentSiteLink'
 import { SiteNav } from '../chrome/SiteNav'
-import { thumbAlt } from '../modules/seo'
 import { HeroInkCanvas } from './HeroInkCanvas'
 import styles from './frontpage.module.css'
 
@@ -31,13 +30,11 @@ function GalleryCard({
 	name,
 	slug,
 	category,
-	description,
 	index,
 }: {
 	name: string
 	slug: string
 	category: string
-	description: string
 	index: number
 }) {
 	const ref = useRef<HTMLAnchorElement>(null)
@@ -95,7 +92,7 @@ function GalleryCard({
 				<img
 					className={styles.vizThumb}
 					src={iconUrl(slug)}
-					alt={thumbAlt(name, description)}
+					alt=""
 					loading="lazy"
 					onError={() => setBroken(true)}
 				/>
@@ -136,7 +133,8 @@ function Index() {
 		const card = cards[idx]
 		const navHeight = navRef.current?.offsetHeight ?? 0
 		const top = card.getBoundingClientRect().top + window.scrollY - navHeight - 24
-		window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' })
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+		window.scrollTo({ top: Math.max(top, 0), behavior: reduceMotion ? 'auto' : 'smooth' })
 
 		card.classList.remove(styles.vizCardRandomHit)
 		requestAnimationFrame(() => {
@@ -151,6 +149,7 @@ function Index() {
 		<div className={styles.page}>
 			<SiteNav current="home" headerRef={navRef} />
 
+			<main id="main" tabIndex={-1}>
 			<section className={styles.hero}>
 				<HeroInkCanvas />
 				<div className={styles.heroVignette} aria-hidden="true" />
@@ -187,7 +186,6 @@ function Index() {
 							name={route.name}
 							slug={route.slug}
 							category={route.category}
-							description={route.description}
 							index={index}
 						/>
 					))}
@@ -214,6 +212,7 @@ function Index() {
 					))}
 				</div>
 			</section>
+			</main>
 
 			<SiteFooter className={styles.siteFooter} aboutId="about" />
 		</div>
