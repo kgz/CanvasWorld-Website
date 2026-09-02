@@ -24,6 +24,7 @@ services:
     environment:
       - PORT=8080
       - ENV=development
+      - FRONTEND_URL=http://frontend:5173/chaos
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USER=root

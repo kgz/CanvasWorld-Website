@@ -52,7 +52,7 @@ func init() {
 	initDB()
 
 	// Initialize screenshot service
-	frontendURL := getEnv("FRONTEND_URL", "http://localhost:5173")
+	frontendURL := getEnv("FRONTEND_URL", "http://localhost:5173/chaos")
 	imagesDir := getEnv("IMAGES_DIR", "static/images")
 	screenshotService = NewScreenshotService(frontendURL, imagesDir)
 }
