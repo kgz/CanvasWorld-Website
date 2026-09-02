@@ -125,8 +125,6 @@ const PerlinNoise = () => {
 	)
 }
 
-PerlinNoise.isShaderViz = true
-
 PerlinNoise.getDescription = () => (
 	<>
 		Ken Perlin’s <em>improved</em> gradient noise (2002 fade curve) as a continuous 2D field on the GPU.

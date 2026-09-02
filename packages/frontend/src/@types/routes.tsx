@@ -46,6 +46,7 @@ import ClebschCubic from '../pages/misc/clebsch_cubic'
 import CostaSurface from '../pages/misc/costa_surface'
 import HopfFibration from '../pages/misc/hopf_fibration'
 import PerlinNoise from '../pages/misc/perlin_noise'
+import type { CatalogRenderMode } from '../modules/vizCatalog'
 
 export type CatalogEntry = {
 	slug: string
@@ -53,7 +54,9 @@ export type CatalogEntry = {
 	category: string
 	description: string
 	thumbnail: string
-	renderMode: string
+	renderMode: CatalogRenderMode
+	usesTransportBar?: boolean
+	progressLabel?: string
 	active: boolean
 }
 
@@ -63,7 +66,9 @@ export type TRoute = {
 	category: string
 	description: string
 	thumbnail: string
-	renderMode: string
+	renderMode: CatalogRenderMode
+	usesTransportBar?: boolean
+	progressLabel?: string
 	element: ComponentType
 }
 
@@ -134,6 +139,8 @@ const routes: TRoutes = catalogEntries
 			description: entry.description,
 			thumbnail: entry.thumbnail,
 			renderMode: entry.renderMode,
+			usesTransportBar: entry.usesTransportBar,
+			progressLabel: entry.progressLabel,
 			element,
 		}
 	})

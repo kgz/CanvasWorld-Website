@@ -7,6 +7,7 @@ import { useAnimation } from '../../context/AnimationContext'
 import { isEmbedTransportPaused } from '../../modules/embedBridge'
 import { isEmbedFullReveal } from '../../modules/embedMode'
 import { isScreenshotMode } from '../../modules/screenshotMode'
+import { findVizCanvas } from '../../modules/vizCanvas'
 import vertexShader from '../../shaders/sierpinski.vert.glsl?raw'
 import fragmentShader from '../../shaders/sierpinski.frag.glsl?raw'
 import styles from '../maps/mandelbrotHud.module.css'
@@ -19,11 +20,6 @@ type OverlayProps = {
 	setCenter: Dispatch<SetStateAction<number[]>>
 	zoom: number
 	setZoom: Dispatch<SetStateAction<number>>
-}
-
-function findVizCanvas(): HTMLCanvasElement | null {
-	const el = document.querySelector('#cw-viz-canvas')
-	return el instanceof HTMLCanvasElement ? el : null
 }
 
 const SierpinskiOverlay = ({ center, setCenter, zoom, setZoom }: OverlayProps) => {
@@ -253,9 +249,6 @@ const SierpinskiTriangle = () => {
 		</div>
 	)
 }
-
-SierpinskiTriangle.usesTransportBar = true
-SierpinskiTriangle.progressLabel = 'depth'
 
 SierpinskiTriangle.getDescription = () => (
 	<>
