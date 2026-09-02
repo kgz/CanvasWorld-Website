@@ -1,7 +1,29 @@
 import { describe, it, expect } from 'vitest'
-import { bedheadAttractorTick, testBedheadAttractorTick } from '../../utils/bedheadAttractor'
+import { bedheadAttractorTick } from '../../utils/bedheadAttractor'
 
 const { sin, cos } = Math
+
+function sampleBedheadAttractorTick(a: number, b: number, iterations: number = 100) {
+	let x = 0.1
+	let y = 0
+	const results: Array<{ x: number; y: number; iteration: number }> = []
+
+	for (let i = 0; i < iterations; i++) {
+		try {
+			const next = bedheadAttractorTick(x, y, a, b)
+			x = next.x
+			y = next.y
+			results.push({ x, y, iteration: i })
+			if (Math.abs(x) > 1000 || Math.abs(y) > 1000) {
+				break
+			}
+		} catch {
+			break
+		}
+	}
+
+	return results
+}
 
 describe('Bedhead Attractor', () => {
 	describe('Core tick function', () => {
@@ -42,7 +64,7 @@ describe('Bedhead Attractor', () => {
 		it('should generate valid values with default parameters', () => {
 			const a = 0.65343
 			const b = 0.7345345
-			const results = testBedheadAttractorTick(a, b, 50)
+			const results = sampleBedheadAttractorTick(a, b, 50)
 			
 			expect(results.length).toBeGreaterThan(0)
 			expect(results.length).toBeLessThanOrEqual(50)
@@ -63,7 +85,7 @@ describe('Bedhead Attractor', () => {
 		it('should handle edge case when b is very small', () => {
 			const a = 0.5
 			const b = 0.0001  // Very small b
-			const results = testBedheadAttractorTick(a, b, 20)
+			const results = sampleBedheadAttractorTick(a, b, 20)
 			
 			expect(results.length).toBeGreaterThan(0)
 			
@@ -77,7 +99,7 @@ describe('Bedhead Attractor', () => {
 		it('should handle edge case when b is zero', () => {
 			const a = 0.5
 			const b = 0  // Zero b
-			const results = testBedheadAttractorTick(a, b, 20)
+			const results = sampleBedheadAttractorTick(a, b, 20)
 			
 			expect(results.length).toBeGreaterThan(0)
 			
@@ -89,8 +111,8 @@ describe('Bedhead Attractor', () => {
 		})
 
 		it('should generate different patterns for different parameters', () => {
-			const results1 = testBedheadAttractorTick(0.5, 0.7, 30)
-			const results2 = testBedheadAttractorTick(0.8, 0.3, 30)
+			const results1 = sampleBedheadAttractorTick(0.5, 0.7, 30)
+			const results2 = sampleBedheadAttractorTick(0.8, 0.3, 30)
 			
 			expect(results1.length).toBeGreaterThan(0)
 			expect(results2.length).toBeGreaterThan(0)
@@ -106,7 +128,7 @@ describe('Bedhead Attractor', () => {
 		it('should maintain mathematical consistency', () => {
 			const a = 0.65343
 			const b = 0.7345345
-			const results = testBedheadAttractorTick(a, b, 100)
+			const results = sampleBedheadAttractorTick(a, b, 100)
 			
 			expect(results.length).toBeGreaterThan(50) // Should complete most iterations
 			

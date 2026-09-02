@@ -1,8 +1,7 @@
 import { OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { renderToString } from 'react-dom/server'
 import { isMeshProps, isParticleProps, isShaderProps, EDimensions, type TPointsProps, type TParticleProps, type TShaderProps, type TMeshProps } from '../@types/gui'
 import { isScreenshotMode, markScreenshotReady } from '../modules/screenshotMode'
 
@@ -258,17 +257,6 @@ const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: Pick<TShaderPro
   const { gl, size, viewport } = useThree()
   const readySent = useRef(false)
 
-  // Resize uniform
-  useEffect(() => {
-    const mat = materialRef.current
-    if (mat?.uniforms?.u_resolution) {
-      const w = size.width * gl.getPixelRatio()
-      const h = size.height * gl.getPixelRatio()
-      if (w > 0 && h > 0) mat.uniforms.u_resolution.value.set(w, h)
-    }
-    return () => {}
-  }, [size.width, size.height, gl])
-
   useFrame(() => {
     const mat = materialRef.current
     if (mat && mat.uniforms) {
@@ -311,20 +299,11 @@ const ShaderPlane = ({ vertexShader, fragmentShader, uniforms }: Pick<TShaderPro
 // Base wrapper
 // ------------------------------------------------------------
 const Base = <T,>(props: TPointsProps<T>) => {
-  const canvas = useRef<HTMLCanvasElement>(null)
   const screenshot = isScreenshotMode()
-
-  useEffect(() => {
-    if (isParticleProps(props) && props.setCanvasRef) {
-      props.setCanvasRef(canvas)
-    }
-    return () => {}
-  }, [props])
 
   if (isShaderProps(props)) {
     return (
-      <>
-        <Canvas
+      <Canvas
           camera={('cameraPosition' in props && props.cameraPosition) ? { position: props.cameraPosition } : { position: [0, 0, 1], fov: 75 }}
           dpr={window.devicePixelRatio}
           gl={canvasGlProps()}
@@ -336,8 +315,7 @@ const Base = <T,>(props: TPointsProps<T>) => {
             fragmentShader={props.fragmentShader}
             uniforms={props.uniforms}
           />
-        </Canvas>
-      </>
+      </Canvas>
     )
   }
 
@@ -348,9 +326,8 @@ const Base = <T,>(props: TPointsProps<T>) => {
     }
 
     return (
-      <>
-        <Canvas
-          camera={meshCamera}
+      <Canvas
+        camera={meshCamera}
           dpr={window.devicePixelRatio}
           gl={canvasGlProps()}
           style={{ width: '100%', height: '100%', background: '#000' }}
@@ -374,7 +351,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
             />
           )}
         </Canvas>
-      </>
     )
   }
 
@@ -396,9 +372,8 @@ const Base = <T,>(props: TPointsProps<T>) => {
     : { position: [0, 0, camZ] as [number, number, number], fov: 75 }
 
   return (
-    <>
-      <Canvas
-        camera={particleCamera}
+    <Canvas
+      camera={particleCamera}
         dpr={[1, 2]}
         gl={canvasGlProps()}
         style={{ width: '100%', height: '100%', background: '#000' }}
@@ -438,7 +413,6 @@ const Base = <T,>(props: TPointsProps<T>) => {
           />
         )}
       </Canvas>
-    </>
   )
 }
 
