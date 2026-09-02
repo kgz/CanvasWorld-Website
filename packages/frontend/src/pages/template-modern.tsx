@@ -262,6 +262,19 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 
 	return (
 		<div className={`${styles.app}${panelOpen ? ` ${styles.panelOpen}` : ''}`}>
+			<a
+				className={styles.skipLink}
+				href="#about"
+				onClick={(event) => {
+					event.preventDefault()
+					setPanelOpen(true)
+					window.setTimeout(() => {
+						document.getElementById('about')?.focus()
+					}, 50)
+				}}
+			>
+				Skip to About
+			</a>
 			<Helmet>
 				<title>{pageTitle}</title>
 				<meta name="description" content={route.description} />
@@ -510,7 +523,9 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 						) : null}
 
 						<section className={styles.panelSection}>
-							<h2 className={styles.panelSectionTitle}>About</h2>
+							<h2 className={styles.panelSectionTitle} id="about" tabIndex={-1}>
+								About
+							</h2>
 							<div className={styles.aboutBody}>{description}</div>
 						</section>
 

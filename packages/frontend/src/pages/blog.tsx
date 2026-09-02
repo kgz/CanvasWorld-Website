@@ -5,7 +5,6 @@ import { posts } from '../blog/registry'
 import { formatPostMeta, type PostMeta } from '../blog/types'
 import { SiteFooter } from '../chrome/ParentSiteLink'
 import { SiteNav } from '../chrome/SiteNav'
-import { thumbAlt } from '../modules/seo'
 import styles from './blog.module.css'
 
 const FONT_HREF =
@@ -69,7 +68,7 @@ function Blog() {
 			</Helmet>
 			<SiteNav current="notebook" />
 
-			<main>
+			<main id="main" tabIndex={-1}>
 				<section className={styles.blogHero}>
 					<p className={styles.eyebrow}>Field notes</p>
 					<h1 className={styles.blogTitle}>The lab notebook</h1>
@@ -124,7 +123,7 @@ function Blog() {
 										<img
 											className={styles.featuredArt}
 											src={iconUrl(featured.meta.thumbSlug)}
-											alt={thumbAlt(featured.meta.title, featured.meta.excerpt)}
+											alt=""
 											onError={() => setThumbBroken(true)}
 										/>
 									) : (

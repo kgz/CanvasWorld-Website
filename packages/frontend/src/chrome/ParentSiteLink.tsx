@@ -11,7 +11,12 @@ export function ParentSiteLink({ className }: { className?: string }) {
 
 export function SiteFooter({ className, aboutId }: { className: string; aboutId?: string }) {
 	return (
-		<footer className={className} id={aboutId}>
+		<footer
+			className={className}
+			id={aboutId}
+			tabIndex={aboutId ? -1 : undefined}
+			aria-label={aboutId ? 'About' : undefined}
+		>
 			<p>Interactive sketches of classical dynamical systems.</p>
 			<ParentSiteLink />
 		</footer>

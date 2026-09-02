@@ -25,6 +25,15 @@
   background: var(--cw-bg);
 }
 
+.page :is(a, button, input):focus-visible {
+  outline: 2px solid var(--cw-accent);
+  outline-offset: 2px;
+}
+
+.page main:focus {
+  outline: none;
+}
+
 .blogHero {
   max-width: var(--cw-container-wide);
   margin: 0 auto;
@@ -86,7 +95,6 @@
   color: var(--cw-fg);
   font-family: var(--cw-font-body);
   font-size: var(--cw-fs-body);
-  outline: none;
   transition: border-color 160ms ease, background 160ms ease;
 }
 
@@ -101,6 +109,11 @@
 .searchInput:focus {
   border-color: color-mix(in oklch, var(--cw-accent) 55%, var(--cw-border));
   background: var(--cw-surface);
+}
+
+.searchInput:focus-visible {
+  outline: 2px solid var(--cw-accent);
+  outline-offset: 2px;
 }
 
 .empty {
@@ -281,6 +294,10 @@
 
 .siteFooter a:hover {
   color: var(--cw-accent);
+}
+
+.siteFooter:focus {
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

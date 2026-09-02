@@ -15,7 +15,7 @@ import {
 import { Link } from 'react-router-dom'
 import { parseEmbedProgress, postEmbedControl } from '../modules/embedBridge'
 import { DEFAULT_EMBED_PARTICLES } from '../modules/embedMode'
-import { publicIconUrl, publicPageUrl, thumbAlt } from '../modules/seo'
+import { publicIconUrl, publicPageUrl } from '../modules/seo'
 import routes from '../@types/routes'
 import styles from './VizEmbed.module.css'
 
@@ -92,12 +92,14 @@ export function VizEmbed({
 	const [docVisible, setDocVisible] = useState(
 		typeof document === 'undefined' ? true : document.visibilityState === 'visible',
 	)
-	const [userPaused, setUserPaused] = useState(false)
+	const [userPaused, setUserPaused] = useState(
+		() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+	)
 	const [iframeReady, setIframeReady] = useState(false)
 	const [nComplete, setNComplete] = useState(false)
 	const title = label ?? slug.replace(/_/g, ' ')
 	const catalog = routes.find((entry) => entry.slug === slug)
-	const posterAlt = thumbAlt(catalog?.name ?? title, catalog?.description ?? '')
+	const iframeTitle = catalog?.name ?? title
 	const posterSrc = publicIconUrl(slug)
 	const fullHref = publicPageUrl(`/${slug}`)
 	const src = useMemo(() => embedSrc(slug, particles, animateN), [slug, particles, animateN])
@@ -116,7 +118,9 @@ export function VizEmbed({
 	useEffect(() => {
 		setIframeReady(false)
 		setNComplete(false)
-		setUserPaused(false)
+		setUserPaused(
+			typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+		)
 	}, [src])
 
 	useEffect(() => {
@@ -173,15 +177,24 @@ export function VizEmbed({
 		}
 	}
 
+	const statusLabel = !slotAllowed ? 'queued' : userPaused ? 'paused' : 'live'
+	const transportLabel = !slotAllowed
+		? 'Queued'
+		: nComplete
+			? 'Replay'
+			: userPaused
+				? 'Play'
+				: 'Pause'
+
 	return (
-		<figure className={styles.player} ref={rootRef} data-stagger-index={index} data-slot-allowed={slotAllowed ? '1' : '0'}>
+		<figure className={styles.player} ref={rootRef} data-stagger-index={index} data-slot-allowed={slotAllowed ? '1' : '0'} aria-busy={!slotAllowed}>
 			<div className={styles.stage}>
-				<img className={styles.poster} src={posterSrc} alt={posterAlt} width={640} height={400} />
+				<img className={styles.poster} src={posterSrc} alt="" width={640} height={400} />
 				{slotAllowed ? (
 					<iframe
 						ref={iframeRef}
 						className={styles.frame}
-						title={title}
+						title={iframeTitle}
 						src={src}
 						loading="eager"
 						allow="fullscreen"
@@ -197,12 +210,12 @@ export function VizEmbed({
 				</noscript>
 			</div>
 			<figcaption className={styles.bar}>
-				<span className={styles.label}>{title} · live</span>
+				<span className={styles.label}>{title} · {statusLabel}</span>
 				<div className={styles.actions}>
 					<button
 						type="button"
 						className={[styles.btn, showPlayIcon ? styles.btnPaused : ''].filter(Boolean).join(' ')}
-						aria-label={nComplete ? 'Replay' : userPaused ? 'Play' : 'Pause'}
+						aria-label={transportLabel}
 						disabled={!slotAllowed}
 						onClick={onTransportClick}
 					>
