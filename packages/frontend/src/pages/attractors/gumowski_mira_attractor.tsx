@@ -10,8 +10,7 @@ import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import type { TRoutes } from '../../@types/routes'
 import { useAnimationState } from '../../hooks/useAnimationState'
-
-const { sin, cos } = Math
+import { gumowskiMiraAttractorTick } from '../../utils/gumowskiMiraAttractor'
 
 const datData: TDatData = {
 	options: {
@@ -89,10 +88,6 @@ const GumowskiMiraAttractor = () => {
 		}
 	}, [dispatch, data])
 
-	const G = (x: number, mu: number) => {
-		return mu * x + (2 * (1 - mu) * x ** 2) / (1.0 + x ** 2)
-	}
-
 	const tick: TPointsProps<TData>['tick'] = (
 		positions: Float32Array,
 		colors: Float32Array,
@@ -114,13 +109,13 @@ const GumowskiMiraAttractor = () => {
 		
 		let x = safeX0,
 			y = safeY0
-		
+		const params = { a: safeA, b: safeB, mu: safeMu }
+
 		for (let i = 0; i < numParticles; i++) {
 			if (i < particlesToDraw) {
-				const xn = y + safeA * (1 - safeB * y ** 2) * y + G(x, safeMu)
-				const yn = -x + G(xn, safeMu)
-				x = xn
-				y = yn
+				const next = gumowskiMiraAttractorTick(x, y, params)
+				x = next.x
+				y = next.y
 
 				positions.set([x * 5, y * 5], i * EDimensions.TWO_D)
 				

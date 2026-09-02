@@ -1,5 +1,6 @@
 import { BlockMath, InlineMath } from 'react-katex'
 import { createAttractorPage } from '../_attractorPage'
+import { cliffordAttractorTick } from '../../utils/cliffordAttractor'
 
 const CliffordAttractor = createAttractorPage({
 	params: {
@@ -12,10 +13,7 @@ const CliffordAttractor = createAttractorPage({
 	scale: 100,
 	color: 'purple',
 	cameraPosition: [0, 0, -500],
-	iterate: (x, y, p) => ({
-		x: Math.sin(p.a * y) + p.c * Math.cos(p.a * x),
-		y: Math.sin(p.b * x) + p.d * Math.cos(p.b * y),
-	}),
+	iterate: cliffordAttractorTick,
 	description: () => (
 		<>
 			The Clifford Attractor is a fascinating example of a 2-dimensional strange (chaotic) attractor defined by a simple discrete iteration of two functions. It's both mathematically rich and visually compelling.

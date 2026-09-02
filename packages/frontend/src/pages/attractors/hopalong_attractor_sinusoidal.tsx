@@ -1,5 +1,6 @@
 import { BlockMath } from 'react-katex'
 import { createAttractorPage } from '../_attractorPage'
+import { hopalongSinusoidalAttractorTick } from '../../utils/hopalongAttractor'
 
 const HopalongAttractorSinusoidal = createAttractorPage({
 	params: {
@@ -16,11 +17,7 @@ const HopalongAttractorSinusoidal = createAttractorPage({
 	scale: 1.1,
 	color: 'hsl-chunk',
 	cameraPosition: [0, 0, -220],
-	iterate: (x, y, p) => {
-		const xn = y + Math.sin(p.b * x - p.c)
-		const yn = p.a - x
-		return { x: xn, y: yn }
-	},
+	iterate: hopalongSinusoidalAttractorTick,
 	description: () => (
 		<>
 			Sinusoidal Hopalong is Barry Martin's sine variant of the classic map: the square-root term is replaced by a sine.

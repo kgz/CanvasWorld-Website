@@ -1,4 +1,5 @@
 import { BlockMath, InlineMath } from 'react-katex'
+import { svenssonAttractorTick } from '../../utils/svenssonAttractor'
 import { createAttractorPage } from '../_attractorPage'
 
 const SvenssonAttractor = createAttractorPage({
@@ -12,10 +13,7 @@ const SvenssonAttractor = createAttractorPage({
 	scale: 50,
 	color: 'hsl-chunk',
 	cameraPosition: [0, 0, -500],
-	iterate: (x, y, p) => ({
-		x: p.d * Math.sin(p.a * x) - Math.sin(p.b * y),
-		y: p.c * Math.cos(p.a * x) + Math.cos(p.b * y),
-	}),
+	iterate: svenssonAttractorTick,
 	description: () => (
 		<>
 			The Svensson attractor is a 2-dimensional strange attractor defined by a discrete iteration of sine and cosine terms with four real parameters.

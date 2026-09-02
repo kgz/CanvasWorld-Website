@@ -1,5 +1,6 @@
 import { BlockMath, InlineMath } from 'react-katex'
 import { createAttractorPage } from '../_attractorPage'
+import { henonMapTick } from '../../utils/henonMap'
 
 /** Classic Hénon 1976: x' = 1 − a x² + y, y' = b x */
 const HenonMap = createAttractorPage({
@@ -11,10 +12,7 @@ const HenonMap = createAttractorPage({
 	scale: 100,
 	color: 'hsl-sin',
 	cameraPosition: [0, 0, -400],
-	iterate: (x, y, p) => ({
-		x: 1 - p.a * x * x + y,
-		y: p.b * x,
-	}),
+	iterate: henonMapTick,
 	description: () => (
 		<>
 			The Hénon map is a discrete-time dynamical system introduced by Michel Hénon in 1976 as a

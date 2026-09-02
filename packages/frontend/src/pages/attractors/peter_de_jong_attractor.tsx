@@ -1,4 +1,5 @@
 import { BlockMath, InlineMath } from 'react-katex'
+import { peterDeJongAttractorTick } from '../../utils/peterDeJongAttractor'
 import { createAttractorPage } from '../_attractorPage'
 
 const PeterDeJongAttractor = createAttractorPage({
@@ -17,10 +18,7 @@ const PeterDeJongAttractor = createAttractorPage({
 	scale: 50,
 	color: 'hsl-chunk',
 	cameraPosition: [0, 0, -500],
-	iterate: (x, y, p) => ({
-		x: Math.sin(p.a * y) - Math.cos(p.b * x),
-		y: Math.sin(p.c * x) - Math.cos(p.d * y),
-	}),
+	iterate: peterDeJongAttractorTick,
 	description: () => (
 		<>
 			The Peter de Jong attractor is a 2D iterated map: four real knobs and a sine–cosine pair with a

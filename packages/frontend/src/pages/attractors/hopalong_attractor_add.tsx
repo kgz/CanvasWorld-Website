@@ -1,5 +1,6 @@
 import { BlockMath } from 'react-katex'
 import { createAttractorPage } from '../_attractorPage'
+import { hopalongAdditiveAttractorTick } from '../../utils/hopalongAttractor'
 
 const HopalongAttractorAdditive = createAttractorPage({
 	params: {
@@ -16,11 +17,7 @@ const HopalongAttractorAdditive = createAttractorPage({
 	scale: 5,
 	color: 'hsl-chunk',
 	cameraPosition: [0, 0, -220],
-	iterate: (x, y, p) => {
-		const xn = y + Math.sqrt(Math.abs(p.b * x - p.c))
-		const yn = p.a - x
-		return { x: xn, y: yn }
-	},
+	iterate: hopalongAdditiveAttractorTick,
 	description: () => (
 		<>
 			Additive Hopalong is Barry Martin's unsigned-square-root variant: the radical is always added, with no sign flip.
