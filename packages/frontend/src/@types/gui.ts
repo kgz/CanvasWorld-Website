@@ -2,7 +2,6 @@
 
 import type { RootState, Vector3 } from "@react-three/fiber"
 import type { _XRFrame } from "@react-three/fiber/dist/declarations/src/core/utils"
-import type { RefObject } from 'react'
 import type * as THREE from 'three'
 
 /**
@@ -81,7 +80,6 @@ export type TParticleProps<T> = {
 	lineOpacity?: number
 	autoRotate?: boolean
 	autoRotateSpeed?: number
-	setCanvasRef?: (ref: RefObject<HTMLCanvasElement>) => void
 }
 
 export type TMeshProps = {
