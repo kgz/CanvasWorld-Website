@@ -23,7 +23,7 @@
 		"@cw/routes": ["../shared/routes.json"]
 	  }
 	},
-	"include": ["src", "src/dummy_data.ts"],
+	"include": ["src"],
 	"exclude": ["node_modules", "build", "scripts", "acceptance-tests", "webpack", "jest", "src/setupTests.ts"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }

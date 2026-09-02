@@ -14,7 +14,6 @@ const Template = () => {
 
 	// Track page view
 	useEffect(() => {
-		console.log('tracking', loc)
 		trackPageView({
 			href: loc.pathname + loc.search
 		})
