@@ -8,6 +8,7 @@ import { ERenderMode, type TDatData } from '../../@types/gui'
 import { setDatData, setData } from '../../@store/WebSlice'
 import { useAppDispatch, useAppSelector } from '../../@store/store'
 import { isScreenshotMode } from '../../modules/screenshotMode'
+import { findVizCanvas } from '../../modules/vizCanvas'
 import vertexShader from '../../shaders/mandelbrot.vert.glsl?raw'
 import fragmentShader from '../../shaders/mandelbrot.frag.glsl?raw'
 import styles from './mandelbrotHud.module.css'
@@ -28,11 +29,6 @@ type OverlayProps = {
 	onReset: () => void
 	onPickJuliaC?: (c: [number, number]) => void
 	exportName: string
-}
-
-function findVizCanvas(): HTMLCanvasElement | null {
-	const el = document.querySelector('#cw-viz-canvas')
-	return el instanceof HTMLCanvasElement ? el : null
 }
 
 function ComplexSetOverlay({
@@ -394,7 +390,6 @@ export function createComplexQuadraticPage(config: PageConfig) {
 		)
 	}
 
-	Page.isShaderViz = true
 	Page.getDescription = description
 	return Page
 }

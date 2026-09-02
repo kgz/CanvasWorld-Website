@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet'
 import { AnimationProvider, useAnimation } from '../context/AnimationContext'
 import { postsForVizSlug } from '../blog/registry'
 import { categorySearchHeading, publicIconUrl, publicPageUrl, thumbAlt } from '../modules/seo'
+import { routeProgressLabel, routeShowsTransportBar } from '../modules/vizCatalog'
 import styles from './canvasChrome.module.css'
 
 const FONT_HREF =
@@ -226,11 +227,8 @@ function ModernCanvasPageInner({ route, isIframe }: ModernCanvasPageProps) {
 		return <div>Loading description...</div>
 	}, [route])
 
-	const transportEnabled =
-		Reflect.get(route.element, 'usesTransportBar') === true ||
-		(route.renderMode !== 'shader' && Reflect.get(route.element, 'isShaderViz') !== true)
-	const progressLabelRaw = Reflect.get(route.element, 'progressLabel')
-	const progressLabel = typeof progressLabelRaw === 'string' ? progressLabelRaw : 'n'
+	const transportEnabled = routeShowsTransportBar(route)
+	const progressLabel = routeProgressLabel(route)
 
 	const hasParams = Boolean(datData && Object.keys(datData.options).length > 0)
 	const hasExamples = Boolean(datData.examples && datData.examples.length > 0)
